@@ -152,6 +152,7 @@ exports.Prisma.MeetingScalarFieldEnum = {
   finalizedBy: 'finalizedBy',
   finalizedAt: 'finalizedAt',
   draftReadyAt: 'draftReadyAt',
+  timeToFinalize: 'timeToFinalize',
   readyForCCO: 'readyForCCO',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

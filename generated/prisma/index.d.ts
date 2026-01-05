@@ -4173,8 +4173,18 @@ export namespace Prisma {
 
   export type AggregateMeeting = {
     _count: MeetingCountAggregateOutputType | null
+    _avg: MeetingAvgAggregateOutputType | null
+    _sum: MeetingSumAggregateOutputType | null
     _min: MeetingMinAggregateOutputType | null
     _max: MeetingMaxAggregateOutputType | null
+  }
+
+  export type MeetingAvgAggregateOutputType = {
+    timeToFinalize: number | null
+  }
+
+  export type MeetingSumAggregateOutputType = {
+    timeToFinalize: number | null
   }
 
   export type MeetingMinAggregateOutputType = {
@@ -4188,6 +4198,7 @@ export namespace Prisma {
     finalizedBy: string | null
     finalizedAt: Date | null
     draftReadyAt: Date | null
+    timeToFinalize: number | null
     readyForCCO: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -4204,6 +4215,7 @@ export namespace Prisma {
     finalizedBy: string | null
     finalizedAt: Date | null
     draftReadyAt: Date | null
+    timeToFinalize: number | null
     readyForCCO: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -4222,12 +4234,21 @@ export namespace Prisma {
     finalizedBy: number
     finalizedAt: number
     draftReadyAt: number
+    timeToFinalize: number
     readyForCCO: number
     createdAt: number
     updatedAt: number
     _all: number
   }
 
+
+  export type MeetingAvgAggregateInputType = {
+    timeToFinalize?: true
+  }
+
+  export type MeetingSumAggregateInputType = {
+    timeToFinalize?: true
+  }
 
   export type MeetingMinAggregateInputType = {
     id?: true
@@ -4240,6 +4261,7 @@ export namespace Prisma {
     finalizedBy?: true
     finalizedAt?: true
     draftReadyAt?: true
+    timeToFinalize?: true
     readyForCCO?: true
     createdAt?: true
     updatedAt?: true
@@ -4256,6 +4278,7 @@ export namespace Prisma {
     finalizedBy?: true
     finalizedAt?: true
     draftReadyAt?: true
+    timeToFinalize?: true
     readyForCCO?: true
     createdAt?: true
     updatedAt?: true
@@ -4274,6 +4297,7 @@ export namespace Prisma {
     finalizedBy?: true
     finalizedAt?: true
     draftReadyAt?: true
+    timeToFinalize?: true
     readyForCCO?: true
     createdAt?: true
     updatedAt?: true
@@ -4318,6 +4342,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: MeetingAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MeetingSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: MeetingMinAggregateInputType
@@ -4348,6 +4384,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: MeetingCountAggregateInputType | true
+    _avg?: MeetingAvgAggregateInputType
+    _sum?: MeetingSumAggregateInputType
     _min?: MeetingMinAggregateInputType
     _max?: MeetingMaxAggregateInputType
   }
@@ -4365,10 +4403,13 @@ export namespace Prisma {
     finalizedBy: string | null
     finalizedAt: Date | null
     draftReadyAt: Date | null
+    timeToFinalize: number | null
     readyForCCO: boolean
     createdAt: Date
     updatedAt: Date
     _count: MeetingCountAggregateOutputType | null
+    _avg: MeetingAvgAggregateOutputType | null
+    _sum: MeetingSumAggregateOutputType | null
     _min: MeetingMinAggregateOutputType | null
     _max: MeetingMaxAggregateOutputType | null
   }
@@ -4400,6 +4441,7 @@ export namespace Prisma {
     finalizedBy?: boolean
     finalizedAt?: boolean
     draftReadyAt?: boolean
+    timeToFinalize?: boolean
     readyForCCO?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -4422,6 +4464,7 @@ export namespace Prisma {
     finalizedBy?: boolean
     finalizedAt?: boolean
     draftReadyAt?: boolean
+    timeToFinalize?: boolean
     readyForCCO?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -4441,6 +4484,7 @@ export namespace Prisma {
     finalizedBy?: boolean
     finalizedAt?: boolean
     draftReadyAt?: boolean
+    timeToFinalize?: boolean
     readyForCCO?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -4460,12 +4504,13 @@ export namespace Prisma {
     finalizedBy?: boolean
     finalizedAt?: boolean
     draftReadyAt?: boolean
+    timeToFinalize?: boolean
     readyForCCO?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientName" | "meetingType" | "meetingDate" | "status" | "fileUrl" | "transcript" | "extraction" | "finalizedBy" | "finalizedAt" | "draftReadyAt" | "readyForCCO" | "createdAt" | "updatedAt", ExtArgs["result"]["meeting"]>
+  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientName" | "meetingType" | "meetingDate" | "status" | "fileUrl" | "transcript" | "extraction" | "finalizedBy" | "finalizedAt" | "draftReadyAt" | "timeToFinalize" | "readyForCCO" | "createdAt" | "updatedAt", ExtArgs["result"]["meeting"]>
   export type MeetingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     versions?: boolean | Meeting$versionsArgs<ExtArgs>
@@ -4499,6 +4544,7 @@ export namespace Prisma {
       finalizedBy: string | null
       finalizedAt: Date | null
       draftReadyAt: Date | null
+      timeToFinalize: number | null
       readyForCCO: boolean
       createdAt: Date
       updatedAt: Date
@@ -4940,6 +4986,7 @@ export namespace Prisma {
     readonly finalizedBy: FieldRef<"Meeting", 'String'>
     readonly finalizedAt: FieldRef<"Meeting", 'DateTime'>
     readonly draftReadyAt: FieldRef<"Meeting", 'DateTime'>
+    readonly timeToFinalize: FieldRef<"Meeting", 'Int'>
     readonly readyForCCO: FieldRef<"Meeting", 'Boolean'>
     readonly createdAt: FieldRef<"Meeting", 'DateTime'>
     readonly updatedAt: FieldRef<"Meeting", 'DateTime'>
@@ -13157,6 +13204,7 @@ export namespace Prisma {
     finalizedBy: 'finalizedBy',
     finalizedAt: 'finalizedAt',
     draftReadyAt: 'draftReadyAt',
+    timeToFinalize: 'timeToFinalize',
     readyForCCO: 'readyForCCO',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -13590,6 +13638,7 @@ export namespace Prisma {
     finalizedBy?: StringNullableFilter<"Meeting"> | string | null
     finalizedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     draftReadyAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    timeToFinalize?: IntNullableFilter<"Meeting"> | number | null
     readyForCCO?: BoolFilter<"Meeting"> | boolean
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
@@ -13611,6 +13660,7 @@ export namespace Prisma {
     finalizedBy?: SortOrderInput | SortOrder
     finalizedAt?: SortOrderInput | SortOrder
     draftReadyAt?: SortOrderInput | SortOrder
+    timeToFinalize?: SortOrderInput | SortOrder
     readyForCCO?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -13635,6 +13685,7 @@ export namespace Prisma {
     finalizedBy?: StringNullableFilter<"Meeting"> | string | null
     finalizedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     draftReadyAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    timeToFinalize?: IntNullableFilter<"Meeting"> | number | null
     readyForCCO?: BoolFilter<"Meeting"> | boolean
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
@@ -13656,12 +13707,15 @@ export namespace Prisma {
     finalizedBy?: SortOrderInput | SortOrder
     finalizedAt?: SortOrderInput | SortOrder
     draftReadyAt?: SortOrderInput | SortOrder
+    timeToFinalize?: SortOrderInput | SortOrder
     readyForCCO?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: MeetingCountOrderByAggregateInput
+    _avg?: MeetingAvgOrderByAggregateInput
     _max?: MeetingMaxOrderByAggregateInput
     _min?: MeetingMinOrderByAggregateInput
+    _sum?: MeetingSumOrderByAggregateInput
   }
 
   export type MeetingScalarWhereWithAggregatesInput = {
@@ -13680,6 +13734,7 @@ export namespace Prisma {
     finalizedBy?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
     finalizedAt?: DateTimeNullableWithAggregatesFilter<"Meeting"> | Date | string | null
     draftReadyAt?: DateTimeNullableWithAggregatesFilter<"Meeting"> | Date | string | null
+    timeToFinalize?: IntNullableWithAggregatesFilter<"Meeting"> | number | null
     readyForCCO?: BoolWithAggregatesFilter<"Meeting"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Meeting"> | Date | string
@@ -14310,6 +14365,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
     readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14331,6 +14387,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
     readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14350,6 +14407,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14371,6 +14429,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14391,6 +14450,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
     readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14408,6 +14468,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14426,6 +14487,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15258,6 +15320,17 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type VersionListRelationFilter = {
     every?: VersionWhereInput
     some?: VersionWhereInput
@@ -15281,9 +15354,14 @@ export namespace Prisma {
     finalizedBy?: SortOrder
     finalizedAt?: SortOrder
     draftReadyAt?: SortOrder
+    timeToFinalize?: SortOrder
     readyForCCO?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type MeetingAvgOrderByAggregateInput = {
+    timeToFinalize?: SortOrder
   }
 
   export type MeetingMaxOrderByAggregateInput = {
@@ -15297,6 +15375,7 @@ export namespace Prisma {
     finalizedBy?: SortOrder
     finalizedAt?: SortOrder
     draftReadyAt?: SortOrder
+    timeToFinalize?: SortOrder
     readyForCCO?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15313,9 +15392,14 @@ export namespace Prisma {
     finalizedBy?: SortOrder
     finalizedAt?: SortOrder
     draftReadyAt?: SortOrder
+    timeToFinalize?: SortOrder
     readyForCCO?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type MeetingSumOrderByAggregateInput = {
+    timeToFinalize?: SortOrder
   }
 
   export type EnumMeetingStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -15370,6 +15454,22 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedJsonNullableFilter<$PrismaModel>
     _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type MeetingScalarRelationFilter = {
@@ -15471,17 +15571,6 @@ export namespace Prisma {
     _max?: NestedEnumAuditActionFilter<$PrismaModel>
   }
 
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
   export type AccountProviderProviderAccountIdCompoundUniqueInput = {
     provider: string
     providerAccountId: string
@@ -15543,22 +15632,6 @@ export namespace Prisma {
   export type AccountSumOrderByAggregateInput = {
     expires_at?: SortOrder
     refresh_token_expires_in?: SortOrder
-  }
-
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type SessionCountOrderByAggregateInput = {
@@ -15960,6 +16033,14 @@ export namespace Prisma {
     set?: string | null
   }
 
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput = {
     create?: XOR<WorkspaceCreateWithoutMeetingsInput, WorkspaceUncheckedCreateWithoutMeetingsInput>
     connectOrCreate?: WorkspaceCreateOrConnectWithoutMeetingsInput
@@ -16076,14 +16157,6 @@ export namespace Prisma {
     create?: XOR<UserCreateWithoutAccountsInput, UserUncheckedCreateWithoutAccountsInput>
     connectOrCreate?: UserCreateOrConnectWithoutAccountsInput
     connect?: UserWhereUniqueInput
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type UserUpdateOneRequiredWithoutAccountsNestedInput = {
@@ -16496,23 +16569,6 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
-  export type NestedEnumAuditActionFilter<$PrismaModel = never> = {
-    equals?: $Enums.AuditAction | EnumAuditActionFieldRefInput<$PrismaModel>
-    in?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
-    notIn?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
-    not?: NestedEnumAuditActionFilter<$PrismaModel> | $Enums.AuditAction
-  }
-
-  export type NestedEnumAuditActionWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.AuditAction | EnumAuditActionFieldRefInput<$PrismaModel>
-    in?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
-    notIn?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
-    not?: NestedEnumAuditActionWithAggregatesFilter<$PrismaModel> | $Enums.AuditAction
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumAuditActionFilter<$PrismaModel>
-    _max?: NestedEnumAuditActionFilter<$PrismaModel>
-  }
-
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -16538,6 +16594,23 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumAuditActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.AuditAction | EnumAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumAuditActionFilter<$PrismaModel> | $Enums.AuditAction
+  }
+
+  export type NestedEnumAuditActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AuditAction | EnumAuditActionFieldRefInput<$PrismaModel>
+    in?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumAuditActionWithAggregatesFilter<$PrismaModel> | $Enums.AuditAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAuditActionFilter<$PrismaModel>
+    _max?: NestedEnumAuditActionFilter<$PrismaModel>
   }
 
   export type UserWorkspaceCreateWithoutWorkspaceInput = {
@@ -16572,6 +16645,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
     readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16591,6 +16665,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
     readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16729,6 +16804,7 @@ export namespace Prisma {
     finalizedBy?: StringNullableFilter<"Meeting"> | string | null
     finalizedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     draftReadyAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    timeToFinalize?: IntNullableFilter<"Meeting"> | number | null
     readyForCCO?: BoolFilter<"Meeting"> | boolean
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
@@ -17121,6 +17197,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
     readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17141,6 +17218,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
     readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17175,6 +17253,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17195,6 +17274,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17248,6 +17328,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
     readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17268,6 +17349,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
     readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17343,6 +17425,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17363,6 +17446,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17733,6 +17817,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
     readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17787,6 +17872,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17806,6 +17892,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17825,6 +17912,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

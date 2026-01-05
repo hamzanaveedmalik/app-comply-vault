@@ -13,6 +13,8 @@ import ExportButton from "./export-button";
 import VersionHistory from "./version-history";
 import TranscriptViewer from "./transcript-viewer";
 import ReadyForCCOButton from "./ready-for-cco-button";
+import FinalizeButton from "./finalize-button";
+import FinalizeButton from "./finalize-button";
 
 export default async function MeetingDetailPage({
   params,
@@ -237,6 +239,19 @@ export default async function MeetingDetailPage({
                 meetingId={meeting.id}
                 currentStatus={meeting.readyForCCO}
                 meetingStatus={meeting.status}
+              />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Finalize Button (CCO only) */}
+        {(meeting.status === "DRAFT_READY" || meeting.status === "DRAFT") && (
+          <Card>
+            <CardContent className="pt-6">
+              <FinalizeButton
+                meetingId={meeting.id}
+                meetingStatus={meeting.status}
+                userRole={session.user.role}
               />
             </CardContent>
           </Card>

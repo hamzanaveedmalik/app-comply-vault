@@ -74,21 +74,22 @@ enum MeetingStatus {
 }
 
 model Meeting {
-  id           String        @id @default(cuid())
-  workspaceId  String
-  clientName   String
-  meetingType  String
-  meetingDate  DateTime
-  status       MeetingStatus @default(UPLOADING)
-  fileUrl      String? // S3/R2 storage URL
-  transcript   Json? // { segments: [{ startTime, endTime, speaker, text }] }
-  extraction   Json? // { topics, recommendations, disclosures, decisions, followUps, evidenceMap }
-  finalizedBy  String? // userId who finalized
-  finalizedAt  DateTime? // timestamp when finalized
-  draftReadyAt DateTime? // timestamp when status changed to DRAFT_READY (for KPI tracking)
-  readyForCCO  Boolean       @default(false) // flag indicating meeting is ready for CCO review
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  id             String        @id @default(cuid())
+  workspaceId    String
+  clientName     String
+  meetingType    String
+  meetingDate    DateTime
+  status         MeetingStatus @default(UPLOADING)
+  fileUrl        String? // S3/R2 storage URL
+  transcript     Json? // { segments: [{ startTime, endTime, speaker, text }] }
+  extraction     Json? // { topics, recommendations, disclosures, decisions, followUps, evidenceMap }
+  finalizedBy    String? // userId who finalized
+  finalizedAt    DateTime? // timestamp when finalized
+  draftReadyAt   DateTime? // timestamp when status changed to DRAFT_READY (for KPI tracking)
+  timeToFinalize Int? // Time-to-Finalize in seconds (draftReadyAt → finalizedAt) for KPI tracking
+  readyForCCO    Boolean       @default(false) // flag indicating meeting is ready for CCO review
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   // Relations
   workspace   Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)

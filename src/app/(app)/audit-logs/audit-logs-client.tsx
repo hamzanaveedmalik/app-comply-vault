@@ -153,7 +153,7 @@ export default function AuditLogsClient({
           <CardTitle>Filters</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div>
               <Label htmlFor="action">Action</Label>
               <Select
@@ -201,15 +201,15 @@ export default function AuditLogsClient({
                 onChange={(e) => handleFilterChange("dateTo", e.target.value)}
               />
             </div>
-            <div className="flex items-end gap-2">
-              <Button variant="outline" onClick={clearFilters} className="w-full">
-                Clear
-              </Button>
-              <Button onClick={handleExport} disabled={isExporting} className="w-full">
-                <Download className="mr-2 h-4 w-4" />
-                Export CSV
-              </Button>
-            </div>
+          </div>
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+            <Button variant="outline" onClick={clearFilters} className="w-full sm:w-auto">
+              Clear Filters
+            </Button>
+            <Button onClick={handleExport} disabled={isExporting} className="w-full sm:w-auto">
+              <Download className="mr-2 h-4 w-4" />
+              Export CSV
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -227,70 +227,74 @@ export default function AuditLogsClient({
               No audit events found matching your filters.
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Timestamp</TableHead>
-                    <TableHead>User</TableHead>
-                    <TableHead>Action</TableHead>
-                    <TableHead>Resource</TableHead>
-                    <TableHead>Meeting</TableHead>
-                    <TableHead>Metadata</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {initialEvents.map((event) => (
-                    <TableRow key={event.id}>
-                      <TableCell className="font-mono text-xs">
-                        {new Date(event.timestamp).toLocaleString()}
-                      </TableCell>
-                      <TableCell>
-                        {event.user.name || event.user.email || event.user.id}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={getActionVariant(event.action)}>
-                          {event.action}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          <div className="font-medium">{event.resourceType}</div>
-                          <div className="text-xs text-muted-foreground font-mono">
-                            {event.resourceId.slice(0, 8)}...
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {event.meeting ? (
+            <div className="overflow-x-auto -mx-6 sm:mx-0">
+              <div className="inline-block min-w-full align-middle px-6 sm:px-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="whitespace-nowrap">Timestamp</TableHead>
+                      <TableHead className="whitespace-nowrap">User</TableHead>
+                      <TableHead className="whitespace-nowrap">Action</TableHead>
+                      <TableHead className="whitespace-nowrap">Resource</TableHead>
+                      <TableHead className="whitespace-nowrap">Meeting</TableHead>
+                      <TableHead className="whitespace-nowrap">Metadata</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {initialEvents.map((event) => (
+                      <TableRow key={event.id}>
+                        <TableCell className="font-mono text-xs whitespace-nowrap">
+                          {new Date(event.timestamp).toLocaleString()}
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
                           <div className="text-sm">
-                            <div className="font-medium">{event.meeting.clientName}</div>
-                            <div className="text-xs text-muted-foreground">
-                              {new Date(event.meeting.meetingDate).toLocaleDateString()}
+                            {event.user.name || event.user.email || event.user.id}
+                          </div>
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">
+                          <Badge variant={getActionVariant(event.action)}>
+                            {event.action}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm min-w-[100px]">
+                            <div className="font-medium">{event.resourceType}</div>
+                            <div className="text-xs text-muted-foreground font-mono truncate max-w-[120px]">
+                              {event.resourceId}
                             </div>
                           </div>
-                        ) : (
-                          <span className="text-muted-foreground">—</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {event.metadata ? (
-                          <details className="text-xs">
-                            <summary className="cursor-pointer text-muted-foreground">
-                              View metadata
-                            </summary>
-                            <pre className="mt-2 whitespace-pre-wrap break-words">
-                              {JSON.stringify(event.metadata, null, 2)}
-                            </pre>
-                          </details>
-                        ) : (
-                          <span className="text-muted-foreground">—</span>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                        </TableCell>
+                        <TableCell>
+                          {event.meeting ? (
+                            <div className="text-sm min-w-[120px]">
+                              <div className="font-medium">{event.meeting.clientName}</div>
+                              <div className="text-xs text-muted-foreground">
+                                {new Date(event.meeting.meetingDate).toLocaleDateString()}
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {event.metadata ? (
+                            <details className="text-xs">
+                              <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
+                                View metadata
+                              </summary>
+                              <pre className="mt-2 whitespace-pre-wrap break-words max-w-md text-xs bg-muted p-2 rounded">
+                                {JSON.stringify(event.metadata, null, 2)}
+                              </pre>
+                            </details>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
           )}
         </CardContent>

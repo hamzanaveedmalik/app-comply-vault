@@ -22,13 +22,18 @@ export async function POST(
         id,
         workspaceId: session.user.workspaceId,
       },
-      include: {
-        finalizedBy: true,
-      },
     });
 
     if (!meeting) {
       return Response.json({ error: "Meeting not found" }, { status: 404 });
+    }
+
+    // Fetch finalizedBy user if exists
+    let finalizedByUser = null;
+    if (meeting.finalizedBy) {
+      finalizedByUser = await db.user.findUnique({
+        where: { id: meeting.finalizedBy },
+      });
     }
 
     // Check if meeting is finalized (or allow export for DRAFT_READY meetings)
@@ -82,7 +87,10 @@ export async function POST(
 
     // Generate audit pack
     const zipBuffer = await generateAuditPack({
-      meeting,
+      meeting: {
+        ...meeting,
+        finalizedBy: finalizedByUser,
+      },
       extraction,
       transcript,
       versions,

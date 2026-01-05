@@ -19,7 +19,7 @@ import Link from "next/link";
 interface Meeting {
   id: string;
   clientName: string;
-  meetingDate: Date;
+  meetingDate: string; // ISO string
   meetingType: string;
   status: string;
   uploadedBy: {
@@ -28,10 +28,10 @@ interface Meeting {
     email: string | null;
   } | null;
   lastEdited: {
-    timestamp: Date;
+    timestamp: string; // ISO string
     editorId: string;
   } | null;
-  draftReadyAt: Date | null;
+  draftReadyAt: string | null; // ISO string
 }
 
 interface ReviewQueueClientProps {

@@ -61,45 +61,48 @@ export default async function ReviewQueuePage({
     orderBy: {
       updatedAt: "desc",
     },
-    include: {
-      auditEvents: {
+  });
+
+  // Get last edited info from version history and uploader info
+  const meetingsWithLastEdited = await Promise.all(
+    meetings.map(async (meeting) => {
+      // Get upload event
+      const uploadEvent = await db.auditEvent.findFirst({
         where: {
+          meetingId: meeting.id,
           action: "UPLOAD",
         },
         orderBy: {
           timestamp: "desc",
         },
-        take: 1,
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-        },
-      },
-    },
-  });
+      });
 
-  // Get last edited info from version history
-  const meetingsWithLastEdited = await Promise.all(
-    meetings.map(async (meeting) => {
+      // Get uploader user if upload event exists
+      let uploader = null;
+      if (uploadEvent?.userId) {
+        const user = await db.user.findUnique({
+          where: { id: uploadEvent.userId },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        });
+        if (user) {
+          uploader = user;
+        }
+      }
+
+      // Get last version
       const lastVersion = await db.version.findFirst({
         where: { meetingId: meeting.id },
         orderBy: { timestamp: "desc" },
-        include: {
-          meeting: false,
-        },
       });
-
-      const uploader = meeting.auditEvents[0]?.user;
 
       return {
         id: meeting.id,
         clientName: meeting.clientName,
-        meetingDate: meeting.meetingDate,
+        meetingDate: meeting.meetingDate.toISOString(),
         meetingType: meeting.meetingType,
         status: meeting.status,
         uploadedBy: uploader
@@ -111,11 +114,11 @@ export default async function ReviewQueuePage({
           : null,
         lastEdited: lastVersion
           ? {
-              timestamp: lastVersion.timestamp,
+              timestamp: lastVersion.timestamp.toISOString(),
               editorId: lastVersion.editorId,
             }
           : null,
-        draftReadyAt: meeting.draftReadyAt,
+        draftReadyAt: meeting.draftReadyAt?.toISOString() || null,
       };
     })
   );

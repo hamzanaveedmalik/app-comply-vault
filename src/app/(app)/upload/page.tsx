@@ -77,10 +77,22 @@ export default function UploadPage() {
         throw new Error(errorMessage);
       }
 
-      const { meetingId, uploadUrl } = await initResponse.json();
+      const initData = await initResponse.json();
+      const { meetingId, uploadUrl } = initData;
+
+      if (!meetingId) {
+        throw new Error("No meeting ID received from server");
+      }
 
       if (!uploadUrl) {
         throw new Error("No upload URL received from server");
+      }
+
+      // Validate meetingId is a valid UUID format
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(meetingId)) {
+        console.error("Invalid meetingId format:", meetingId);
+        throw new Error(`Invalid meeting ID format: ${meetingId}`);
       }
 
       // Step 2: Upload file directly to S3/R2 using presigned URL
@@ -135,7 +147,14 @@ export default function UploadPage() {
       // Redirect to meeting detail page
       router.push(`/meetings/${meetingId}`);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "An error occurred";
+      let errorMessage = "An error occurred";
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === "string") {
+        errorMessage = err;
+      } else {
+        errorMessage = JSON.stringify(err);
+      }
       setError(errorMessage);
       setIsUploading(false);
       console.error("Upload error:", err);

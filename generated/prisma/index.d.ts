@@ -4188,6 +4188,7 @@ export namespace Prisma {
     finalizedBy: string | null
     finalizedAt: Date | null
     draftReadyAt: Date | null
+    readyForCCO: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -4203,6 +4204,7 @@ export namespace Prisma {
     finalizedBy: string | null
     finalizedAt: Date | null
     draftReadyAt: Date | null
+    readyForCCO: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -4220,6 +4222,7 @@ export namespace Prisma {
     finalizedBy: number
     finalizedAt: number
     draftReadyAt: number
+    readyForCCO: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -4237,6 +4240,7 @@ export namespace Prisma {
     finalizedBy?: true
     finalizedAt?: true
     draftReadyAt?: true
+    readyForCCO?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -4252,6 +4256,7 @@ export namespace Prisma {
     finalizedBy?: true
     finalizedAt?: true
     draftReadyAt?: true
+    readyForCCO?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -4269,6 +4274,7 @@ export namespace Prisma {
     finalizedBy?: true
     finalizedAt?: true
     draftReadyAt?: true
+    readyForCCO?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -4359,6 +4365,7 @@ export namespace Prisma {
     finalizedBy: string | null
     finalizedAt: Date | null
     draftReadyAt: Date | null
+    readyForCCO: boolean
     createdAt: Date
     updatedAt: Date
     _count: MeetingCountAggregateOutputType | null
@@ -4393,6 +4400,7 @@ export namespace Prisma {
     finalizedBy?: boolean
     finalizedAt?: boolean
     draftReadyAt?: boolean
+    readyForCCO?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
@@ -4414,6 +4422,7 @@ export namespace Prisma {
     finalizedBy?: boolean
     finalizedAt?: boolean
     draftReadyAt?: boolean
+    readyForCCO?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
@@ -4432,6 +4441,7 @@ export namespace Prisma {
     finalizedBy?: boolean
     finalizedAt?: boolean
     draftReadyAt?: boolean
+    readyForCCO?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
@@ -4450,11 +4460,12 @@ export namespace Prisma {
     finalizedBy?: boolean
     finalizedAt?: boolean
     draftReadyAt?: boolean
+    readyForCCO?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientName" | "meetingType" | "meetingDate" | "status" | "fileUrl" | "transcript" | "extraction" | "finalizedBy" | "finalizedAt" | "draftReadyAt" | "createdAt" | "updatedAt", ExtArgs["result"]["meeting"]>
+  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientName" | "meetingType" | "meetingDate" | "status" | "fileUrl" | "transcript" | "extraction" | "finalizedBy" | "finalizedAt" | "draftReadyAt" | "readyForCCO" | "createdAt" | "updatedAt", ExtArgs["result"]["meeting"]>
   export type MeetingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     versions?: boolean | Meeting$versionsArgs<ExtArgs>
@@ -4488,6 +4499,7 @@ export namespace Prisma {
       finalizedBy: string | null
       finalizedAt: Date | null
       draftReadyAt: Date | null
+      readyForCCO: boolean
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["meeting"]>
@@ -4928,6 +4940,7 @@ export namespace Prisma {
     readonly finalizedBy: FieldRef<"Meeting", 'String'>
     readonly finalizedAt: FieldRef<"Meeting", 'DateTime'>
     readonly draftReadyAt: FieldRef<"Meeting", 'DateTime'>
+    readonly readyForCCO: FieldRef<"Meeting", 'Boolean'>
     readonly createdAt: FieldRef<"Meeting", 'DateTime'>
     readonly updatedAt: FieldRef<"Meeting", 'DateTime'>
   }
@@ -13144,6 +13157,7 @@ export namespace Prisma {
     finalizedBy: 'finalizedBy',
     finalizedAt: 'finalizedAt',
     draftReadyAt: 'draftReadyAt',
+    readyForCCO: 'readyForCCO',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -13576,6 +13590,7 @@ export namespace Prisma {
     finalizedBy?: StringNullableFilter<"Meeting"> | string | null
     finalizedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     draftReadyAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    readyForCCO?: BoolFilter<"Meeting"> | boolean
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
@@ -13596,6 +13611,7 @@ export namespace Prisma {
     finalizedBy?: SortOrderInput | SortOrder
     finalizedAt?: SortOrderInput | SortOrder
     draftReadyAt?: SortOrderInput | SortOrder
+    readyForCCO?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     workspace?: WorkspaceOrderByWithRelationInput
@@ -13619,6 +13635,7 @@ export namespace Prisma {
     finalizedBy?: StringNullableFilter<"Meeting"> | string | null
     finalizedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     draftReadyAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    readyForCCO?: BoolFilter<"Meeting"> | boolean
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
@@ -13639,6 +13656,7 @@ export namespace Prisma {
     finalizedBy?: SortOrderInput | SortOrder
     finalizedAt?: SortOrderInput | SortOrder
     draftReadyAt?: SortOrderInput | SortOrder
+    readyForCCO?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: MeetingCountOrderByAggregateInput
@@ -13662,6 +13680,7 @@ export namespace Prisma {
     finalizedBy?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
     finalizedAt?: DateTimeNullableWithAggregatesFilter<"Meeting"> | Date | string | null
     draftReadyAt?: DateTimeNullableWithAggregatesFilter<"Meeting"> | Date | string | null
+    readyForCCO?: BoolWithAggregatesFilter<"Meeting"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Meeting"> | Date | string
   }
@@ -14291,6 +14310,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -14311,6 +14331,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -14329,6 +14350,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -14349,6 +14371,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -14368,6 +14391,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -14384,6 +14408,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -14401,6 +14426,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -15255,6 +15281,7 @@ export namespace Prisma {
     finalizedBy?: SortOrder
     finalizedAt?: SortOrder
     draftReadyAt?: SortOrder
+    readyForCCO?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -15270,6 +15297,7 @@ export namespace Prisma {
     finalizedBy?: SortOrder
     finalizedAt?: SortOrder
     draftReadyAt?: SortOrder
+    readyForCCO?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -15285,6 +15313,7 @@ export namespace Prisma {
     finalizedBy?: SortOrder
     finalizedAt?: SortOrder
     draftReadyAt?: SortOrder
+    readyForCCO?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -16543,6 +16572,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionCreateNestedManyWithoutMeetingInput
@@ -16561,6 +16591,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -16698,6 +16729,7 @@ export namespace Prisma {
     finalizedBy?: StringNullableFilter<"Meeting"> | string | null
     finalizedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     draftReadyAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    readyForCCO?: BoolFilter<"Meeting"> | boolean
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
   }
@@ -17089,6 +17121,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -17108,6 +17141,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutMeetingInput
@@ -17141,6 +17175,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -17160,6 +17195,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
@@ -17212,6 +17248,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -17231,6 +17268,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -17305,6 +17343,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -17324,6 +17363,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -17693,6 +17733,7 @@ export namespace Prisma {
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
+    readyForCCO?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -17746,6 +17787,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUpdateManyWithoutMeetingNestedInput
@@ -17764,6 +17806,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -17782,6 +17825,7 @@ export namespace Prisma {
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

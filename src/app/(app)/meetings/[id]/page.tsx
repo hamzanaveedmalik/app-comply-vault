@@ -12,6 +12,7 @@ import ReprocessButton from "./reprocess-button";
 import ExportButton from "./export-button";
 import VersionHistory from "./version-history";
 import TranscriptViewer from "./transcript-viewer";
+import ReadyForCCOButton from "./ready-for-cco-button";
 
 export default async function MeetingDetailPage({
   params,
@@ -223,6 +224,19 @@ export default async function MeetingDetailPage({
                 meetingId={meeting.id}
                 status={meeting.status}
                 hasExtraction={!!extraction}
+              />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Ready for CCO Button */}
+        {(meeting.status === "DRAFT_READY" || meeting.status === "DRAFT") && (
+          <Card>
+            <CardContent className="pt-6">
+              <ReadyForCCOButton
+                meetingId={meeting.id}
+                currentStatus={meeting.readyForCCO}
+                meetingStatus={meeting.status}
               />
             </CardContent>
           </Card>

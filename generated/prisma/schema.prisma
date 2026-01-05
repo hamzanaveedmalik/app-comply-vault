@@ -86,6 +86,7 @@ model Meeting {
   finalizedBy  String? // userId who finalized
   finalizedAt  DateTime? // timestamp when finalized
   draftReadyAt DateTime? // timestamp when status changed to DRAFT_READY (for KPI tracking)
+  readyForCCO  Boolean       @default(false) // flag indicating meeting is ready for CCO review
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 

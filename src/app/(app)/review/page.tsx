@@ -122,6 +122,7 @@ export default async function ReviewQueuePage({
             meetingDate: meeting.meetingDate.toISOString(),
             meetingType: meeting.meetingType,
             status: meeting.status,
+            readyForCCO: meeting.readyForCCO,
             uploadedBy: uploader
               ? {
                   id: uploader.id,
@@ -146,6 +147,7 @@ export default async function ReviewQueuePage({
             meetingDate: meeting.meetingDate.toISOString(),
             meetingType: meeting.meetingType,
             status: meeting.status,
+            readyForCCO: meeting.readyForCCO,
             uploadedBy: null,
             lastEdited: null,
             draftReadyAt: meeting.draftReadyAt?.toISOString() || null,

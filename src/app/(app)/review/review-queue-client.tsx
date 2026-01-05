@@ -22,6 +22,7 @@ interface Meeting {
   meetingDate: string; // ISO string
   meetingType: string;
   status: string;
+  readyForCCO: boolean;
   uploadedBy: {
     id: string;
     name: string;
@@ -189,6 +190,11 @@ export default function ReviewQueueClient({
                           <Badge variant={getStatusVariant(meeting.status)}>
                             {getStatusLabel(meeting.status)}
                           </Badge>
+                          {meeting.readyForCCO && (
+                            <Badge variant="default" className="bg-green-600 hover:bg-green-700">
+                              Ready for CCO
+                            </Badge>
+                          )}
                         </div>
                         <div className="text-sm text-muted-foreground space-y-1">
                           <div>

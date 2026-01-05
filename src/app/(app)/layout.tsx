@@ -1,6 +1,7 @@
 import { auth } from "~/server/auth";
 import { redirect } from "next/navigation";
 import { Sidebar } from "~/components/sidebar";
+import { TopBar } from "~/components/top-bar";
 
 export default async function AppLayout({
   children,
@@ -24,8 +25,12 @@ export default async function AppLayout({
         userName={session.user.name}
         userRole={session.user.role}
       />
+      {/* Top bar with global search */}
+      <div className="lg:pl-64">
+        <TopBar />
+      </div>
       {/* Main content with left padding for desktop sidebar and top padding for mobile */}
-      <main className="lg:pl-64 pt-16 lg:pt-0">
+      <main className="lg:pl-64 pt-14">
         {children}
       </main>
     </div>

@@ -92,32 +92,19 @@ export function Sidebar({ userEmail, userName, userRole }: SidebarProps) {
         <SidebarContent />
       </aside>
 
-      {/* Mobile Top Bar with Menu Button */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 border-b bg-background">
-        <div className="flex h-16 items-center justify-between px-4">
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-64 p-0">
-              <SidebarContent />
-            </SheetContent>
-          </Sheet>
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <img 
-              src="/intellivault-logo.svg" 
-              alt="Comply Vault" 
-              className="h-16 w-auto"
-            />
-            <span className="text-xl font-bold">
-              Comply Vault
-            </span>
-          </Link>
-          <div className="w-10" /> {/* Spacer for centering */}
-        </div>
+      {/* Mobile Menu Button - Positioned in top bar */}
+      <div className="lg:hidden fixed top-0 left-0 z-50">
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-14 w-14 rounded-none">
+              <Menu className="h-6 w-6" />
+              <span className="sr-only">Toggle menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-64 p-0">
+            <SidebarContent />
+          </SheetContent>
+        </Sheet>
       </div>
     </>
   );

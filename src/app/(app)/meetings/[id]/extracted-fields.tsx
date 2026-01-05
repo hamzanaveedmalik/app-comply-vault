@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { ExtractionData } from "~/server/extraction/types";
 
 interface ExtractedFieldsProps {
@@ -190,7 +191,70 @@ export default function ExtractedFields({ extraction }: ExtractedFieldsProps) {
             </p>
           </div>
         )}
+
+      {/* Soft Gap Prompts */}
+      <SoftGapPrompts extraction={extraction} />
     </div>
   );
+}
+
+/**
+ * Soft Gap Prompter Component
+ * Displays prompts when recommendations are detected but risk disclosures are not
+ */
+function SoftGapPrompts({ extraction }: { extraction: ExtractionData | null | undefined }) {
+  const [dismissedPrompts, setDismissedPrompts] = useState<Set<string>>(new Set());
+
+  if (!extraction) return null;
+
+  // Find recommendations without corresponding risk disclosures
+  const recommendations = extraction.recommendations || [];
+  const disclosures = extraction.disclosures || [];
+
+  // Simple heuristic: if there are recommendations but no disclosures, show a prompt
+  // In a more sophisticated version, we'd match recommendations to specific disclosures
+  const hasRecommendations = recommendations.length > 0;
+  const hasDisclosures = disclosures.length > 0;
+  const needsPrompt = hasRecommendations && !hasDisclosures;
+
+  if (!needsPrompt || dismissedPrompts.has("no-disclosures")) {
+    return null;
+  }
+
+  const promptId = "no-disclosures";
+
+  return (
+    <div className="mt-4 rounded-md bg-yellow-50 border border-yellow-200 p-4">
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <h4 className="text-sm font-semibold text-yellow-800 mb-1">
+            Soft Gap Prompt
+          </h4>
+          <p className="text-sm text-yellow-700">
+            {recommendations.length} recommendation{recommendations.length > 1 ? "s" : ""} detected, but no risk disclosure{recommendations.length > 1 ? "s" : ""} found.
+            Please confirm if risk was discussed or add disclosure if needed.
+          </p>
+          {recommendations.length > 0 && (
+            <div className="mt-2 text-xs text-yellow-600">
+              First recommendation at {formatTime(recommendations[0]!.startTime)}
+            </div>
+          )}
+        </div>
+        <button
+          onClick={() => setDismissedPrompts(new Set([...dismissedPrompts, promptId]))}
+          className="ml-2 text-yellow-600 hover:text-yellow-800"
+          aria-label="Dismiss prompt"
+        >
+          ×
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function formatTime(seconds: number): string {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
 }
 

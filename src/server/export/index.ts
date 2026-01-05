@@ -1,5 +1,5 @@
 import archiver from "archiver";
-import type { Meeting, User, Version, Workspace } from "~/generated/prisma";
+import type { Meeting, User, Version, Workspace } from "../../generated/prisma";
 import type { ExtractionData } from "../extraction/types";
 import type { TranscriptSegment } from "../transcription/types";
 import { generateComplianceNotePDF } from "./pdf";

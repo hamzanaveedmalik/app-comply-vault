@@ -1,5 +1,5 @@
 import type { ExtractionData, EvidenceMapItem } from "../extraction/types";
-import type { Version } from "~/generated/prisma";
+import type { Version } from "../../generated/prisma";
 
 /**
  * Generate Evidence Map CSV

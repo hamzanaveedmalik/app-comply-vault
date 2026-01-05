@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { ExtractionData } from "~/server/extraction/types";
 import { Button } from "~/components/ui/button";
@@ -23,12 +23,14 @@ interface EditableFieldsProps {
   meetingId: string;
   extraction: ExtractionData | null | undefined;
   isReadOnly?: boolean;
+  transcript?: { segments: Array<{ startTime: number; endTime: number; speaker: string; text: string }> } | null;
 }
 
 export default function EditableFields({
   meetingId,
   extraction,
   isReadOnly = false,
+  transcript,
 }: EditableFieldsProps) {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState<{
@@ -189,6 +191,21 @@ export default function EditableFields({
                     />
                   </div>
                   <div>
+                    <Label htmlFor="add-timestamp">Timestamp (seconds, optional)</Label>
+                    <Input
+                      id="add-timestamp"
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={editStartTime ?? ""}
+                      onChange={(e) => setEditStartTime(e.target.value ? parseFloat(e.target.value) : undefined)}
+                      placeholder="e.g., 120 for 2:00"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Enter the timestamp in seconds, or click a timestamp in the transcript to link this item
+                    </p>
+                  </div>
+                  <div>
                     <Label htmlFor="add-reason">Reason (optional)</Label>
                     <Input
                       id="add-reason"
@@ -205,6 +222,7 @@ export default function EditableFields({
                       setIsAdding(null);
                       setEditValue("");
                       setEditReason("");
+                      setEditStartTime(undefined);
                     }}
                   >
                     Cancel
@@ -212,11 +230,13 @@ export default function EditableFields({
                   <Button
                     onClick={() => {
                       if (editValue.trim()) {
+                        const startTime = editStartTime ?? 0;
+                        const endTime = startTime + 10; // Default 10 second duration
                         handleEdit(fieldType, "add", undefined, {
                           text: editValue.trim(),
-                          startTime: 0,
-                          endTime: 0,
-                          snippet: "",
+                          startTime,
+                          endTime,
+                          snippet: editValue.trim(),
                         });
                       }
                     }}
@@ -233,20 +253,45 @@ export default function EditableFields({
           {items.map((item, idx) => (
             <li key={idx} className={`border-l-2 ${borderColor} pl-3`}>
               {isEditing?.fieldType === fieldType && isEditing.index === idx ? (
-                <div className="space-y-2">
-                  <Textarea
-                    value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
-                    placeholder="Enter text..."
-                  />
+                <div className="space-y-3">
+                  <div>
+                    <Label htmlFor="edit-text" className="text-xs">Text</Label>
+                    <Textarea
+                      id="edit-text"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      placeholder="Enter text..."
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-timestamp" className="text-xs">Timestamp (seconds)</Label>
+                    <Input
+                      id="edit-timestamp"
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={editStartTime ?? item.startTime ?? ""}
+                      onChange={(e) => setEditStartTime(e.target.value ? parseFloat(e.target.value) : undefined)}
+                      placeholder="e.g., 120 for 2:00"
+                      className="mt-1"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Click a timestamp in the transcript to link this item
+                    </p>
+                  </div>
                   <div className="flex gap-2">
                     <Button
                       size="sm"
                       onClick={() => {
                         if (editValue.trim()) {
+                          const startTime = editStartTime ?? item.startTime ?? 0;
+                          const endTime = item.endTime ?? startTime + 10;
                           handleEdit(fieldType, "update", idx, {
                             ...item,
                             text: editValue.trim(),
+                            startTime,
+                            endTime,
                           });
                         }
                       }}
@@ -261,6 +306,7 @@ export default function EditableFields({
                         setIsEditing(null);
                         setEditValue("");
                         setEditReason("");
+                        setEditStartTime(undefined);
                       }}
                     >
                       Cancel
@@ -290,6 +336,7 @@ export default function EditableFields({
                             setIsEditing({ fieldType, index: idx });
                             setEditValue(item.text);
                             setEditReason("");
+                            setEditStartTime(item.startTime);
                           }}
                           className="h-8 w-8 p-0"
                         >

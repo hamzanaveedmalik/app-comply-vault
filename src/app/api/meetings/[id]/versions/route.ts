@@ -59,7 +59,7 @@ export async function GET(
             : { id: version.editorId, name: "Unknown", email: null },
           whatChanged: version.whatChanged,
           reason: version.reason,
-          timestamp: version.timestamp,
+          timestamp: version.timestamp.toISOString(),
         };
       })
     );

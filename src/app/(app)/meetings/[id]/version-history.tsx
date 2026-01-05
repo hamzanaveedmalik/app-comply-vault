@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
+import { Separator } from "~/components/ui/separator";
+import { Clock, User, FileEdit } from "lucide-react";
 
 interface Version {
   id: string;
@@ -14,7 +16,7 @@ interface Version {
   };
   whatChanged: string;
   reason: string | null;
-  timestamp: Date;
+  timestamp: string; // ISO string
 }
 
 interface VersionHistoryProps {
@@ -46,49 +48,93 @@ export default function VersionHistory({ meetingId }: VersionHistoryProps) {
   }, [meetingId]);
 
   if (isLoading) {
-    return <div className="text-sm text-muted-foreground">Loading version history...</div>;
+    return (
+      <div className="text-sm text-muted-foreground py-4">
+        Loading version history...
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-sm text-destructive">Error: {error}</div>;
+    return (
+      <div className="text-sm text-destructive py-4">
+        Error: {error}
+      </div>
+    );
   }
 
   if (versions.length === 0) {
     return (
-      <div className="text-sm text-muted-foreground">
+      <div className="text-sm text-muted-foreground py-4 text-center">
         No version history available. This meeting has not been edited yet.
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      {versions.map((version) => (
-        <Card key={version.id}>
-          <CardContent className="pt-4">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="outline">Version {version.version}</Badge>
-                  <span className="text-sm text-muted-foreground">
-                    by {version.editor.name}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    • {new Date(version.timestamp).toLocaleString()}
-                  </span>
+    <div className="space-y-0">
+      {versions.map((version, index) => {
+        const date = new Date(version.timestamp);
+        const isLast = index === versions.length - 1;
+        
+        return (
+          <div key={version.id} className="relative">
+            {/* Timeline line */}
+            {!isLast && (
+              <div className="absolute left-6 top-12 bottom-0 w-0.5 bg-border" />
+            )}
+            
+            <div className="flex gap-4 pb-6">
+              {/* Timeline dot */}
+              <div className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-primary bg-background">
+                <FileEdit className="h-5 w-5 text-primary" />
+              </div>
+              
+              {/* Content */}
+              <div className="flex-1 space-y-2">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="font-mono">
+                    v{version.version}
+                  </Badge>
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <User className="h-3.5 w-3.5" />
+                    <span className="font-medium">{version.editor.name}</span>
+                  </div>
+                  <Separator orientation="vertical" className="h-4" />
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <Clock className="h-3.5 w-3.5" />
+                    <time dateTime={version.timestamp}>
+                      {date.toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                      {" at "}
+                      {date.toLocaleTimeString("en-US", {
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
+                    </time>
+                  </div>
                 </div>
-                <p className="text-sm font-medium mb-1">{version.whatChanged}</p>
-                {version.reason && (
-                  <p className="text-sm text-muted-foreground italic">
-                    Reason: {version.reason}
+                
+                <div className="rounded-md border bg-card p-3">
+                  <p className="text-sm font-medium text-foreground">
+                    {version.whatChanged}
                   </p>
-                )}
+                  {version.reason && (
+                    <div className="mt-2 pt-2 border-t">
+                      <p className="text-xs text-muted-foreground">
+                        <span className="font-medium">Reason:</span> {version.reason}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      ))}
+          </div>
+        );
+      })}
     </div>
   );
 }
-

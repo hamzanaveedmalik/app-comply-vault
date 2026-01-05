@@ -157,7 +157,15 @@ export default async function MeetingDetailPage({
                       <div
                         key={index}
                         data-timestamp={Math.floor(segment.startTime)}
-                        className="border-l-4 border-primary pl-4"
+                        data-segment-start={segment.startTime}
+                        className="border-l-4 border-primary pl-4 cursor-pointer hover:bg-muted/50 transition-colors"
+                        onClick={() => {
+                          // Dispatch custom event to set timestamp in editable fields
+                          window.dispatchEvent(new CustomEvent('setTimestamp', { 
+                            detail: { timestamp: segment.startTime } 
+                          }));
+                        }}
+                        title="Click to use this timestamp when adding/editing items"
                       >
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <span className="font-medium">
@@ -197,6 +205,7 @@ export default async function MeetingDetailPage({
                     meetingId={meeting.id}
                     extraction={extraction}
                     isReadOnly={meeting.status === "FINALIZED"}
+                    transcript={transcript}
                   />
                 )}
                 {meeting.status !== "FINALIZED" && (

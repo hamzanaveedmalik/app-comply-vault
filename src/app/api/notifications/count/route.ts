@@ -38,6 +38,9 @@ export async function GET() {
             },
           },
         ],
+        meetingId: {
+          not: null,
+        },
       },
       select: {
         id: true,
@@ -46,25 +49,46 @@ export async function GET() {
       },
     });
 
-    // For each event, check if user has viewed the meeting
+    if (statusEvents.length === 0) {
+      return NextResponse.json({ count: 0 });
+    }
+
+    // Get all meetings the user has viewed in the last 7 days
+    const viewedMeetings = await db.auditEvent.findMany({
+      where: {
+        workspaceId,
+        userId,
+        action: "VIEW",
+        meetingId: {
+          in: statusEvents.map((e) => e.meetingId!).filter(Boolean),
+        },
+        timestamp: {
+          gte: sevenDaysAgo,
+        },
+      },
+      select: {
+        meetingId: true,
+        timestamp: true,
+      },
+    });
+
+    // Create a map of meetingId -> last viewed timestamp
+    const viewedMap = new Map<string, Date>();
+    for (const view of viewedMeetings) {
+      if (!view.meetingId) continue;
+      const existing = viewedMap.get(view.meetingId);
+      if (!existing || view.timestamp > existing) {
+        viewedMap.set(view.meetingId, view.timestamp);
+      }
+    }
+
+    // Count unread notifications
     let unreadCount = 0;
     for (const event of statusEvents) {
       if (!event.meetingId) continue;
-
-      // Check if user has viewed this meeting after the status change
-      const hasViewed = await db.auditEvent.findFirst({
-        where: {
-          workspaceId,
-          userId,
-          action: "VIEW",
-          meetingId: event.meetingId,
-          timestamp: {
-            gte: event.timestamp,
-          },
-        },
-      });
-
-      if (!hasViewed) {
+      const lastViewed = viewedMap.get(event.meetingId);
+      // If not viewed, or viewed before the status change, it's unread
+      if (!lastViewed || lastViewed < event.timestamp) {
         unreadCount++;
       }
     }

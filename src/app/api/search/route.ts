@@ -103,16 +103,15 @@ export async function GET(request: Request) {
         }))
       );
 
-      // Keyword search in transcripts and extracted fields
-      // Get all meetings with transcripts or extractions and filter in memory
-      // (For v1, we do simple filtering. Full indexing can be added in Story 7.4)
-      const allMeetings = await db.meeting.findMany({
+      // Keyword search using indexed searchableText (Story 7.4)
+      const queryLower = query.toLowerCase();
+      const keywordMeetings = await db.meeting.findMany({
         where: {
           workspaceId,
-          OR: [
-            { transcript: { not: null } },
-            { extraction: { not: null } },
-          ],
+          searchableText: {
+            contains: queryLower,
+            mode: "insensitive",
+          },
         },
         select: {
           id: true,
@@ -122,21 +121,20 @@ export async function GET(request: Request) {
           meetingType: true,
           transcript: true,
           extraction: true,
+          searchableText: true,
         },
-        take: 50, // Get more to filter
+        take: 10,
         orderBy: {
           meetingDate: "desc",
         },
       });
 
-      const queryLower = query.toLowerCase();
-
-      // Filter meetings that match in transcript or extraction
-      for (const meeting of allMeetings) {
+      // Extract snippets from matching meetings
+      for (const meeting of keywordMeetings) {
         let snippet: string | undefined;
         let matchType: "transcript" | "field" = "transcript";
 
-        // Check transcript
+        // Try to find matching segment in transcript
         if (meeting.transcript) {
           const transcript = meeting.transcript as {
             segments?: Array<{ text?: string; startTime?: number; endTime?: number }>;
@@ -152,7 +150,7 @@ export async function GET(request: Request) {
           }
         }
 
-        // Check extraction fields if no transcript match
+        // If no transcript match, try extraction fields
         if (!snippet && meeting.extraction) {
           const extraction = meeting.extraction as {
             topics?: string[];
@@ -180,19 +178,26 @@ export async function GET(request: Request) {
           }
         }
 
-        if (snippet) {
-          // Check if already in results
-          if (!results.find((r) => r.id === meeting.id)) {
-            results.push({
-              id: meeting.id,
-              clientName: meeting.clientName,
-              meetingDate: meeting.meetingDate.toISOString(),
-              status: meeting.status,
-              type: meeting.meetingType,
-              matchType,
-              snippet,
-            });
+        // Fallback to searchableText snippet if no specific match found
+        if (!snippet && meeting.searchableText) {
+          const index = meeting.searchableText.toLowerCase().indexOf(queryLower);
+          if (index >= 0) {
+            const start = Math.max(0, index - 20);
+            snippet = meeting.searchableText.substring(start, start + 100);
           }
+        }
+
+        // Check if already in results
+        if (!results.find((r) => r.id === meeting.id)) {
+          results.push({
+            id: meeting.id,
+            clientName: meeting.clientName,
+            meetingDate: meeting.meetingDate.toISOString(),
+            status: meeting.status,
+            type: meeting.meetingType,
+            matchType,
+            snippet: snippet || undefined,
+          });
         }
       }
     }

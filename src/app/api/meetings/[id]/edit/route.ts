@@ -2,6 +2,7 @@ import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { z } from "zod";
 import type { ExtractionData } from "~/server/extraction/types";
+import { generateSearchableText } from "~/server/search/index";
 
 // Force Node.js runtime for this route
 export const runtime = "nodejs";
@@ -139,11 +140,19 @@ export async function POST(
     // Update meeting status to DRAFT if it was DRAFT_READY
     const newStatus = meeting.status === "DRAFT_READY" ? "DRAFT" : meeting.status;
 
+    // Regenerate searchable text for indexing (Story 7.4)
+    const transcript = meeting.transcript as { segments?: Array<{ text?: string }> } | null;
+    const searchableText = generateSearchableText(
+      transcript ? { segments: transcript.segments || [] } : null,
+      updatedExtraction
+    );
+
     // Update meeting in database
     await db.meeting.update({
       where: { id: meeting.id },
       data: {
         extraction: updatedExtraction as any,
+        searchableText, // Regenerate indexed text
         status: newStatus,
       },
     });

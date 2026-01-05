@@ -83,6 +83,7 @@ model Meeting {
   fileUrl      String? // S3/R2 storage URL
   transcript   Json? // { segments: [{ startTime, endTime, speaker, text }] }
   extraction   Json? // { topics, recommendations, disclosures, decisions, followUps, evidenceMap }
+  searchableText String? // Indexed text for fast keyword search (transcript + extracted fields)
   finalizedBy  String? // userId who finalized
   finalizedAt  DateTime? // timestamp when finalized
   draftReadyAt DateTime? // timestamp when status changed to DRAFT_READY (for KPI tracking)
@@ -100,6 +101,7 @@ model Meeting {
   @@index([workspaceId, status])
   @@index([workspaceId, clientName])
   @@index([workspaceId, meetingDate])
+  @@index([workspaceId, searchableText]) // Indexed text for fast keyword search
 }
 
 model Version {

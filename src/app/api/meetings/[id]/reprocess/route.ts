@@ -3,6 +3,7 @@ import { db } from "~/server/db";
 import { z } from "zod";
 import { extractFields } from "~/server/extraction";
 import { toExtractionData, validateEvidenceCoverage } from "~/server/extraction/evidence";
+import { generateSearchableText } from "~/server/search/index";
 import type { Transcript } from "~/server/transcription/types";
 
 export async function POST(
@@ -100,11 +101,18 @@ export async function POST(
         );
       }
 
-      // Store extraction data and update status to DRAFT_READY
+      // Generate searchable text for indexing (Story 7.4)
+      const searchableText = generateSearchableText(
+        transcriptForExtraction,
+        extractionData
+      );
+
+      // Store extraction data, searchable text, and update status to DRAFT_READY
       await db.meeting.update({
         where: { id: meeting.id },
         data: {
           extraction: extractionData as any, // Prisma JSON type
+          searchableText, // Regenerate indexed text
           status: "DRAFT_READY",
           draftReadyAt: new Date(),
         },

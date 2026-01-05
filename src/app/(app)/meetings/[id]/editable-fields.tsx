@@ -475,24 +475,73 @@ function SoftGapPrompts({ extraction }: { extraction: ExtractionData | null | un
     return null;
   }
 
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const firstRecommendation = recommendations[0];
+
   return (
-    <Alert variant="default" className="mt-4">
-      <div className="flex items-start justify-between w-full">
-        <div className="flex-1">
-          <h4 className="text-sm font-semibold mb-1">Soft Gap Prompt</h4>
-          <AlertDescription>
-            {recommendations.length} recommendation{recommendations.length > 1 ? "s" : ""} detected, but no risk disclosure{recommendations.length > 1 ? "s" : ""} found.
-            Please confirm if risk was discussed or add disclosure if needed.
-          </AlertDescription>
+    <Alert variant="default" className="mt-6 border-amber-500 bg-amber-50 dark:bg-amber-950/20">
+      <div className="flex items-start gap-3">
+        <div className="flex-shrink-0 mt-0.5">
+          <svg
+            className="h-5 w-5 text-amber-600 dark:text-amber-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setDismissedPrompts(new Set([...dismissedPrompts, "no-disclosures"]))}
-          className="ml-2 h-auto p-1"
-        >
-          ×
-        </Button>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1">
+              <h4 className="text-sm font-semibold text-amber-900 dark:text-amber-100 mb-1">
+                Soft Gap Prompt
+              </h4>
+              <AlertDescription className="text-amber-800 dark:text-amber-200">
+                <div className="space-y-2">
+                  <p>
+                    <strong>{recommendations.length}</strong> recommendation{recommendations.length > 1 ? "s" : ""} detected, but{" "}
+                    <strong>no risk disclosure{recommendations.length > 1 ? "s" : ""} found</strong>.
+                  </p>
+                  <p className="text-xs">
+                    Please confirm if risk was discussed or add disclosure if needed.
+                  </p>
+                  {firstRecommendation && (
+                    <div className="mt-2 p-2 bg-amber-100 dark:bg-amber-900/30 rounded text-xs">
+                      <div className="font-medium mb-1">
+                        First recommendation at {formatTime(firstRecommendation.startTime)}
+                      </div>
+                      <div className="text-amber-700 dark:text-amber-300 line-clamp-2">
+                        "{firstRecommendation.text}"
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </AlertDescription>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setDismissedPrompts(new Set([...dismissedPrompts, "no-disclosures"]))}
+              className="ml-2 h-auto p-1 text-amber-700 hover:text-amber-900 dark:text-amber-300 dark:hover:text-amber-100"
+              aria-label="Dismiss prompt"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </Button>
+          </div>
+        </div>
       </div>
     </Alert>
   );

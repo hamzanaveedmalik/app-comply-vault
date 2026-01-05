@@ -6,6 +6,7 @@ import { getSignedFileUrl } from "~/server/storage";
 import { sendDraftReadyEmail } from "~/server/email";
 import { extractFields } from "~/server/extraction";
 import { toExtractionData, validateEvidenceCoverage } from "~/server/extraction/evidence";
+import { generateSearchableText } from "~/server/search/index";
 import type { Transcript } from "~/server/transcription/types";
 
 const processMeetingSchema = z.object({
@@ -116,17 +117,24 @@ async function handler(request: Request) {
         );
       }
 
-      // Step 7: Store extraction data and update status to DRAFT_READY
+      // Step 7: Generate searchable text for indexing
+      const searchableText = generateSearchableText(
+        transcriptionResult.transcript,
+        extractionData
+      );
+
+      // Step 8: Store extraction data, searchable text, and update status to DRAFT_READY
       await db.meeting.update({
         where: { id: meetingId },
         data: {
           extraction: extractionData as any, // Prisma JSON type
+          searchableText, // Indexed text for fast keyword search
           status: "DRAFT_READY",
           draftReadyAt: new Date(),
         },
       });
 
-      // Step 8: Log extraction completion
+      // Step 9: Log extraction completion
       await db.auditEvent.create({
         data: {
           workspaceId,
@@ -150,7 +158,7 @@ async function handler(request: Request) {
         },
       });
 
-      // Step 9: Send email notification (async, don't block on failure)
+      // Step 10: Send email notification (async, don't block on failure)
       try {
         // Get the user who uploaded the meeting (from audit events)
         const uploadEvent = await db.auditEvent.findFirst({

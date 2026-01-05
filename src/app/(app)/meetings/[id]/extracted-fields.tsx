@@ -30,15 +30,15 @@ export default function ExtractedFields({ extraction }: ExtractedFieldsProps) {
     }
   };
 
-  if (!extraction) {
-    return (
-      <div className="rounded-md bg-gray-50 p-4">
-        <p className="text-sm text-gray-600">
-          Extraction is in progress or not available yet.
-        </p>
-      </div>
-    );
-  }
+        if (!extraction) {
+          return (
+            <Alert>
+              <AlertDescription>
+                Extraction is in progress or not available yet.
+              </AlertDescription>
+            </Alert>
+          );
+        }
 
   return (
     <div className="space-y-6 max-h-[600px] overflow-y-auto">
@@ -184,13 +184,13 @@ export default function ExtractedFields({ extraction }: ExtractedFieldsProps) {
         (!extraction.recommendations || extraction.recommendations.length === 0) &&
         (!extraction.disclosures || extraction.disclosures.length === 0) &&
         (!extraction.decisions || extraction.decisions.length === 0) &&
-        (!extraction.followUps || extraction.followUps.length === 0) && (
-          <div className="rounded-md bg-gray-50 p-4">
-            <p className="text-sm text-gray-600">
-              No fields were extracted from this transcript.
-            </p>
-          </div>
-        )}
+               (!extraction.followUps || extraction.followUps.length === 0) && (
+                 <Alert>
+                   <AlertDescription>
+                     No fields were extracted from this transcript.
+                   </AlertDescription>
+                 </Alert>
+               )}
 
       {/* Soft Gap Prompts */}
       <SoftGapPrompts extraction={extraction} />
@@ -223,33 +223,35 @@ function SoftGapPrompts({ extraction }: { extraction: ExtractionData | null | un
 
   const promptId = "no-disclosures";
 
-  return (
-    <div className="mt-4 rounded-md bg-yellow-50 border border-yellow-200 p-4">
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <h4 className="text-sm font-semibold text-yellow-800 mb-1">
-            Soft Gap Prompt
-          </h4>
-          <p className="text-sm text-yellow-700">
-            {recommendations.length} recommendation{recommendations.length > 1 ? "s" : ""} detected, but no risk disclosure{recommendations.length > 1 ? "s" : ""} found.
-            Please confirm if risk was discussed or add disclosure if needed.
-          </p>
-          {recommendations.length > 0 && (
-            <div className="mt-2 text-xs text-yellow-600">
-              First recommendation at {formatTime(recommendations[0]!.startTime)}
-            </div>
-          )}
-        </div>
-        <button
-          onClick={() => setDismissedPrompts(new Set([...dismissedPrompts, promptId]))}
-          className="ml-2 text-yellow-600 hover:text-yellow-800"
-          aria-label="Dismiss prompt"
-        >
-          ×
-        </button>
-      </div>
-    </div>
-  );
+         return (
+           <Alert variant="default" className="mt-4">
+             <div className="flex items-start justify-between w-full">
+               <div className="flex-1">
+                 <h4 className="text-sm font-semibold mb-1">
+                   Soft Gap Prompt
+                 </h4>
+                 <AlertDescription>
+                   {recommendations.length} recommendation{recommendations.length > 1 ? "s" : ""} detected, but no risk disclosure{recommendations.length > 1 ? "s" : ""} found.
+                   Please confirm if risk was discussed or add disclosure if needed.
+                 </AlertDescription>
+                 {recommendations.length > 0 && (
+                   <div className="mt-2 text-xs text-muted-foreground">
+                     First recommendation at {formatTime(recommendations[0]!.startTime)}
+                   </div>
+                 )}
+               </div>
+               <Button
+                 variant="ghost"
+                 size="sm"
+                 onClick={() => setDismissedPrompts(new Set([...dismissedPrompts, promptId]))}
+                 className="ml-2 h-auto p-1"
+                 aria-label="Dismiss prompt"
+               >
+                 ×
+               </Button>
+             </div>
+           </Alert>
+         );
 }
 
 function formatTime(seconds: number): string {

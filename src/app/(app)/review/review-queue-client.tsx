@@ -120,14 +120,14 @@ export default function ReviewQueueClient({
             <div>
               <Label htmlFor="status">Status</Label>
               <Select
-                value={filters.status}
-                onValueChange={(value) => handleFilterChange("status", value)}
+                value={filters.status || "all"}
+                onValueChange={(value) => handleFilterChange("status", value === "all" ? "" : value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="All statuses" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All statuses</SelectItem>
+                  <SelectItem value="all">All statuses</SelectItem>
                   <SelectItem value="DRAFT_READY">Draft Ready</SelectItem>
                   <SelectItem value="DRAFT">Draft</SelectItem>
                 </SelectContent>

@@ -4,6 +4,9 @@ import { z } from "zod";
 import { transcribeAudio } from "~/server/transcription";
 import { getSignedFileUrl } from "~/server/storage";
 import { sendDraftReadyEmail } from "~/server/email";
+import { extractFields } from "~/server/extraction";
+import { toExtractionData, validateEvidenceCoverage } from "~/server/extraction/evidence";
+import type { Transcript } from "~/server/transcription/types";
 
 const processMeetingSchema = z.object({
   meetingId: z.string(),
@@ -69,12 +72,12 @@ async function handler(request: Request) {
         duration: transcriptionResult.transcript.duration,
       };
 
+      // Update meeting with transcript (but keep status as PROCESSING until extraction completes)
       await db.meeting.update({
         where: { id: meetingId },
         data: {
           transcript: transcriptJson as any, // Prisma JSON type
-          status: "DRAFT_READY", // Extraction will be added in EPIC 3
-          draftReadyAt: new Date(),
+          // Status stays PROCESSING until extraction completes
         },
       });
 
@@ -88,7 +91,6 @@ async function handler(request: Request) {
           resourceId: meetingId,
           metadata: {
             action: "transcription_complete",
-            status: "DRAFT_READY",
             provider: transcriptionResult.provider,
             processingTime: transcriptionResult.processingTime,
             segmentCount: transcriptionResult.transcript.segments.length,
@@ -96,7 +98,59 @@ async function handler(request: Request) {
         },
       });
 
-      // Step 5: Send email notification (async, don't block on failure)
+      // Step 5: Extract structured fields using LLM
+      console.log(`Extracting fields from transcript for meeting ${meetingId}...`);
+      const extractionResult = await extractFields(transcriptionResult.transcript);
+
+      // Step 6: Create evidence map and validate coverage
+      const extractionData = toExtractionData(extractionResult, transcriptionResult.transcript);
+      const evidenceValidation = validateEvidenceCoverage(extractionData.evidenceMap);
+
+      if (!evidenceValidation.valid) {
+        console.warn(
+          `⚠️ Evidence coverage below 90% for meeting ${meetingId}: ${(evidenceValidation.coverage * 100).toFixed(1)}% (${evidenceValidation.validClaims}/${evidenceValidation.totalClaims} valid claims)`
+        );
+      } else {
+        console.log(
+          `✅ Evidence coverage: ${(evidenceValidation.coverage * 100).toFixed(1)}% (${evidenceValidation.validClaims}/${evidenceValidation.totalClaims} valid claims)`
+        );
+      }
+
+      // Step 7: Store extraction data and update status to DRAFT_READY
+      await db.meeting.update({
+        where: { id: meetingId },
+        data: {
+          extraction: extractionData as any, // Prisma JSON type
+          status: "DRAFT_READY",
+          draftReadyAt: new Date(),
+        },
+      });
+
+      // Step 8: Log extraction completion
+      await db.auditEvent.create({
+        data: {
+          workspaceId,
+          userId: "system",
+          action: "UPLOAD",
+          resourceType: "meeting",
+          resourceId: meetingId,
+          metadata: {
+            action: "extraction_complete",
+            status: "DRAFT_READY",
+            provider: extractionResult.provider,
+            processingTime: extractionResult.processingTime,
+            topicsCount: extractionData.topics.length,
+            recommendationsCount: extractionData.recommendations.length,
+            disclosuresCount: extractionData.disclosures.length,
+            decisionsCount: extractionData.decisions.length,
+            followUpsCount: extractionData.followUps.length,
+            evidenceCoverage: evidenceValidation.coverage,
+            evidenceValid: evidenceValidation.valid,
+          },
+        },
+      });
+
+      // Step 9: Send email notification (async, don't block on failure)
       try {
         // Get the user who uploaded the meeting (from audit events)
         const uploadEvent = await db.auditEvent.findFirst({
@@ -133,31 +187,51 @@ async function handler(request: Request) {
         // Don't fail the job if email fails
       }
 
-      console.log(`Transcription complete for meeting ${meetingId}`);
+      console.log(`✅ Processing complete for meeting ${meetingId} (transcription + extraction)`);
 
       return Response.json({
         success: true,
         meetingId,
         status: "DRAFT_READY",
+        extraction: {
+          topicsCount: extractionData.topics.length,
+          recommendationsCount: extractionData.recommendations.length,
+          disclosuresCount: extractionData.disclosures.length,
+          decisionsCount: extractionData.decisions.length,
+          followUpsCount: extractionData.followUps.length,
+          evidenceCoverage: evidenceValidation.coverage,
+        },
       });
-    } catch (transcriptionError) {
-      // Handle transcription errors
-      console.error(`Transcription failed for meeting ${meetingId}:`, transcriptionError);
+    } catch (processingError) {
+      // Handle transcription or extraction errors
+      const isTranscriptionError = !meeting.transcript;
+      const errorMessage = processingError instanceof Error ? processingError.message : "Unknown error";
+      
+      console.error(`${isTranscriptionError ? "Transcription" : "Extraction"} failed for meeting ${meetingId}:`, processingError);
 
       // Update meeting status to show error (we'll need to add an ERROR status or store in metadata)
       await db.meeting.update({
         where: { id: meetingId },
         data: {
           status: "PROCESSING", // Keep as PROCESSING for now, can add ERROR status later
-          // Store error in transcript field for now (temporary)
-          transcript: {
-            error: true,
-            message: transcriptionError instanceof Error ? transcriptionError.message : "Transcription failed",
-          },
+          // Store error in appropriate field
+          ...(isTranscriptionError
+            ? {
+                transcript: {
+                  error: true,
+                  message: errorMessage,
+                },
+              }
+            : {
+                extraction: {
+                  error: true,
+                  message: errorMessage,
+                },
+              }),
         },
       });
 
-      // Log transcription failure
+      // Log failure
       await db.auditEvent.create({
         data: {
           workspaceId,
@@ -166,8 +240,8 @@ async function handler(request: Request) {
           resourceType: "meeting",
           resourceId: meetingId,
           metadata: {
-            action: "transcription_failed",
-            error: transcriptionError instanceof Error ? transcriptionError.message : "Unknown error",
+            action: isTranscriptionError ? "transcription_failed" : "extraction_failed",
+            error: errorMessage,
           },
         },
       });
@@ -176,8 +250,8 @@ async function handler(request: Request) {
       return Response.json(
         {
           success: false,
-          error: "Transcription failed",
-          message: transcriptionError instanceof Error ? transcriptionError.message : "Unknown error",
+          error: isTranscriptionError ? "Transcription failed" : "Extraction failed",
+          message: errorMessage,
         },
         { status: 500 }
       );

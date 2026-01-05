@@ -26,10 +26,16 @@ export const env = createEnv({
     QSTASH_TOKEN: z.string().optional(), // Upstash QStash token
     QSTASH_CURRENT_SIGNING_KEY: z.string().optional(), // QStash webhook signature verification
     QSTASH_NEXT_SIGNING_KEY: z.string().optional(), // QStash webhook signature verification (for key rotation)
-    // Transcription providers
-    TRANSCRIPTION_PROVIDER: z.enum(["deepgram", "assemblyai"]).optional().default("deepgram"),
-    DEEPGRAM_API_KEY: z.string().optional(),
-    ASSEMBLYAI_API_KEY: z.string().optional(),
+      // Transcription providers
+      TRANSCRIPTION_PROVIDER: z.enum(["deepgram", "assemblyai"]).optional().default("deepgram"),
+      DEEPGRAM_API_KEY: z.string().optional(),
+      ASSEMBLYAI_API_KEY: z.string().optional(),
+      // Extraction providers
+      EXTRACTION_PROVIDER: z.enum(["openai", "anthropic"]).optional().default("openai"),
+      OPENAI_API_KEY: z.string().optional(),
+      OPENAI_MODEL: z.string().optional().default("gpt-4o-mini"),
+      ANTHROPIC_API_KEY: z.string().optional(),
+      ANTHROPIC_MODEL: z.string().optional().default("claude-3-5-sonnet-20241022"),
   },
 
   /**
@@ -62,9 +68,14 @@ export const env = createEnv({
     QSTASH_TOKEN: process.env.QSTASH_TOKEN,
     QSTASH_CURRENT_SIGNING_KEY: process.env.QSTASH_CURRENT_SIGNING_KEY,
     QSTASH_NEXT_SIGNING_KEY: process.env.QSTASH_NEXT_SIGNING_KEY,
-    TRANSCRIPTION_PROVIDER: process.env.TRANSCRIPTION_PROVIDER,
-    DEEPGRAM_API_KEY: process.env.DEEPGRAM_API_KEY,
-    ASSEMBLYAI_API_KEY: process.env.ASSEMBLYAI_API_KEY,
+      TRANSCRIPTION_PROVIDER: process.env.TRANSCRIPTION_PROVIDER,
+      DEEPGRAM_API_KEY: process.env.DEEPGRAM_API_KEY,
+      ASSEMBLYAI_API_KEY: process.env.ASSEMBLYAI_API_KEY,
+      EXTRACTION_PROVIDER: process.env.EXTRACTION_PROVIDER,
+      OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+      OPENAI_MODEL: process.env.OPENAI_MODEL,
+      ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
+      ANTHROPIC_MODEL: process.env.ANTHROPIC_MODEL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

@@ -79,8 +79,8 @@ Return the extraction as JSON.`;
       });
 
       const content = message.content[0];
-      if (content.type !== "text") {
-        throw new Error("Anthropic returned non-text response");
+      if (!content || content.type !== "text") {
+        throw new Error("Anthropic returned non-text response or empty content");
       }
 
       // Extract JSON from response (may be wrapped in markdown code blocks)

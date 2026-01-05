@@ -86,15 +86,21 @@ export default function UploadPage() {
       // Step 2: Upload file directly to S3/R2 using presigned URL
       let uploadResponse;
       try {
+        // Note: Don't set Content-Type header if it's in the presigned URL
+        // Some S3-compatible services require exact header match
+        const headers: HeadersInit = {};
+        if (file.type) {
+          headers["Content-Type"] = file.type;
+        }
+        
         uploadResponse = await fetch(uploadUrl, {
           method: "PUT",
           body: file,
-          headers: {
-            "Content-Type": file.type || "application/octet-stream",
-          },
+          headers,
         });
       } catch (err) {
-        throw new Error(`Upload to storage failed: ${err instanceof Error ? err.message : "Network error"}`);
+        const errorMsg = err instanceof Error ? err.message : "Network error";
+        throw new Error(`Upload to storage failed: ${errorMsg}. Check CORS configuration on your R2 bucket.`);
       }
 
       if (!uploadResponse.ok) {

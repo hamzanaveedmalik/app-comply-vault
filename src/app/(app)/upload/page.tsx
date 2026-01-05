@@ -33,26 +33,58 @@ export default function UploadPage() {
     setIsUploading(true);
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("clientName", clientName);
-      formData.append("meetingType", meetingType);
-      formData.append("meetingDate", new Date(meetingDate).toISOString());
-      formData.append("consent", consent.toString());
-
-      const response = await fetch("/api/upload", {
+      // Step 1: Initialize upload - get presigned URL
+      const initResponse = await fetch("/api/upload/init", {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          clientName,
+          meetingType,
+          meetingDate: new Date(meetingDate).toISOString(),
+          consent,
+          fileName: file.name,
+          fileSize: file.size,
+        }),
       });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to upload file");
+      if (!initResponse.ok) {
+        const data = await initResponse.json().catch(() => ({ error: "Failed to initialize upload" }));
+        throw new Error(data.error || "Failed to initialize upload");
       }
 
-      const data = await response.json();
+      const { meetingId, uploadUrl } = await initResponse.json();
+
+      // Step 2: Upload file directly to S3/R2 using presigned URL
+      const uploadResponse = await fetch(uploadUrl, {
+        method: "PUT",
+        body: file,
+        headers: {
+          "Content-Type": file.type || "application/octet-stream",
+        },
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error(`Upload failed: ${uploadResponse.statusText}`);
+      }
+
+      // Step 3: Notify API that upload is complete
+      const completeResponse = await fetch("/api/upload/complete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ meetingId }),
+      });
+
+      if (!completeResponse.ok) {
+        const data = await completeResponse.json().catch(() => ({ error: "Failed to complete upload" }));
+        throw new Error(data.error || "Failed to complete upload");
+      }
+
       // Redirect to meeting detail page
-      router.push(`/meetings/${data.meetingId}`);
+      router.push(`/meetings/${meetingId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
       setIsUploading(false);

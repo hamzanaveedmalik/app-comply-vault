@@ -122,3 +122,37 @@ export function validateWorkspaceAccess(
   return keyWorkspaceId === workspaceId;
 }
 
+/**
+ * Generate a presigned URL for direct client-side upload to S3/R2
+ * This bypasses Vercel's 4.5 MB function payload limit
+ */
+export async function generatePresignedUploadUrl(
+  workspaceId: string,
+  meetingId: string,
+  filename: string,
+  contentType: string,
+  expiresIn: number = 3600 // 1 hour default
+): Promise<{ key: string; uploadUrl: string }> {
+  if (!BUCKET_NAME) {
+    throw new Error("S3_BUCKET_NAME environment variable is not set");
+  }
+
+  const s3Client = getS3Client();
+  const key = generateStorageKey(workspaceId, meetingId, filename);
+
+  const command = new PutObjectCommand({
+    Bucket: BUCKET_NAME,
+    Key: key,
+    ContentType: contentType,
+    // Metadata for workspace isolation tracking
+    Metadata: {
+      workspaceId,
+      meetingId,
+      uploadedAt: new Date().toISOString(),
+    },
+  });
+
+  const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn });
+  return { key, uploadUrl };
+}
+

@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     } else {
       // Publish QStash job for background processing
       try {
-        await publishProcessMeetingJob({
+        const messageId = await publishProcessMeetingJob({
           meetingId: meeting.id,
           workspaceId: session.user.workspaceId,
           fileUrl: meeting.fileUrl ?? "",
@@ -67,10 +67,14 @@ export async function POST(request: Request) {
           data: { status: "PROCESSING" },
         });
 
-        console.log(`✅ Meeting ${meeting.id} status updated to PROCESSING`);
+        console.log(`✅ Meeting ${meeting.id} status updated to PROCESSING. QStash message ID: ${messageId}`);
       } catch (error) {
         console.error("❌ Error publishing QStash job:", error);
+        if (error instanceof Error) {
+          console.error("Error message:", error.message);
+        }
         console.error("   Meeting will stay in UPLOADING status. Check QStash configuration.");
+        console.error("   Required env vars: QSTASH_TOKEN, NEXT_PUBLIC_APP_URL");
         // Don't fail the completion if job publishing fails - job can be retried later
       }
     }

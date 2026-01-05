@@ -6,6 +6,7 @@ import type { TranscriptSegment } from "~/server/transcription";
 import type { ExtractionData } from "~/server/extraction/types";
 import ExtractedFields from "./extracted-fields";
 import ReprocessButton from "./reprocess-button";
+import ExportButton from "./export-button";
 
 export default async function MeetingDetailPage({
   params,
@@ -204,9 +205,28 @@ export default async function MeetingDetailPage({
 
           {meeting.status === "FINALIZED" && (
             <div className="rounded-lg bg-green-50 p-4">
-              <p className="text-sm text-green-800">
-                This meeting has been finalized. Export options will be available here once implemented.
+              <p className="text-sm text-green-800 mb-2">
+                This meeting has been finalized and is ready for export.
               </p>
+              <ExportButton
+                meetingId={meeting.id}
+                status={meeting.status}
+                hasExtraction={!!extraction}
+              />
+            </div>
+          )}
+
+          {/* Export button for DRAFT_READY meetings */}
+          {meeting.status === "DRAFT_READY" && (
+            <div className="mt-6 rounded-lg bg-blue-50 p-4">
+              <p className="text-sm text-blue-800 mb-2">
+                This meeting is ready for review. You can export a draft audit pack.
+              </p>
+              <ExportButton
+                meetingId={meeting.id}
+                status={meeting.status}
+                hasExtraction={!!extraction}
+              />
             </div>
           )}
         </div>

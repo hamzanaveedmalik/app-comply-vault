@@ -36,6 +36,9 @@ export default async function MeetingDetailPage({
     | null
     | undefined;
 
+  // Parse extraction data if available
+  const extraction = meeting.extraction as ExtractionData | null | undefined;
+
   // Log view event
   if (session.user.id) {
     await db.auditEvent.create({

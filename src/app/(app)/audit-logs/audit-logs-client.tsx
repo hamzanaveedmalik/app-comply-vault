@@ -218,7 +218,7 @@ export default function AuditLogsClient({
       <Card>
         <CardHeader>
           <CardTitle>
-            Audit Events ({total})
+            Audit Events ({initialTotal})
           </CardTitle>
         </CardHeader>
         <CardContent>

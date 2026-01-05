@@ -8,7 +8,7 @@ import { sendDraftReadyEmail } from "~/server/email";
 const processMeetingSchema = z.object({
   meetingId: z.string(),
   workspaceId: z.string(),
-  fileUrl: z.string().url(),
+  fileUrl: z.string().min(1), // S3 key, not a URL (e.g., "workspaces/{workspaceId}/meetings/{meetingId}/recording.mp3")
 });
 
 /**

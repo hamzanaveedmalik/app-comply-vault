@@ -14,7 +14,6 @@ import VersionHistory from "./version-history";
 import TranscriptViewer from "./transcript-viewer";
 import ReadyForCCOButton from "./ready-for-cco-button";
 import FinalizeButton from "./finalize-button";
-import FinalizeButton from "./finalize-button";
 
 export default async function MeetingDetailPage({
   params,

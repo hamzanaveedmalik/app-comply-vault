@@ -43,6 +43,14 @@ export default async function MeetingDetailPage({
     | null
     | undefined;
 
+  // Ensure segments are properly serialized (plain objects only)
+  const transcriptSegments = transcript?.segments?.map((seg) => ({
+    startTime: seg.startTime,
+    endTime: seg.endTime,
+    speaker: seg.speaker,
+    text: seg.text,
+  })) ?? [];
+
   // Parse extraction data if available
   const extraction = meeting.extraction as ExtractionData | null | undefined;
 
@@ -147,7 +155,7 @@ export default async function MeetingDetailPage({
                 <CardTitle>Transcript</CardTitle>
               </CardHeader>
               <CardContent>
-                <TranscriptViewer segments={transcript?.segments ?? []} />
+                <TranscriptViewer segments={transcriptSegments} />
               </CardContent>
             </Card>
 

@@ -1,9 +1,13 @@
-import { auth } from "~/server/auth";
+import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  const session = await auth();
+  // Use getToken instead of auth() to avoid importing Prisma in Edge runtime
+  const token = await getToken({
+    req: request,
+    secret: process.env.AUTH_SECRET,
+  });
 
   // Public routes that don't require authentication
   const publicRoutes = ["/", "/api/auth", "/invitations"];
@@ -16,7 +20,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Protect all other routes
-  if (!session?.user) {
+  if (!token) {
     const signInUrl = new URL("/api/auth/signin", request.url);
     signInUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
     return NextResponse.redirect(signInUrl);
@@ -24,16 +28,15 @@ export async function middleware(request: NextRequest) {
 
   // Check if user has a workspace (for app routes)
   // Exclude workspace creation page from this check
+  // Note: workspaceId check is done in layout/page components since we can't access DB in middleware
   const isWorkspaceCreationPage = request.nextUrl.pathname === "/workspaces/new";
   const appRoutes = ["/dashboard", "/workspaces", "/meetings", "/upload", "/settings"];
   const isAppRoute = appRoutes.some((route) =>
     request.nextUrl.pathname.startsWith(route)
   );
 
-  if (isAppRoute && !isWorkspaceCreationPage && (!session.user.workspaceId || session.user.workspaceId === "")) {
-    // User is authenticated but has no workspace - redirect to workspace creation
-    return NextResponse.redirect(new URL("/workspaces/new", request.url));
-  }
+  // Workspace check is handled in layout components (can't access DB in Edge runtime)
+  // Middleware only checks authentication, not workspace membership
 
   return NextResponse.next();
 }

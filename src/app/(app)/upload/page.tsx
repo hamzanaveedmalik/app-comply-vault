@@ -2,6 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
+import { Alert, AlertDescription } from "~/components/ui/alert";
 
 export default function UploadPage() {
   const router = useRouter();
@@ -162,130 +167,113 @@ export default function UploadPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Upload Meeting</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Upload a meeting recording to process it into a compliance record
-          </p>
-        </div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Upload Meeting</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Upload a meeting recording to process it into a compliance record
+        </p>
+      </div>
 
-        <div className="rounded-lg bg-white p-8 shadow">
+      <Card>
+        <CardHeader>
+          <CardTitle>Meeting Details</CardTitle>
+          <CardDescription>
+            Provide the meeting information and recording file
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label
-                htmlFor="file"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Recording File
-              </label>
-              <input
+            <div className="space-y-2">
+              <Label htmlFor="file">Recording File</Label>
+              <Input
                 id="file"
                 type="file"
                 accept=".mp3,.mp4,.wav,.m4a"
                 onChange={handleFileChange}
-                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
+                className="cursor-pointer"
                 required
               />
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 Supported formats: MP3, MP4, WAV, M4A (max 500 MB)
               </p>
             </div>
 
-            <div>
-              <label
-                htmlFor="clientName"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Client Name
-              </label>
-              <input
+            <div className="space-y-2">
+              <Label htmlFor="clientName">Client Name</Label>
+              <Input
                 id="clientName"
                 type="text"
                 required
                 value={clientName}
                 onChange={(e) => setClientName(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                 placeholder="John Smith"
               />
             </div>
 
-            <div>
-              <label
-                htmlFor="meetingType"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Meeting Type
-              </label>
-              <input
+            <div className="space-y-2">
+              <Label htmlFor="meetingType">Meeting Type</Label>
+              <Input
                 id="meetingType"
                 type="text"
                 required
                 value={meetingType}
                 onChange={(e) => setMeetingType(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                 placeholder="e.g., Annual Review, Portfolio Review"
               />
             </div>
 
-            <div>
-              <label
-                htmlFor="meetingDate"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Meeting Date
-              </label>
-              <input
+            <div className="space-y-2">
+              <Label htmlFor="meetingDate">Meeting Date</Label>
+              <Input
                 id="meetingDate"
                 type="datetime-local"
                 required
                 value={meetingDate}
                 onChange={(e) => setMeetingDate(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
               />
             </div>
 
-            <div className="flex items-start">
+            <div className="flex items-start space-x-2">
               <input
                 id="consent"
                 type="checkbox"
                 required
                 checked={consent}
                 onChange={(e) => setConsent(e.target.checked)}
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
               />
-              <label
-                htmlFor="consent"
-                className="ml-2 block text-sm text-gray-700"
-              >
+              <Label htmlFor="consent" className="font-normal">
                 I confirm I have permission to upload and process this recording
-              </label>
+              </Label>
             </div>
 
             {error && (
-              <div className="rounded-md bg-red-50 p-3">
-                <p className="text-sm text-red-800">{error}</p>
-              </div>
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
 
             <div className="flex gap-4">
-              <button
+              <Button
                 type="button"
+                variant="outline"
                 onClick={() => router.back()}
-                className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 disabled={isUploading}
+                className="flex-1"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
                 disabled={isUploading || !file || !consent}
-                className="flex-1 rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex-1"
               >
                 {isUploading ? "Uploading..." : "Upload"}
-              </button>
+              </Button>
             </div>
           </form>
-        </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

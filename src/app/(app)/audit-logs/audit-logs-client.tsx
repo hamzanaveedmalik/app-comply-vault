@@ -227,74 +227,76 @@ export default function AuditLogsClient({
               No audit events found matching your filters.
             </div>
           ) : (
-            <div className="overflow-x-auto -mx-6 sm:mx-0">
-              <div className="inline-block min-w-full align-middle px-6 sm:px-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="whitespace-nowrap">Timestamp</TableHead>
-                      <TableHead className="whitespace-nowrap">User</TableHead>
-                      <TableHead className="whitespace-nowrap">Action</TableHead>
-                      <TableHead className="whitespace-nowrap">Resource</TableHead>
-                      <TableHead className="whitespace-nowrap">Meeting</TableHead>
-                      <TableHead className="whitespace-nowrap">Metadata</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {initialEvents.map((event) => (
-                      <TableRow key={event.id}>
-                        <TableCell className="font-mono text-xs whitespace-nowrap">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="min-w-[140px]">Timestamp</TableHead>
+                    <TableHead className="min-w-[100px]">User</TableHead>
+                    <TableHead className="min-w-[100px]">Action</TableHead>
+                    <TableHead className="min-w-[120px]">Resource</TableHead>
+                    <TableHead className="min-w-[140px]">Meeting</TableHead>
+                    <TableHead className="min-w-[100px]">Metadata</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {initialEvents.map((event) => (
+                    <TableRow key={event.id}>
+                      <TableCell className="font-mono text-xs">
+                        <div className="whitespace-nowrap">
                           {new Date(event.timestamp).toLocaleString()}
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap">
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm whitespace-nowrap">
+                          {event.user.name || event.user.email || event.user.id}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={getActionVariant(event.action)} className="whitespace-nowrap">
+                          {event.action}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          <div className="font-medium">{event.resourceType}</div>
+                          <div className="text-xs text-muted-foreground font-mono truncate max-w-[150px]">
+                            {event.resourceId}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {event.meeting ? (
                           <div className="text-sm">
-                            {event.user.name || event.user.email || event.user.id}
-                          </div>
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap">
-                          <Badge variant={getActionVariant(event.action)}>
-                            {event.action}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-sm min-w-[100px]">
-                            <div className="font-medium">{event.resourceType}</div>
-                            <div className="text-xs text-muted-foreground font-mono truncate max-w-[120px]">
-                              {event.resourceId}
+                            <div className="font-medium">{event.meeting.clientName}</div>
+                            <div className="text-xs text-muted-foreground">
+                              {new Date(event.meeting.meetingDate).toLocaleDateString()}
                             </div>
                           </div>
-                        </TableCell>
-                        <TableCell>
-                          {event.meeting ? (
-                            <div className="text-sm min-w-[120px]">
-                              <div className="font-medium">{event.meeting.clientName}</div>
-                              <div className="text-xs text-muted-foreground">
-                                {new Date(event.meeting.meetingDate).toLocaleDateString()}
-                              </div>
-                            </div>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {event.metadata ? (
-                            <details className="text-xs">
-                              <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
-                                View metadata
-                              </summary>
-                              <pre className="mt-2 whitespace-pre-wrap break-words max-w-md text-xs bg-muted p-2 rounded">
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {event.metadata ? (
+                          <details className="text-xs">
+                            <summary className="cursor-pointer text-muted-foreground hover:text-foreground transition-colors">
+                              View metadata
+                            </summary>
+                            <div className="mt-2 max-w-md">
+                              <pre className="whitespace-pre-wrap break-words text-xs bg-muted p-2 rounded border overflow-auto max-h-48">
                                 {JSON.stringify(event.metadata, null, 2)}
                               </pre>
-                            </details>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                            </div>
+                          </details>
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           )}
         </CardContent>

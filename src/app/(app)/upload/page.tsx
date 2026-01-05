@@ -286,7 +286,6 @@ export default function UploadPage() {
             </div>
           </form>
         </div>
-      </div>
     </div>
   );
 }

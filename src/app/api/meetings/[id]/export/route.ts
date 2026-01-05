@@ -81,7 +81,7 @@ export async function POST(
         meetingId: meeting.id,
       },
       orderBy: {
-        createdAt: "asc",
+        timestamp: "asc",
       },
     });
 

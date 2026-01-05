@@ -30,7 +30,10 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
         const zipBuffer = Buffer.concat(buffers);
         resolve(zipBuffer);
       });
-      archive.on("error", reject);
+      archive.on("error", (err) => {
+        console.error("Archiver error:", err);
+        reject(err);
+      });
 
       const { meeting, extraction, transcript, versions, workspace } = data;
 
@@ -44,12 +47,17 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
       const baseFilename = `${sanitizeFilename(workspace.name)}_${clientName}_${exportDate}`;
 
       // 1. Generate and add PDF
-      const pdfBuffer = await generateComplianceNotePDF({
-        meeting,
-        extraction,
-        workspaceName: workspace.name,
-      });
-      archive.append(pdfBuffer, { name: `${baseFilename}_compliance_note.pdf` });
+      try {
+        const pdfBuffer = await generateComplianceNotePDF({
+          meeting,
+          extraction,
+          workspaceName: workspace.name,
+        });
+        archive.append(pdfBuffer, { name: `${baseFilename}_compliance_note.pdf` });
+      } catch (pdfError) {
+        console.error("PDF generation error:", pdfError);
+        throw new Error(`PDF generation failed: ${pdfError instanceof Error ? pdfError.message : "Unknown error"}`);
+      }
 
       // 2. Generate and add Evidence Map CSV
       const evidenceMapCSV = generateEvidenceMapCSV(extraction);
@@ -80,6 +88,7 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
       // Finalize the archive
       await archive.finalize();
     } catch (error) {
+      console.error("Error in generateAuditPack:", error);
       reject(error);
     }
   });

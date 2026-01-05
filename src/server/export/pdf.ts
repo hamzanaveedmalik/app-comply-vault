@@ -143,6 +143,7 @@ export async function generateComplianceNotePDF({
 
       doc.end();
     } catch (error) {
+      console.error("PDFDocument error:", error);
       reject(error);
     }
   });

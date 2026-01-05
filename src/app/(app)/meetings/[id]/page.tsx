@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import type { TranscriptSegment } from "~/server/transcription";
 import type { ExtractionData } from "~/server/extraction/types";
 import ExtractedFields from "./extracted-fields";
+import ReprocessButton from "./reprocess-button";
 
 export default async function MeetingDetailPage({
   params,
@@ -179,10 +180,17 @@ export default async function MeetingDetailPage({
 
               {/* Right Column: Extracted Fields */}
               <div className="rounded-lg bg-white p-6 shadow">
-                <h2 className="mb-4 text-lg font-semibold text-gray-900">
-                  Extracted Fields
-                </h2>
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    Extracted Fields
+                  </h2>
+                </div>
                 <ExtractedFields extraction={extraction} />
+                <ReprocessButton
+                  meetingId={meeting.id}
+                  hasTranscript={!!(transcript && transcript.segments && transcript.segments.length > 0)}
+                  hasExtraction={!!extraction}
+                />
               </div>
             </div>
           ) : (

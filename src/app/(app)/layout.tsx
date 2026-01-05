@@ -1,5 +1,6 @@
 import { auth } from "~/server/auth";
 import { redirect } from "next/navigation";
+import { Navigation } from "~/components/navigation";
 
 export default async function AppLayout({
   children,
@@ -16,6 +17,14 @@ export default async function AppLayout({
   // This layout only checks authentication
   // The workspace creation page is allowed to render without a workspace
 
-  return <>{children}</>;
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navigation
+        userEmail={session.user.email}
+        userName={session.user.name}
+      />
+      <main>{children}</main>
+    </div>
+  );
 }
 

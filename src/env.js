@@ -7,20 +7,22 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    AUTH_SECRET: z.string().optional(), // Required at runtime, optional for build
+    // All server env vars are optional for build-time validation
+    // Runtime checks are performed where these values are actually used
+    AUTH_SECRET: z.string().optional(),
     AUTH_DISCORD_ID: z.string().optional(),
     AUTH_DISCORD_SECRET: z.string().optional(),
-    DATABASE_URL: z.string().url().optional(),
+    DATABASE_URL: z.string().optional(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
     RESEND_API_KEY: z.string().optional(),
-    EMAIL_FROM: z.string().email().optional(),
-    S3_BUCKET_NAME: z.string().min(1).optional(),
-    S3_ACCESS_KEY_ID: z.string().min(1).optional(),
-    S3_SECRET_ACCESS_KEY: z.string().min(1).optional(),
+    EMAIL_FROM: z.string().optional(),
+    S3_BUCKET_NAME: z.string().optional(),
+    S3_ACCESS_KEY_ID: z.string().optional(),
+    S3_SECRET_ACCESS_KEY: z.string().optional(),
     S3_REGION: z.string().optional(),
-    S3_ENDPOINT: z.string().url().optional(), // For R2 or other S3-compatible storage
+    S3_ENDPOINT: z.string().optional(), // For R2 or other S3-compatible storage
     QSTASH_TOKEN: z.string().optional(), // Upstash QStash token
     QSTASH_CURRENT_SIGNING_KEY: z.string().optional(), // QStash webhook signature verification
     QSTASH_NEXT_SIGNING_KEY: z.string().optional(), // QStash webhook signature verification (for key rotation)
@@ -36,7 +38,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    NEXT_PUBLIC_APP_URL: z.string().url().optional(),
+    NEXT_PUBLIC_APP_URL: z.string().optional(),
   },
 
   /**

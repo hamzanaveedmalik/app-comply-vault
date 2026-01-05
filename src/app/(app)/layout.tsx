@@ -1,6 +1,6 @@
 import { auth } from "~/server/auth";
 import { redirect } from "next/navigation";
-import { Navigation } from "~/components/navigation";
+import { Sidebar } from "~/components/sidebar";
 
 export default async function AppLayout({
   children,
@@ -19,11 +19,14 @@ export default async function AppLayout({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navigation
+      <Sidebar
         userEmail={session.user.email}
         userName={session.user.name}
       />
-      <main>{children}</main>
+      {/* Main content with left padding for desktop sidebar and top padding for mobile */}
+      <main className="lg:pl-64 pt-16 lg:pt-0">
+        {children}
+      </main>
     </div>
   );
 }

@@ -1,0 +1,122 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
+import { Button } from "~/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
+import { Menu } from "lucide-react";
+import { cn } from "~/lib/utils";
+import { useState } from "react";
+
+interface SidebarProps {
+  userEmail?: string | null;
+  userName?: string | null;
+}
+
+export function Sidebar({ userEmail, userName }: SidebarProps) {
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const isActive = (path: string) => {
+    if (path === "/dashboard") {
+      return pathname === "/dashboard";
+    }
+    return pathname?.startsWith(path);
+  };
+
+  const navLinks = [
+    { href: "/dashboard", label: "Dashboard" },
+    { href: "/upload", label: "Upload" },
+    { href: "/settings", label: "Settings" },
+  ];
+
+  const SidebarContent = () => (
+    <div className="flex h-full flex-col">
+      {/* Logo */}
+      <div className="flex h-16 items-center border-b px-6">
+        <Link href="/dashboard" className="flex items-center gap-3" onClick={() => setIsOpen(false)}>
+          <img 
+            src="/intellivault-logo.svg" 
+            alt="Comply Vault" 
+            className="h-16 w-auto"
+          />
+          <span className="text-xl font-bold">
+            Comply Vault
+          </span>
+        </Link>
+      </div>
+
+      {/* Navigation Links */}
+      <nav className="flex-1 space-y-1 px-3 py-4">
+        {navLinks.map((link) => (
+          <Button
+            key={link.href}
+            variant={isActive(link.href) ? "secondary" : "ghost"}
+            className={cn(
+              "w-full justify-start",
+              isActive(link.href) && "bg-secondary"
+            )}
+            asChild
+          >
+            <Link href={link.href} onClick={() => setIsOpen(false)}>
+              {link.label}
+            </Link>
+          </Button>
+        ))}
+      </nav>
+
+      {/* User Info and Sign Out */}
+      <div className="border-t p-4">
+        <div className="mb-3 text-sm text-muted-foreground">
+          {userName || userEmail || "User"}
+        </div>
+        <Button
+          variant="ghost"
+          className="w-full justify-start"
+          onClick={() => signOut({ callbackUrl: "/" })}
+        >
+          Sign Out
+        </Button>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar - Always visible */}
+      <aside className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col border-r bg-background">
+        <SidebarContent />
+      </aside>
+
+      {/* Mobile Top Bar with Menu Button */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 border-b bg-background">
+        <div className="flex h-16 items-center justify-between px-4">
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Toggle menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-64 p-0">
+              <SidebarContent />
+            </SheetContent>
+          </Sheet>
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <img 
+              src="/intellivault-logo.svg" 
+              alt="Comply Vault" 
+              className="h-16 w-auto"
+            />
+            <span className="text-xl font-bold">
+              Comply Vault
+            </span>
+          </Link>
+          <div className="w-10" /> {/* Spacer for centering */}
+        </div>
+      </div>
+    </>
+  );
+}
+

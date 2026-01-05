@@ -34,9 +34,14 @@ export function Navigation({ userEmail, userName }: NavigationProps) {
         <div className="flex h-16 items-center justify-between">
           {/* Logo and Main Navigation */}
           <div className="flex items-center gap-8">
-            <Link href="/dashboard" className="flex items-center">
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <img 
+                src="/intellivault-logo.svg" 
+                alt="Comply Vault" 
+                className="h-8 w-auto"
+              />
               <span className="text-xl font-bold">
-                RIA Compliance
+                Comply Vault
               </span>
             </Link>
             <div className="hidden md:flex md:gap-1">

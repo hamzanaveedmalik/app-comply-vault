@@ -22,11 +22,11 @@ export async function sendInvitationEmail({
   const emailContent = {
     from: process.env.EMAIL_FROM || "noreply@ria-compliance.com",
     to: email,
-    subject: `Invitation to join ${workspaceName} on RIA Compliance Tool`,
+    subject: `Invitation to join ${workspaceName} on Comply Vault`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2>You've been invited to join ${workspaceName}</h2>
-        <p>You've been invited to join the workspace <strong>${workspaceName}</strong> on RIA Compliance Tool with the role: <strong>${role === "OWNER_CCO" ? "Owner/CCO" : "Member"}</strong>.</p>
+        <p>You've been invited to join the workspace <strong>${workspaceName}</strong> on Comply Vault with the role: <strong>${role === "OWNER_CCO" ? "Owner/CCO" : "Member"}</strong>.</p>
         <p>Click the button below to accept the invitation:</p>
         <a href="${invitationUrl}" style="display: inline-block; padding: 12px 24px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0;">
           Accept Invitation
@@ -37,7 +37,7 @@ export async function sendInvitationEmail({
       </div>
     `,
     text: `
-      You've been invited to join ${workspaceName} on RIA Compliance Tool.
+      You've been invited to join ${workspaceName} on Comply Vault.
       
       Role: ${role === "OWNER_CCO" ? "Owner/CCO" : "Member"}
       
@@ -100,7 +100,7 @@ export async function sendDraftReadyEmail({
         </a>
         <p>Or copy and paste this link into your browser:</p>
         <p style="word-break: break-all; color: #666;">${meetingUrl}</p>
-        <p style="color: #999; font-size: 12px; margin-top: 30px;">This is an automated notification from RIA Compliance Tool.</p>
+        <p style="color: #999; font-size: 12px; margin-top: 30px;">This is an automated notification from Comply Vault.</p>
       </div>
     `,
     text: `
@@ -110,7 +110,7 @@ export async function sendDraftReadyEmail({
       
       Review the meeting: ${meetingUrl}
       
-      This is an automated notification from RIA Compliance Tool.
+      This is an automated notification from Comply Vault.
     `,
   };
 

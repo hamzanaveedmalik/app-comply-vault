@@ -48,7 +48,7 @@ export default function NewWorkspacePage() {
         <CardHeader>
           <CardTitle>Create Your Workspace</CardTitle>
           <CardDescription>
-            Set up your RIA firm&apos;s compliance documentation system
+            Set up your firm&apos;s compliance documentation system
           </CardDescription>
         </CardHeader>
         <CardContent>

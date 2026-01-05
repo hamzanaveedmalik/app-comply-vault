@@ -31,7 +31,7 @@ export function Sidebar({ userEmail, userName, userRole }: SidebarProps) {
     { href: "/interaction-log", label: "Interaction Log" },
     { href: "/review", label: "Review Queue" },
     { href: "/upload", label: "Upload" },
-    { href: "/settings", label: "Settings" },
+    { href: "/notifications", label: "Notifications" },
     ...(userRole === "OWNER_CCO" ? [{ href: "/audit-logs", label: "Audit Logs" }] : []),
   ];
 
@@ -70,18 +70,11 @@ export function Sidebar({ userEmail, userName, userRole }: SidebarProps) {
         ))}
       </nav>
 
-      {/* User Info and Sign Out */}
+      {/* User Info - Simplified (full menu in top bar) */}
       <div className="border-t p-4">
-        <div className="mb-3 text-sm text-muted-foreground">
+        <div className="text-sm text-muted-foreground">
           {userName || userEmail || "User"}
         </div>
-        <Button
-          variant="ghost"
-          className="w-full justify-start"
-          onClick={() => signOut({ callbackUrl: "/" })}
-        >
-          Sign Out
-        </Button>
       </div>
     </div>
   );

@@ -149,6 +149,7 @@ exports.Prisma.MeetingScalarFieldEnum = {
   fileUrl: 'fileUrl',
   transcript: 'transcript',
   extraction: 'extraction',
+  searchableText: 'searchableText',
   finalizedBy: 'finalizedBy',
   finalizedAt: 'finalizedAt',
   draftReadyAt: 'draftReadyAt',

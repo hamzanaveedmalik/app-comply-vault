@@ -4195,6 +4195,7 @@ export namespace Prisma {
     meetingDate: Date | null
     status: $Enums.MeetingStatus | null
     fileUrl: string | null
+    searchableText: string | null
     finalizedBy: string | null
     finalizedAt: Date | null
     draftReadyAt: Date | null
@@ -4212,6 +4213,7 @@ export namespace Prisma {
     meetingDate: Date | null
     status: $Enums.MeetingStatus | null
     fileUrl: string | null
+    searchableText: string | null
     finalizedBy: string | null
     finalizedAt: Date | null
     draftReadyAt: Date | null
@@ -4231,6 +4233,7 @@ export namespace Prisma {
     fileUrl: number
     transcript: number
     extraction: number
+    searchableText: number
     finalizedBy: number
     finalizedAt: number
     draftReadyAt: number
@@ -4258,6 +4261,7 @@ export namespace Prisma {
     meetingDate?: true
     status?: true
     fileUrl?: true
+    searchableText?: true
     finalizedBy?: true
     finalizedAt?: true
     draftReadyAt?: true
@@ -4275,6 +4279,7 @@ export namespace Prisma {
     meetingDate?: true
     status?: true
     fileUrl?: true
+    searchableText?: true
     finalizedBy?: true
     finalizedAt?: true
     draftReadyAt?: true
@@ -4294,6 +4299,7 @@ export namespace Prisma {
     fileUrl?: true
     transcript?: true
     extraction?: true
+    searchableText?: true
     finalizedBy?: true
     finalizedAt?: true
     draftReadyAt?: true
@@ -4400,6 +4406,7 @@ export namespace Prisma {
     fileUrl: string | null
     transcript: JsonValue | null
     extraction: JsonValue | null
+    searchableText: string | null
     finalizedBy: string | null
     finalizedAt: Date | null
     draftReadyAt: Date | null
@@ -4438,6 +4445,7 @@ export namespace Prisma {
     fileUrl?: boolean
     transcript?: boolean
     extraction?: boolean
+    searchableText?: boolean
     finalizedBy?: boolean
     finalizedAt?: boolean
     draftReadyAt?: boolean
@@ -4461,6 +4469,7 @@ export namespace Prisma {
     fileUrl?: boolean
     transcript?: boolean
     extraction?: boolean
+    searchableText?: boolean
     finalizedBy?: boolean
     finalizedAt?: boolean
     draftReadyAt?: boolean
@@ -4481,6 +4490,7 @@ export namespace Prisma {
     fileUrl?: boolean
     transcript?: boolean
     extraction?: boolean
+    searchableText?: boolean
     finalizedBy?: boolean
     finalizedAt?: boolean
     draftReadyAt?: boolean
@@ -4501,6 +4511,7 @@ export namespace Prisma {
     fileUrl?: boolean
     transcript?: boolean
     extraction?: boolean
+    searchableText?: boolean
     finalizedBy?: boolean
     finalizedAt?: boolean
     draftReadyAt?: boolean
@@ -4510,7 +4521,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientName" | "meetingType" | "meetingDate" | "status" | "fileUrl" | "transcript" | "extraction" | "finalizedBy" | "finalizedAt" | "draftReadyAt" | "timeToFinalize" | "readyForCCO" | "createdAt" | "updatedAt", ExtArgs["result"]["meeting"]>
+  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientName" | "meetingType" | "meetingDate" | "status" | "fileUrl" | "transcript" | "extraction" | "searchableText" | "finalizedBy" | "finalizedAt" | "draftReadyAt" | "timeToFinalize" | "readyForCCO" | "createdAt" | "updatedAt", ExtArgs["result"]["meeting"]>
   export type MeetingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     versions?: boolean | Meeting$versionsArgs<ExtArgs>
@@ -4541,6 +4552,7 @@ export namespace Prisma {
       fileUrl: string | null
       transcript: Prisma.JsonValue | null
       extraction: Prisma.JsonValue | null
+      searchableText: string | null
       finalizedBy: string | null
       finalizedAt: Date | null
       draftReadyAt: Date | null
@@ -4983,6 +4995,7 @@ export namespace Prisma {
     readonly fileUrl: FieldRef<"Meeting", 'String'>
     readonly transcript: FieldRef<"Meeting", 'Json'>
     readonly extraction: FieldRef<"Meeting", 'Json'>
+    readonly searchableText: FieldRef<"Meeting", 'String'>
     readonly finalizedBy: FieldRef<"Meeting", 'String'>
     readonly finalizedAt: FieldRef<"Meeting", 'DateTime'>
     readonly draftReadyAt: FieldRef<"Meeting", 'DateTime'>
@@ -13201,6 +13214,7 @@ export namespace Prisma {
     fileUrl: 'fileUrl',
     transcript: 'transcript',
     extraction: 'extraction',
+    searchableText: 'searchableText',
     finalizedBy: 'finalizedBy',
     finalizedAt: 'finalizedAt',
     draftReadyAt: 'draftReadyAt',
@@ -13635,6 +13649,7 @@ export namespace Prisma {
     fileUrl?: StringNullableFilter<"Meeting"> | string | null
     transcript?: JsonNullableFilter<"Meeting">
     extraction?: JsonNullableFilter<"Meeting">
+    searchableText?: StringNullableFilter<"Meeting"> | string | null
     finalizedBy?: StringNullableFilter<"Meeting"> | string | null
     finalizedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     draftReadyAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
@@ -13657,6 +13672,7 @@ export namespace Prisma {
     fileUrl?: SortOrderInput | SortOrder
     transcript?: SortOrderInput | SortOrder
     extraction?: SortOrderInput | SortOrder
+    searchableText?: SortOrderInput | SortOrder
     finalizedBy?: SortOrderInput | SortOrder
     finalizedAt?: SortOrderInput | SortOrder
     draftReadyAt?: SortOrderInput | SortOrder
@@ -13682,6 +13698,7 @@ export namespace Prisma {
     fileUrl?: StringNullableFilter<"Meeting"> | string | null
     transcript?: JsonNullableFilter<"Meeting">
     extraction?: JsonNullableFilter<"Meeting">
+    searchableText?: StringNullableFilter<"Meeting"> | string | null
     finalizedBy?: StringNullableFilter<"Meeting"> | string | null
     finalizedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     draftReadyAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
@@ -13704,6 +13721,7 @@ export namespace Prisma {
     fileUrl?: SortOrderInput | SortOrder
     transcript?: SortOrderInput | SortOrder
     extraction?: SortOrderInput | SortOrder
+    searchableText?: SortOrderInput | SortOrder
     finalizedBy?: SortOrderInput | SortOrder
     finalizedAt?: SortOrderInput | SortOrder
     draftReadyAt?: SortOrderInput | SortOrder
@@ -13731,6 +13749,7 @@ export namespace Prisma {
     fileUrl?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
     transcript?: JsonNullableWithAggregatesFilter<"Meeting">
     extraction?: JsonNullableWithAggregatesFilter<"Meeting">
+    searchableText?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
     finalizedBy?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
     finalizedAt?: DateTimeNullableWithAggregatesFilter<"Meeting"> | Date | string | null
     draftReadyAt?: DateTimeNullableWithAggregatesFilter<"Meeting"> | Date | string | null
@@ -14362,6 +14381,7 @@ export namespace Prisma {
     fileUrl?: string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
@@ -14384,6 +14404,7 @@ export namespace Prisma {
     fileUrl?: string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
@@ -14404,6 +14425,7 @@ export namespace Prisma {
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -14426,6 +14448,7 @@ export namespace Prisma {
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -14447,6 +14470,7 @@ export namespace Prisma {
     fileUrl?: string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
@@ -14465,6 +14489,7 @@ export namespace Prisma {
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -14484,6 +14509,7 @@ export namespace Prisma {
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -15351,6 +15377,7 @@ export namespace Prisma {
     fileUrl?: SortOrder
     transcript?: SortOrder
     extraction?: SortOrder
+    searchableText?: SortOrder
     finalizedBy?: SortOrder
     finalizedAt?: SortOrder
     draftReadyAt?: SortOrder
@@ -15372,6 +15399,7 @@ export namespace Prisma {
     meetingDate?: SortOrder
     status?: SortOrder
     fileUrl?: SortOrder
+    searchableText?: SortOrder
     finalizedBy?: SortOrder
     finalizedAt?: SortOrder
     draftReadyAt?: SortOrder
@@ -15389,6 +15417,7 @@ export namespace Prisma {
     meetingDate?: SortOrder
     status?: SortOrder
     fileUrl?: SortOrder
+    searchableText?: SortOrder
     finalizedBy?: SortOrder
     finalizedAt?: SortOrder
     draftReadyAt?: SortOrder
@@ -16642,6 +16671,7 @@ export namespace Prisma {
     fileUrl?: string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
@@ -16662,6 +16692,7 @@ export namespace Prisma {
     fileUrl?: string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
@@ -16801,6 +16832,7 @@ export namespace Prisma {
     fileUrl?: StringNullableFilter<"Meeting"> | string | null
     transcript?: JsonNullableFilter<"Meeting">
     extraction?: JsonNullableFilter<"Meeting">
+    searchableText?: StringNullableFilter<"Meeting"> | string | null
     finalizedBy?: StringNullableFilter<"Meeting"> | string | null
     finalizedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     draftReadyAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
@@ -17194,6 +17226,7 @@ export namespace Prisma {
     fileUrl?: string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
@@ -17215,6 +17248,7 @@ export namespace Prisma {
     fileUrl?: string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
@@ -17250,6 +17284,7 @@ export namespace Prisma {
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17271,6 +17306,7 @@ export namespace Prisma {
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17325,6 +17361,7 @@ export namespace Prisma {
     fileUrl?: string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
@@ -17346,6 +17383,7 @@ export namespace Prisma {
     fileUrl?: string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
@@ -17422,6 +17460,7 @@ export namespace Prisma {
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17443,6 +17482,7 @@ export namespace Prisma {
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17814,6 +17854,7 @@ export namespace Prisma {
     fileUrl?: string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
     finalizedBy?: string | null
     finalizedAt?: Date | string | null
     draftReadyAt?: Date | string | null
@@ -17869,6 +17910,7 @@ export namespace Prisma {
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17889,6 +17931,7 @@ export namespace Prisma {
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17909,6 +17952,7 @@ export namespace Prisma {
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     transcript?: NullableJsonNullValueInput | InputJsonValue
     extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
     finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

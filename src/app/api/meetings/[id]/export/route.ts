@@ -4,6 +4,9 @@ import { generateAuditPack, generateExportFilename } from "~/server/export";
 import type { ExtractionData } from "~/server/extraction/types";
 import type { TranscriptSegment } from "~/server/transcription/types";
 
+// Force Node.js runtime for this route (needed for Buffer and archiver)
+export const runtime = "nodejs";
+
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }

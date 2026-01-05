@@ -102,14 +102,20 @@ Vercel will auto-detect Next.js. Settings:
 - **Output Directory**: `.next` (default)
 - **Install Command**: `npm install` (default)
 
+**⚠️ STOP HERE - Don't click "Deploy" yet!**
+
 ### 4.3 Add Environment Variables (CRITICAL - Do This BEFORE Deploying)
+
+**The build will fail if you don't add environment variables first!**
+
+Before clicking "Deploy", you MUST add environment variables:
 
 **⚠️ IMPORTANT**: You MUST add environment variables BEFORE clicking "Deploy", otherwise the build will fail.
 
-1. In Vercel project settings, go to **Settings** → **Environment Variables**
+1. **Before clicking "Deploy"**, go to **Settings** → **Environment Variables** (in the left sidebar)
 2. Click **"Add New"** for each variable below
-3. Add variables for **Production**, **Preview**, and **Development** environments (or at least Production)
-4. Add each variable:
+3. Select environment: **Production**, **Preview**, and **Development** (or at least Production)
+4. Add each variable one by one:
 
 **Required (Minimum for Build to Succeed):**
 ```

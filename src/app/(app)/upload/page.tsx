@@ -33,61 +33,106 @@ export default function UploadPage() {
     setIsUploading(true);
 
     try {
+      // Convert datetime-local format to ISO string
+      // datetime-local returns "YYYY-MM-DDTHH:mm" format
+      const dateISO = meetingDate ? new Date(meetingDate).toISOString() : new Date().toISOString();
+
       // Step 1: Initialize upload - get presigned URL
-      const initResponse = await fetch("/api/upload/init", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          clientName,
-          meetingType,
-          meetingDate: new Date(meetingDate).toISOString(),
-          consent,
-          fileName: file.name,
-          fileSize: file.size,
-        }),
-      });
+      let initResponse;
+      try {
+        initResponse = await fetch("/api/upload/init", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            clientName,
+            meetingType,
+            meetingDate: dateISO,
+            consent,
+            fileName: file.name,
+            fileSize: file.size,
+          }),
+        });
+      } catch (err) {
+        throw new Error(`Network error: ${err instanceof Error ? err.message : "Failed to connect to server"}`);
+      }
 
       if (!initResponse.ok) {
-        const data = await initResponse.json().catch(() => ({ error: "Failed to initialize upload" }));
-        throw new Error(data.error || "Failed to initialize upload");
+        let errorMessage = "Failed to initialize upload";
+        try {
+          const data = await initResponse.json();
+          if (data.error) {
+            if (Array.isArray(data.error)) {
+              errorMessage = data.error.map((e: any) => e.message || e).join(", ");
+            } else if (typeof data.error === "string") {
+              errorMessage = data.error;
+            } else if (data.error?.message) {
+              errorMessage = data.error.message;
+            }
+          }
+        } catch {
+          errorMessage = `Server error: ${initResponse.status} ${initResponse.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
 
       const { meetingId, uploadUrl } = await initResponse.json();
 
+      if (!uploadUrl) {
+        throw new Error("No upload URL received from server");
+      }
+
       // Step 2: Upload file directly to S3/R2 using presigned URL
-      const uploadResponse = await fetch(uploadUrl, {
-        method: "PUT",
-        body: file,
-        headers: {
-          "Content-Type": file.type || "application/octet-stream",
-        },
-      });
+      let uploadResponse;
+      try {
+        uploadResponse = await fetch(uploadUrl, {
+          method: "PUT",
+          body: file,
+          headers: {
+            "Content-Type": file.type || "application/octet-stream",
+          },
+        });
+      } catch (err) {
+        throw new Error(`Upload to storage failed: ${err instanceof Error ? err.message : "Network error"}`);
+      }
 
       if (!uploadResponse.ok) {
-        throw new Error(`Upload failed: ${uploadResponse.statusText}`);
+        throw new Error(`Upload failed: ${uploadResponse.status} ${uploadResponse.statusText}`);
       }
 
       // Step 3: Notify API that upload is complete
-      const completeResponse = await fetch("/api/upload/complete", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ meetingId }),
-      });
+      let completeResponse;
+      try {
+        completeResponse = await fetch("/api/upload/complete", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ meetingId }),
+        });
+      } catch (err) {
+        throw new Error(`Failed to complete upload: ${err instanceof Error ? err.message : "Network error"}`);
+      }
 
       if (!completeResponse.ok) {
-        const data = await completeResponse.json().catch(() => ({ error: "Failed to complete upload" }));
-        throw new Error(data.error || "Failed to complete upload");
+        let errorMessage = "Failed to complete upload";
+        try {
+          const data = await completeResponse.json();
+          errorMessage = data.error || errorMessage;
+        } catch {
+          errorMessage = `Server error: ${completeResponse.status} ${completeResponse.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
 
       // Redirect to meeting detail page
       router.push(`/meetings/${meetingId}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      const errorMessage = err instanceof Error ? err.message : "An error occurred";
+      setError(errorMessage);
       setIsUploading(false);
+      console.error("Upload error:", err);
     }
   };
 

@@ -146,8 +146,6 @@ See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for deployment instructions.
 
 - [SETUP_GUIDE.md](./SETUP_GUIDE.md) - Complete setup instructions
 - [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - GitHub + Vercel deployment
-- [EPIC2_SUMMARY.md](./EPIC2_SUMMARY.md) - EPIC 2 implementation summary
-- [TESTING_GUIDE.md](./TESTING_GUIDE.md) - Testing scenarios
 
 ## License
 

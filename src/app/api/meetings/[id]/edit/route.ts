@@ -46,8 +46,13 @@ export async function POST(
       return Response.json({ error: "Meeting not found" }, { status: 404 });
     }
 
-    // Check if meeting is finalized (read-only)
+    // Check if meeting is finalized (read-only) - return 403 Forbidden
     if (meeting.status === "FINALIZED") {
+      return Response.json(
+        { error: "Meeting is finalized and cannot be edited" },
+        { status: 403 }
+      );
+    }
       return Response.json(
         { error: "Cannot edit finalized meetings" },
         { status: 403 }

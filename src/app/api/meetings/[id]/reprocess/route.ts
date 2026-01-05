@@ -29,6 +29,14 @@ export async function POST(
       return Response.json({ error: "Meeting not found" }, { status: 404 });
     }
 
+    // Check if meeting is finalized (read-only) - return 403 Forbidden
+    if (meeting.status === "FINALIZED") {
+      return Response.json(
+        { error: "Meeting is finalized and cannot be reprocessed" },
+        { status: 403 }
+      );
+    }
+
     // Check if meeting has a transcript
     const transcript = meeting.transcript as
       | { segments: Array<{ startTime: number; endTime: number; text: string; speaker: string }> }

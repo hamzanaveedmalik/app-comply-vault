@@ -67,12 +67,14 @@ export default function ExtractedFields({ extraction }: ExtractedFieldsProps) {
               <li key={idx} className="border-l-2 border-green-500 pl-3">
                 <div className="flex items-start justify-between">
                   <p className="text-sm text-gray-900 flex-1">{rec.text}</p>
-                  <button
+                  <Button
+                    variant="link"
+                    size="sm"
                     onClick={() => scrollToTimestamp(rec.startTime)}
-                    className="ml-2 text-xs text-blue-600 hover:text-blue-800 hover:underline"
+                    className="ml-2 h-auto p-0 text-xs"
                   >
                     {formatTime(rec.startTime)}
-                  </button>
+                  </Button>
                 </div>
                 {rec.confidence !== undefined && (
                   <div className="mt-1 flex items-center gap-2">
@@ -98,12 +100,14 @@ export default function ExtractedFields({ extraction }: ExtractedFieldsProps) {
               <li key={idx} className="border-l-2 border-orange-500 pl-3">
                 <div className="flex items-start justify-between">
                   <p className="text-sm text-gray-900 flex-1">{dis.text}</p>
-                  <button
+                  <Button
+                    variant="link"
+                    size="sm"
                     onClick={() => scrollToTimestamp(dis.startTime)}
-                    className="ml-2 text-xs text-blue-600 hover:text-blue-800 hover:underline"
+                    className="ml-2 h-auto p-0 text-xs"
                   >
                     {formatTime(dis.startTime)}
-                  </button>
+                  </Button>
                 </div>
                 {dis.confidence !== undefined && (
                   <div className="mt-1 flex items-center gap-2">
@@ -129,12 +133,14 @@ export default function ExtractedFields({ extraction }: ExtractedFieldsProps) {
               <li key={idx} className="border-l-2 border-purple-500 pl-3">
                 <div className="flex items-start justify-between">
                   <p className="text-sm text-gray-900 flex-1">{dec.text}</p>
-                  <button
+                  <Button
+                    variant="link"
+                    size="sm"
                     onClick={() => scrollToTimestamp(dec.startTime)}
-                    className="ml-2 text-xs text-blue-600 hover:text-blue-800 hover:underline"
+                    className="ml-2 h-auto p-0 text-xs"
                   >
                     {formatTime(dec.startTime)}
-                  </button>
+                  </Button>
                 </div>
                 {dec.confidence !== undefined && (
                   <div className="mt-1 flex items-center gap-2">
@@ -160,12 +166,14 @@ export default function ExtractedFields({ extraction }: ExtractedFieldsProps) {
               <li key={idx} className="border-l-2 border-blue-500 pl-3">
                 <div className="flex items-start justify-between">
                   <p className="text-sm text-gray-900 flex-1">{fu.text}</p>
-                  <button
+                  <Button
+                    variant="link"
+                    size="sm"
                     onClick={() => scrollToTimestamp(fu.startTime)}
-                    className="ml-2 text-xs text-blue-600 hover:text-blue-800 hover:underline"
+                    className="ml-2 h-auto p-0 text-xs"
                   >
                     {formatTime(fu.startTime)}
-                  </button>
+                  </Button>
                 </div>
                 {fu.confidence !== undefined && (
                   <div className="mt-1 flex items-center gap-2">

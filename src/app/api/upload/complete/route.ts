@@ -79,7 +79,7 @@ export async function POST(request: Request) {
       }
     }
 
-    // Log upload completion
+    // Log upload completion - always log, even if QStash job publishing failed
     await db.auditEvent.create({
       data: {
         workspaceId: session.user.workspaceId,
@@ -87,8 +87,10 @@ export async function POST(request: Request) {
         action: "UPLOAD",
         resourceType: "meeting",
         resourceId: meeting.id,
+        meetingId: meeting.id,
         metadata: {
           action: "upload_completed",
+          qstashJobPublished: !!env.QSTASH_TOKEN && meeting.status === "PROCESSING",
         },
       },
     });

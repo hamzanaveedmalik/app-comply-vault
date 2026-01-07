@@ -49,9 +49,16 @@ export async function GET(
     });
 
     // Check for QStash-related issues
+    // Look for upload_completed event OR check if status was updated to PROCESSING after upload
     const uploadCompleteEvent = auditEvents.find(
-      (e) => e.metadata && typeof e.metadata === "object" && "action" in e.metadata && e.metadata.action === "upload_completed"
+      (e) => {
+        const metadata = e.metadata as { action?: string } | null;
+        return metadata?.action === "upload_completed" || metadata?.action === "upload_initiated";
+      }
     );
+    
+    // Also check if meeting status is PROCESSING (which indicates upload completed)
+    const uploadCompleted = !!uploadCompleteEvent || meeting.status === "PROCESSING" || meeting.status === "DRAFT_READY" || meeting.status === "DRAFT" || meeting.status === "FINALIZED";
     const transcriptionCompleteEvent = auditEvents.find(
       (e) => e.metadata && typeof e.metadata === "object" && "action" in e.metadata && e.metadata.action === "transcription_complete"
     );
@@ -80,7 +87,7 @@ export async function GET(
       hasFile: !!meeting.fileUrl,
       hasTranscript: !!meeting.transcript,
       hasExtraction: !!meeting.extraction,
-      uploadComplete: !!uploadCompleteEvent,
+      uploadComplete: uploadCompleted,
       transcriptionComplete: !!transcriptionCompleteEvent,
       extractionComplete: !!extractionCompleteEvent,
       hasErrors: errorEvents.length > 0,
@@ -94,8 +101,8 @@ export async function GET(
 
     // Determine why it's stuck
     if (meeting.status === "PROCESSING") {
-      if (!uploadCompleteEvent) {
-        diagnosis.stuckReason = "Upload never completed - QStash job may not have been published";
+      if (!uploadCompleted) {
+        diagnosis.stuckReason = "Upload never completed - QStash job may not have been published. Try clicking 'Retry Processing'.";
       } else if (!transcriptionCompleteEvent && !errorEvents.some((e) => {
         const metadata = e.metadata as { action?: string } | null;
         return metadata?.action === "transcription_failed";
@@ -170,12 +177,17 @@ function getRecommendations(diagnosis: any, env: any): string[] {
 
   if (diagnosis.transcriptionComplete && !diagnosis.extractionComplete) {
     if (env.EXTRACTION_PROVIDER === "NOT SET") {
-      recommendations.push("❌ EXTRACTION_PROVIDER is not set");
+      recommendations.push("❌ EXTRACTION_PROVIDER is not set - set to 'openai' or 'anthropic' in Vercel environment variables");
     } else if (env.EXTRACTION_PROVIDER === "openai" && !env.OPENAI_API_KEY) {
-      recommendations.push("❌ OPENAI_API_KEY is not set");
+      recommendations.push("❌ OPENAI_API_KEY is not set - get it from https://platform.openai.com/api-keys");
     } else if (env.EXTRACTION_PROVIDER === "anthropic" && !env.ANTHROPIC_API_KEY) {
-      recommendations.push("❌ ANTHROPIC_API_KEY is not set");
+      recommendations.push("❌ ANTHROPIC_API_KEY is not set - get it from https://console.anthropic.com");
     }
+  }
+  
+  // Always check EXTRACTION_PROVIDER if it's missing (even before transcription completes)
+  if (env.EXTRACTION_PROVIDER === "NOT SET") {
+    recommendations.push("⚠️ EXTRACTION_PROVIDER is not set - extraction will fail. Set it to 'openai' or 'anthropic' in Vercel.");
   }
 
   if (diagnosis.hasErrors) {

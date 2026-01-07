@@ -50,15 +50,27 @@ export async function GET(
 
     // Check for QStash-related issues
     // Look for upload_completed event OR check if status was updated to PROCESSING after upload
-    const uploadCompleteEvent = auditEvents.find(
+    const uploadInitiatedEvent = auditEvents.find(
       (e) => {
         const metadata = e.metadata as { action?: string } | null;
-        return metadata?.action === "upload_completed" || metadata?.action === "upload_initiated";
+        return metadata?.action === "upload_initiated";
       }
     );
     
-    // Also check if meeting status is PROCESSING (which indicates upload completed)
-    const uploadCompleted = !!uploadCompleteEvent || meeting.status === "PROCESSING" || meeting.status === "DRAFT_READY" || meeting.status === "DRAFT" || meeting.status === "FINALIZED";
+    const uploadCompleteEvent = auditEvents.find(
+      (e) => {
+        const metadata = e.metadata as { action?: string } | null;
+        return metadata?.action === "upload_completed";
+      }
+    );
+    
+    // Upload is considered complete if:
+    // 1. We have an upload_completed event, OR
+    // 2. Meeting status is PROCESSING/DRAFT_READY/DRAFT/FINALIZED (meaning upload finished and processing started/ended), OR
+    // 3. We have an upload_initiated event AND the meeting has a fileUrl (file was uploaded)
+    const uploadCompleted = !!uploadCompleteEvent || 
+      (meeting.status !== "UPLOADING" && meeting.status !== "ERROR" && !!meeting.fileUrl) ||
+      (!!uploadInitiatedEvent && !!meeting.fileUrl && meeting.status === "PROCESSING");
     const transcriptionCompleteEvent = auditEvents.find(
       (e) => e.metadata && typeof e.metadata === "object" && "action" in e.metadata && e.metadata.action === "transcription_complete"
     );
@@ -101,7 +113,10 @@ export async function GET(
 
     // Determine why it's stuck
     if (meeting.status === "PROCESSING") {
-      if (!uploadCompleted) {
+      // If we have file but no upload_completed event, the upload completed but QStash job wasn't published
+      if (meeting.fileUrl && !uploadCompleteEvent && !uploadCompleted) {
+        diagnosis.stuckReason = "File uploaded but QStash job was not published. Click 'Retry Processing' to republish the job.";
+      } else if (!uploadCompleted) {
         diagnosis.stuckReason = "Upload never completed - QStash job may not have been published. Try clicking 'Retry Processing'.";
       } else if (!transcriptionCompleteEvent && !errorEvents.some((e) => {
         const metadata = e.metadata as { action?: string } | null;

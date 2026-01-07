@@ -62,6 +62,37 @@ export async function POST(
         });
       }
 
+      // Check if upload_completed event exists, if not create it
+      const existingUploadComplete = await db.auditEvent.findFirst({
+        where: {
+          workspaceId,
+          meetingId: meeting.id,
+          metadata: {
+            path: ["action"],
+            equals: "upload_completed",
+          },
+        },
+      });
+
+      // Log upload_completed event if missing
+      if (!existingUploadComplete) {
+        await db.auditEvent.create({
+          data: {
+            workspaceId,
+            userId: session.user.id,
+            action: "UPLOAD",
+            resourceType: "meeting",
+            resourceId: meeting.id,
+            meetingId: meeting.id,
+            metadata: {
+              action: "upload_completed",
+              qstashJobPublished: true,
+              retroactivelyAdded: true,
+            },
+          },
+        });
+      }
+
       // Log retry event
       await db.auditEvent.create({
         data: {
@@ -70,6 +101,7 @@ export async function POST(
           action: "UPLOAD",
           resourceType: "meeting",
           resourceId: meeting.id,
+          meetingId: meeting.id,
           metadata: {
             action: "manual_retry",
             messageId,

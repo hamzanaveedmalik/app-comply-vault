@@ -73,7 +73,9 @@ export async function GET(request: Request) {
       );
     } else {
       // Search by client name (case-insensitive, partial match)
-      // Use both contains and startsWith for better matching
+      // This should match "eman" to "Eman Hamza"
+      console.log(`[Search] Searching for client name: "${query}" in workspace ${workspaceId}`);
+      
       const clientNameResults = await db.meeting.findMany({
         where: {
           workspaceId,
@@ -89,11 +91,14 @@ export async function GET(request: Request) {
           status: true,
           meetingType: true,
         },
-        take: 20, // Increased limit
+        take: 20,
         orderBy: {
           meetingDate: "desc",
         },
       });
+
+      console.log(`[Search] Found ${clientNameResults.length} client name matches:`, 
+        clientNameResults.map((m) => `${m.clientName} (${m.id})`));
 
       results.push(
         ...clientNameResults.map((meeting) => ({

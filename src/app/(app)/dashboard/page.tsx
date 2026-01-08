@@ -13,10 +13,19 @@ export default async function DashboardPage() {
     redirect("/workspaces/new");
   }
 
-  // Fetch meetings for the workspace
+  // Fetch meetings for the workspace (optimized: select only needed fields)
   const meetings = await db.meeting.findMany({
     where: {
       workspaceId: session.user.workspaceId,
+    },
+    select: {
+      id: true,
+      clientName: true,
+      meetingType: true,
+      meetingDate: true,
+      status: true,
+      createdAt: true,
+      readyForCCO: true,
     },
     orderBy: {
       createdAt: "desc",

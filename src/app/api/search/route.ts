@@ -1,6 +1,7 @@
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { NextResponse } from "next/server";
+import { measurePerformance, QueryOptimizations } from "~/server/performance";
 
 interface SearchResult {
   id: string;
@@ -13,22 +14,23 @@ interface SearchResult {
 }
 
 export async function GET(request: Request) {
-  try {
-    const session = await auth();
+  return measurePerformance("Search operation", async () => {
+    try {
+      const session = await auth();
 
-    if (!session?.user?.workspaceId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+      if (!session?.user?.workspaceId) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
 
-    const { searchParams } = new URL(request.url);
-    const query = searchParams.get("q")?.trim() || "";
+      const { searchParams } = new URL(request.url);
+      const query = searchParams.get("q")?.trim() || "";
 
-    if (query.length < 2) {
-      return NextResponse.json({ results: [] });
-    }
+      if (query.length < 2) {
+        return NextResponse.json({ results: [] });
+      }
 
-    const workspaceId = session.user.workspaceId;
-    const results: SearchResult[] = [];
+      const workspaceId = session.user.workspaceId;
+      const results: SearchResult[] = [];
 
     // Parse date range (format: "2024-01-01 to 2024-12-31" or "2024-01-01-2024-12-31")
     const dateRangeMatch = query.match(/(\d{4}-\d{2}-\d{2})\s*(?:to|-)\s*(\d{4}-\d{2}-\d{2})/i);
@@ -207,13 +209,14 @@ export async function GET(request: Request) {
       new Map(results.map((r) => [r.id, r])).values()
     ).slice(0, 20);
 
-    return NextResponse.json({ results: uniqueResults });
-  } catch (error) {
-    console.error("Search error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
-  }
+      return NextResponse.json({ results: uniqueResults });
+    } catch (error) {
+      console.error("Search error:", error);
+      return NextResponse.json(
+        { error: "Internal server error" },
+        { status: 500 }
+      );
+    }
+  });
 }
 

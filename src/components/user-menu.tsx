@@ -54,16 +54,21 @@ export function UserMenu({ userEmail, userName, userImage, userRole }: UserMenuP
       </Button>
 
       {/* Notifications Button */}
-      <Button variant="ghost" size="icon" asChild>
+      <Button variant="ghost" size="icon" asChild className="relative">
         <Link href="/notifications" className="relative">
           <Bell className="h-5 w-5" />
           {notificationCount > 0 && (
-            <Badge
-              variant="destructive"
-              className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
-            >
-              {notificationCount > 9 ? "9+" : notificationCount}
-            </Badge>
+            <>
+              {/* Red circle indicator for unread notifications */}
+              <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-background animate-pulse" />
+              {/* Counter badge */}
+              <Badge
+                variant="destructive"
+                className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs font-semibold shadow-lg z-10"
+              >
+                {notificationCount > 9 ? "9+" : notificationCount}
+              </Badge>
+            </>
           )}
           <span className="sr-only">Notifications</span>
         </Link>
@@ -78,12 +83,17 @@ export function UserMenu({ userEmail, userName, userImage, userRole }: UserMenuP
               <AvatarFallback>{getInitials()}</AvatarFallback>
             </Avatar>
             {notificationCount > 0 && (
-              <Badge
-                variant="destructive"
-                className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs border-2 border-background"
-              >
-                {notificationCount > 9 ? "9+" : notificationCount}
-              </Badge>
+              <>
+                {/* Red circle indicator for unread notifications */}
+                <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-background animate-pulse" />
+                {/* Counter badge */}
+                <Badge
+                  variant="destructive"
+                  className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs font-semibold border-2 border-background shadow-lg z-10"
+                >
+                  {notificationCount > 9 ? "9+" : notificationCount}
+                </Badge>
+              </>
             )}
           </Button>
         </DropdownMenuTrigger>

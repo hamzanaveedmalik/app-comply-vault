@@ -66,12 +66,25 @@ export function GlobalSearch({ className }: GlobalSearchProps) {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `/api/search?q=${encodeURIComponent(searchQuery)}`
+        `/api/search?q=${encodeURIComponent(searchQuery)}`,
+        {
+          credentials: "include", // Ensure cookies are sent
+        }
       );
       if (!response.ok) {
-        throw new Error("Search failed");
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Search failed:", response.status, errorData);
+        throw new Error(errorData.error || "Search failed");
       }
       const data = await response.json();
+      console.log("[GlobalSearch] Results received:", data.results?.length || 0, "for query:", searchQuery);
+      if (data.results && data.results.length > 0) {
+        console.log("[GlobalSearch] Sample results:", data.results.slice(0, 3).map((r: SearchResult) => ({
+          id: r.id,
+          clientName: r.clientName,
+          matchType: r.matchType,
+        })));
+      }
       setResults(data.results || []);
     } catch (error) {
       console.error("Search error:", error);

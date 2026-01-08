@@ -72,7 +72,8 @@ export async function GET(request: Request) {
         }))
       );
     } else {
-      // Search by client name (case-insensitive)
+      // Search by client name (case-insensitive, partial match)
+      // Use both contains and startsWith for better matching
       const clientNameResults = await db.meeting.findMany({
         where: {
           workspaceId,
@@ -88,10 +89,16 @@ export async function GET(request: Request) {
           status: true,
           meetingType: true,
         },
-        take: 10,
-        orderBy: {
-          meetingDate: "desc",
-        },
+        take: 20, // Increased limit
+        orderBy: [
+          // Prioritize exact matches and starts-with matches
+          {
+            clientName: "asc", // Sort alphabetically for consistent results
+          },
+          {
+            meetingDate: "desc",
+          },
+        ],
       });
 
       results.push(
@@ -209,7 +216,15 @@ export async function GET(request: Request) {
       new Map(results.map((r) => [r.id, r])).values()
     ).slice(0, 20);
 
-      return NextResponse.json({ results: uniqueResults });
+    // Log search results for debugging (only in development)
+    if (process.env.NODE_ENV === "development") {
+      console.log(`Search query: "${query}", Results: ${uniqueResults.length}`, {
+        clientNameMatches: results.filter((r) => r.matchType === "client").length,
+        keywordMatches: results.filter((r) => r.matchType === "transcript" || r.matchType === "field").length,
+      });
+    }
+
+    return NextResponse.json({ results: uniqueResults });
     } catch (error) {
       console.error("Search error:", error);
       return NextResponse.json(

@@ -321,23 +321,39 @@ async function handler(request: Request) {
 // Note: If signature verification fails, requests will be rejected with 401
 // Make sure QSTASH_CURRENT_SIGNING_KEY and QSTASH_NEXT_SIGNING_KEY are set in production
 export const POST = (() => {
-  if (process.env.NODE_ENV === "production") {
+  const isProduction = process.env.NODE_ENV === "production";
+  const hasSigningKeys = !!(process.env.QSTASH_CURRENT_SIGNING_KEY || process.env.QSTASH_NEXT_SIGNING_KEY);
+  
+  console.log(`🔧 QStash handler setup:`, {
+    isProduction,
+    hasSigningKeys,
+    currentKey: !!process.env.QSTASH_CURRENT_SIGNING_KEY,
+    nextKey: !!process.env.QSTASH_NEXT_SIGNING_KEY,
+  });
+  
+  if (isProduction) {
     // In production, verify signature
-    // If signing keys are missing, log a warning but still try to verify
-    if (!process.env.QSTASH_CURRENT_SIGNING_KEY && !process.env.QSTASH_NEXT_SIGNING_KEY) {
+    if (!hasSigningKeys) {
       console.warn("⚠️ WARNING: QStash signing keys not set in production. Webhook requests may be rejected.");
       console.warn("   Set QSTASH_CURRENT_SIGNING_KEY and QSTASH_NEXT_SIGNING_KEY in Vercel environment variables.");
+      console.warn("   Get them from: https://console.upstash.com/qstash");
+      // Still try to use verification - it might work with just the token
     }
     
     try {
-      return verifySignatureAppRouter(handler);
+      const verifiedHandler = verifySignatureAppRouter(handler);
+      console.log("✅ QStash signature verification enabled");
+      return verifiedHandler;
     } catch (error) {
       console.error("❌ Error setting up QStash signature verification:", error);
+      console.error("   Falling back to handler without verification");
       // Fall back to handler without verification if setup fails
       return handler;
     }
   }
+  
   // In development, skip signature verification
+  console.log("🔧 Development mode: QStash signature verification disabled");
   return handler;
 })();
 

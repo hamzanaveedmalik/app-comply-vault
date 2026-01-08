@@ -58,6 +58,14 @@ export async function publishProcessMeetingJob({
   // Publish job to QStash
   try {
     const qstash = getQStashClient();
+    
+    // Log publishing attempt
+    console.log(`📤 Attempting to publish QStash job:`, {
+      meetingId,
+      webhookUrl,
+      hasSigningKeys: !!(process.env.QSTASH_CURRENT_SIGNING_KEY || process.env.QSTASH_NEXT_SIGNING_KEY),
+    });
+    
     const messageId = await qstash.publishJSON({
       url: webhookUrl,
       body: payload,
@@ -65,13 +73,42 @@ export async function publishProcessMeetingJob({
       retries: 3,
       // Delay before first retry (exponential backoff)
       delay: 5,
+      // Add headers for debugging
+      headers: {
+        "X-QStash-Debug": "true",
+      },
     });
 
     console.log(`✅ QStash job published successfully!`, {
       messageId,
       meetingId,
       webhookUrl,
+      payloadSize: JSON.stringify(payload).length,
     });
+    
+    // Log to audit events for tracking
+    try {
+      const { db } = await import("~/server/db");
+      await db.auditEvent.create({
+        data: {
+          workspaceId,
+          userId: "system",
+          action: "UPLOAD",
+          resourceType: "meeting",
+          resourceId: meetingId,
+          meetingId,
+          metadata: {
+            action: "qstash_job_published",
+            messageId,
+            webhookUrl,
+            timestamp: new Date().toISOString(),
+          },
+        },
+      });
+    } catch (auditError) {
+      console.warn("Failed to log QStash publish to audit events:", auditError);
+    }
+    
     return messageId;
   } catch (error) {
     console.error("❌ QStash publish error:", error);
@@ -79,8 +116,33 @@ export async function publishProcessMeetingJob({
       console.error("Error details:", {
         message: error.message,
         stack: error.stack,
+        name: error.name,
       });
     }
+    
+    // Log publish failure to audit events
+    try {
+      const { db } = await import("~/server/db");
+      await db.auditEvent.create({
+        data: {
+          workspaceId,
+          userId: "system",
+          action: "UPLOAD",
+          resourceType: "meeting",
+          resourceId: meetingId,
+          meetingId,
+          metadata: {
+            action: "qstash_job_publish_failed",
+            error: error instanceof Error ? error.message : "Unknown error",
+            webhookUrl,
+            timestamp: new Date().toISOString(),
+          },
+        },
+      });
+    } catch (auditError) {
+      console.warn("Failed to log QStash publish failure to audit events:", auditError);
+    }
+    
     throw error;
   }
 }

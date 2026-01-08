@@ -2,6 +2,7 @@ import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { publishProcessMeetingJob } from "~/server/qstash";
 import { env } from "~/env";
+import { createErrorResponse, AppError, ErrorMessages } from "~/server/errors";
 import { z } from "zod";
 
 const completeUploadSchema = z.object({
@@ -32,13 +33,20 @@ export async function POST(request: Request) {
     });
 
     if (!meeting) {
-      return Response.json({ error: "Meeting not found" }, { status: 404 });
+      throw new AppError(
+        ErrorMessages.MEETING_NOT_FOUND.message,
+        404,
+        ErrorMessages.MEETING_NOT_FOUND.action,
+        "MEETING_NOT_FOUND"
+      );
     }
 
     if (meeting.status !== "UPLOADING") {
-      return Response.json(
-        { error: "Meeting is not in UPLOADING status" },
-        { status: 400 }
+      throw new AppError(
+        "Upload cannot be completed. The meeting is not in the correct state.",
+        400,
+        "Please try uploading the file again",
+        "INVALID_STATUS"
       );
     }
 
@@ -76,6 +84,12 @@ export async function POST(request: Request) {
         console.error("   Meeting will stay in UPLOADING status. Check QStash configuration.");
         console.error("   Required env vars: QSTASH_TOKEN, NEXT_PUBLIC_APP_URL");
         // Don't fail the completion if job publishing fails - job can be retried later
+        // But log a warning in the response
+        return Response.json({
+          meetingId: meeting.id,
+          status: "UPLOADING",
+          warning: "Upload completed but processing may be delayed. Please contact support if processing doesn't start.",
+        });
       }
     }
 
@@ -100,14 +114,13 @@ export async function POST(request: Request) {
       status: meeting.status,
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return Response.json({ error: error.errors }, { status: 400 });
+    if (error instanceof AppError) {
+      return Response.json(error.toJSON(), { status: error.statusCode });
     }
-    console.error("Error completing upload:", error);
-    return Response.json(
-      { error: "Failed to complete upload" },
-      { status: 500 }
-    );
+    return createErrorResponse(error, {
+      endpoint: "/api/upload/complete",
+      action: "upload_complete",
+    });
   }
 }
 

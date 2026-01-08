@@ -15,6 +15,7 @@ import TranscriptViewer from "./transcript-viewer";
 import ReadyForCCOButton from "./ready-for-cco-button";
 import FinalizeButton from "./finalize-button";
 import { MeetingStatusPoller } from "./meeting-status-poller";
+import RetryButton from "./retry-button";
 
 export default async function MeetingDetailPage({
   params,
@@ -196,12 +197,20 @@ export default async function MeetingDetailPage({
           </div>
         ) : (
           <Card>
-            <CardContent className="pt-6">
+            <CardContent className="pt-6 space-y-4">
               <p className="text-sm text-muted-foreground">
                 {meeting.status === "PROCESSING"
                   ? "This meeting is being processed. The transcript will be available once processing is complete."
                   : "This meeting is still uploading. Please wait for processing to complete."}
               </p>
+              {meeting.status === "PROCESSING" && (
+                <RetryButton
+                  meetingId={meeting.id}
+                  status={meeting.status}
+                  hasFile={!!meeting.fileUrl}
+                  type="processing"
+                />
+              )}
             </CardContent>
           </Card>
         )}

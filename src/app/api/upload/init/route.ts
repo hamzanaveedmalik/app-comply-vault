@@ -2,6 +2,7 @@ import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { generatePresignedUploadUrl } from "~/server/storage";
 import { validateFile, getContentType } from "~/server/storage-utils";
+import { createErrorResponse, ErrorMessages, AppError } from "~/server/errors";
 import { z } from "zod";
 
 const initUploadSchema = z.object({
@@ -32,9 +33,27 @@ export async function POST(request: Request) {
     // Validate file
     const fileValidation = validateFile(validation.fileName, validation.fileSize);
     if (!fileValidation.valid) {
-      return Response.json(
-        { error: fileValidation.error },
-        { status: 400 }
+      if (fileValidation.error?.includes("too large")) {
+        throw new AppError(
+          ErrorMessages.FILE_TOO_LARGE.message,
+          400,
+          ErrorMessages.FILE_TOO_LARGE.action,
+          "FILE_TOO_LARGE"
+        );
+      }
+      if (fileValidation.error?.includes("format") || fileValidation.error?.includes("extension")) {
+        throw new AppError(
+          ErrorMessages.INVALID_FILE_FORMAT.message,
+          400,
+          ErrorMessages.INVALID_FILE_FORMAT.action,
+          "INVALID_FILE_FORMAT"
+        );
+      }
+      throw new AppError(
+        fileValidation.error || "File validation failed",
+        400,
+        "Please check your file and try again",
+        "FILE_VALIDATION_ERROR"
       );
     }
 
@@ -86,14 +105,13 @@ export async function POST(request: Request) {
       key,
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return Response.json({ error: error.errors }, { status: 400 });
+    if (error instanceof AppError) {
+      return Response.json(error.toJSON(), { status: error.statusCode });
     }
-    console.error("Error initializing upload:", error);
-    return Response.json(
-      { error: "Failed to initialize upload" },
-      { status: 500 }
-    );
+    return createErrorResponse(error, {
+      endpoint: "/api/upload/init",
+      action: "upload_init",
+    });
   }
 }
 

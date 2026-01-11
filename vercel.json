@@ -1,0 +1,7 @@
+{
+  "github": {
+    "autoDeployOnPush": true,
+    "autoJobCancelation": true
+  }
+}
+

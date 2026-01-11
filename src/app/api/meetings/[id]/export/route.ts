@@ -3,6 +3,7 @@ import { db } from "~/server/db";
 import { generateAuditPack, generateExportFilename } from "~/server/export";
 import type { ExtractionData } from "~/server/extraction/types";
 import type { TranscriptSegment } from "~/server/transcription/types";
+import type { Meeting, User } from "~/server/export/types";
 
 // Force Node.js runtime for this route (needed for Buffer and archiver)
 export const runtime = "nodejs";
@@ -121,11 +122,16 @@ export async function POST(
     }));
 
     // Generate audit pack
+    // Exclude finalizedBy from meeting and add it as User object
+    // Type assertion needed because Meeting.finalizedBy is string | null, but export expects User | null
+    const { finalizedBy: _, ...meetingWithoutFinalizedBy } = meeting;
+    const meetingForExport = {
+      ...meetingWithoutFinalizedBy,
+      finalizedBy: finalizedByUser,
+    } as Meeting & { finalizedBy?: User | null };
+    
     const zipBuffer = await generateAuditPack({
-      meeting: {
-        ...meeting,
-        finalizedBy: finalizedByUser,
-      },
+      meeting: meetingForExport,
       extraction,
       transcript,
       versions,

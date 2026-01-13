@@ -1,6 +1,6 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
+import GoogleProvider from "next-auth/providers/google";
 
 import { db } from "~/server/db";
 
@@ -32,25 +32,13 @@ declare module "next-auth" {
  */
 export const authConfig = {
   providers: [
-    // DiscordProvider requires AUTH_DISCORD_ID and AUTH_DISCORD_SECRET
-    // These are validated at runtime, not build time
-    ...(process.env.AUTH_DISCORD_ID && process.env.AUTH_DISCORD_SECRET
-      ? [
-          DiscordProvider({
-            clientId: process.env.AUTH_DISCORD_ID,
-            clientSecret: process.env.AUTH_DISCORD_SECRET,
-          }),
-        ]
-      : []),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
+    // GoogleProvider - Primary authentication provider
+    // Requires AUTH_GOOGLE_ID and AUTH_GOOGLE_SECRET
+    GoogleProvider({
+      clientId: process.env.AUTH_GOOGLE_ID!,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+      allowDangerousEmailAccountLinking: true, // Allow linking accounts with same email
+    }),
   ],
   adapter: PrismaAdapter(db),
   session: {
@@ -70,6 +58,11 @@ export const authConfig = {
     },
   },
   callbacks: {
+    signIn: async ({ user, account }) => {
+      // Allow sign-in - account linking will be handled by allowDangerousEmailAccountLinking
+      // or manually if needed
+      return true;
+    },
     session: async ({ session, user }) => {
       // Fetch user's primary workspace and role
       // Priority: 1) First OWNER_CCO workspace, 2) First workspace alphabetically

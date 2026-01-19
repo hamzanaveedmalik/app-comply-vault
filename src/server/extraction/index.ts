@@ -1,6 +1,7 @@
 import { env } from "~/env";
 import { OpenAIExtractionProvider } from "./openai";
 import { AnthropicExtractionProvider } from "./anthropic";
+import { VertexAIExtractionProvider } from "./vertex";
 import type { ExtractionResult } from "./types";
 import type { Transcript } from "../transcription/types";
 
@@ -21,8 +22,15 @@ function getExtractionProvider(): ExtractionProvider {
     return new OpenAIExtractionProvider();
   } else if (provider === "anthropic") {
     return new AnthropicExtractionProvider();
+  } else if (provider === "vertex") {
+    return new VertexAIExtractionProvider({
+      apiEndpoint: env.VERTEX_API_ENDPOINT || "us-central1-aiplatform.googleapis.com",
+      projectId: env.VERTEX_PROJECT_ID || "",
+      location: env.VERTEX_LOCATION || "us-central1",
+      modelId: env.VERTEX_MODEL_ID || "text-bison",
+    });
   } else {
-    throw new Error(`Unsupported extraction provider: ${provider}. Supported: openai, anthropic`);
+    throw new Error(`Unsupported extraction provider: ${provider}. Supported: openai, anthropic, vertex`);
   }
 }
 

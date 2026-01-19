@@ -21,6 +21,8 @@ const config = {
     }
     return config;
   },
+  // Enable standalone output for Docker deployment
+  output: 'standalone',
 };
 
 export default config;

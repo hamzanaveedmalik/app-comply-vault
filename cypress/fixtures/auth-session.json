@@ -1,0 +1,8 @@
+{
+  "user": {
+    "name": "Test User",
+    "email": "test@example.com",
+    "image": "https://ui-avatars.com/api/?name=Test+User"
+  },
+  "expires": "2099-01-01T00:00:00.000Z"
+}

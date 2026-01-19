@@ -1,87 +1,95 @@
-/**
- * Performance optimization utilities
- * Implements caching, query optimization, and performance monitoring
- */
+import { NextRequest, NextResponse } from "next/server";
+import { metrics } from "~/lib/metrics";
 
-/**
- * Cache configuration
- */
-export const CACHE_CONFIG = {
-  // Cache TTL in seconds
-  MEETING_LIST: 30, // 30 seconds for meeting lists
-  MEETING_DETAIL: 60, // 1 minute for meeting details
-  METRICS: 60, // 1 minute for dashboard metrics
-  SEARCH: 10, // 10 seconds for search results
-} as const;
-
-/**
- * Query optimization helpers
- */
-export const QueryOptimizations = {
-  /**
-   * Select only necessary fields for meeting list views
-   */
-  meetingListFields: {
-    id: true,
-    clientName: true,
-    meetingType: true,
-    meetingDate: true,
-    status: true,
-    createdAt: true,
-    readyForCCO: true,
-  },
-
-  /**
-   * Select only necessary fields for search results
-   */
-  searchResultFields: {
-    id: true,
-    clientName: true,
-    meetingType: true,
-    meetingDate: true,
-    status: true,
-    searchableText: true,
-  },
-
-  /**
-   * Pagination defaults
-   */
-  pagination: {
-    defaultPageSize: 50,
-    maxPageSize: 100,
-  },
-} as const;
-
-/**
- * Performance monitoring
- */
-export function measurePerformance<T>(
-  label: string,
-  fn: () => Promise<T>
-): Promise<T> {
-  const start = Date.now();
-  return fn().then((result) => {
-    const duration = Date.now() - start;
-    if (duration > 1000) {
-      console.warn(`⚠️ Slow operation: ${label} took ${duration}ms`);
-    } else {
-      console.log(`✅ ${label} completed in ${duration}ms`);
-    }
-    return result;
+export async function withPerformanceTracking(
+  request: NextRequest,
+  handler: (request: NextRequest) => Promise<NextResponse>
+): Promise<NextResponse> {
+  const startTime = performance.now();
+  const url = new URL(request.url);
+  const path = url.pathname;
+  
+  // Record request
+  metrics.incrementCounter("http_requests_total", 1, {
+    method: request.method,
+    path,
   });
+  
+  try {
+    const response = await handler(request);
+    const duration = performance.now() - startTime;
+    
+    // Record response time
+    metrics.observeHistogram("http_request_duration_seconds", duration / 1000, {
+      method: request.method,
+      path,
+      status: response.status.toString(),
+    });
+    
+    // Record status codes
+    metrics.incrementCounter("http_responses_total", 1, {
+      method: request.method,
+      path,
+      status: response.status.toString(),
+    });
+    
+    return response;
+  } catch (error) {
+    const duration = performance.now() - startTime;
+    
+    // Record errors
+    metrics.incrementCounter("http_errors_total", 1, {
+      method: request.method,
+      path,
+      error: error instanceof Error ? error.name : "Unknown",
+    });
+    
+    // Record error response time
+    metrics.observeHistogram("http_request_duration_seconds", duration / 1000, {
+      method: request.method,
+      path,
+      status: "500",
+    });
+    
+    throw error;
+  }
 }
 
-/**
- * Debounce helper for search queries
- */
-export function debounce<T extends (...args: unknown[]) => unknown>(
-  func: T,
-  wait: number
-): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout | null = null;
-  return (...args: Parameters<T>) => {
-    if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
-  };
+// Function to wrap API route handlers with performance tracking
+export function withPerformance<T extends (...args: any[]) => Promise<any>>(
+  name: string,
+  handler: T
+): T {
+  return (async (...args) => {
+    const startTime = performance.now();
+    
+    try {
+      const result = await handler(...args);
+      const duration = performance.now() - startTime;
+      
+      // Record function duration
+      metrics.observeHistogram("function_duration_seconds", duration / 1000, {
+        name,
+        success: "true",
+      });
+      
+      return result;
+    } catch (error) {
+      const duration = performance.now() - startTime;
+      
+      // Record function errors
+      metrics.incrementCounter("function_errors_total", 1, {
+        name,
+        error: error instanceof Error ? error.name : "Unknown",
+      });
+      
+      // Record error duration
+      metrics.observeHistogram("function_duration_seconds", duration / 1000, {
+        name,
+        success: "false",
+      });
+      
+      throw error;
+    }
+  }) as T;
 }
-

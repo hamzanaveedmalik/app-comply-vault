@@ -27,16 +27,25 @@ export const env = createEnv({
     QSTASH_TOKEN: z.string().optional(), // Upstash QStash token
     QSTASH_CURRENT_SIGNING_KEY: z.string().optional(), // QStash webhook signature verification
     QSTASH_NEXT_SIGNING_KEY: z.string().optional(), // QStash webhook signature verification (for key rotation)
-      // Transcription providers
-      TRANSCRIPTION_PROVIDER: z.enum(["deepgram", "assemblyai"]).optional().default("deepgram"),
-      DEEPGRAM_API_KEY: z.string().optional(),
-      ASSEMBLYAI_API_KEY: z.string().optional(),
-      // Extraction providers
-      EXTRACTION_PROVIDER: z.enum(["openai", "anthropic"]).optional().default("openai"),
-      OPENAI_API_KEY: z.string().optional(),
-      OPENAI_MODEL: z.string().optional().default("gpt-4o-mini"),
-      ANTHROPIC_API_KEY: z.string().optional(),
-      ANTHROPIC_MODEL: z.string().optional().default("claude-3-5-sonnet-20241022"),
+    // Transcription providers
+    TRANSCRIPTION_PROVIDER: z.enum(["deepgram", "assemblyai"]).optional().default("deepgram"),
+    DEEPGRAM_API_KEY: z.string().optional(),
+    ASSEMBLYAI_API_KEY: z.string().optional(),
+    // Extraction providers
+    EXTRACTION_PROVIDER: z.enum(["openai", "anthropic", "vertex"]).optional().default("openai"),
+    OPENAI_API_KEY: z.string().optional(),
+    OPENAI_MODEL: z.string().optional().default("gpt-4o-mini"),
+    ANTHROPIC_API_KEY: z.string().optional(),
+    ANTHROPIC_MODEL: z.string().optional().default("claude-3-5-sonnet-20241022"),
+    // Google Vertex AI
+    VERTEX_API_KEY: z.string().optional(),
+    VERTEX_PROJECT_ID: z.string().optional(),
+    VERTEX_LOCATION: z.string().optional().default("us-central1"),
+    VERTEX_API_ENDPOINT: z.string().optional().default("us-central1-aiplatform.googleapis.com"),
+    VERTEX_MODEL_ID: z.string().optional().default("text-bison"),
+    // Metrics and monitoring
+    METRICS_USERNAME: z.string().optional(),
+    METRICS_PASSWORD: z.string().optional(),
   },
 
   /**
@@ -70,14 +79,21 @@ export const env = createEnv({
     QSTASH_TOKEN: process.env.QSTASH_TOKEN,
     QSTASH_CURRENT_SIGNING_KEY: process.env.QSTASH_CURRENT_SIGNING_KEY,
     QSTASH_NEXT_SIGNING_KEY: process.env.QSTASH_NEXT_SIGNING_KEY,
-      TRANSCRIPTION_PROVIDER: process.env.TRANSCRIPTION_PROVIDER,
-      DEEPGRAM_API_KEY: process.env.DEEPGRAM_API_KEY,
-      ASSEMBLYAI_API_KEY: process.env.ASSEMBLYAI_API_KEY,
-      EXTRACTION_PROVIDER: process.env.EXTRACTION_PROVIDER,
-      OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-      OPENAI_MODEL: process.env.OPENAI_MODEL,
-      ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
-      ANTHROPIC_MODEL: process.env.ANTHROPIC_MODEL,
+    TRANSCRIPTION_PROVIDER: process.env.TRANSCRIPTION_PROVIDER,
+    DEEPGRAM_API_KEY: process.env.DEEPGRAM_API_KEY,
+    ASSEMBLYAI_API_KEY: process.env.ASSEMBLYAI_API_KEY,
+    EXTRACTION_PROVIDER: process.env.EXTRACTION_PROVIDER,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    OPENAI_MODEL: process.env.OPENAI_MODEL,
+    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
+    ANTHROPIC_MODEL: process.env.ANTHROPIC_MODEL,
+    VERTEX_API_KEY: process.env.VERTEX_API_KEY,
+    VERTEX_PROJECT_ID: process.env.VERTEX_PROJECT_ID,
+    VERTEX_LOCATION: process.env.VERTEX_LOCATION,
+    VERTEX_API_ENDPOINT: process.env.VERTEX_API_ENDPOINT,
+    VERTEX_MODEL_ID: process.env.VERTEX_MODEL_ID,
+    METRICS_USERNAME: process.env.METRICS_USERNAME,
+    METRICS_PASSWORD: process.env.METRICS_PASSWORD,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

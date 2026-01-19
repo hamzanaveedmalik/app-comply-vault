@@ -9,11 +9,16 @@
     "db:migrate": "prisma migrate deploy",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
+    "db:backup": "bash ./scripts/backup-database.sh",
+    "db:create-migration": "node ./scripts/create-migration.js",
+    "db:run-migrations": "node ./scripts/run-migrations.js",
     "dev": "next dev --turbo",
     "postinstall": "prisma generate",
     "preview": "next build && next start",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "cypress run",
+    "test:e2e:open": "cypress open"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",

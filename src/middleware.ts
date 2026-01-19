@@ -10,7 +10,13 @@ export async function middleware(request: NextRequest) {
   });
 
   // Public routes that don't require authentication
-  const publicRoutes = ["/", "/api/auth", "/invitations", "/api/jobs"];
+  const publicRoutes = [
+    "/",
+    "/api/auth",
+    "/auth",
+    "/invitations",
+    "/api/jobs",
+  ];
   const isPublicRoute = publicRoutes.some((route) =>
     request.nextUrl.pathname.startsWith(route)
   );
@@ -21,7 +27,7 @@ export async function middleware(request: NextRequest) {
 
   // Protect all other routes
   if (!token) {
-    const signInUrl = new URL("/api/auth/signin", request.url);
+    const signInUrl = new URL("/auth/signin", request.url);
     signInUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
     return NextResponse.redirect(signInUrl);
   }

@@ -11,7 +11,7 @@ export default async function AppLayout({
   const session = await auth();
 
   if (!session?.user) {
-    redirect("/api/auth/signin");
+    redirect("/auth/signin");
   }
 
   // Note: Workspace check is handled in middleware

@@ -36,7 +36,7 @@ export function Navigation({ userEmail, userName }: NavigationProps) {
           <div className="flex items-center gap-8">
             <Link href="/dashboard" className="flex items-center gap-2">
               <img 
-                src="/intellivault-logo.svg" 
+                src="/logo.svg" 
                 alt="Comply Vault" 
                 className="h-8 w-auto"
               />

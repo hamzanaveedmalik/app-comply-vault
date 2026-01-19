@@ -41,12 +41,24 @@ export default function NewWorkspacePage() {
       }
 
       const data = await response.json();
-      setSuccess(data.message || "Workspace created successfully!");
       
-      // Redirect to dashboard after a brief delay
-      setTimeout(() => {
-        router.push(`/dashboard`);
-      }, 2000);
+      // Check if setup fee is required
+      if (data.setupFee > 0) {
+        // Show message with demo code option
+        setSuccess(
+          `Workspace created! Use demo code "FREEPILOT" to skip the $500 setup fee. Redirecting to dashboard...`
+        );
+        // Force full page reload to refresh session with new workspace
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 3000);
+      } else {
+        // No setup fee, redirect immediately with full reload
+        setSuccess(data.message || "Workspace created successfully! Redirecting...");
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 2000);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
       setIsLoading(false);
@@ -89,11 +101,28 @@ export default function NewWorkspacePage() {
                 type="text"
                 value={pilotCode}
                 onChange={(e) => setPilotCode(e.target.value)}
-                placeholder="Enter pilot code for free setup"
+                placeholder="Enter pilot code (e.g., FREEPILOT)"
               />
-              <p className="text-xs text-muted-foreground">
-                If you have a pilot code, enter it here to skip the $500 setup fee. Otherwise, you&apos;ll be prompted to complete payment after workspace creation.
-              </p>
+              <div className="space-y-1">
+                <p className="text-xs text-muted-foreground">
+                  Enter a pilot code to skip the $500 setup fee. 
+                </p>
+                <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
+                  <p className="text-xs font-medium">Demo Code:</p>
+                  <code className="text-xs bg-background px-2 py-1 rounded font-mono">FREEPILOT</code>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 px-2 text-xs"
+                    onClick={() => {
+                      setPilotCode("FREEPILOT");
+                    }}
+                  >
+                    Use
+                  </Button>
+                </div>
+              </div>
             </div>
 
             {error && (

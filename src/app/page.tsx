@@ -8,7 +8,8 @@ export default async function HomePage() {
 
   // If authenticated, redirect to dashboard or workspace creation
   if (session?.user) {
-    if (session.user.workspaceId) {
+    // Check if user has a workspace (workspaceId should be a non-empty string)
+    if (session.user.workspaceId && session.user.workspaceId !== "") {
       redirect("/dashboard");
     } else {
       redirect("/workspaces/new");
@@ -57,10 +58,10 @@ export default async function HomePage() {
         {/* Sign In Button */}
         <div className="flex gap-4">
           <Link
-            href="/api/auth/signin"
+            href="/auth/signin"
             className="rounded-xl bg-[#117A4B] px-8 py-4 text-lg font-semibold text-white hover:bg-[#0E6B3F] transition-colors shadow-lg shadow-[#117A4B]/25 hover:shadow-xl hover:shadow-[#117A4B]/30"
           >
-            Sign In
+            Get Started
           </Link>
         </div>
 

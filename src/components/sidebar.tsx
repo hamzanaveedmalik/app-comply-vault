@@ -40,9 +40,9 @@ export function Sidebar({ userEmail, userName, userRole }: SidebarProps) {
       <div className="flex h-16 items-center border-b px-6">
         <Link href="/dashboard" className="flex items-center gap-3" onClick={() => setIsOpen(false)}>
           <img 
-            src="/intellivault-logo.svg" 
+            src="/logo.svg" 
             alt="Comply Vault" 
-            className="h-16 w-auto"
+            className="h-8 w-auto"
           />
           <span className="text-xl font-bold">
             Comply Vault

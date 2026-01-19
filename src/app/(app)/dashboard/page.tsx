@@ -9,7 +9,8 @@ import { DashboardClient } from "./dashboard-client";
 export default async function DashboardPage() {
   const session = await auth();
 
-  if (!session?.user?.workspaceId) {
+  // Redirect to workspace creation if user has no workspace
+  if (!session?.user?.workspaceId || session.user.workspaceId === "") {
     redirect("/workspaces/new");
   }
 

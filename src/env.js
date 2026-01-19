@@ -10,6 +10,7 @@ export const env = createEnv({
     // All server env vars are optional for build-time validation
     // Runtime checks are performed where these values are actually used
     AUTH_SECRET: z.string().optional(),
+    AUTH_URL: z.string().url().optional(), // Base URL for NextAuth (e.g., https://app-staging.complyvault.co)
     AUTH_GOOGLE_ID: z.string().optional(),
     AUTH_GOOGLE_SECRET: z.string().optional(),
     DATABASE_URL: z.string().optional(),
@@ -53,6 +54,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     AUTH_SECRET: process.env.AUTH_SECRET,
+    AUTH_URL: process.env.AUTH_URL,
     AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
     AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,

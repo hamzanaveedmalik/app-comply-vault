@@ -1,7 +1,7 @@
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { NextResponse } from "next/server";
-import { measurePerformance, QueryOptimizations } from "~/server/performance";
+import { withPerformance } from "~/server/performance";
 
 interface SearchResult {
   id: string;
@@ -13,8 +13,8 @@ interface SearchResult {
   snippet?: string;
 }
 
-export async function GET(request: Request) {
-  return measurePerformance("Search operation", async () => {
+export const GET = withPerformance("Search operation", 
+  async function GET(request: Request) {
     try {
       const session = await auth();
 
@@ -231,6 +231,6 @@ export async function GET(request: Request) {
         { status: 500 }
       );
     }
-  });
-}
+  }
+);
 

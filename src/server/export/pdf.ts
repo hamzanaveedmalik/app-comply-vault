@@ -19,8 +19,18 @@ function patchPdfkitStandardFonts() {
   }
 
   const originalReadFileSync = fs.readFileSync.bind(fs);
-  const moduleDir = path.dirname(fileURLToPath(import.meta.url));
-  const dataDir = path.join(moduleDir, "data");
+  
+  // In Next.js standalone/serverless, the AFM files are in the API route directory
+  // Try multiple possible locations
+  const possibleDataDirs = [
+    // Development
+    path.join(process.cwd(), "src", "app", "api", "meetings", "[id]", "export", "data"),
+    // Production serverless bundle (relative to .next/server)
+    path.join(process.cwd(), ".next", "server", "app", "api", "meetings", "[id]", "export", "data"),
+    // Standalone output
+    path.join(process.cwd(), "app", "api", "meetings", "[id]", "export", "data"),
+  ];
+  
   const fontFiles = new Set([
     "Helvetica.afm",
     "Helvetica-Bold.afm",
@@ -33,9 +43,16 @@ function patchPdfkitStandardFonts() {
     const basename = path.basename(rawPath);
 
     if (rawPath.includes(`${path.sep}data${path.sep}`) && fontFiles.has(basename)) {
-      const localFontPath = path.join(dataDir, basename);
-      if (fs.existsSync(localFontPath)) {
-        return originalReadFileSync(localFontPath, options as any);
+      // Try each possible location
+      for (const dataDir of possibleDataDirs) {
+        const localFontPath = path.join(dataDir, basename);
+        try {
+          if (fs.existsSync(localFontPath)) {
+            return originalReadFileSync(localFontPath, options as any);
+          }
+        } catch (e) {
+          // Continue to next location
+        }
       }
     }
 

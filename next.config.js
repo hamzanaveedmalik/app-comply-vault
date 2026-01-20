@@ -19,10 +19,27 @@ const config = {
         fs: false,
       };
     }
+    
+    // Copy AFM font data files for PDFKit in serverless environment
+    if (isServer) {
+      config.module.rules.push({
+        test: /\.afm$/,
+        type: 'asset/source',
+      });
+    }
+    
     return config;
   },
   // Enable standalone output for Docker deployment
   output: 'standalone',
+  // Force Next.js to include AFM font files in the export route bundle
+  experimental: {
+    outputFileTracingIncludes: {
+      '/api/meetings/[id]/export': [
+        './src/app/api/meetings/[id]/export/data/**/*.afm',
+      ],
+    },
+  },
 };
 
 export default config;

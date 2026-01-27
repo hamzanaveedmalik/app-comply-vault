@@ -2,15 +2,19 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 
-export default function AcceptInvitationClient({ token }: { token?: string }) {
+export default function AcceptInvitationClient({
+  token,
+  signedInEmail,
+}: {
+  token?: string;
+  signedInEmail: string | null;
+}) {
   const router = useRouter();
-  const { data: session } = useSession();
-  const signedInEmail = session?.user?.email ?? null;
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

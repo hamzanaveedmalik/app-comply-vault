@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { auth } from "~/server/auth";
 import AcceptInvitationClient from "./accept-client";
 
 // Force dynamic rendering to prevent static generation
@@ -32,6 +33,8 @@ async function AcceptInvitationServer({
 }) {
   const params = await searchParams;
   const token = params.token;
+  const session = await auth();
+  const signedInEmail = session?.user?.email ?? null;
 
-  return <AcceptInvitationClient token={token} />;
+  return <AcceptInvitationClient token={token} signedInEmail={signedInEmail} />;
 }

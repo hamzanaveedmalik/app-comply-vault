@@ -39,6 +39,26 @@ export type Version = $Result.DefaultSelection<Prisma.$VersionPayload>
  */
 export type Flag = $Result.DefaultSelection<Prisma.$FlagPayload>
 /**
+ * Model ResolutionRecord
+ * 
+ */
+export type ResolutionRecord = $Result.DefaultSelection<Prisma.$ResolutionRecordPayload>
+/**
+ * Model ActionItem
+ * 
+ */
+export type ActionItem = $Result.DefaultSelection<Prisma.$ActionItemPayload>
+/**
+ * Model EvidenceLink
+ * 
+ */
+export type EvidenceLink = $Result.DefaultSelection<Prisma.$EvidenceLinkPayload>
+/**
+ * Model Verification
+ * 
+ */
+export type Verification = $Result.DefaultSelection<Prisma.$VerificationPayload>
+/**
  * Model AuditEvent
  * 
  */
@@ -117,7 +137,13 @@ export const AuditAction: {
   EDIT: 'EDIT',
   FINALIZE: 'FINALIZE',
   EXPORT: 'EXPORT',
-  DELETE: 'DELETE'
+  DELETE: 'DELETE',
+  REMEDIATION_START: 'REMEDIATION_START',
+  REMEDIATION_UPDATE: 'REMEDIATION_UPDATE',
+  TASK_UPDATE: 'TASK_UPDATE',
+  EVIDENCE_ADD: 'EVIDENCE_ADD',
+  VERIFICATION: 'VERIFICATION',
+  OVERRIDE: 'OVERRIDE'
 };
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction]
@@ -143,9 +169,10 @@ export type FlagSeverity = (typeof FlagSeverity)[keyof typeof FlagSeverity]
 
 export const FlagStatus: {
   OPEN: 'OPEN',
-  RESOLVED: 'RESOLVED',
-  DISMISSED: 'DISMISSED',
-  OVERRIDDEN: 'OVERRIDDEN'
+  IN_REMEDIATION: 'IN_REMEDIATION',
+  PENDING_VERIFICATION: 'PENDING_VERIFICATION',
+  CLOSED: 'CLOSED',
+  CLOSED_ACCEPTED_RISK: 'CLOSED_ACCEPTED_RISK'
 };
 
 export type FlagStatus = (typeof FlagStatus)[keyof typeof FlagStatus]
@@ -160,6 +187,34 @@ export const FlagResolutionType: {
 };
 
 export type FlagResolutionType = (typeof FlagResolutionType)[keyof typeof FlagResolutionType]
+
+
+export const RemediationTaskStatus: {
+  OPEN: 'OPEN',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED'
+};
+
+export type RemediationTaskStatus = (typeof RemediationTaskStatus)[keyof typeof RemediationTaskStatus]
+
+
+export const EvidenceType: {
+  TRANSCRIPT_SNIPPET: 'TRANSCRIPT_SNIPPET',
+  DOCUMENT_LINK: 'DOCUMENT_LINK',
+  OUTREACH_PROOF: 'OUTREACH_PROOF',
+  ACKNOWLEDGEMENT: 'ACKNOWLEDGEMENT',
+  NOTE: 'NOTE'
+};
+
+export type EvidenceType = (typeof EvidenceType)[keyof typeof EvidenceType]
+
+
+export const VerificationDecision: {
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+export type VerificationDecision = (typeof VerificationDecision)[keyof typeof VerificationDecision]
 
 
 export const FlagCreatedByType: {
@@ -206,6 +261,18 @@ export const FlagStatus: typeof $Enums.FlagStatus
 export type FlagResolutionType = $Enums.FlagResolutionType
 
 export const FlagResolutionType: typeof $Enums.FlagResolutionType
+
+export type RemediationTaskStatus = $Enums.RemediationTaskStatus
+
+export const RemediationTaskStatus: typeof $Enums.RemediationTaskStatus
+
+export type EvidenceType = $Enums.EvidenceType
+
+export const EvidenceType: typeof $Enums.EvidenceType
+
+export type VerificationDecision = $Enums.VerificationDecision
+
+export const VerificationDecision: typeof $Enums.VerificationDecision
 
 export type FlagCreatedByType = $Enums.FlagCreatedByType
 
@@ -378,6 +445,46 @@ export class PrismaClient<
     * ```
     */
   get flag(): Prisma.FlagDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.resolutionRecord`: Exposes CRUD operations for the **ResolutionRecord** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ResolutionRecords
+    * const resolutionRecords = await prisma.resolutionRecord.findMany()
+    * ```
+    */
+  get resolutionRecord(): Prisma.ResolutionRecordDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.actionItem`: Exposes CRUD operations for the **ActionItem** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ActionItems
+    * const actionItems = await prisma.actionItem.findMany()
+    * ```
+    */
+  get actionItem(): Prisma.ActionItemDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.evidenceLink`: Exposes CRUD operations for the **EvidenceLink** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more EvidenceLinks
+    * const evidenceLinks = await prisma.evidenceLink.findMany()
+    * ```
+    */
+  get evidenceLink(): Prisma.EvidenceLinkDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.verification`: Exposes CRUD operations for the **Verification** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Verifications
+    * const verifications = await prisma.verification.findMany()
+    * ```
+    */
+  get verification(): Prisma.VerificationDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.auditEvent`: Exposes CRUD operations for the **AuditEvent** model.
@@ -884,6 +991,10 @@ export namespace Prisma {
     Meeting: 'Meeting',
     Version: 'Version',
     Flag: 'Flag',
+    ResolutionRecord: 'ResolutionRecord',
+    ActionItem: 'ActionItem',
+    EvidenceLink: 'EvidenceLink',
+    Verification: 'Verification',
     AuditEvent: 'AuditEvent',
     Account: 'Account',
     Session: 'Session',
@@ -908,7 +1019,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "workspace" | "userWorkspace" | "meeting" | "version" | "flag" | "auditEvent" | "account" | "session" | "user" | "verificationToken" | "invitation"
+      modelProps: "workspace" | "userWorkspace" | "meeting" | "version" | "flag" | "resolutionRecord" | "actionItem" | "evidenceLink" | "verification" | "auditEvent" | "account" | "session" | "user" | "verificationToken" | "invitation"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1279,6 +1390,302 @@ export namespace Prisma {
           count: {
             args: Prisma.FlagCountArgs<ExtArgs>
             result: $Utils.Optional<FlagCountAggregateOutputType> | number
+          }
+        }
+      }
+      ResolutionRecord: {
+        payload: Prisma.$ResolutionRecordPayload<ExtArgs>
+        fields: Prisma.ResolutionRecordFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ResolutionRecordFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResolutionRecordPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ResolutionRecordFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResolutionRecordPayload>
+          }
+          findFirst: {
+            args: Prisma.ResolutionRecordFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResolutionRecordPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ResolutionRecordFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResolutionRecordPayload>
+          }
+          findMany: {
+            args: Prisma.ResolutionRecordFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResolutionRecordPayload>[]
+          }
+          create: {
+            args: Prisma.ResolutionRecordCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResolutionRecordPayload>
+          }
+          createMany: {
+            args: Prisma.ResolutionRecordCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ResolutionRecordCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResolutionRecordPayload>[]
+          }
+          delete: {
+            args: Prisma.ResolutionRecordDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResolutionRecordPayload>
+          }
+          update: {
+            args: Prisma.ResolutionRecordUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResolutionRecordPayload>
+          }
+          deleteMany: {
+            args: Prisma.ResolutionRecordDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ResolutionRecordUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ResolutionRecordUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResolutionRecordPayload>[]
+          }
+          upsert: {
+            args: Prisma.ResolutionRecordUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ResolutionRecordPayload>
+          }
+          aggregate: {
+            args: Prisma.ResolutionRecordAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateResolutionRecord>
+          }
+          groupBy: {
+            args: Prisma.ResolutionRecordGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ResolutionRecordGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ResolutionRecordCountArgs<ExtArgs>
+            result: $Utils.Optional<ResolutionRecordCountAggregateOutputType> | number
+          }
+        }
+      }
+      ActionItem: {
+        payload: Prisma.$ActionItemPayload<ExtArgs>
+        fields: Prisma.ActionItemFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ActionItemFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ActionItemPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ActionItemFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ActionItemPayload>
+          }
+          findFirst: {
+            args: Prisma.ActionItemFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ActionItemPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ActionItemFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ActionItemPayload>
+          }
+          findMany: {
+            args: Prisma.ActionItemFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ActionItemPayload>[]
+          }
+          create: {
+            args: Prisma.ActionItemCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ActionItemPayload>
+          }
+          createMany: {
+            args: Prisma.ActionItemCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ActionItemCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ActionItemPayload>[]
+          }
+          delete: {
+            args: Prisma.ActionItemDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ActionItemPayload>
+          }
+          update: {
+            args: Prisma.ActionItemUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ActionItemPayload>
+          }
+          deleteMany: {
+            args: Prisma.ActionItemDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ActionItemUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ActionItemUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ActionItemPayload>[]
+          }
+          upsert: {
+            args: Prisma.ActionItemUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ActionItemPayload>
+          }
+          aggregate: {
+            args: Prisma.ActionItemAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateActionItem>
+          }
+          groupBy: {
+            args: Prisma.ActionItemGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ActionItemGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ActionItemCountArgs<ExtArgs>
+            result: $Utils.Optional<ActionItemCountAggregateOutputType> | number
+          }
+        }
+      }
+      EvidenceLink: {
+        payload: Prisma.$EvidenceLinkPayload<ExtArgs>
+        fields: Prisma.EvidenceLinkFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EvidenceLinkFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceLinkPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EvidenceLinkFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceLinkPayload>
+          }
+          findFirst: {
+            args: Prisma.EvidenceLinkFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceLinkPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EvidenceLinkFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceLinkPayload>
+          }
+          findMany: {
+            args: Prisma.EvidenceLinkFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceLinkPayload>[]
+          }
+          create: {
+            args: Prisma.EvidenceLinkCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceLinkPayload>
+          }
+          createMany: {
+            args: Prisma.EvidenceLinkCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EvidenceLinkCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceLinkPayload>[]
+          }
+          delete: {
+            args: Prisma.EvidenceLinkDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceLinkPayload>
+          }
+          update: {
+            args: Prisma.EvidenceLinkUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceLinkPayload>
+          }
+          deleteMany: {
+            args: Prisma.EvidenceLinkDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EvidenceLinkUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EvidenceLinkUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceLinkPayload>[]
+          }
+          upsert: {
+            args: Prisma.EvidenceLinkUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceLinkPayload>
+          }
+          aggregate: {
+            args: Prisma.EvidenceLinkAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEvidenceLink>
+          }
+          groupBy: {
+            args: Prisma.EvidenceLinkGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EvidenceLinkGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EvidenceLinkCountArgs<ExtArgs>
+            result: $Utils.Optional<EvidenceLinkCountAggregateOutputType> | number
+          }
+        }
+      }
+      Verification: {
+        payload: Prisma.$VerificationPayload<ExtArgs>
+        fields: Prisma.VerificationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.VerificationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VerificationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.VerificationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VerificationPayload>
+          }
+          findFirst: {
+            args: Prisma.VerificationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VerificationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.VerificationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VerificationPayload>
+          }
+          findMany: {
+            args: Prisma.VerificationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VerificationPayload>[]
+          }
+          create: {
+            args: Prisma.VerificationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VerificationPayload>
+          }
+          createMany: {
+            args: Prisma.VerificationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.VerificationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VerificationPayload>[]
+          }
+          delete: {
+            args: Prisma.VerificationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VerificationPayload>
+          }
+          update: {
+            args: Prisma.VerificationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VerificationPayload>
+          }
+          deleteMany: {
+            args: Prisma.VerificationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.VerificationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.VerificationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VerificationPayload>[]
+          }
+          upsert: {
+            args: Prisma.VerificationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VerificationPayload>
+          }
+          aggregate: {
+            args: Prisma.VerificationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateVerification>
+          }
+          groupBy: {
+            args: Prisma.VerificationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<VerificationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.VerificationCountArgs<ExtArgs>
+            result: $Utils.Optional<VerificationCountAggregateOutputType> | number
           }
         }
       }
@@ -1827,6 +2234,10 @@ export namespace Prisma {
     meeting?: MeetingOmit
     version?: VersionOmit
     flag?: FlagOmit
+    resolutionRecord?: ResolutionRecordOmit
+    actionItem?: ActionItemOmit
+    evidenceLink?: EvidenceLinkOmit
+    verification?: VerificationOmit
     auditEvent?: AuditEventOmit
     account?: AccountOmit
     session?: SessionOmit
@@ -1918,6 +2329,7 @@ export namespace Prisma {
     auditEvents: number
     invitations: number
     flags: number
+    resolutionRecords: number
   }
 
   export type WorkspaceCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1926,6 +2338,7 @@ export namespace Prisma {
     auditEvents?: boolean | WorkspaceCountOutputTypeCountAuditEventsArgs
     invitations?: boolean | WorkspaceCountOutputTypeCountInvitationsArgs
     flags?: boolean | WorkspaceCountOutputTypeCountFlagsArgs
+    resolutionRecords?: boolean | WorkspaceCountOutputTypeCountResolutionRecordsArgs
   }
 
   // Custom InputTypes
@@ -1974,6 +2387,13 @@ export namespace Prisma {
     where?: FlagWhereInput
   }
 
+  /**
+   * WorkspaceCountOutputType without action
+   */
+  export type WorkspaceCountOutputTypeCountResolutionRecordsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ResolutionRecordWhereInput
+  }
+
 
   /**
    * Count Type MeetingCountOutputType
@@ -1983,12 +2403,14 @@ export namespace Prisma {
     versions: number
     auditEvents: number
     flags: number
+    resolutionRecords: number
   }
 
   export type MeetingCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     versions?: boolean | MeetingCountOutputTypeCountVersionsArgs
     auditEvents?: boolean | MeetingCountOutputTypeCountAuditEventsArgs
     flags?: boolean | MeetingCountOutputTypeCountFlagsArgs
+    resolutionRecords?: boolean | MeetingCountOutputTypeCountResolutionRecordsArgs
   }
 
   // Custom InputTypes
@@ -2021,6 +2443,93 @@ export namespace Prisma {
    */
   export type MeetingCountOutputTypeCountFlagsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: FlagWhereInput
+  }
+
+  /**
+   * MeetingCountOutputType without action
+   */
+  export type MeetingCountOutputTypeCountResolutionRecordsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ResolutionRecordWhereInput
+  }
+
+
+  /**
+   * Count Type ResolutionRecordCountOutputType
+   */
+
+  export type ResolutionRecordCountOutputType = {
+    tasks: number
+    evidence: number
+    verifications: number
+  }
+
+  export type ResolutionRecordCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tasks?: boolean | ResolutionRecordCountOutputTypeCountTasksArgs
+    evidence?: boolean | ResolutionRecordCountOutputTypeCountEvidenceArgs
+    verifications?: boolean | ResolutionRecordCountOutputTypeCountVerificationsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ResolutionRecordCountOutputType without action
+   */
+  export type ResolutionRecordCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResolutionRecordCountOutputType
+     */
+    select?: ResolutionRecordCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ResolutionRecordCountOutputType without action
+   */
+  export type ResolutionRecordCountOutputTypeCountTasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ActionItemWhereInput
+  }
+
+  /**
+   * ResolutionRecordCountOutputType without action
+   */
+  export type ResolutionRecordCountOutputTypeCountEvidenceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EvidenceLinkWhereInput
+  }
+
+  /**
+   * ResolutionRecordCountOutputType without action
+   */
+  export type ResolutionRecordCountOutputTypeCountVerificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VerificationWhereInput
+  }
+
+
+  /**
+   * Count Type ActionItemCountOutputType
+   */
+
+  export type ActionItemCountOutputType = {
+    evidence: number
+  }
+
+  export type ActionItemCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    evidence?: boolean | ActionItemCountOutputTypeCountEvidenceArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ActionItemCountOutputType without action
+   */
+  export type ActionItemCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActionItemCountOutputType
+     */
+    select?: ActionItemCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ActionItemCountOutputType without action
+   */
+  export type ActionItemCountOutputTypeCountEvidenceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EvidenceLinkWhereInput
   }
 
 
@@ -2312,6 +2821,7 @@ export namespace Prisma {
     auditEvents?: boolean | Workspace$auditEventsArgs<ExtArgs>
     invitations?: boolean | Workspace$invitationsArgs<ExtArgs>
     flags?: boolean | Workspace$flagsArgs<ExtArgs>
+    resolutionRecords?: boolean | Workspace$resolutionRecordsArgs<ExtArgs>
     _count?: boolean | WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["workspace"]>
 
@@ -2358,6 +2868,7 @@ export namespace Prisma {
     auditEvents?: boolean | Workspace$auditEventsArgs<ExtArgs>
     invitations?: boolean | Workspace$invitationsArgs<ExtArgs>
     flags?: boolean | Workspace$flagsArgs<ExtArgs>
+    resolutionRecords?: boolean | Workspace$resolutionRecordsArgs<ExtArgs>
     _count?: boolean | WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type WorkspaceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2371,6 +2882,7 @@ export namespace Prisma {
       auditEvents: Prisma.$AuditEventPayload<ExtArgs>[]
       invitations: Prisma.$InvitationPayload<ExtArgs>[]
       flags: Prisma.$FlagPayload<ExtArgs>[]
+      resolutionRecords: Prisma.$ResolutionRecordPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2781,6 +3293,7 @@ export namespace Prisma {
     auditEvents<T extends Workspace$auditEventsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$auditEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     invitations<T extends Workspace$invitationsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$invitationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     flags<T extends Workspace$flagsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$flagsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FlagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    resolutionRecords<T extends Workspace$resolutionRecordsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$resolutionRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3324,6 +3837,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: FlagScalarFieldEnum | FlagScalarFieldEnum[]
+  }
+
+  /**
+   * Workspace.resolutionRecords
+   */
+  export type Workspace$resolutionRecordsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResolutionRecord
+     */
+    select?: ResolutionRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResolutionRecord
+     */
+    omit?: ResolutionRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResolutionRecordInclude<ExtArgs> | null
+    where?: ResolutionRecordWhereInput
+    orderBy?: ResolutionRecordOrderByWithRelationInput | ResolutionRecordOrderByWithRelationInput[]
+    cursor?: ResolutionRecordWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ResolutionRecordScalarFieldEnum | ResolutionRecordScalarFieldEnum[]
   }
 
   /**
@@ -4763,6 +5300,7 @@ export namespace Prisma {
     versions?: boolean | Meeting$versionsArgs<ExtArgs>
     auditEvents?: boolean | Meeting$auditEventsArgs<ExtArgs>
     flags?: boolean | Meeting$flagsArgs<ExtArgs>
+    resolutionRecords?: boolean | Meeting$resolutionRecordsArgs<ExtArgs>
     _count?: boolean | MeetingCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["meeting"]>
 
@@ -4864,6 +5402,7 @@ export namespace Prisma {
     versions?: boolean | Meeting$versionsArgs<ExtArgs>
     auditEvents?: boolean | Meeting$auditEventsArgs<ExtArgs>
     flags?: boolean | Meeting$flagsArgs<ExtArgs>
+    resolutionRecords?: boolean | Meeting$resolutionRecordsArgs<ExtArgs>
     _count?: boolean | MeetingCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type MeetingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4880,6 +5419,7 @@ export namespace Prisma {
       versions: Prisma.$VersionPayload<ExtArgs>[]
       auditEvents: Prisma.$AuditEventPayload<ExtArgs>[]
       flags: Prisma.$FlagPayload<ExtArgs>[]
+      resolutionRecords: Prisma.$ResolutionRecordPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5307,6 +5847,7 @@ export namespace Prisma {
     versions<T extends Meeting$versionsArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$versionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VersionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     auditEvents<T extends Meeting$auditEventsArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$auditEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     flags<T extends Meeting$flagsArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$flagsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FlagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    resolutionRecords<T extends Meeting$resolutionRecordsArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$resolutionRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5828,6 +6369,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: FlagScalarFieldEnum | FlagScalarFieldEnum[]
+  }
+
+  /**
+   * Meeting.resolutionRecords
+   */
+  export type Meeting$resolutionRecordsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResolutionRecord
+     */
+    select?: ResolutionRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResolutionRecord
+     */
+    omit?: ResolutionRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResolutionRecordInclude<ExtArgs> | null
+    where?: ResolutionRecordWhereInput
+    orderBy?: ResolutionRecordOrderByWithRelationInput | ResolutionRecordOrderByWithRelationInput[]
+    cursor?: ResolutionRecordWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ResolutionRecordScalarFieldEnum | ResolutionRecordScalarFieldEnum[]
   }
 
   /**
@@ -7209,6 +7774,7 @@ export namespace Prisma {
     updatedAt?: boolean
     meeting?: boolean | MeetingDefaultArgs<ExtArgs>
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    resolutionRecord?: boolean | Flag$resolutionRecordArgs<ExtArgs>
   }, ExtArgs["result"]["flag"]>
 
   export type FlagSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7273,6 +7839,7 @@ export namespace Prisma {
   export type FlagInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     meeting?: boolean | MeetingDefaultArgs<ExtArgs>
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    resolutionRecord?: boolean | Flag$resolutionRecordArgs<ExtArgs>
   }
   export type FlagIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     meeting?: boolean | MeetingDefaultArgs<ExtArgs>
@@ -7288,6 +7855,7 @@ export namespace Prisma {
     objects: {
       meeting: Prisma.$MeetingPayload<ExtArgs>
       workspace: Prisma.$WorkspacePayload<ExtArgs>
+      resolutionRecord: Prisma.$ResolutionRecordPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7701,6 +8269,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     meeting<T extends MeetingDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MeetingDefaultArgs<ExtArgs>>): Prisma__MeetingClient<$Result.GetResult<Prisma.$MeetingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    resolutionRecord<T extends Flag$resolutionRecordArgs<ExtArgs> = {}>(args?: Subset<T, Flag$resolutionRecordArgs<ExtArgs>>): Prisma__ResolutionRecordClient<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8141,6 +8710,25 @@ export namespace Prisma {
   }
 
   /**
+   * Flag.resolutionRecord
+   */
+  export type Flag$resolutionRecordArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResolutionRecord
+     */
+    select?: ResolutionRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResolutionRecord
+     */
+    omit?: ResolutionRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResolutionRecordInclude<ExtArgs> | null
+    where?: ResolutionRecordWhereInput
+  }
+
+  /**
    * Flag without action
    */
   export type FlagDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8156,6 +8744,4662 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: FlagInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ResolutionRecord
+   */
+
+  export type AggregateResolutionRecord = {
+    _count: ResolutionRecordCountAggregateOutputType | null
+    _min: ResolutionRecordMinAggregateOutputType | null
+    _max: ResolutionRecordMaxAggregateOutputType | null
+  }
+
+  export type ResolutionRecordMinAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    meetingId: string | null
+    flagId: string | null
+    resolutionType: $Enums.FlagResolutionType | null
+    rationale: string | null
+    createdByUserId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    submittedForVerificationAt: Date | null
+    closedAt: Date | null
+    closedByUserId: string | null
+    overrideReason: string | null
+    overrideCategory: string | null
+  }
+
+  export type ResolutionRecordMaxAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    meetingId: string | null
+    flagId: string | null
+    resolutionType: $Enums.FlagResolutionType | null
+    rationale: string | null
+    createdByUserId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    submittedForVerificationAt: Date | null
+    closedAt: Date | null
+    closedByUserId: string | null
+    overrideReason: string | null
+    overrideCategory: string | null
+  }
+
+  export type ResolutionRecordCountAggregateOutputType = {
+    id: number
+    workspaceId: number
+    meetingId: number
+    flagId: number
+    resolutionType: number
+    rationale: number
+    metadata: number
+    createdByUserId: number
+    createdAt: number
+    updatedAt: number
+    submittedForVerificationAt: number
+    closedAt: number
+    closedByUserId: number
+    overrideReason: number
+    overrideCategory: number
+    _all: number
+  }
+
+
+  export type ResolutionRecordMinAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    meetingId?: true
+    flagId?: true
+    resolutionType?: true
+    rationale?: true
+    createdByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+    submittedForVerificationAt?: true
+    closedAt?: true
+    closedByUserId?: true
+    overrideReason?: true
+    overrideCategory?: true
+  }
+
+  export type ResolutionRecordMaxAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    meetingId?: true
+    flagId?: true
+    resolutionType?: true
+    rationale?: true
+    createdByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+    submittedForVerificationAt?: true
+    closedAt?: true
+    closedByUserId?: true
+    overrideReason?: true
+    overrideCategory?: true
+  }
+
+  export type ResolutionRecordCountAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    meetingId?: true
+    flagId?: true
+    resolutionType?: true
+    rationale?: true
+    metadata?: true
+    createdByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+    submittedForVerificationAt?: true
+    closedAt?: true
+    closedByUserId?: true
+    overrideReason?: true
+    overrideCategory?: true
+    _all?: true
+  }
+
+  export type ResolutionRecordAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ResolutionRecord to aggregate.
+     */
+    where?: ResolutionRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ResolutionRecords to fetch.
+     */
+    orderBy?: ResolutionRecordOrderByWithRelationInput | ResolutionRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ResolutionRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ResolutionRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ResolutionRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ResolutionRecords
+    **/
+    _count?: true | ResolutionRecordCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ResolutionRecordMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ResolutionRecordMaxAggregateInputType
+  }
+
+  export type GetResolutionRecordAggregateType<T extends ResolutionRecordAggregateArgs> = {
+        [P in keyof T & keyof AggregateResolutionRecord]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateResolutionRecord[P]>
+      : GetScalarType<T[P], AggregateResolutionRecord[P]>
+  }
+
+
+
+
+  export type ResolutionRecordGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ResolutionRecordWhereInput
+    orderBy?: ResolutionRecordOrderByWithAggregationInput | ResolutionRecordOrderByWithAggregationInput[]
+    by: ResolutionRecordScalarFieldEnum[] | ResolutionRecordScalarFieldEnum
+    having?: ResolutionRecordScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ResolutionRecordCountAggregateInputType | true
+    _min?: ResolutionRecordMinAggregateInputType
+    _max?: ResolutionRecordMaxAggregateInputType
+  }
+
+  export type ResolutionRecordGroupByOutputType = {
+    id: string
+    workspaceId: string
+    meetingId: string
+    flagId: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata: JsonValue | null
+    createdByUserId: string
+    createdAt: Date
+    updatedAt: Date
+    submittedForVerificationAt: Date | null
+    closedAt: Date | null
+    closedByUserId: string | null
+    overrideReason: string | null
+    overrideCategory: string | null
+    _count: ResolutionRecordCountAggregateOutputType | null
+    _min: ResolutionRecordMinAggregateOutputType | null
+    _max: ResolutionRecordMaxAggregateOutputType | null
+  }
+
+  type GetResolutionRecordGroupByPayload<T extends ResolutionRecordGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ResolutionRecordGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ResolutionRecordGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ResolutionRecordGroupByOutputType[P]>
+            : GetScalarType<T[P], ResolutionRecordGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ResolutionRecordSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    meetingId?: boolean
+    flagId?: boolean
+    resolutionType?: boolean
+    rationale?: boolean
+    metadata?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    submittedForVerificationAt?: boolean
+    closedAt?: boolean
+    closedByUserId?: boolean
+    overrideReason?: boolean
+    overrideCategory?: boolean
+    flag?: boolean | FlagDefaultArgs<ExtArgs>
+    meeting?: boolean | MeetingDefaultArgs<ExtArgs>
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    tasks?: boolean | ResolutionRecord$tasksArgs<ExtArgs>
+    evidence?: boolean | ResolutionRecord$evidenceArgs<ExtArgs>
+    verifications?: boolean | ResolutionRecord$verificationsArgs<ExtArgs>
+    _count?: boolean | ResolutionRecordCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["resolutionRecord"]>
+
+  export type ResolutionRecordSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    meetingId?: boolean
+    flagId?: boolean
+    resolutionType?: boolean
+    rationale?: boolean
+    metadata?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    submittedForVerificationAt?: boolean
+    closedAt?: boolean
+    closedByUserId?: boolean
+    overrideReason?: boolean
+    overrideCategory?: boolean
+    flag?: boolean | FlagDefaultArgs<ExtArgs>
+    meeting?: boolean | MeetingDefaultArgs<ExtArgs>
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["resolutionRecord"]>
+
+  export type ResolutionRecordSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    meetingId?: boolean
+    flagId?: boolean
+    resolutionType?: boolean
+    rationale?: boolean
+    metadata?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    submittedForVerificationAt?: boolean
+    closedAt?: boolean
+    closedByUserId?: boolean
+    overrideReason?: boolean
+    overrideCategory?: boolean
+    flag?: boolean | FlagDefaultArgs<ExtArgs>
+    meeting?: boolean | MeetingDefaultArgs<ExtArgs>
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["resolutionRecord"]>
+
+  export type ResolutionRecordSelectScalar = {
+    id?: boolean
+    workspaceId?: boolean
+    meetingId?: boolean
+    flagId?: boolean
+    resolutionType?: boolean
+    rationale?: boolean
+    metadata?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    submittedForVerificationAt?: boolean
+    closedAt?: boolean
+    closedByUserId?: boolean
+    overrideReason?: boolean
+    overrideCategory?: boolean
+  }
+
+  export type ResolutionRecordOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "meetingId" | "flagId" | "resolutionType" | "rationale" | "metadata" | "createdByUserId" | "createdAt" | "updatedAt" | "submittedForVerificationAt" | "closedAt" | "closedByUserId" | "overrideReason" | "overrideCategory", ExtArgs["result"]["resolutionRecord"]>
+  export type ResolutionRecordInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    flag?: boolean | FlagDefaultArgs<ExtArgs>
+    meeting?: boolean | MeetingDefaultArgs<ExtArgs>
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    tasks?: boolean | ResolutionRecord$tasksArgs<ExtArgs>
+    evidence?: boolean | ResolutionRecord$evidenceArgs<ExtArgs>
+    verifications?: boolean | ResolutionRecord$verificationsArgs<ExtArgs>
+    _count?: boolean | ResolutionRecordCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ResolutionRecordIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    flag?: boolean | FlagDefaultArgs<ExtArgs>
+    meeting?: boolean | MeetingDefaultArgs<ExtArgs>
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+  export type ResolutionRecordIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    flag?: boolean | FlagDefaultArgs<ExtArgs>
+    meeting?: boolean | MeetingDefaultArgs<ExtArgs>
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+
+  export type $ResolutionRecordPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ResolutionRecord"
+    objects: {
+      flag: Prisma.$FlagPayload<ExtArgs>
+      meeting: Prisma.$MeetingPayload<ExtArgs>
+      workspace: Prisma.$WorkspacePayload<ExtArgs>
+      tasks: Prisma.$ActionItemPayload<ExtArgs>[]
+      evidence: Prisma.$EvidenceLinkPayload<ExtArgs>[]
+      verifications: Prisma.$VerificationPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workspaceId: string
+      meetingId: string
+      flagId: string
+      resolutionType: $Enums.FlagResolutionType
+      rationale: string
+      metadata: Prisma.JsonValue | null
+      createdByUserId: string
+      createdAt: Date
+      updatedAt: Date
+      submittedForVerificationAt: Date | null
+      closedAt: Date | null
+      closedByUserId: string | null
+      overrideReason: string | null
+      overrideCategory: string | null
+    }, ExtArgs["result"]["resolutionRecord"]>
+    composites: {}
+  }
+
+  type ResolutionRecordGetPayload<S extends boolean | null | undefined | ResolutionRecordDefaultArgs> = $Result.GetResult<Prisma.$ResolutionRecordPayload, S>
+
+  type ResolutionRecordCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ResolutionRecordFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ResolutionRecordCountAggregateInputType | true
+    }
+
+  export interface ResolutionRecordDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ResolutionRecord'], meta: { name: 'ResolutionRecord' } }
+    /**
+     * Find zero or one ResolutionRecord that matches the filter.
+     * @param {ResolutionRecordFindUniqueArgs} args - Arguments to find a ResolutionRecord
+     * @example
+     * // Get one ResolutionRecord
+     * const resolutionRecord = await prisma.resolutionRecord.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ResolutionRecordFindUniqueArgs>(args: SelectSubset<T, ResolutionRecordFindUniqueArgs<ExtArgs>>): Prisma__ResolutionRecordClient<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ResolutionRecord that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ResolutionRecordFindUniqueOrThrowArgs} args - Arguments to find a ResolutionRecord
+     * @example
+     * // Get one ResolutionRecord
+     * const resolutionRecord = await prisma.resolutionRecord.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ResolutionRecordFindUniqueOrThrowArgs>(args: SelectSubset<T, ResolutionRecordFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ResolutionRecordClient<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ResolutionRecord that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ResolutionRecordFindFirstArgs} args - Arguments to find a ResolutionRecord
+     * @example
+     * // Get one ResolutionRecord
+     * const resolutionRecord = await prisma.resolutionRecord.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ResolutionRecordFindFirstArgs>(args?: SelectSubset<T, ResolutionRecordFindFirstArgs<ExtArgs>>): Prisma__ResolutionRecordClient<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ResolutionRecord that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ResolutionRecordFindFirstOrThrowArgs} args - Arguments to find a ResolutionRecord
+     * @example
+     * // Get one ResolutionRecord
+     * const resolutionRecord = await prisma.resolutionRecord.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ResolutionRecordFindFirstOrThrowArgs>(args?: SelectSubset<T, ResolutionRecordFindFirstOrThrowArgs<ExtArgs>>): Prisma__ResolutionRecordClient<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ResolutionRecords that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ResolutionRecordFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ResolutionRecords
+     * const resolutionRecords = await prisma.resolutionRecord.findMany()
+     * 
+     * // Get first 10 ResolutionRecords
+     * const resolutionRecords = await prisma.resolutionRecord.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const resolutionRecordWithIdOnly = await prisma.resolutionRecord.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ResolutionRecordFindManyArgs>(args?: SelectSubset<T, ResolutionRecordFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ResolutionRecord.
+     * @param {ResolutionRecordCreateArgs} args - Arguments to create a ResolutionRecord.
+     * @example
+     * // Create one ResolutionRecord
+     * const ResolutionRecord = await prisma.resolutionRecord.create({
+     *   data: {
+     *     // ... data to create a ResolutionRecord
+     *   }
+     * })
+     * 
+     */
+    create<T extends ResolutionRecordCreateArgs>(args: SelectSubset<T, ResolutionRecordCreateArgs<ExtArgs>>): Prisma__ResolutionRecordClient<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ResolutionRecords.
+     * @param {ResolutionRecordCreateManyArgs} args - Arguments to create many ResolutionRecords.
+     * @example
+     * // Create many ResolutionRecords
+     * const resolutionRecord = await prisma.resolutionRecord.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ResolutionRecordCreateManyArgs>(args?: SelectSubset<T, ResolutionRecordCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ResolutionRecords and returns the data saved in the database.
+     * @param {ResolutionRecordCreateManyAndReturnArgs} args - Arguments to create many ResolutionRecords.
+     * @example
+     * // Create many ResolutionRecords
+     * const resolutionRecord = await prisma.resolutionRecord.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ResolutionRecords and only return the `id`
+     * const resolutionRecordWithIdOnly = await prisma.resolutionRecord.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ResolutionRecordCreateManyAndReturnArgs>(args?: SelectSubset<T, ResolutionRecordCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ResolutionRecord.
+     * @param {ResolutionRecordDeleteArgs} args - Arguments to delete one ResolutionRecord.
+     * @example
+     * // Delete one ResolutionRecord
+     * const ResolutionRecord = await prisma.resolutionRecord.delete({
+     *   where: {
+     *     // ... filter to delete one ResolutionRecord
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ResolutionRecordDeleteArgs>(args: SelectSubset<T, ResolutionRecordDeleteArgs<ExtArgs>>): Prisma__ResolutionRecordClient<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ResolutionRecord.
+     * @param {ResolutionRecordUpdateArgs} args - Arguments to update one ResolutionRecord.
+     * @example
+     * // Update one ResolutionRecord
+     * const resolutionRecord = await prisma.resolutionRecord.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ResolutionRecordUpdateArgs>(args: SelectSubset<T, ResolutionRecordUpdateArgs<ExtArgs>>): Prisma__ResolutionRecordClient<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ResolutionRecords.
+     * @param {ResolutionRecordDeleteManyArgs} args - Arguments to filter ResolutionRecords to delete.
+     * @example
+     * // Delete a few ResolutionRecords
+     * const { count } = await prisma.resolutionRecord.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ResolutionRecordDeleteManyArgs>(args?: SelectSubset<T, ResolutionRecordDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ResolutionRecords.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ResolutionRecordUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ResolutionRecords
+     * const resolutionRecord = await prisma.resolutionRecord.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ResolutionRecordUpdateManyArgs>(args: SelectSubset<T, ResolutionRecordUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ResolutionRecords and returns the data updated in the database.
+     * @param {ResolutionRecordUpdateManyAndReturnArgs} args - Arguments to update many ResolutionRecords.
+     * @example
+     * // Update many ResolutionRecords
+     * const resolutionRecord = await prisma.resolutionRecord.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ResolutionRecords and only return the `id`
+     * const resolutionRecordWithIdOnly = await prisma.resolutionRecord.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ResolutionRecordUpdateManyAndReturnArgs>(args: SelectSubset<T, ResolutionRecordUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ResolutionRecord.
+     * @param {ResolutionRecordUpsertArgs} args - Arguments to update or create a ResolutionRecord.
+     * @example
+     * // Update or create a ResolutionRecord
+     * const resolutionRecord = await prisma.resolutionRecord.upsert({
+     *   create: {
+     *     // ... data to create a ResolutionRecord
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ResolutionRecord we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ResolutionRecordUpsertArgs>(args: SelectSubset<T, ResolutionRecordUpsertArgs<ExtArgs>>): Prisma__ResolutionRecordClient<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ResolutionRecords.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ResolutionRecordCountArgs} args - Arguments to filter ResolutionRecords to count.
+     * @example
+     * // Count the number of ResolutionRecords
+     * const count = await prisma.resolutionRecord.count({
+     *   where: {
+     *     // ... the filter for the ResolutionRecords we want to count
+     *   }
+     * })
+    **/
+    count<T extends ResolutionRecordCountArgs>(
+      args?: Subset<T, ResolutionRecordCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ResolutionRecordCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ResolutionRecord.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ResolutionRecordAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ResolutionRecordAggregateArgs>(args: Subset<T, ResolutionRecordAggregateArgs>): Prisma.PrismaPromise<GetResolutionRecordAggregateType<T>>
+
+    /**
+     * Group by ResolutionRecord.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ResolutionRecordGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ResolutionRecordGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ResolutionRecordGroupByArgs['orderBy'] }
+        : { orderBy?: ResolutionRecordGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ResolutionRecordGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetResolutionRecordGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ResolutionRecord model
+   */
+  readonly fields: ResolutionRecordFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ResolutionRecord.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ResolutionRecordClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    flag<T extends FlagDefaultArgs<ExtArgs> = {}>(args?: Subset<T, FlagDefaultArgs<ExtArgs>>): Prisma__FlagClient<$Result.GetResult<Prisma.$FlagPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    meeting<T extends MeetingDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MeetingDefaultArgs<ExtArgs>>): Prisma__MeetingClient<$Result.GetResult<Prisma.$MeetingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    tasks<T extends ResolutionRecord$tasksArgs<ExtArgs> = {}>(args?: Subset<T, ResolutionRecord$tasksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActionItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    evidence<T extends ResolutionRecord$evidenceArgs<ExtArgs> = {}>(args?: Subset<T, ResolutionRecord$evidenceArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    verifications<T extends ResolutionRecord$verificationsArgs<ExtArgs> = {}>(args?: Subset<T, ResolutionRecord$verificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VerificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ResolutionRecord model
+   */
+  interface ResolutionRecordFieldRefs {
+    readonly id: FieldRef<"ResolutionRecord", 'String'>
+    readonly workspaceId: FieldRef<"ResolutionRecord", 'String'>
+    readonly meetingId: FieldRef<"ResolutionRecord", 'String'>
+    readonly flagId: FieldRef<"ResolutionRecord", 'String'>
+    readonly resolutionType: FieldRef<"ResolutionRecord", 'FlagResolutionType'>
+    readonly rationale: FieldRef<"ResolutionRecord", 'String'>
+    readonly metadata: FieldRef<"ResolutionRecord", 'Json'>
+    readonly createdByUserId: FieldRef<"ResolutionRecord", 'String'>
+    readonly createdAt: FieldRef<"ResolutionRecord", 'DateTime'>
+    readonly updatedAt: FieldRef<"ResolutionRecord", 'DateTime'>
+    readonly submittedForVerificationAt: FieldRef<"ResolutionRecord", 'DateTime'>
+    readonly closedAt: FieldRef<"ResolutionRecord", 'DateTime'>
+    readonly closedByUserId: FieldRef<"ResolutionRecord", 'String'>
+    readonly overrideReason: FieldRef<"ResolutionRecord", 'String'>
+    readonly overrideCategory: FieldRef<"ResolutionRecord", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ResolutionRecord findUnique
+   */
+  export type ResolutionRecordFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResolutionRecord
+     */
+    select?: ResolutionRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResolutionRecord
+     */
+    omit?: ResolutionRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResolutionRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which ResolutionRecord to fetch.
+     */
+    where: ResolutionRecordWhereUniqueInput
+  }
+
+  /**
+   * ResolutionRecord findUniqueOrThrow
+   */
+  export type ResolutionRecordFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResolutionRecord
+     */
+    select?: ResolutionRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResolutionRecord
+     */
+    omit?: ResolutionRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResolutionRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which ResolutionRecord to fetch.
+     */
+    where: ResolutionRecordWhereUniqueInput
+  }
+
+  /**
+   * ResolutionRecord findFirst
+   */
+  export type ResolutionRecordFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResolutionRecord
+     */
+    select?: ResolutionRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResolutionRecord
+     */
+    omit?: ResolutionRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResolutionRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which ResolutionRecord to fetch.
+     */
+    where?: ResolutionRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ResolutionRecords to fetch.
+     */
+    orderBy?: ResolutionRecordOrderByWithRelationInput | ResolutionRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ResolutionRecords.
+     */
+    cursor?: ResolutionRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ResolutionRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ResolutionRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ResolutionRecords.
+     */
+    distinct?: ResolutionRecordScalarFieldEnum | ResolutionRecordScalarFieldEnum[]
+  }
+
+  /**
+   * ResolutionRecord findFirstOrThrow
+   */
+  export type ResolutionRecordFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResolutionRecord
+     */
+    select?: ResolutionRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResolutionRecord
+     */
+    omit?: ResolutionRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResolutionRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which ResolutionRecord to fetch.
+     */
+    where?: ResolutionRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ResolutionRecords to fetch.
+     */
+    orderBy?: ResolutionRecordOrderByWithRelationInput | ResolutionRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ResolutionRecords.
+     */
+    cursor?: ResolutionRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ResolutionRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ResolutionRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ResolutionRecords.
+     */
+    distinct?: ResolutionRecordScalarFieldEnum | ResolutionRecordScalarFieldEnum[]
+  }
+
+  /**
+   * ResolutionRecord findMany
+   */
+  export type ResolutionRecordFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResolutionRecord
+     */
+    select?: ResolutionRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResolutionRecord
+     */
+    omit?: ResolutionRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResolutionRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which ResolutionRecords to fetch.
+     */
+    where?: ResolutionRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ResolutionRecords to fetch.
+     */
+    orderBy?: ResolutionRecordOrderByWithRelationInput | ResolutionRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ResolutionRecords.
+     */
+    cursor?: ResolutionRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ResolutionRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ResolutionRecords.
+     */
+    skip?: number
+    distinct?: ResolutionRecordScalarFieldEnum | ResolutionRecordScalarFieldEnum[]
+  }
+
+  /**
+   * ResolutionRecord create
+   */
+  export type ResolutionRecordCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResolutionRecord
+     */
+    select?: ResolutionRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResolutionRecord
+     */
+    omit?: ResolutionRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResolutionRecordInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ResolutionRecord.
+     */
+    data: XOR<ResolutionRecordCreateInput, ResolutionRecordUncheckedCreateInput>
+  }
+
+  /**
+   * ResolutionRecord createMany
+   */
+  export type ResolutionRecordCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ResolutionRecords.
+     */
+    data: ResolutionRecordCreateManyInput | ResolutionRecordCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ResolutionRecord createManyAndReturn
+   */
+  export type ResolutionRecordCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResolutionRecord
+     */
+    select?: ResolutionRecordSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResolutionRecord
+     */
+    omit?: ResolutionRecordOmit<ExtArgs> | null
+    /**
+     * The data used to create many ResolutionRecords.
+     */
+    data: ResolutionRecordCreateManyInput | ResolutionRecordCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResolutionRecordIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ResolutionRecord update
+   */
+  export type ResolutionRecordUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResolutionRecord
+     */
+    select?: ResolutionRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResolutionRecord
+     */
+    omit?: ResolutionRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResolutionRecordInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ResolutionRecord.
+     */
+    data: XOR<ResolutionRecordUpdateInput, ResolutionRecordUncheckedUpdateInput>
+    /**
+     * Choose, which ResolutionRecord to update.
+     */
+    where: ResolutionRecordWhereUniqueInput
+  }
+
+  /**
+   * ResolutionRecord updateMany
+   */
+  export type ResolutionRecordUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ResolutionRecords.
+     */
+    data: XOR<ResolutionRecordUpdateManyMutationInput, ResolutionRecordUncheckedUpdateManyInput>
+    /**
+     * Filter which ResolutionRecords to update
+     */
+    where?: ResolutionRecordWhereInput
+    /**
+     * Limit how many ResolutionRecords to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ResolutionRecord updateManyAndReturn
+   */
+  export type ResolutionRecordUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResolutionRecord
+     */
+    select?: ResolutionRecordSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResolutionRecord
+     */
+    omit?: ResolutionRecordOmit<ExtArgs> | null
+    /**
+     * The data used to update ResolutionRecords.
+     */
+    data: XOR<ResolutionRecordUpdateManyMutationInput, ResolutionRecordUncheckedUpdateManyInput>
+    /**
+     * Filter which ResolutionRecords to update
+     */
+    where?: ResolutionRecordWhereInput
+    /**
+     * Limit how many ResolutionRecords to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResolutionRecordIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ResolutionRecord upsert
+   */
+  export type ResolutionRecordUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResolutionRecord
+     */
+    select?: ResolutionRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResolutionRecord
+     */
+    omit?: ResolutionRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResolutionRecordInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ResolutionRecord to update in case it exists.
+     */
+    where: ResolutionRecordWhereUniqueInput
+    /**
+     * In case the ResolutionRecord found by the `where` argument doesn't exist, create a new ResolutionRecord with this data.
+     */
+    create: XOR<ResolutionRecordCreateInput, ResolutionRecordUncheckedCreateInput>
+    /**
+     * In case the ResolutionRecord was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ResolutionRecordUpdateInput, ResolutionRecordUncheckedUpdateInput>
+  }
+
+  /**
+   * ResolutionRecord delete
+   */
+  export type ResolutionRecordDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResolutionRecord
+     */
+    select?: ResolutionRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResolutionRecord
+     */
+    omit?: ResolutionRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResolutionRecordInclude<ExtArgs> | null
+    /**
+     * Filter which ResolutionRecord to delete.
+     */
+    where: ResolutionRecordWhereUniqueInput
+  }
+
+  /**
+   * ResolutionRecord deleteMany
+   */
+  export type ResolutionRecordDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ResolutionRecords to delete
+     */
+    where?: ResolutionRecordWhereInput
+    /**
+     * Limit how many ResolutionRecords to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ResolutionRecord.tasks
+   */
+  export type ResolutionRecord$tasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActionItem
+     */
+    select?: ActionItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ActionItem
+     */
+    omit?: ActionItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActionItemInclude<ExtArgs> | null
+    where?: ActionItemWhereInput
+    orderBy?: ActionItemOrderByWithRelationInput | ActionItemOrderByWithRelationInput[]
+    cursor?: ActionItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ActionItemScalarFieldEnum | ActionItemScalarFieldEnum[]
+  }
+
+  /**
+   * ResolutionRecord.evidence
+   */
+  export type ResolutionRecord$evidenceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceLink
+     */
+    select?: EvidenceLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceLink
+     */
+    omit?: EvidenceLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceLinkInclude<ExtArgs> | null
+    where?: EvidenceLinkWhereInput
+    orderBy?: EvidenceLinkOrderByWithRelationInput | EvidenceLinkOrderByWithRelationInput[]
+    cursor?: EvidenceLinkWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EvidenceLinkScalarFieldEnum | EvidenceLinkScalarFieldEnum[]
+  }
+
+  /**
+   * ResolutionRecord.verifications
+   */
+  export type ResolutionRecord$verificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Verification
+     */
+    select?: VerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Verification
+     */
+    omit?: VerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationInclude<ExtArgs> | null
+    where?: VerificationWhereInput
+    orderBy?: VerificationOrderByWithRelationInput | VerificationOrderByWithRelationInput[]
+    cursor?: VerificationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: VerificationScalarFieldEnum | VerificationScalarFieldEnum[]
+  }
+
+  /**
+   * ResolutionRecord without action
+   */
+  export type ResolutionRecordDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ResolutionRecord
+     */
+    select?: ResolutionRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ResolutionRecord
+     */
+    omit?: ResolutionRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ResolutionRecordInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ActionItem
+   */
+
+  export type AggregateActionItem = {
+    _count: ActionItemCountAggregateOutputType | null
+    _min: ActionItemMinAggregateOutputType | null
+    _max: ActionItemMaxAggregateOutputType | null
+  }
+
+  export type ActionItemMinAggregateOutputType = {
+    id: string | null
+    resolutionId: string | null
+    title: string | null
+    status: $Enums.RemediationTaskStatus | null
+    ownerId: string | null
+    dueDate: Date | null
+    required: boolean | null
+    completionNote: string | null
+    completedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ActionItemMaxAggregateOutputType = {
+    id: string | null
+    resolutionId: string | null
+    title: string | null
+    status: $Enums.RemediationTaskStatus | null
+    ownerId: string | null
+    dueDate: Date | null
+    required: boolean | null
+    completionNote: string | null
+    completedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ActionItemCountAggregateOutputType = {
+    id: number
+    resolutionId: number
+    title: number
+    status: number
+    ownerId: number
+    dueDate: number
+    required: number
+    completionNote: number
+    completedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ActionItemMinAggregateInputType = {
+    id?: true
+    resolutionId?: true
+    title?: true
+    status?: true
+    ownerId?: true
+    dueDate?: true
+    required?: true
+    completionNote?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ActionItemMaxAggregateInputType = {
+    id?: true
+    resolutionId?: true
+    title?: true
+    status?: true
+    ownerId?: true
+    dueDate?: true
+    required?: true
+    completionNote?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ActionItemCountAggregateInputType = {
+    id?: true
+    resolutionId?: true
+    title?: true
+    status?: true
+    ownerId?: true
+    dueDate?: true
+    required?: true
+    completionNote?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ActionItemAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ActionItem to aggregate.
+     */
+    where?: ActionItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ActionItems to fetch.
+     */
+    orderBy?: ActionItemOrderByWithRelationInput | ActionItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ActionItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ActionItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ActionItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ActionItems
+    **/
+    _count?: true | ActionItemCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ActionItemMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ActionItemMaxAggregateInputType
+  }
+
+  export type GetActionItemAggregateType<T extends ActionItemAggregateArgs> = {
+        [P in keyof T & keyof AggregateActionItem]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateActionItem[P]>
+      : GetScalarType<T[P], AggregateActionItem[P]>
+  }
+
+
+
+
+  export type ActionItemGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ActionItemWhereInput
+    orderBy?: ActionItemOrderByWithAggregationInput | ActionItemOrderByWithAggregationInput[]
+    by: ActionItemScalarFieldEnum[] | ActionItemScalarFieldEnum
+    having?: ActionItemScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ActionItemCountAggregateInputType | true
+    _min?: ActionItemMinAggregateInputType
+    _max?: ActionItemMaxAggregateInputType
+  }
+
+  export type ActionItemGroupByOutputType = {
+    id: string
+    resolutionId: string
+    title: string
+    status: $Enums.RemediationTaskStatus
+    ownerId: string
+    dueDate: Date
+    required: boolean
+    completionNote: string | null
+    completedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: ActionItemCountAggregateOutputType | null
+    _min: ActionItemMinAggregateOutputType | null
+    _max: ActionItemMaxAggregateOutputType | null
+  }
+
+  type GetActionItemGroupByPayload<T extends ActionItemGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ActionItemGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ActionItemGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ActionItemGroupByOutputType[P]>
+            : GetScalarType<T[P], ActionItemGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ActionItemSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    resolutionId?: boolean
+    title?: boolean
+    status?: boolean
+    ownerId?: boolean
+    dueDate?: boolean
+    required?: boolean
+    completionNote?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+    evidence?: boolean | ActionItem$evidenceArgs<ExtArgs>
+    _count?: boolean | ActionItemCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["actionItem"]>
+
+  export type ActionItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    resolutionId?: boolean
+    title?: boolean
+    status?: boolean
+    ownerId?: boolean
+    dueDate?: boolean
+    required?: boolean
+    completionNote?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["actionItem"]>
+
+  export type ActionItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    resolutionId?: boolean
+    title?: boolean
+    status?: boolean
+    ownerId?: boolean
+    dueDate?: boolean
+    required?: boolean
+    completionNote?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["actionItem"]>
+
+  export type ActionItemSelectScalar = {
+    id?: boolean
+    resolutionId?: boolean
+    title?: boolean
+    status?: boolean
+    ownerId?: boolean
+    dueDate?: boolean
+    required?: boolean
+    completionNote?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ActionItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "resolutionId" | "title" | "status" | "ownerId" | "dueDate" | "required" | "completionNote" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["actionItem"]>
+  export type ActionItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+    evidence?: boolean | ActionItem$evidenceArgs<ExtArgs>
+    _count?: boolean | ActionItemCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ActionItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+  }
+  export type ActionItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+  }
+
+  export type $ActionItemPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ActionItem"
+    objects: {
+      resolution: Prisma.$ResolutionRecordPayload<ExtArgs>
+      evidence: Prisma.$EvidenceLinkPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      resolutionId: string
+      title: string
+      status: $Enums.RemediationTaskStatus
+      ownerId: string
+      dueDate: Date
+      required: boolean
+      completionNote: string | null
+      completedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["actionItem"]>
+    composites: {}
+  }
+
+  type ActionItemGetPayload<S extends boolean | null | undefined | ActionItemDefaultArgs> = $Result.GetResult<Prisma.$ActionItemPayload, S>
+
+  type ActionItemCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ActionItemFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ActionItemCountAggregateInputType | true
+    }
+
+  export interface ActionItemDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ActionItem'], meta: { name: 'ActionItem' } }
+    /**
+     * Find zero or one ActionItem that matches the filter.
+     * @param {ActionItemFindUniqueArgs} args - Arguments to find a ActionItem
+     * @example
+     * // Get one ActionItem
+     * const actionItem = await prisma.actionItem.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ActionItemFindUniqueArgs>(args: SelectSubset<T, ActionItemFindUniqueArgs<ExtArgs>>): Prisma__ActionItemClient<$Result.GetResult<Prisma.$ActionItemPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ActionItem that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ActionItemFindUniqueOrThrowArgs} args - Arguments to find a ActionItem
+     * @example
+     * // Get one ActionItem
+     * const actionItem = await prisma.actionItem.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ActionItemFindUniqueOrThrowArgs>(args: SelectSubset<T, ActionItemFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ActionItemClient<$Result.GetResult<Prisma.$ActionItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ActionItem that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ActionItemFindFirstArgs} args - Arguments to find a ActionItem
+     * @example
+     * // Get one ActionItem
+     * const actionItem = await prisma.actionItem.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ActionItemFindFirstArgs>(args?: SelectSubset<T, ActionItemFindFirstArgs<ExtArgs>>): Prisma__ActionItemClient<$Result.GetResult<Prisma.$ActionItemPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ActionItem that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ActionItemFindFirstOrThrowArgs} args - Arguments to find a ActionItem
+     * @example
+     * // Get one ActionItem
+     * const actionItem = await prisma.actionItem.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ActionItemFindFirstOrThrowArgs>(args?: SelectSubset<T, ActionItemFindFirstOrThrowArgs<ExtArgs>>): Prisma__ActionItemClient<$Result.GetResult<Prisma.$ActionItemPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ActionItems that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ActionItemFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ActionItems
+     * const actionItems = await prisma.actionItem.findMany()
+     * 
+     * // Get first 10 ActionItems
+     * const actionItems = await prisma.actionItem.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const actionItemWithIdOnly = await prisma.actionItem.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ActionItemFindManyArgs>(args?: SelectSubset<T, ActionItemFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActionItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ActionItem.
+     * @param {ActionItemCreateArgs} args - Arguments to create a ActionItem.
+     * @example
+     * // Create one ActionItem
+     * const ActionItem = await prisma.actionItem.create({
+     *   data: {
+     *     // ... data to create a ActionItem
+     *   }
+     * })
+     * 
+     */
+    create<T extends ActionItemCreateArgs>(args: SelectSubset<T, ActionItemCreateArgs<ExtArgs>>): Prisma__ActionItemClient<$Result.GetResult<Prisma.$ActionItemPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ActionItems.
+     * @param {ActionItemCreateManyArgs} args - Arguments to create many ActionItems.
+     * @example
+     * // Create many ActionItems
+     * const actionItem = await prisma.actionItem.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ActionItemCreateManyArgs>(args?: SelectSubset<T, ActionItemCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ActionItems and returns the data saved in the database.
+     * @param {ActionItemCreateManyAndReturnArgs} args - Arguments to create many ActionItems.
+     * @example
+     * // Create many ActionItems
+     * const actionItem = await prisma.actionItem.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ActionItems and only return the `id`
+     * const actionItemWithIdOnly = await prisma.actionItem.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ActionItemCreateManyAndReturnArgs>(args?: SelectSubset<T, ActionItemCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActionItemPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ActionItem.
+     * @param {ActionItemDeleteArgs} args - Arguments to delete one ActionItem.
+     * @example
+     * // Delete one ActionItem
+     * const ActionItem = await prisma.actionItem.delete({
+     *   where: {
+     *     // ... filter to delete one ActionItem
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ActionItemDeleteArgs>(args: SelectSubset<T, ActionItemDeleteArgs<ExtArgs>>): Prisma__ActionItemClient<$Result.GetResult<Prisma.$ActionItemPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ActionItem.
+     * @param {ActionItemUpdateArgs} args - Arguments to update one ActionItem.
+     * @example
+     * // Update one ActionItem
+     * const actionItem = await prisma.actionItem.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ActionItemUpdateArgs>(args: SelectSubset<T, ActionItemUpdateArgs<ExtArgs>>): Prisma__ActionItemClient<$Result.GetResult<Prisma.$ActionItemPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ActionItems.
+     * @param {ActionItemDeleteManyArgs} args - Arguments to filter ActionItems to delete.
+     * @example
+     * // Delete a few ActionItems
+     * const { count } = await prisma.actionItem.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ActionItemDeleteManyArgs>(args?: SelectSubset<T, ActionItemDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ActionItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ActionItemUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ActionItems
+     * const actionItem = await prisma.actionItem.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ActionItemUpdateManyArgs>(args: SelectSubset<T, ActionItemUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ActionItems and returns the data updated in the database.
+     * @param {ActionItemUpdateManyAndReturnArgs} args - Arguments to update many ActionItems.
+     * @example
+     * // Update many ActionItems
+     * const actionItem = await prisma.actionItem.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ActionItems and only return the `id`
+     * const actionItemWithIdOnly = await prisma.actionItem.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ActionItemUpdateManyAndReturnArgs>(args: SelectSubset<T, ActionItemUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActionItemPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ActionItem.
+     * @param {ActionItemUpsertArgs} args - Arguments to update or create a ActionItem.
+     * @example
+     * // Update or create a ActionItem
+     * const actionItem = await prisma.actionItem.upsert({
+     *   create: {
+     *     // ... data to create a ActionItem
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ActionItem we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ActionItemUpsertArgs>(args: SelectSubset<T, ActionItemUpsertArgs<ExtArgs>>): Prisma__ActionItemClient<$Result.GetResult<Prisma.$ActionItemPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ActionItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ActionItemCountArgs} args - Arguments to filter ActionItems to count.
+     * @example
+     * // Count the number of ActionItems
+     * const count = await prisma.actionItem.count({
+     *   where: {
+     *     // ... the filter for the ActionItems we want to count
+     *   }
+     * })
+    **/
+    count<T extends ActionItemCountArgs>(
+      args?: Subset<T, ActionItemCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ActionItemCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ActionItem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ActionItemAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ActionItemAggregateArgs>(args: Subset<T, ActionItemAggregateArgs>): Prisma.PrismaPromise<GetActionItemAggregateType<T>>
+
+    /**
+     * Group by ActionItem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ActionItemGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ActionItemGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ActionItemGroupByArgs['orderBy'] }
+        : { orderBy?: ActionItemGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ActionItemGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetActionItemGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ActionItem model
+   */
+  readonly fields: ActionItemFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ActionItem.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ActionItemClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    resolution<T extends ResolutionRecordDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ResolutionRecordDefaultArgs<ExtArgs>>): Prisma__ResolutionRecordClient<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    evidence<T extends ActionItem$evidenceArgs<ExtArgs> = {}>(args?: Subset<T, ActionItem$evidenceArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ActionItem model
+   */
+  interface ActionItemFieldRefs {
+    readonly id: FieldRef<"ActionItem", 'String'>
+    readonly resolutionId: FieldRef<"ActionItem", 'String'>
+    readonly title: FieldRef<"ActionItem", 'String'>
+    readonly status: FieldRef<"ActionItem", 'RemediationTaskStatus'>
+    readonly ownerId: FieldRef<"ActionItem", 'String'>
+    readonly dueDate: FieldRef<"ActionItem", 'DateTime'>
+    readonly required: FieldRef<"ActionItem", 'Boolean'>
+    readonly completionNote: FieldRef<"ActionItem", 'String'>
+    readonly completedAt: FieldRef<"ActionItem", 'DateTime'>
+    readonly createdAt: FieldRef<"ActionItem", 'DateTime'>
+    readonly updatedAt: FieldRef<"ActionItem", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ActionItem findUnique
+   */
+  export type ActionItemFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActionItem
+     */
+    select?: ActionItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ActionItem
+     */
+    omit?: ActionItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActionItemInclude<ExtArgs> | null
+    /**
+     * Filter, which ActionItem to fetch.
+     */
+    where: ActionItemWhereUniqueInput
+  }
+
+  /**
+   * ActionItem findUniqueOrThrow
+   */
+  export type ActionItemFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActionItem
+     */
+    select?: ActionItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ActionItem
+     */
+    omit?: ActionItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActionItemInclude<ExtArgs> | null
+    /**
+     * Filter, which ActionItem to fetch.
+     */
+    where: ActionItemWhereUniqueInput
+  }
+
+  /**
+   * ActionItem findFirst
+   */
+  export type ActionItemFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActionItem
+     */
+    select?: ActionItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ActionItem
+     */
+    omit?: ActionItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActionItemInclude<ExtArgs> | null
+    /**
+     * Filter, which ActionItem to fetch.
+     */
+    where?: ActionItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ActionItems to fetch.
+     */
+    orderBy?: ActionItemOrderByWithRelationInput | ActionItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ActionItems.
+     */
+    cursor?: ActionItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ActionItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ActionItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ActionItems.
+     */
+    distinct?: ActionItemScalarFieldEnum | ActionItemScalarFieldEnum[]
+  }
+
+  /**
+   * ActionItem findFirstOrThrow
+   */
+  export type ActionItemFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActionItem
+     */
+    select?: ActionItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ActionItem
+     */
+    omit?: ActionItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActionItemInclude<ExtArgs> | null
+    /**
+     * Filter, which ActionItem to fetch.
+     */
+    where?: ActionItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ActionItems to fetch.
+     */
+    orderBy?: ActionItemOrderByWithRelationInput | ActionItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ActionItems.
+     */
+    cursor?: ActionItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ActionItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ActionItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ActionItems.
+     */
+    distinct?: ActionItemScalarFieldEnum | ActionItemScalarFieldEnum[]
+  }
+
+  /**
+   * ActionItem findMany
+   */
+  export type ActionItemFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActionItem
+     */
+    select?: ActionItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ActionItem
+     */
+    omit?: ActionItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActionItemInclude<ExtArgs> | null
+    /**
+     * Filter, which ActionItems to fetch.
+     */
+    where?: ActionItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ActionItems to fetch.
+     */
+    orderBy?: ActionItemOrderByWithRelationInput | ActionItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ActionItems.
+     */
+    cursor?: ActionItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ActionItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ActionItems.
+     */
+    skip?: number
+    distinct?: ActionItemScalarFieldEnum | ActionItemScalarFieldEnum[]
+  }
+
+  /**
+   * ActionItem create
+   */
+  export type ActionItemCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActionItem
+     */
+    select?: ActionItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ActionItem
+     */
+    omit?: ActionItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActionItemInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ActionItem.
+     */
+    data: XOR<ActionItemCreateInput, ActionItemUncheckedCreateInput>
+  }
+
+  /**
+   * ActionItem createMany
+   */
+  export type ActionItemCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ActionItems.
+     */
+    data: ActionItemCreateManyInput | ActionItemCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ActionItem createManyAndReturn
+   */
+  export type ActionItemCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActionItem
+     */
+    select?: ActionItemSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ActionItem
+     */
+    omit?: ActionItemOmit<ExtArgs> | null
+    /**
+     * The data used to create many ActionItems.
+     */
+    data: ActionItemCreateManyInput | ActionItemCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActionItemIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ActionItem update
+   */
+  export type ActionItemUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActionItem
+     */
+    select?: ActionItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ActionItem
+     */
+    omit?: ActionItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActionItemInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ActionItem.
+     */
+    data: XOR<ActionItemUpdateInput, ActionItemUncheckedUpdateInput>
+    /**
+     * Choose, which ActionItem to update.
+     */
+    where: ActionItemWhereUniqueInput
+  }
+
+  /**
+   * ActionItem updateMany
+   */
+  export type ActionItemUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ActionItems.
+     */
+    data: XOR<ActionItemUpdateManyMutationInput, ActionItemUncheckedUpdateManyInput>
+    /**
+     * Filter which ActionItems to update
+     */
+    where?: ActionItemWhereInput
+    /**
+     * Limit how many ActionItems to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ActionItem updateManyAndReturn
+   */
+  export type ActionItemUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActionItem
+     */
+    select?: ActionItemSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ActionItem
+     */
+    omit?: ActionItemOmit<ExtArgs> | null
+    /**
+     * The data used to update ActionItems.
+     */
+    data: XOR<ActionItemUpdateManyMutationInput, ActionItemUncheckedUpdateManyInput>
+    /**
+     * Filter which ActionItems to update
+     */
+    where?: ActionItemWhereInput
+    /**
+     * Limit how many ActionItems to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActionItemIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ActionItem upsert
+   */
+  export type ActionItemUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActionItem
+     */
+    select?: ActionItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ActionItem
+     */
+    omit?: ActionItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActionItemInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ActionItem to update in case it exists.
+     */
+    where: ActionItemWhereUniqueInput
+    /**
+     * In case the ActionItem found by the `where` argument doesn't exist, create a new ActionItem with this data.
+     */
+    create: XOR<ActionItemCreateInput, ActionItemUncheckedCreateInput>
+    /**
+     * In case the ActionItem was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ActionItemUpdateInput, ActionItemUncheckedUpdateInput>
+  }
+
+  /**
+   * ActionItem delete
+   */
+  export type ActionItemDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActionItem
+     */
+    select?: ActionItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ActionItem
+     */
+    omit?: ActionItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActionItemInclude<ExtArgs> | null
+    /**
+     * Filter which ActionItem to delete.
+     */
+    where: ActionItemWhereUniqueInput
+  }
+
+  /**
+   * ActionItem deleteMany
+   */
+  export type ActionItemDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ActionItems to delete
+     */
+    where?: ActionItemWhereInput
+    /**
+     * Limit how many ActionItems to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ActionItem.evidence
+   */
+  export type ActionItem$evidenceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceLink
+     */
+    select?: EvidenceLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceLink
+     */
+    omit?: EvidenceLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceLinkInclude<ExtArgs> | null
+    where?: EvidenceLinkWhereInput
+    orderBy?: EvidenceLinkOrderByWithRelationInput | EvidenceLinkOrderByWithRelationInput[]
+    cursor?: EvidenceLinkWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EvidenceLinkScalarFieldEnum | EvidenceLinkScalarFieldEnum[]
+  }
+
+  /**
+   * ActionItem without action
+   */
+  export type ActionItemDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActionItem
+     */
+    select?: ActionItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ActionItem
+     */
+    omit?: ActionItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActionItemInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model EvidenceLink
+   */
+
+  export type AggregateEvidenceLink = {
+    _count: EvidenceLinkCountAggregateOutputType | null
+    _min: EvidenceLinkMinAggregateOutputType | null
+    _max: EvidenceLinkMaxAggregateOutputType | null
+  }
+
+  export type EvidenceLinkMinAggregateOutputType = {
+    id: string | null
+    resolutionId: string | null
+    taskId: string | null
+    type: $Enums.EvidenceType | null
+    label: string | null
+    url: string | null
+    createdByUserId: string | null
+    createdAt: Date | null
+  }
+
+  export type EvidenceLinkMaxAggregateOutputType = {
+    id: string | null
+    resolutionId: string | null
+    taskId: string | null
+    type: $Enums.EvidenceType | null
+    label: string | null
+    url: string | null
+    createdByUserId: string | null
+    createdAt: Date | null
+  }
+
+  export type EvidenceLinkCountAggregateOutputType = {
+    id: number
+    resolutionId: number
+    taskId: number
+    type: number
+    label: number
+    url: number
+    metadata: number
+    createdByUserId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type EvidenceLinkMinAggregateInputType = {
+    id?: true
+    resolutionId?: true
+    taskId?: true
+    type?: true
+    label?: true
+    url?: true
+    createdByUserId?: true
+    createdAt?: true
+  }
+
+  export type EvidenceLinkMaxAggregateInputType = {
+    id?: true
+    resolutionId?: true
+    taskId?: true
+    type?: true
+    label?: true
+    url?: true
+    createdByUserId?: true
+    createdAt?: true
+  }
+
+  export type EvidenceLinkCountAggregateInputType = {
+    id?: true
+    resolutionId?: true
+    taskId?: true
+    type?: true
+    label?: true
+    url?: true
+    metadata?: true
+    createdByUserId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type EvidenceLinkAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EvidenceLink to aggregate.
+     */
+    where?: EvidenceLinkWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EvidenceLinks to fetch.
+     */
+    orderBy?: EvidenceLinkOrderByWithRelationInput | EvidenceLinkOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EvidenceLinkWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EvidenceLinks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EvidenceLinks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned EvidenceLinks
+    **/
+    _count?: true | EvidenceLinkCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EvidenceLinkMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EvidenceLinkMaxAggregateInputType
+  }
+
+  export type GetEvidenceLinkAggregateType<T extends EvidenceLinkAggregateArgs> = {
+        [P in keyof T & keyof AggregateEvidenceLink]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEvidenceLink[P]>
+      : GetScalarType<T[P], AggregateEvidenceLink[P]>
+  }
+
+
+
+
+  export type EvidenceLinkGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EvidenceLinkWhereInput
+    orderBy?: EvidenceLinkOrderByWithAggregationInput | EvidenceLinkOrderByWithAggregationInput[]
+    by: EvidenceLinkScalarFieldEnum[] | EvidenceLinkScalarFieldEnum
+    having?: EvidenceLinkScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EvidenceLinkCountAggregateInputType | true
+    _min?: EvidenceLinkMinAggregateInputType
+    _max?: EvidenceLinkMaxAggregateInputType
+  }
+
+  export type EvidenceLinkGroupByOutputType = {
+    id: string
+    resolutionId: string
+    taskId: string | null
+    type: $Enums.EvidenceType
+    label: string | null
+    url: string | null
+    metadata: JsonValue | null
+    createdByUserId: string
+    createdAt: Date
+    _count: EvidenceLinkCountAggregateOutputType | null
+    _min: EvidenceLinkMinAggregateOutputType | null
+    _max: EvidenceLinkMaxAggregateOutputType | null
+  }
+
+  type GetEvidenceLinkGroupByPayload<T extends EvidenceLinkGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EvidenceLinkGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EvidenceLinkGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EvidenceLinkGroupByOutputType[P]>
+            : GetScalarType<T[P], EvidenceLinkGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EvidenceLinkSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    resolutionId?: boolean
+    taskId?: boolean
+    type?: boolean
+    label?: boolean
+    url?: boolean
+    metadata?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+    task?: boolean | EvidenceLink$taskArgs<ExtArgs>
+  }, ExtArgs["result"]["evidenceLink"]>
+
+  export type EvidenceLinkSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    resolutionId?: boolean
+    taskId?: boolean
+    type?: boolean
+    label?: boolean
+    url?: boolean
+    metadata?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+    task?: boolean | EvidenceLink$taskArgs<ExtArgs>
+  }, ExtArgs["result"]["evidenceLink"]>
+
+  export type EvidenceLinkSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    resolutionId?: boolean
+    taskId?: boolean
+    type?: boolean
+    label?: boolean
+    url?: boolean
+    metadata?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+    task?: boolean | EvidenceLink$taskArgs<ExtArgs>
+  }, ExtArgs["result"]["evidenceLink"]>
+
+  export type EvidenceLinkSelectScalar = {
+    id?: boolean
+    resolutionId?: boolean
+    taskId?: boolean
+    type?: boolean
+    label?: boolean
+    url?: boolean
+    metadata?: boolean
+    createdByUserId?: boolean
+    createdAt?: boolean
+  }
+
+  export type EvidenceLinkOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "resolutionId" | "taskId" | "type" | "label" | "url" | "metadata" | "createdByUserId" | "createdAt", ExtArgs["result"]["evidenceLink"]>
+  export type EvidenceLinkInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+    task?: boolean | EvidenceLink$taskArgs<ExtArgs>
+  }
+  export type EvidenceLinkIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+    task?: boolean | EvidenceLink$taskArgs<ExtArgs>
+  }
+  export type EvidenceLinkIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+    task?: boolean | EvidenceLink$taskArgs<ExtArgs>
+  }
+
+  export type $EvidenceLinkPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "EvidenceLink"
+    objects: {
+      resolution: Prisma.$ResolutionRecordPayload<ExtArgs>
+      task: Prisma.$ActionItemPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      resolutionId: string
+      taskId: string | null
+      type: $Enums.EvidenceType
+      label: string | null
+      url: string | null
+      metadata: Prisma.JsonValue | null
+      createdByUserId: string
+      createdAt: Date
+    }, ExtArgs["result"]["evidenceLink"]>
+    composites: {}
+  }
+
+  type EvidenceLinkGetPayload<S extends boolean | null | undefined | EvidenceLinkDefaultArgs> = $Result.GetResult<Prisma.$EvidenceLinkPayload, S>
+
+  type EvidenceLinkCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EvidenceLinkFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EvidenceLinkCountAggregateInputType | true
+    }
+
+  export interface EvidenceLinkDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['EvidenceLink'], meta: { name: 'EvidenceLink' } }
+    /**
+     * Find zero or one EvidenceLink that matches the filter.
+     * @param {EvidenceLinkFindUniqueArgs} args - Arguments to find a EvidenceLink
+     * @example
+     * // Get one EvidenceLink
+     * const evidenceLink = await prisma.evidenceLink.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EvidenceLinkFindUniqueArgs>(args: SelectSubset<T, EvidenceLinkFindUniqueArgs<ExtArgs>>): Prisma__EvidenceLinkClient<$Result.GetResult<Prisma.$EvidenceLinkPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one EvidenceLink that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EvidenceLinkFindUniqueOrThrowArgs} args - Arguments to find a EvidenceLink
+     * @example
+     * // Get one EvidenceLink
+     * const evidenceLink = await prisma.evidenceLink.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EvidenceLinkFindUniqueOrThrowArgs>(args: SelectSubset<T, EvidenceLinkFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EvidenceLinkClient<$Result.GetResult<Prisma.$EvidenceLinkPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EvidenceLink that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceLinkFindFirstArgs} args - Arguments to find a EvidenceLink
+     * @example
+     * // Get one EvidenceLink
+     * const evidenceLink = await prisma.evidenceLink.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EvidenceLinkFindFirstArgs>(args?: SelectSubset<T, EvidenceLinkFindFirstArgs<ExtArgs>>): Prisma__EvidenceLinkClient<$Result.GetResult<Prisma.$EvidenceLinkPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EvidenceLink that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceLinkFindFirstOrThrowArgs} args - Arguments to find a EvidenceLink
+     * @example
+     * // Get one EvidenceLink
+     * const evidenceLink = await prisma.evidenceLink.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EvidenceLinkFindFirstOrThrowArgs>(args?: SelectSubset<T, EvidenceLinkFindFirstOrThrowArgs<ExtArgs>>): Prisma__EvidenceLinkClient<$Result.GetResult<Prisma.$EvidenceLinkPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more EvidenceLinks that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceLinkFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all EvidenceLinks
+     * const evidenceLinks = await prisma.evidenceLink.findMany()
+     * 
+     * // Get first 10 EvidenceLinks
+     * const evidenceLinks = await prisma.evidenceLink.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const evidenceLinkWithIdOnly = await prisma.evidenceLink.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EvidenceLinkFindManyArgs>(args?: SelectSubset<T, EvidenceLinkFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a EvidenceLink.
+     * @param {EvidenceLinkCreateArgs} args - Arguments to create a EvidenceLink.
+     * @example
+     * // Create one EvidenceLink
+     * const EvidenceLink = await prisma.evidenceLink.create({
+     *   data: {
+     *     // ... data to create a EvidenceLink
+     *   }
+     * })
+     * 
+     */
+    create<T extends EvidenceLinkCreateArgs>(args: SelectSubset<T, EvidenceLinkCreateArgs<ExtArgs>>): Prisma__EvidenceLinkClient<$Result.GetResult<Prisma.$EvidenceLinkPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many EvidenceLinks.
+     * @param {EvidenceLinkCreateManyArgs} args - Arguments to create many EvidenceLinks.
+     * @example
+     * // Create many EvidenceLinks
+     * const evidenceLink = await prisma.evidenceLink.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends EvidenceLinkCreateManyArgs>(args?: SelectSubset<T, EvidenceLinkCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many EvidenceLinks and returns the data saved in the database.
+     * @param {EvidenceLinkCreateManyAndReturnArgs} args - Arguments to create many EvidenceLinks.
+     * @example
+     * // Create many EvidenceLinks
+     * const evidenceLink = await prisma.evidenceLink.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many EvidenceLinks and only return the `id`
+     * const evidenceLinkWithIdOnly = await prisma.evidenceLink.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends EvidenceLinkCreateManyAndReturnArgs>(args?: SelectSubset<T, EvidenceLinkCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceLinkPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a EvidenceLink.
+     * @param {EvidenceLinkDeleteArgs} args - Arguments to delete one EvidenceLink.
+     * @example
+     * // Delete one EvidenceLink
+     * const EvidenceLink = await prisma.evidenceLink.delete({
+     *   where: {
+     *     // ... filter to delete one EvidenceLink
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EvidenceLinkDeleteArgs>(args: SelectSubset<T, EvidenceLinkDeleteArgs<ExtArgs>>): Prisma__EvidenceLinkClient<$Result.GetResult<Prisma.$EvidenceLinkPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one EvidenceLink.
+     * @param {EvidenceLinkUpdateArgs} args - Arguments to update one EvidenceLink.
+     * @example
+     * // Update one EvidenceLink
+     * const evidenceLink = await prisma.evidenceLink.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EvidenceLinkUpdateArgs>(args: SelectSubset<T, EvidenceLinkUpdateArgs<ExtArgs>>): Prisma__EvidenceLinkClient<$Result.GetResult<Prisma.$EvidenceLinkPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more EvidenceLinks.
+     * @param {EvidenceLinkDeleteManyArgs} args - Arguments to filter EvidenceLinks to delete.
+     * @example
+     * // Delete a few EvidenceLinks
+     * const { count } = await prisma.evidenceLink.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EvidenceLinkDeleteManyArgs>(args?: SelectSubset<T, EvidenceLinkDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EvidenceLinks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceLinkUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many EvidenceLinks
+     * const evidenceLink = await prisma.evidenceLink.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EvidenceLinkUpdateManyArgs>(args: SelectSubset<T, EvidenceLinkUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EvidenceLinks and returns the data updated in the database.
+     * @param {EvidenceLinkUpdateManyAndReturnArgs} args - Arguments to update many EvidenceLinks.
+     * @example
+     * // Update many EvidenceLinks
+     * const evidenceLink = await prisma.evidenceLink.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more EvidenceLinks and only return the `id`
+     * const evidenceLinkWithIdOnly = await prisma.evidenceLink.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EvidenceLinkUpdateManyAndReturnArgs>(args: SelectSubset<T, EvidenceLinkUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceLinkPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one EvidenceLink.
+     * @param {EvidenceLinkUpsertArgs} args - Arguments to update or create a EvidenceLink.
+     * @example
+     * // Update or create a EvidenceLink
+     * const evidenceLink = await prisma.evidenceLink.upsert({
+     *   create: {
+     *     // ... data to create a EvidenceLink
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the EvidenceLink we want to update
+     *   }
+     * })
+     */
+    upsert<T extends EvidenceLinkUpsertArgs>(args: SelectSubset<T, EvidenceLinkUpsertArgs<ExtArgs>>): Prisma__EvidenceLinkClient<$Result.GetResult<Prisma.$EvidenceLinkPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of EvidenceLinks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceLinkCountArgs} args - Arguments to filter EvidenceLinks to count.
+     * @example
+     * // Count the number of EvidenceLinks
+     * const count = await prisma.evidenceLink.count({
+     *   where: {
+     *     // ... the filter for the EvidenceLinks we want to count
+     *   }
+     * })
+    **/
+    count<T extends EvidenceLinkCountArgs>(
+      args?: Subset<T, EvidenceLinkCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EvidenceLinkCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a EvidenceLink.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceLinkAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EvidenceLinkAggregateArgs>(args: Subset<T, EvidenceLinkAggregateArgs>): Prisma.PrismaPromise<GetEvidenceLinkAggregateType<T>>
+
+    /**
+     * Group by EvidenceLink.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceLinkGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EvidenceLinkGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EvidenceLinkGroupByArgs['orderBy'] }
+        : { orderBy?: EvidenceLinkGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EvidenceLinkGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEvidenceLinkGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the EvidenceLink model
+   */
+  readonly fields: EvidenceLinkFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for EvidenceLink.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EvidenceLinkClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    resolution<T extends ResolutionRecordDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ResolutionRecordDefaultArgs<ExtArgs>>): Prisma__ResolutionRecordClient<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    task<T extends EvidenceLink$taskArgs<ExtArgs> = {}>(args?: Subset<T, EvidenceLink$taskArgs<ExtArgs>>): Prisma__ActionItemClient<$Result.GetResult<Prisma.$ActionItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the EvidenceLink model
+   */
+  interface EvidenceLinkFieldRefs {
+    readonly id: FieldRef<"EvidenceLink", 'String'>
+    readonly resolutionId: FieldRef<"EvidenceLink", 'String'>
+    readonly taskId: FieldRef<"EvidenceLink", 'String'>
+    readonly type: FieldRef<"EvidenceLink", 'EvidenceType'>
+    readonly label: FieldRef<"EvidenceLink", 'String'>
+    readonly url: FieldRef<"EvidenceLink", 'String'>
+    readonly metadata: FieldRef<"EvidenceLink", 'Json'>
+    readonly createdByUserId: FieldRef<"EvidenceLink", 'String'>
+    readonly createdAt: FieldRef<"EvidenceLink", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * EvidenceLink findUnique
+   */
+  export type EvidenceLinkFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceLink
+     */
+    select?: EvidenceLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceLink
+     */
+    omit?: EvidenceLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceLinkInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceLink to fetch.
+     */
+    where: EvidenceLinkWhereUniqueInput
+  }
+
+  /**
+   * EvidenceLink findUniqueOrThrow
+   */
+  export type EvidenceLinkFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceLink
+     */
+    select?: EvidenceLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceLink
+     */
+    omit?: EvidenceLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceLinkInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceLink to fetch.
+     */
+    where: EvidenceLinkWhereUniqueInput
+  }
+
+  /**
+   * EvidenceLink findFirst
+   */
+  export type EvidenceLinkFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceLink
+     */
+    select?: EvidenceLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceLink
+     */
+    omit?: EvidenceLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceLinkInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceLink to fetch.
+     */
+    where?: EvidenceLinkWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EvidenceLinks to fetch.
+     */
+    orderBy?: EvidenceLinkOrderByWithRelationInput | EvidenceLinkOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EvidenceLinks.
+     */
+    cursor?: EvidenceLinkWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EvidenceLinks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EvidenceLinks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EvidenceLinks.
+     */
+    distinct?: EvidenceLinkScalarFieldEnum | EvidenceLinkScalarFieldEnum[]
+  }
+
+  /**
+   * EvidenceLink findFirstOrThrow
+   */
+  export type EvidenceLinkFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceLink
+     */
+    select?: EvidenceLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceLink
+     */
+    omit?: EvidenceLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceLinkInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceLink to fetch.
+     */
+    where?: EvidenceLinkWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EvidenceLinks to fetch.
+     */
+    orderBy?: EvidenceLinkOrderByWithRelationInput | EvidenceLinkOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EvidenceLinks.
+     */
+    cursor?: EvidenceLinkWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EvidenceLinks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EvidenceLinks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EvidenceLinks.
+     */
+    distinct?: EvidenceLinkScalarFieldEnum | EvidenceLinkScalarFieldEnum[]
+  }
+
+  /**
+   * EvidenceLink findMany
+   */
+  export type EvidenceLinkFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceLink
+     */
+    select?: EvidenceLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceLink
+     */
+    omit?: EvidenceLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceLinkInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceLinks to fetch.
+     */
+    where?: EvidenceLinkWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EvidenceLinks to fetch.
+     */
+    orderBy?: EvidenceLinkOrderByWithRelationInput | EvidenceLinkOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing EvidenceLinks.
+     */
+    cursor?: EvidenceLinkWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EvidenceLinks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EvidenceLinks.
+     */
+    skip?: number
+    distinct?: EvidenceLinkScalarFieldEnum | EvidenceLinkScalarFieldEnum[]
+  }
+
+  /**
+   * EvidenceLink create
+   */
+  export type EvidenceLinkCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceLink
+     */
+    select?: EvidenceLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceLink
+     */
+    omit?: EvidenceLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceLinkInclude<ExtArgs> | null
+    /**
+     * The data needed to create a EvidenceLink.
+     */
+    data: XOR<EvidenceLinkCreateInput, EvidenceLinkUncheckedCreateInput>
+  }
+
+  /**
+   * EvidenceLink createMany
+   */
+  export type EvidenceLinkCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many EvidenceLinks.
+     */
+    data: EvidenceLinkCreateManyInput | EvidenceLinkCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * EvidenceLink createManyAndReturn
+   */
+  export type EvidenceLinkCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceLink
+     */
+    select?: EvidenceLinkSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceLink
+     */
+    omit?: EvidenceLinkOmit<ExtArgs> | null
+    /**
+     * The data used to create many EvidenceLinks.
+     */
+    data: EvidenceLinkCreateManyInput | EvidenceLinkCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceLinkIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EvidenceLink update
+   */
+  export type EvidenceLinkUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceLink
+     */
+    select?: EvidenceLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceLink
+     */
+    omit?: EvidenceLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceLinkInclude<ExtArgs> | null
+    /**
+     * The data needed to update a EvidenceLink.
+     */
+    data: XOR<EvidenceLinkUpdateInput, EvidenceLinkUncheckedUpdateInput>
+    /**
+     * Choose, which EvidenceLink to update.
+     */
+    where: EvidenceLinkWhereUniqueInput
+  }
+
+  /**
+   * EvidenceLink updateMany
+   */
+  export type EvidenceLinkUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update EvidenceLinks.
+     */
+    data: XOR<EvidenceLinkUpdateManyMutationInput, EvidenceLinkUncheckedUpdateManyInput>
+    /**
+     * Filter which EvidenceLinks to update
+     */
+    where?: EvidenceLinkWhereInput
+    /**
+     * Limit how many EvidenceLinks to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * EvidenceLink updateManyAndReturn
+   */
+  export type EvidenceLinkUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceLink
+     */
+    select?: EvidenceLinkSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceLink
+     */
+    omit?: EvidenceLinkOmit<ExtArgs> | null
+    /**
+     * The data used to update EvidenceLinks.
+     */
+    data: XOR<EvidenceLinkUpdateManyMutationInput, EvidenceLinkUncheckedUpdateManyInput>
+    /**
+     * Filter which EvidenceLinks to update
+     */
+    where?: EvidenceLinkWhereInput
+    /**
+     * Limit how many EvidenceLinks to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceLinkIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EvidenceLink upsert
+   */
+  export type EvidenceLinkUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceLink
+     */
+    select?: EvidenceLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceLink
+     */
+    omit?: EvidenceLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceLinkInclude<ExtArgs> | null
+    /**
+     * The filter to search for the EvidenceLink to update in case it exists.
+     */
+    where: EvidenceLinkWhereUniqueInput
+    /**
+     * In case the EvidenceLink found by the `where` argument doesn't exist, create a new EvidenceLink with this data.
+     */
+    create: XOR<EvidenceLinkCreateInput, EvidenceLinkUncheckedCreateInput>
+    /**
+     * In case the EvidenceLink was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EvidenceLinkUpdateInput, EvidenceLinkUncheckedUpdateInput>
+  }
+
+  /**
+   * EvidenceLink delete
+   */
+  export type EvidenceLinkDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceLink
+     */
+    select?: EvidenceLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceLink
+     */
+    omit?: EvidenceLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceLinkInclude<ExtArgs> | null
+    /**
+     * Filter which EvidenceLink to delete.
+     */
+    where: EvidenceLinkWhereUniqueInput
+  }
+
+  /**
+   * EvidenceLink deleteMany
+   */
+  export type EvidenceLinkDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EvidenceLinks to delete
+     */
+    where?: EvidenceLinkWhereInput
+    /**
+     * Limit how many EvidenceLinks to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * EvidenceLink.task
+   */
+  export type EvidenceLink$taskArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ActionItem
+     */
+    select?: ActionItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ActionItem
+     */
+    omit?: ActionItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ActionItemInclude<ExtArgs> | null
+    where?: ActionItemWhereInput
+  }
+
+  /**
+   * EvidenceLink without action
+   */
+  export type EvidenceLinkDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceLink
+     */
+    select?: EvidenceLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceLink
+     */
+    omit?: EvidenceLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceLinkInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Verification
+   */
+
+  export type AggregateVerification = {
+    _count: VerificationCountAggregateOutputType | null
+    _min: VerificationMinAggregateOutputType | null
+    _max: VerificationMaxAggregateOutputType | null
+  }
+
+  export type VerificationMinAggregateOutputType = {
+    id: string | null
+    resolutionId: string | null
+    reviewerId: string | null
+    decision: $Enums.VerificationDecision | null
+    note: string | null
+    decidedAt: Date | null
+  }
+
+  export type VerificationMaxAggregateOutputType = {
+    id: string | null
+    resolutionId: string | null
+    reviewerId: string | null
+    decision: $Enums.VerificationDecision | null
+    note: string | null
+    decidedAt: Date | null
+  }
+
+  export type VerificationCountAggregateOutputType = {
+    id: number
+    resolutionId: number
+    reviewerId: number
+    decision: number
+    note: number
+    decidedAt: number
+    _all: number
+  }
+
+
+  export type VerificationMinAggregateInputType = {
+    id?: true
+    resolutionId?: true
+    reviewerId?: true
+    decision?: true
+    note?: true
+    decidedAt?: true
+  }
+
+  export type VerificationMaxAggregateInputType = {
+    id?: true
+    resolutionId?: true
+    reviewerId?: true
+    decision?: true
+    note?: true
+    decidedAt?: true
+  }
+
+  export type VerificationCountAggregateInputType = {
+    id?: true
+    resolutionId?: true
+    reviewerId?: true
+    decision?: true
+    note?: true
+    decidedAt?: true
+    _all?: true
+  }
+
+  export type VerificationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Verification to aggregate.
+     */
+    where?: VerificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Verifications to fetch.
+     */
+    orderBy?: VerificationOrderByWithRelationInput | VerificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: VerificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Verifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Verifications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Verifications
+    **/
+    _count?: true | VerificationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: VerificationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: VerificationMaxAggregateInputType
+  }
+
+  export type GetVerificationAggregateType<T extends VerificationAggregateArgs> = {
+        [P in keyof T & keyof AggregateVerification]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateVerification[P]>
+      : GetScalarType<T[P], AggregateVerification[P]>
+  }
+
+
+
+
+  export type VerificationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VerificationWhereInput
+    orderBy?: VerificationOrderByWithAggregationInput | VerificationOrderByWithAggregationInput[]
+    by: VerificationScalarFieldEnum[] | VerificationScalarFieldEnum
+    having?: VerificationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: VerificationCountAggregateInputType | true
+    _min?: VerificationMinAggregateInputType
+    _max?: VerificationMaxAggregateInputType
+  }
+
+  export type VerificationGroupByOutputType = {
+    id: string
+    resolutionId: string
+    reviewerId: string
+    decision: $Enums.VerificationDecision
+    note: string | null
+    decidedAt: Date
+    _count: VerificationCountAggregateOutputType | null
+    _min: VerificationMinAggregateOutputType | null
+    _max: VerificationMaxAggregateOutputType | null
+  }
+
+  type GetVerificationGroupByPayload<T extends VerificationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<VerificationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof VerificationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], VerificationGroupByOutputType[P]>
+            : GetScalarType<T[P], VerificationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type VerificationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    resolutionId?: boolean
+    reviewerId?: boolean
+    decision?: boolean
+    note?: boolean
+    decidedAt?: boolean
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["verification"]>
+
+  export type VerificationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    resolutionId?: boolean
+    reviewerId?: boolean
+    decision?: boolean
+    note?: boolean
+    decidedAt?: boolean
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["verification"]>
+
+  export type VerificationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    resolutionId?: boolean
+    reviewerId?: boolean
+    decision?: boolean
+    note?: boolean
+    decidedAt?: boolean
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["verification"]>
+
+  export type VerificationSelectScalar = {
+    id?: boolean
+    resolutionId?: boolean
+    reviewerId?: boolean
+    decision?: boolean
+    note?: boolean
+    decidedAt?: boolean
+  }
+
+  export type VerificationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "resolutionId" | "reviewerId" | "decision" | "note" | "decidedAt", ExtArgs["result"]["verification"]>
+  export type VerificationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+  }
+  export type VerificationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+  }
+  export type VerificationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    resolution?: boolean | ResolutionRecordDefaultArgs<ExtArgs>
+  }
+
+  export type $VerificationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Verification"
+    objects: {
+      resolution: Prisma.$ResolutionRecordPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      resolutionId: string
+      reviewerId: string
+      decision: $Enums.VerificationDecision
+      note: string | null
+      decidedAt: Date
+    }, ExtArgs["result"]["verification"]>
+    composites: {}
+  }
+
+  type VerificationGetPayload<S extends boolean | null | undefined | VerificationDefaultArgs> = $Result.GetResult<Prisma.$VerificationPayload, S>
+
+  type VerificationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<VerificationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: VerificationCountAggregateInputType | true
+    }
+
+  export interface VerificationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Verification'], meta: { name: 'Verification' } }
+    /**
+     * Find zero or one Verification that matches the filter.
+     * @param {VerificationFindUniqueArgs} args - Arguments to find a Verification
+     * @example
+     * // Get one Verification
+     * const verification = await prisma.verification.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends VerificationFindUniqueArgs>(args: SelectSubset<T, VerificationFindUniqueArgs<ExtArgs>>): Prisma__VerificationClient<$Result.GetResult<Prisma.$VerificationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Verification that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {VerificationFindUniqueOrThrowArgs} args - Arguments to find a Verification
+     * @example
+     * // Get one Verification
+     * const verification = await prisma.verification.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends VerificationFindUniqueOrThrowArgs>(args: SelectSubset<T, VerificationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__VerificationClient<$Result.GetResult<Prisma.$VerificationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Verification that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VerificationFindFirstArgs} args - Arguments to find a Verification
+     * @example
+     * // Get one Verification
+     * const verification = await prisma.verification.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends VerificationFindFirstArgs>(args?: SelectSubset<T, VerificationFindFirstArgs<ExtArgs>>): Prisma__VerificationClient<$Result.GetResult<Prisma.$VerificationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Verification that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VerificationFindFirstOrThrowArgs} args - Arguments to find a Verification
+     * @example
+     * // Get one Verification
+     * const verification = await prisma.verification.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends VerificationFindFirstOrThrowArgs>(args?: SelectSubset<T, VerificationFindFirstOrThrowArgs<ExtArgs>>): Prisma__VerificationClient<$Result.GetResult<Prisma.$VerificationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Verifications that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VerificationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Verifications
+     * const verifications = await prisma.verification.findMany()
+     * 
+     * // Get first 10 Verifications
+     * const verifications = await prisma.verification.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const verificationWithIdOnly = await prisma.verification.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends VerificationFindManyArgs>(args?: SelectSubset<T, VerificationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VerificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Verification.
+     * @param {VerificationCreateArgs} args - Arguments to create a Verification.
+     * @example
+     * // Create one Verification
+     * const Verification = await prisma.verification.create({
+     *   data: {
+     *     // ... data to create a Verification
+     *   }
+     * })
+     * 
+     */
+    create<T extends VerificationCreateArgs>(args: SelectSubset<T, VerificationCreateArgs<ExtArgs>>): Prisma__VerificationClient<$Result.GetResult<Prisma.$VerificationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Verifications.
+     * @param {VerificationCreateManyArgs} args - Arguments to create many Verifications.
+     * @example
+     * // Create many Verifications
+     * const verification = await prisma.verification.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends VerificationCreateManyArgs>(args?: SelectSubset<T, VerificationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Verifications and returns the data saved in the database.
+     * @param {VerificationCreateManyAndReturnArgs} args - Arguments to create many Verifications.
+     * @example
+     * // Create many Verifications
+     * const verification = await prisma.verification.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Verifications and only return the `id`
+     * const verificationWithIdOnly = await prisma.verification.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends VerificationCreateManyAndReturnArgs>(args?: SelectSubset<T, VerificationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VerificationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Verification.
+     * @param {VerificationDeleteArgs} args - Arguments to delete one Verification.
+     * @example
+     * // Delete one Verification
+     * const Verification = await prisma.verification.delete({
+     *   where: {
+     *     // ... filter to delete one Verification
+     *   }
+     * })
+     * 
+     */
+    delete<T extends VerificationDeleteArgs>(args: SelectSubset<T, VerificationDeleteArgs<ExtArgs>>): Prisma__VerificationClient<$Result.GetResult<Prisma.$VerificationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Verification.
+     * @param {VerificationUpdateArgs} args - Arguments to update one Verification.
+     * @example
+     * // Update one Verification
+     * const verification = await prisma.verification.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends VerificationUpdateArgs>(args: SelectSubset<T, VerificationUpdateArgs<ExtArgs>>): Prisma__VerificationClient<$Result.GetResult<Prisma.$VerificationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Verifications.
+     * @param {VerificationDeleteManyArgs} args - Arguments to filter Verifications to delete.
+     * @example
+     * // Delete a few Verifications
+     * const { count } = await prisma.verification.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends VerificationDeleteManyArgs>(args?: SelectSubset<T, VerificationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Verifications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VerificationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Verifications
+     * const verification = await prisma.verification.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends VerificationUpdateManyArgs>(args: SelectSubset<T, VerificationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Verifications and returns the data updated in the database.
+     * @param {VerificationUpdateManyAndReturnArgs} args - Arguments to update many Verifications.
+     * @example
+     * // Update many Verifications
+     * const verification = await prisma.verification.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Verifications and only return the `id`
+     * const verificationWithIdOnly = await prisma.verification.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends VerificationUpdateManyAndReturnArgs>(args: SelectSubset<T, VerificationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VerificationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Verification.
+     * @param {VerificationUpsertArgs} args - Arguments to update or create a Verification.
+     * @example
+     * // Update or create a Verification
+     * const verification = await prisma.verification.upsert({
+     *   create: {
+     *     // ... data to create a Verification
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Verification we want to update
+     *   }
+     * })
+     */
+    upsert<T extends VerificationUpsertArgs>(args: SelectSubset<T, VerificationUpsertArgs<ExtArgs>>): Prisma__VerificationClient<$Result.GetResult<Prisma.$VerificationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Verifications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VerificationCountArgs} args - Arguments to filter Verifications to count.
+     * @example
+     * // Count the number of Verifications
+     * const count = await prisma.verification.count({
+     *   where: {
+     *     // ... the filter for the Verifications we want to count
+     *   }
+     * })
+    **/
+    count<T extends VerificationCountArgs>(
+      args?: Subset<T, VerificationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], VerificationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Verification.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VerificationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends VerificationAggregateArgs>(args: Subset<T, VerificationAggregateArgs>): Prisma.PrismaPromise<GetVerificationAggregateType<T>>
+
+    /**
+     * Group by Verification.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VerificationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends VerificationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: VerificationGroupByArgs['orderBy'] }
+        : { orderBy?: VerificationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, VerificationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetVerificationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Verification model
+   */
+  readonly fields: VerificationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Verification.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__VerificationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    resolution<T extends ResolutionRecordDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ResolutionRecordDefaultArgs<ExtArgs>>): Prisma__ResolutionRecordClient<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Verification model
+   */
+  interface VerificationFieldRefs {
+    readonly id: FieldRef<"Verification", 'String'>
+    readonly resolutionId: FieldRef<"Verification", 'String'>
+    readonly reviewerId: FieldRef<"Verification", 'String'>
+    readonly decision: FieldRef<"Verification", 'VerificationDecision'>
+    readonly note: FieldRef<"Verification", 'String'>
+    readonly decidedAt: FieldRef<"Verification", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Verification findUnique
+   */
+  export type VerificationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Verification
+     */
+    select?: VerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Verification
+     */
+    omit?: VerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Verification to fetch.
+     */
+    where: VerificationWhereUniqueInput
+  }
+
+  /**
+   * Verification findUniqueOrThrow
+   */
+  export type VerificationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Verification
+     */
+    select?: VerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Verification
+     */
+    omit?: VerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Verification to fetch.
+     */
+    where: VerificationWhereUniqueInput
+  }
+
+  /**
+   * Verification findFirst
+   */
+  export type VerificationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Verification
+     */
+    select?: VerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Verification
+     */
+    omit?: VerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Verification to fetch.
+     */
+    where?: VerificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Verifications to fetch.
+     */
+    orderBy?: VerificationOrderByWithRelationInput | VerificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Verifications.
+     */
+    cursor?: VerificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Verifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Verifications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Verifications.
+     */
+    distinct?: VerificationScalarFieldEnum | VerificationScalarFieldEnum[]
+  }
+
+  /**
+   * Verification findFirstOrThrow
+   */
+  export type VerificationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Verification
+     */
+    select?: VerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Verification
+     */
+    omit?: VerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Verification to fetch.
+     */
+    where?: VerificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Verifications to fetch.
+     */
+    orderBy?: VerificationOrderByWithRelationInput | VerificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Verifications.
+     */
+    cursor?: VerificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Verifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Verifications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Verifications.
+     */
+    distinct?: VerificationScalarFieldEnum | VerificationScalarFieldEnum[]
+  }
+
+  /**
+   * Verification findMany
+   */
+  export type VerificationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Verification
+     */
+    select?: VerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Verification
+     */
+    omit?: VerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Verifications to fetch.
+     */
+    where?: VerificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Verifications to fetch.
+     */
+    orderBy?: VerificationOrderByWithRelationInput | VerificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Verifications.
+     */
+    cursor?: VerificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Verifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Verifications.
+     */
+    skip?: number
+    distinct?: VerificationScalarFieldEnum | VerificationScalarFieldEnum[]
+  }
+
+  /**
+   * Verification create
+   */
+  export type VerificationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Verification
+     */
+    select?: VerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Verification
+     */
+    omit?: VerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Verification.
+     */
+    data: XOR<VerificationCreateInput, VerificationUncheckedCreateInput>
+  }
+
+  /**
+   * Verification createMany
+   */
+  export type VerificationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Verifications.
+     */
+    data: VerificationCreateManyInput | VerificationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Verification createManyAndReturn
+   */
+  export type VerificationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Verification
+     */
+    select?: VerificationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Verification
+     */
+    omit?: VerificationOmit<ExtArgs> | null
+    /**
+     * The data used to create many Verifications.
+     */
+    data: VerificationCreateManyInput | VerificationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Verification update
+   */
+  export type VerificationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Verification
+     */
+    select?: VerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Verification
+     */
+    omit?: VerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Verification.
+     */
+    data: XOR<VerificationUpdateInput, VerificationUncheckedUpdateInput>
+    /**
+     * Choose, which Verification to update.
+     */
+    where: VerificationWhereUniqueInput
+  }
+
+  /**
+   * Verification updateMany
+   */
+  export type VerificationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Verifications.
+     */
+    data: XOR<VerificationUpdateManyMutationInput, VerificationUncheckedUpdateManyInput>
+    /**
+     * Filter which Verifications to update
+     */
+    where?: VerificationWhereInput
+    /**
+     * Limit how many Verifications to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Verification updateManyAndReturn
+   */
+  export type VerificationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Verification
+     */
+    select?: VerificationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Verification
+     */
+    omit?: VerificationOmit<ExtArgs> | null
+    /**
+     * The data used to update Verifications.
+     */
+    data: XOR<VerificationUpdateManyMutationInput, VerificationUncheckedUpdateManyInput>
+    /**
+     * Filter which Verifications to update
+     */
+    where?: VerificationWhereInput
+    /**
+     * Limit how many Verifications to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Verification upsert
+   */
+  export type VerificationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Verification
+     */
+    select?: VerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Verification
+     */
+    omit?: VerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Verification to update in case it exists.
+     */
+    where: VerificationWhereUniqueInput
+    /**
+     * In case the Verification found by the `where` argument doesn't exist, create a new Verification with this data.
+     */
+    create: XOR<VerificationCreateInput, VerificationUncheckedCreateInput>
+    /**
+     * In case the Verification was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<VerificationUpdateInput, VerificationUncheckedUpdateInput>
+  }
+
+  /**
+   * Verification delete
+   */
+  export type VerificationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Verification
+     */
+    select?: VerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Verification
+     */
+    omit?: VerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationInclude<ExtArgs> | null
+    /**
+     * Filter which Verification to delete.
+     */
+    where: VerificationWhereUniqueInput
+  }
+
+  /**
+   * Verification deleteMany
+   */
+  export type VerificationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Verifications to delete
+     */
+    where?: VerificationWhereInput
+    /**
+     * Limit how many Verifications to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Verification without action
+   */
+  export type VerificationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Verification
+     */
+    select?: VerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Verification
+     */
+    omit?: VerificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationInclude<ExtArgs> | null
   }
 
 
@@ -14847,6 +20091,71 @@ export namespace Prisma {
   export type FlagScalarFieldEnum = (typeof FlagScalarFieldEnum)[keyof typeof FlagScalarFieldEnum]
 
 
+  export const ResolutionRecordScalarFieldEnum: {
+    id: 'id',
+    workspaceId: 'workspaceId',
+    meetingId: 'meetingId',
+    flagId: 'flagId',
+    resolutionType: 'resolutionType',
+    rationale: 'rationale',
+    metadata: 'metadata',
+    createdByUserId: 'createdByUserId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    submittedForVerificationAt: 'submittedForVerificationAt',
+    closedAt: 'closedAt',
+    closedByUserId: 'closedByUserId',
+    overrideReason: 'overrideReason',
+    overrideCategory: 'overrideCategory'
+  };
+
+  export type ResolutionRecordScalarFieldEnum = (typeof ResolutionRecordScalarFieldEnum)[keyof typeof ResolutionRecordScalarFieldEnum]
+
+
+  export const ActionItemScalarFieldEnum: {
+    id: 'id',
+    resolutionId: 'resolutionId',
+    title: 'title',
+    status: 'status',
+    ownerId: 'ownerId',
+    dueDate: 'dueDate',
+    required: 'required',
+    completionNote: 'completionNote',
+    completedAt: 'completedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ActionItemScalarFieldEnum = (typeof ActionItemScalarFieldEnum)[keyof typeof ActionItemScalarFieldEnum]
+
+
+  export const EvidenceLinkScalarFieldEnum: {
+    id: 'id',
+    resolutionId: 'resolutionId',
+    taskId: 'taskId',
+    type: 'type',
+    label: 'label',
+    url: 'url',
+    metadata: 'metadata',
+    createdByUserId: 'createdByUserId',
+    createdAt: 'createdAt'
+  };
+
+  export type EvidenceLinkScalarFieldEnum = (typeof EvidenceLinkScalarFieldEnum)[keyof typeof EvidenceLinkScalarFieldEnum]
+
+
+  export const VerificationScalarFieldEnum: {
+    id: 'id',
+    resolutionId: 'resolutionId',
+    reviewerId: 'reviewerId',
+    decision: 'decision',
+    note: 'note',
+    decidedAt: 'decidedAt'
+  };
+
+  export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
+
+
   export const AuditEventScalarFieldEnum: {
     id: 'id',
     workspaceId: 'workspaceId',
@@ -15162,6 +20471,48 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'RemediationTaskStatus'
+   */
+  export type EnumRemediationTaskStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RemediationTaskStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'RemediationTaskStatus[]'
+   */
+  export type ListEnumRemediationTaskStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RemediationTaskStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'EvidenceType'
+   */
+  export type EnumEvidenceTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EvidenceType'>
+    
+
+
+  /**
+   * Reference to a field of type 'EvidenceType[]'
+   */
+  export type ListEnumEvidenceTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EvidenceType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'VerificationDecision'
+   */
+  export type EnumVerificationDecisionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VerificationDecision'>
+    
+
+
+  /**
+   * Reference to a field of type 'VerificationDecision[]'
+   */
+  export type ListEnumVerificationDecisionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VerificationDecision[]'>
+    
+
+
+  /**
    * Reference to a field of type 'AuditAction'
    */
   export type EnumAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AuditAction'>
@@ -15210,6 +20561,7 @@ export namespace Prisma {
     auditEvents?: AuditEventListRelationFilter
     invitations?: InvitationListRelationFilter
     flags?: FlagListRelationFilter
+    resolutionRecords?: ResolutionRecordListRelationFilter
   }
 
   export type WorkspaceOrderByWithRelationInput = {
@@ -15227,6 +20579,7 @@ export namespace Prisma {
     auditEvents?: AuditEventOrderByRelationAggregateInput
     invitations?: InvitationOrderByRelationAggregateInput
     flags?: FlagOrderByRelationAggregateInput
+    resolutionRecords?: ResolutionRecordOrderByRelationAggregateInput
   }
 
   export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
@@ -15247,6 +20600,7 @@ export namespace Prisma {
     auditEvents?: AuditEventListRelationFilter
     invitations?: InvitationListRelationFilter
     flags?: FlagListRelationFilter
+    resolutionRecords?: ResolutionRecordListRelationFilter
   }, "id">
 
   export type WorkspaceOrderByWithAggregationInput = {
@@ -15365,6 +20719,7 @@ export namespace Prisma {
     versions?: VersionListRelationFilter
     auditEvents?: AuditEventListRelationFilter
     flags?: FlagListRelationFilter
+    resolutionRecords?: ResolutionRecordListRelationFilter
   }
 
   export type MeetingOrderByWithRelationInput = {
@@ -15399,6 +20754,7 @@ export namespace Prisma {
     versions?: VersionOrderByRelationAggregateInput
     auditEvents?: AuditEventOrderByRelationAggregateInput
     flags?: FlagOrderByRelationAggregateInput
+    resolutionRecords?: ResolutionRecordOrderByRelationAggregateInput
   }
 
   export type MeetingWhereUniqueInput = Prisma.AtLeast<{
@@ -15436,6 +20792,7 @@ export namespace Prisma {
     versions?: VersionListRelationFilter
     auditEvents?: AuditEventListRelationFilter
     flags?: FlagListRelationFilter
+    resolutionRecords?: ResolutionRecordListRelationFilter
   }, "id">
 
   export type MeetingOrderByWithAggregationInput = {
@@ -15594,6 +20951,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Flag"> | Date | string
     meeting?: XOR<MeetingScalarRelationFilter, MeetingWhereInput>
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    resolutionRecord?: XOR<ResolutionRecordNullableScalarRelationFilter, ResolutionRecordWhereInput> | null
   }
 
   export type FlagOrderByWithRelationInput = {
@@ -15614,6 +20972,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     meeting?: MeetingOrderByWithRelationInput
     workspace?: WorkspaceOrderByWithRelationInput
+    resolutionRecord?: ResolutionRecordOrderByWithRelationInput
   }
 
   export type FlagWhereUniqueInput = Prisma.AtLeast<{
@@ -15637,6 +20996,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Flag"> | Date | string
     meeting?: XOR<MeetingScalarRelationFilter, MeetingWhereInput>
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    resolutionRecord?: XOR<ResolutionRecordNullableScalarRelationFilter, ResolutionRecordWhereInput> | null
   }, "id">
 
   export type FlagOrderByWithAggregationInput = {
@@ -15679,6 +21039,352 @@ export namespace Prisma {
     resolutionNote?: StringNullableWithAggregatesFilter<"Flag"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Flag"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Flag"> | Date | string
+  }
+
+  export type ResolutionRecordWhereInput = {
+    AND?: ResolutionRecordWhereInput | ResolutionRecordWhereInput[]
+    OR?: ResolutionRecordWhereInput[]
+    NOT?: ResolutionRecordWhereInput | ResolutionRecordWhereInput[]
+    id?: StringFilter<"ResolutionRecord"> | string
+    workspaceId?: StringFilter<"ResolutionRecord"> | string
+    meetingId?: StringFilter<"ResolutionRecord"> | string
+    flagId?: StringFilter<"ResolutionRecord"> | string
+    resolutionType?: EnumFlagResolutionTypeFilter<"ResolutionRecord"> | $Enums.FlagResolutionType
+    rationale?: StringFilter<"ResolutionRecord"> | string
+    metadata?: JsonNullableFilter<"ResolutionRecord">
+    createdByUserId?: StringFilter<"ResolutionRecord"> | string
+    createdAt?: DateTimeFilter<"ResolutionRecord"> | Date | string
+    updatedAt?: DateTimeFilter<"ResolutionRecord"> | Date | string
+    submittedForVerificationAt?: DateTimeNullableFilter<"ResolutionRecord"> | Date | string | null
+    closedAt?: DateTimeNullableFilter<"ResolutionRecord"> | Date | string | null
+    closedByUserId?: StringNullableFilter<"ResolutionRecord"> | string | null
+    overrideReason?: StringNullableFilter<"ResolutionRecord"> | string | null
+    overrideCategory?: StringNullableFilter<"ResolutionRecord"> | string | null
+    flag?: XOR<FlagScalarRelationFilter, FlagWhereInput>
+    meeting?: XOR<MeetingScalarRelationFilter, MeetingWhereInput>
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    tasks?: ActionItemListRelationFilter
+    evidence?: EvidenceLinkListRelationFilter
+    verifications?: VerificationListRelationFilter
+  }
+
+  export type ResolutionRecordOrderByWithRelationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    meetingId?: SortOrder
+    flagId?: SortOrder
+    resolutionType?: SortOrder
+    rationale?: SortOrder
+    metadata?: SortOrderInput | SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    submittedForVerificationAt?: SortOrderInput | SortOrder
+    closedAt?: SortOrderInput | SortOrder
+    closedByUserId?: SortOrderInput | SortOrder
+    overrideReason?: SortOrderInput | SortOrder
+    overrideCategory?: SortOrderInput | SortOrder
+    flag?: FlagOrderByWithRelationInput
+    meeting?: MeetingOrderByWithRelationInput
+    workspace?: WorkspaceOrderByWithRelationInput
+    tasks?: ActionItemOrderByRelationAggregateInput
+    evidence?: EvidenceLinkOrderByRelationAggregateInput
+    verifications?: VerificationOrderByRelationAggregateInput
+  }
+
+  export type ResolutionRecordWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    flagId?: string
+    AND?: ResolutionRecordWhereInput | ResolutionRecordWhereInput[]
+    OR?: ResolutionRecordWhereInput[]
+    NOT?: ResolutionRecordWhereInput | ResolutionRecordWhereInput[]
+    workspaceId?: StringFilter<"ResolutionRecord"> | string
+    meetingId?: StringFilter<"ResolutionRecord"> | string
+    resolutionType?: EnumFlagResolutionTypeFilter<"ResolutionRecord"> | $Enums.FlagResolutionType
+    rationale?: StringFilter<"ResolutionRecord"> | string
+    metadata?: JsonNullableFilter<"ResolutionRecord">
+    createdByUserId?: StringFilter<"ResolutionRecord"> | string
+    createdAt?: DateTimeFilter<"ResolutionRecord"> | Date | string
+    updatedAt?: DateTimeFilter<"ResolutionRecord"> | Date | string
+    submittedForVerificationAt?: DateTimeNullableFilter<"ResolutionRecord"> | Date | string | null
+    closedAt?: DateTimeNullableFilter<"ResolutionRecord"> | Date | string | null
+    closedByUserId?: StringNullableFilter<"ResolutionRecord"> | string | null
+    overrideReason?: StringNullableFilter<"ResolutionRecord"> | string | null
+    overrideCategory?: StringNullableFilter<"ResolutionRecord"> | string | null
+    flag?: XOR<FlagScalarRelationFilter, FlagWhereInput>
+    meeting?: XOR<MeetingScalarRelationFilter, MeetingWhereInput>
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    tasks?: ActionItemListRelationFilter
+    evidence?: EvidenceLinkListRelationFilter
+    verifications?: VerificationListRelationFilter
+  }, "id" | "flagId">
+
+  export type ResolutionRecordOrderByWithAggregationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    meetingId?: SortOrder
+    flagId?: SortOrder
+    resolutionType?: SortOrder
+    rationale?: SortOrder
+    metadata?: SortOrderInput | SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    submittedForVerificationAt?: SortOrderInput | SortOrder
+    closedAt?: SortOrderInput | SortOrder
+    closedByUserId?: SortOrderInput | SortOrder
+    overrideReason?: SortOrderInput | SortOrder
+    overrideCategory?: SortOrderInput | SortOrder
+    _count?: ResolutionRecordCountOrderByAggregateInput
+    _max?: ResolutionRecordMaxOrderByAggregateInput
+    _min?: ResolutionRecordMinOrderByAggregateInput
+  }
+
+  export type ResolutionRecordScalarWhereWithAggregatesInput = {
+    AND?: ResolutionRecordScalarWhereWithAggregatesInput | ResolutionRecordScalarWhereWithAggregatesInput[]
+    OR?: ResolutionRecordScalarWhereWithAggregatesInput[]
+    NOT?: ResolutionRecordScalarWhereWithAggregatesInput | ResolutionRecordScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ResolutionRecord"> | string
+    workspaceId?: StringWithAggregatesFilter<"ResolutionRecord"> | string
+    meetingId?: StringWithAggregatesFilter<"ResolutionRecord"> | string
+    flagId?: StringWithAggregatesFilter<"ResolutionRecord"> | string
+    resolutionType?: EnumFlagResolutionTypeWithAggregatesFilter<"ResolutionRecord"> | $Enums.FlagResolutionType
+    rationale?: StringWithAggregatesFilter<"ResolutionRecord"> | string
+    metadata?: JsonNullableWithAggregatesFilter<"ResolutionRecord">
+    createdByUserId?: StringWithAggregatesFilter<"ResolutionRecord"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"ResolutionRecord"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ResolutionRecord"> | Date | string
+    submittedForVerificationAt?: DateTimeNullableWithAggregatesFilter<"ResolutionRecord"> | Date | string | null
+    closedAt?: DateTimeNullableWithAggregatesFilter<"ResolutionRecord"> | Date | string | null
+    closedByUserId?: StringNullableWithAggregatesFilter<"ResolutionRecord"> | string | null
+    overrideReason?: StringNullableWithAggregatesFilter<"ResolutionRecord"> | string | null
+    overrideCategory?: StringNullableWithAggregatesFilter<"ResolutionRecord"> | string | null
+  }
+
+  export type ActionItemWhereInput = {
+    AND?: ActionItemWhereInput | ActionItemWhereInput[]
+    OR?: ActionItemWhereInput[]
+    NOT?: ActionItemWhereInput | ActionItemWhereInput[]
+    id?: StringFilter<"ActionItem"> | string
+    resolutionId?: StringFilter<"ActionItem"> | string
+    title?: StringFilter<"ActionItem"> | string
+    status?: EnumRemediationTaskStatusFilter<"ActionItem"> | $Enums.RemediationTaskStatus
+    ownerId?: StringFilter<"ActionItem"> | string
+    dueDate?: DateTimeFilter<"ActionItem"> | Date | string
+    required?: BoolFilter<"ActionItem"> | boolean
+    completionNote?: StringNullableFilter<"ActionItem"> | string | null
+    completedAt?: DateTimeNullableFilter<"ActionItem"> | Date | string | null
+    createdAt?: DateTimeFilter<"ActionItem"> | Date | string
+    updatedAt?: DateTimeFilter<"ActionItem"> | Date | string
+    resolution?: XOR<ResolutionRecordScalarRelationFilter, ResolutionRecordWhereInput>
+    evidence?: EvidenceLinkListRelationFilter
+  }
+
+  export type ActionItemOrderByWithRelationInput = {
+    id?: SortOrder
+    resolutionId?: SortOrder
+    title?: SortOrder
+    status?: SortOrder
+    ownerId?: SortOrder
+    dueDate?: SortOrder
+    required?: SortOrder
+    completionNote?: SortOrderInput | SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    resolution?: ResolutionRecordOrderByWithRelationInput
+    evidence?: EvidenceLinkOrderByRelationAggregateInput
+  }
+
+  export type ActionItemWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ActionItemWhereInput | ActionItemWhereInput[]
+    OR?: ActionItemWhereInput[]
+    NOT?: ActionItemWhereInput | ActionItemWhereInput[]
+    resolutionId?: StringFilter<"ActionItem"> | string
+    title?: StringFilter<"ActionItem"> | string
+    status?: EnumRemediationTaskStatusFilter<"ActionItem"> | $Enums.RemediationTaskStatus
+    ownerId?: StringFilter<"ActionItem"> | string
+    dueDate?: DateTimeFilter<"ActionItem"> | Date | string
+    required?: BoolFilter<"ActionItem"> | boolean
+    completionNote?: StringNullableFilter<"ActionItem"> | string | null
+    completedAt?: DateTimeNullableFilter<"ActionItem"> | Date | string | null
+    createdAt?: DateTimeFilter<"ActionItem"> | Date | string
+    updatedAt?: DateTimeFilter<"ActionItem"> | Date | string
+    resolution?: XOR<ResolutionRecordScalarRelationFilter, ResolutionRecordWhereInput>
+    evidence?: EvidenceLinkListRelationFilter
+  }, "id">
+
+  export type ActionItemOrderByWithAggregationInput = {
+    id?: SortOrder
+    resolutionId?: SortOrder
+    title?: SortOrder
+    status?: SortOrder
+    ownerId?: SortOrder
+    dueDate?: SortOrder
+    required?: SortOrder
+    completionNote?: SortOrderInput | SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ActionItemCountOrderByAggregateInput
+    _max?: ActionItemMaxOrderByAggregateInput
+    _min?: ActionItemMinOrderByAggregateInput
+  }
+
+  export type ActionItemScalarWhereWithAggregatesInput = {
+    AND?: ActionItemScalarWhereWithAggregatesInput | ActionItemScalarWhereWithAggregatesInput[]
+    OR?: ActionItemScalarWhereWithAggregatesInput[]
+    NOT?: ActionItemScalarWhereWithAggregatesInput | ActionItemScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ActionItem"> | string
+    resolutionId?: StringWithAggregatesFilter<"ActionItem"> | string
+    title?: StringWithAggregatesFilter<"ActionItem"> | string
+    status?: EnumRemediationTaskStatusWithAggregatesFilter<"ActionItem"> | $Enums.RemediationTaskStatus
+    ownerId?: StringWithAggregatesFilter<"ActionItem"> | string
+    dueDate?: DateTimeWithAggregatesFilter<"ActionItem"> | Date | string
+    required?: BoolWithAggregatesFilter<"ActionItem"> | boolean
+    completionNote?: StringNullableWithAggregatesFilter<"ActionItem"> | string | null
+    completedAt?: DateTimeNullableWithAggregatesFilter<"ActionItem"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"ActionItem"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ActionItem"> | Date | string
+  }
+
+  export type EvidenceLinkWhereInput = {
+    AND?: EvidenceLinkWhereInput | EvidenceLinkWhereInput[]
+    OR?: EvidenceLinkWhereInput[]
+    NOT?: EvidenceLinkWhereInput | EvidenceLinkWhereInput[]
+    id?: StringFilter<"EvidenceLink"> | string
+    resolutionId?: StringFilter<"EvidenceLink"> | string
+    taskId?: StringNullableFilter<"EvidenceLink"> | string | null
+    type?: EnumEvidenceTypeFilter<"EvidenceLink"> | $Enums.EvidenceType
+    label?: StringNullableFilter<"EvidenceLink"> | string | null
+    url?: StringNullableFilter<"EvidenceLink"> | string | null
+    metadata?: JsonNullableFilter<"EvidenceLink">
+    createdByUserId?: StringFilter<"EvidenceLink"> | string
+    createdAt?: DateTimeFilter<"EvidenceLink"> | Date | string
+    resolution?: XOR<ResolutionRecordScalarRelationFilter, ResolutionRecordWhereInput>
+    task?: XOR<ActionItemNullableScalarRelationFilter, ActionItemWhereInput> | null
+  }
+
+  export type EvidenceLinkOrderByWithRelationInput = {
+    id?: SortOrder
+    resolutionId?: SortOrder
+    taskId?: SortOrderInput | SortOrder
+    type?: SortOrder
+    label?: SortOrderInput | SortOrder
+    url?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+    resolution?: ResolutionRecordOrderByWithRelationInput
+    task?: ActionItemOrderByWithRelationInput
+  }
+
+  export type EvidenceLinkWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: EvidenceLinkWhereInput | EvidenceLinkWhereInput[]
+    OR?: EvidenceLinkWhereInput[]
+    NOT?: EvidenceLinkWhereInput | EvidenceLinkWhereInput[]
+    resolutionId?: StringFilter<"EvidenceLink"> | string
+    taskId?: StringNullableFilter<"EvidenceLink"> | string | null
+    type?: EnumEvidenceTypeFilter<"EvidenceLink"> | $Enums.EvidenceType
+    label?: StringNullableFilter<"EvidenceLink"> | string | null
+    url?: StringNullableFilter<"EvidenceLink"> | string | null
+    metadata?: JsonNullableFilter<"EvidenceLink">
+    createdByUserId?: StringFilter<"EvidenceLink"> | string
+    createdAt?: DateTimeFilter<"EvidenceLink"> | Date | string
+    resolution?: XOR<ResolutionRecordScalarRelationFilter, ResolutionRecordWhereInput>
+    task?: XOR<ActionItemNullableScalarRelationFilter, ActionItemWhereInput> | null
+  }, "id">
+
+  export type EvidenceLinkOrderByWithAggregationInput = {
+    id?: SortOrder
+    resolutionId?: SortOrder
+    taskId?: SortOrderInput | SortOrder
+    type?: SortOrder
+    label?: SortOrderInput | SortOrder
+    url?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+    _count?: EvidenceLinkCountOrderByAggregateInput
+    _max?: EvidenceLinkMaxOrderByAggregateInput
+    _min?: EvidenceLinkMinOrderByAggregateInput
+  }
+
+  export type EvidenceLinkScalarWhereWithAggregatesInput = {
+    AND?: EvidenceLinkScalarWhereWithAggregatesInput | EvidenceLinkScalarWhereWithAggregatesInput[]
+    OR?: EvidenceLinkScalarWhereWithAggregatesInput[]
+    NOT?: EvidenceLinkScalarWhereWithAggregatesInput | EvidenceLinkScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"EvidenceLink"> | string
+    resolutionId?: StringWithAggregatesFilter<"EvidenceLink"> | string
+    taskId?: StringNullableWithAggregatesFilter<"EvidenceLink"> | string | null
+    type?: EnumEvidenceTypeWithAggregatesFilter<"EvidenceLink"> | $Enums.EvidenceType
+    label?: StringNullableWithAggregatesFilter<"EvidenceLink"> | string | null
+    url?: StringNullableWithAggregatesFilter<"EvidenceLink"> | string | null
+    metadata?: JsonNullableWithAggregatesFilter<"EvidenceLink">
+    createdByUserId?: StringWithAggregatesFilter<"EvidenceLink"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"EvidenceLink"> | Date | string
+  }
+
+  export type VerificationWhereInput = {
+    AND?: VerificationWhereInput | VerificationWhereInput[]
+    OR?: VerificationWhereInput[]
+    NOT?: VerificationWhereInput | VerificationWhereInput[]
+    id?: StringFilter<"Verification"> | string
+    resolutionId?: StringFilter<"Verification"> | string
+    reviewerId?: StringFilter<"Verification"> | string
+    decision?: EnumVerificationDecisionFilter<"Verification"> | $Enums.VerificationDecision
+    note?: StringNullableFilter<"Verification"> | string | null
+    decidedAt?: DateTimeFilter<"Verification"> | Date | string
+    resolution?: XOR<ResolutionRecordScalarRelationFilter, ResolutionRecordWhereInput>
+  }
+
+  export type VerificationOrderByWithRelationInput = {
+    id?: SortOrder
+    resolutionId?: SortOrder
+    reviewerId?: SortOrder
+    decision?: SortOrder
+    note?: SortOrderInput | SortOrder
+    decidedAt?: SortOrder
+    resolution?: ResolutionRecordOrderByWithRelationInput
+  }
+
+  export type VerificationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: VerificationWhereInput | VerificationWhereInput[]
+    OR?: VerificationWhereInput[]
+    NOT?: VerificationWhereInput | VerificationWhereInput[]
+    resolutionId?: StringFilter<"Verification"> | string
+    reviewerId?: StringFilter<"Verification"> | string
+    decision?: EnumVerificationDecisionFilter<"Verification"> | $Enums.VerificationDecision
+    note?: StringNullableFilter<"Verification"> | string | null
+    decidedAt?: DateTimeFilter<"Verification"> | Date | string
+    resolution?: XOR<ResolutionRecordScalarRelationFilter, ResolutionRecordWhereInput>
+  }, "id">
+
+  export type VerificationOrderByWithAggregationInput = {
+    id?: SortOrder
+    resolutionId?: SortOrder
+    reviewerId?: SortOrder
+    decision?: SortOrder
+    note?: SortOrderInput | SortOrder
+    decidedAt?: SortOrder
+    _count?: VerificationCountOrderByAggregateInput
+    _max?: VerificationMaxOrderByAggregateInput
+    _min?: VerificationMinOrderByAggregateInput
+  }
+
+  export type VerificationScalarWhereWithAggregatesInput = {
+    AND?: VerificationScalarWhereWithAggregatesInput | VerificationScalarWhereWithAggregatesInput[]
+    OR?: VerificationScalarWhereWithAggregatesInput[]
+    NOT?: VerificationScalarWhereWithAggregatesInput | VerificationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Verification"> | string
+    resolutionId?: StringWithAggregatesFilter<"Verification"> | string
+    reviewerId?: StringWithAggregatesFilter<"Verification"> | string
+    decision?: EnumVerificationDecisionWithAggregatesFilter<"Verification"> | $Enums.VerificationDecision
+    note?: StringNullableWithAggregatesFilter<"Verification"> | string | null
+    decidedAt?: DateTimeWithAggregatesFilter<"Verification"> | Date | string
   }
 
   export type AuditEventWhereInput = {
@@ -16102,6 +21808,7 @@ export namespace Prisma {
     auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
     invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
     flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateInput = {
@@ -16119,6 +21826,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
     invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
     flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUpdateInput = {
@@ -16136,6 +21844,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
     invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
     flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateInput = {
@@ -16153,6 +21862,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
     invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
     flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateManyInput = {
@@ -16262,6 +21972,7 @@ export namespace Prisma {
     versions?: VersionCreateNestedManyWithoutMeetingInput
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     flags?: FlagCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingUncheckedCreateInput = {
@@ -16295,6 +22006,7 @@ export namespace Prisma {
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutMeetingInput
     flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingUpdateInput = {
@@ -16328,6 +22040,7 @@ export namespace Prisma {
     versions?: VersionUpdateManyWithoutMeetingNestedInput
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     flags?: FlagUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
   }
 
   export type MeetingUncheckedUpdateInput = {
@@ -16361,6 +22074,7 @@ export namespace Prisma {
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
     auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
     flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
   export type MeetingCreateManyInput = {
@@ -16537,6 +22251,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     meeting: MeetingCreateNestedOneWithoutFlagsInput
     workspace: WorkspaceCreateNestedOneWithoutFlagsInput
+    resolutionRecord?: ResolutionRecordCreateNestedOneWithoutFlagInput
   }
 
   export type FlagUncheckedCreateInput = {
@@ -16555,6 +22270,7 @@ export namespace Prisma {
     resolutionNote?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    resolutionRecord?: ResolutionRecordUncheckedCreateNestedOneWithoutFlagInput
   }
 
   export type FlagUpdateInput = {
@@ -16573,6 +22289,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meeting?: MeetingUpdateOneRequiredWithoutFlagsNestedInput
     workspace?: WorkspaceUpdateOneRequiredWithoutFlagsNestedInput
+    resolutionRecord?: ResolutionRecordUpdateOneWithoutFlagNestedInput
   }
 
   export type FlagUncheckedUpdateInput = {
@@ -16591,6 +22308,7 @@ export namespace Prisma {
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolutionRecord?: ResolutionRecordUncheckedUpdateOneWithoutFlagNestedInput
   }
 
   export type FlagCreateManyInput = {
@@ -16643,6 +22361,386 @@ export namespace Prisma {
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ResolutionRecordCreateInput = {
+    id?: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedForVerificationAt?: Date | string | null
+    closedAt?: Date | string | null
+    closedByUserId?: string | null
+    overrideReason?: string | null
+    overrideCategory?: string | null
+    flag: FlagCreateNestedOneWithoutResolutionRecordInput
+    meeting: MeetingCreateNestedOneWithoutResolutionRecordsInput
+    workspace: WorkspaceCreateNestedOneWithoutResolutionRecordsInput
+    tasks?: ActionItemCreateNestedManyWithoutResolutionInput
+    evidence?: EvidenceLinkCreateNestedManyWithoutResolutionInput
+    verifications?: VerificationCreateNestedManyWithoutResolutionInput
+  }
+
+  export type ResolutionRecordUncheckedCreateInput = {
+    id?: string
+    workspaceId: string
+    meetingId: string
+    flagId: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedForVerificationAt?: Date | string | null
+    closedAt?: Date | string | null
+    closedByUserId?: string | null
+    overrideReason?: string | null
+    overrideCategory?: string | null
+    tasks?: ActionItemUncheckedCreateNestedManyWithoutResolutionInput
+    evidence?: EvidenceLinkUncheckedCreateNestedManyWithoutResolutionInput
+    verifications?: VerificationUncheckedCreateNestedManyWithoutResolutionInput
+  }
+
+  export type ResolutionRecordUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    flag?: FlagUpdateOneRequiredWithoutResolutionRecordNestedInput
+    meeting?: MeetingUpdateOneRequiredWithoutResolutionRecordsNestedInput
+    workspace?: WorkspaceUpdateOneRequiredWithoutResolutionRecordsNestedInput
+    tasks?: ActionItemUpdateManyWithoutResolutionNestedInput
+    evidence?: EvidenceLinkUpdateManyWithoutResolutionNestedInput
+    verifications?: VerificationUpdateManyWithoutResolutionNestedInput
+  }
+
+  export type ResolutionRecordUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    meetingId?: StringFieldUpdateOperationsInput | string
+    flagId?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    tasks?: ActionItemUncheckedUpdateManyWithoutResolutionNestedInput
+    evidence?: EvidenceLinkUncheckedUpdateManyWithoutResolutionNestedInput
+    verifications?: VerificationUncheckedUpdateManyWithoutResolutionNestedInput
+  }
+
+  export type ResolutionRecordCreateManyInput = {
+    id?: string
+    workspaceId: string
+    meetingId: string
+    flagId: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedForVerificationAt?: Date | string | null
+    closedAt?: Date | string | null
+    closedByUserId?: string | null
+    overrideReason?: string | null
+    overrideCategory?: string | null
+  }
+
+  export type ResolutionRecordUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ResolutionRecordUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    meetingId?: StringFieldUpdateOperationsInput | string
+    flagId?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ActionItemCreateInput = {
+    id?: string
+    title: string
+    status?: $Enums.RemediationTaskStatus
+    ownerId: string
+    dueDate: Date | string
+    required?: boolean
+    completionNote?: string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    resolution: ResolutionRecordCreateNestedOneWithoutTasksInput
+    evidence?: EvidenceLinkCreateNestedManyWithoutTaskInput
+  }
+
+  export type ActionItemUncheckedCreateInput = {
+    id?: string
+    resolutionId: string
+    title: string
+    status?: $Enums.RemediationTaskStatus
+    ownerId: string
+    dueDate: Date | string
+    required?: boolean
+    completionNote?: string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    evidence?: EvidenceLinkUncheckedCreateNestedManyWithoutTaskInput
+  }
+
+  export type ActionItemUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    status?: EnumRemediationTaskStatusFieldUpdateOperationsInput | $Enums.RemediationTaskStatus
+    ownerId?: StringFieldUpdateOperationsInput | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    required?: BoolFieldUpdateOperationsInput | boolean
+    completionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolution?: ResolutionRecordUpdateOneRequiredWithoutTasksNestedInput
+    evidence?: EvidenceLinkUpdateManyWithoutTaskNestedInput
+  }
+
+  export type ActionItemUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resolutionId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    status?: EnumRemediationTaskStatusFieldUpdateOperationsInput | $Enums.RemediationTaskStatus
+    ownerId?: StringFieldUpdateOperationsInput | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    required?: BoolFieldUpdateOperationsInput | boolean
+    completionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    evidence?: EvidenceLinkUncheckedUpdateManyWithoutTaskNestedInput
+  }
+
+  export type ActionItemCreateManyInput = {
+    id?: string
+    resolutionId: string
+    title: string
+    status?: $Enums.RemediationTaskStatus
+    ownerId: string
+    dueDate: Date | string
+    required?: boolean
+    completionNote?: string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ActionItemUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    status?: EnumRemediationTaskStatusFieldUpdateOperationsInput | $Enums.RemediationTaskStatus
+    ownerId?: StringFieldUpdateOperationsInput | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    required?: BoolFieldUpdateOperationsInput | boolean
+    completionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ActionItemUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resolutionId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    status?: EnumRemediationTaskStatusFieldUpdateOperationsInput | $Enums.RemediationTaskStatus
+    ownerId?: StringFieldUpdateOperationsInput | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    required?: BoolFieldUpdateOperationsInput | boolean
+    completionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EvidenceLinkCreateInput = {
+    id?: string
+    type: $Enums.EvidenceType
+    label?: string | null
+    url?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    resolution: ResolutionRecordCreateNestedOneWithoutEvidenceInput
+    task?: ActionItemCreateNestedOneWithoutEvidenceInput
+  }
+
+  export type EvidenceLinkUncheckedCreateInput = {
+    id?: string
+    resolutionId: string
+    taskId?: string | null
+    type: $Enums.EvidenceType
+    label?: string | null
+    url?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+  }
+
+  export type EvidenceLinkUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumEvidenceTypeFieldUpdateOperationsInput | $Enums.EvidenceType
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolution?: ResolutionRecordUpdateOneRequiredWithoutEvidenceNestedInput
+    task?: ActionItemUpdateOneWithoutEvidenceNestedInput
+  }
+
+  export type EvidenceLinkUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resolutionId?: StringFieldUpdateOperationsInput | string
+    taskId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumEvidenceTypeFieldUpdateOperationsInput | $Enums.EvidenceType
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EvidenceLinkCreateManyInput = {
+    id?: string
+    resolutionId: string
+    taskId?: string | null
+    type: $Enums.EvidenceType
+    label?: string | null
+    url?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+  }
+
+  export type EvidenceLinkUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumEvidenceTypeFieldUpdateOperationsInput | $Enums.EvidenceType
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EvidenceLinkUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resolutionId?: StringFieldUpdateOperationsInput | string
+    taskId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumEvidenceTypeFieldUpdateOperationsInput | $Enums.EvidenceType
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VerificationCreateInput = {
+    id?: string
+    reviewerId: string
+    decision: $Enums.VerificationDecision
+    note?: string | null
+    decidedAt?: Date | string
+    resolution: ResolutionRecordCreateNestedOneWithoutVerificationsInput
+  }
+
+  export type VerificationUncheckedCreateInput = {
+    id?: string
+    resolutionId: string
+    reviewerId: string
+    decision: $Enums.VerificationDecision
+    note?: string | null
+    decidedAt?: Date | string
+  }
+
+  export type VerificationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reviewerId?: StringFieldUpdateOperationsInput | string
+    decision?: EnumVerificationDecisionFieldUpdateOperationsInput | $Enums.VerificationDecision
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolution?: ResolutionRecordUpdateOneRequiredWithoutVerificationsNestedInput
+  }
+
+  export type VerificationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resolutionId?: StringFieldUpdateOperationsInput | string
+    reviewerId?: StringFieldUpdateOperationsInput | string
+    decision?: EnumVerificationDecisionFieldUpdateOperationsInput | $Enums.VerificationDecision
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VerificationCreateManyInput = {
+    id?: string
+    resolutionId: string
+    reviewerId: string
+    decision: $Enums.VerificationDecision
+    note?: string | null
+    decidedAt?: Date | string
+  }
+
+  export type VerificationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reviewerId?: StringFieldUpdateOperationsInput | string
+    decision?: EnumVerificationDecisionFieldUpdateOperationsInput | $Enums.VerificationDecision
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VerificationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resolutionId?: StringFieldUpdateOperationsInput | string
+    reviewerId?: StringFieldUpdateOperationsInput | string
+    decision?: EnumVerificationDecisionFieldUpdateOperationsInput | $Enums.VerificationDecision
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AuditEventCreateInput = {
@@ -17169,6 +23267,12 @@ export namespace Prisma {
     none?: FlagWhereInput
   }
 
+  export type ResolutionRecordListRelationFilter = {
+    every?: ResolutionRecordWhereInput
+    some?: ResolutionRecordWhereInput
+    none?: ResolutionRecordWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -17191,6 +23295,10 @@ export namespace Prisma {
   }
 
   export type FlagOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ResolutionRecordOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -17697,6 +23805,11 @@ export namespace Prisma {
     not?: NestedEnumFlagResolutionTypeNullableFilter<$PrismaModel> | $Enums.FlagResolutionType | null
   }
 
+  export type ResolutionRecordNullableScalarRelationFilter = {
+    is?: ResolutionRecordWhereInput | null
+    isNot?: ResolutionRecordWhereInput | null
+  }
+
   export type FlagCountOrderByAggregateInput = {
     id?: SortOrder
     workspaceId?: SortOrder
@@ -17797,6 +23910,274 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumFlagResolutionTypeNullableFilter<$PrismaModel>
     _max?: NestedEnumFlagResolutionTypeNullableFilter<$PrismaModel>
+  }
+
+  export type EnumFlagResolutionTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.FlagResolutionType | EnumFlagResolutionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FlagResolutionType[] | ListEnumFlagResolutionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FlagResolutionType[] | ListEnumFlagResolutionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFlagResolutionTypeFilter<$PrismaModel> | $Enums.FlagResolutionType
+  }
+
+  export type FlagScalarRelationFilter = {
+    is?: FlagWhereInput
+    isNot?: FlagWhereInput
+  }
+
+  export type ActionItemListRelationFilter = {
+    every?: ActionItemWhereInput
+    some?: ActionItemWhereInput
+    none?: ActionItemWhereInput
+  }
+
+  export type EvidenceLinkListRelationFilter = {
+    every?: EvidenceLinkWhereInput
+    some?: EvidenceLinkWhereInput
+    none?: EvidenceLinkWhereInput
+  }
+
+  export type VerificationListRelationFilter = {
+    every?: VerificationWhereInput
+    some?: VerificationWhereInput
+    none?: VerificationWhereInput
+  }
+
+  export type ActionItemOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type EvidenceLinkOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type VerificationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ResolutionRecordCountOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    meetingId?: SortOrder
+    flagId?: SortOrder
+    resolutionType?: SortOrder
+    rationale?: SortOrder
+    metadata?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    submittedForVerificationAt?: SortOrder
+    closedAt?: SortOrder
+    closedByUserId?: SortOrder
+    overrideReason?: SortOrder
+    overrideCategory?: SortOrder
+  }
+
+  export type ResolutionRecordMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    meetingId?: SortOrder
+    flagId?: SortOrder
+    resolutionType?: SortOrder
+    rationale?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    submittedForVerificationAt?: SortOrder
+    closedAt?: SortOrder
+    closedByUserId?: SortOrder
+    overrideReason?: SortOrder
+    overrideCategory?: SortOrder
+  }
+
+  export type ResolutionRecordMinOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    meetingId?: SortOrder
+    flagId?: SortOrder
+    resolutionType?: SortOrder
+    rationale?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    submittedForVerificationAt?: SortOrder
+    closedAt?: SortOrder
+    closedByUserId?: SortOrder
+    overrideReason?: SortOrder
+    overrideCategory?: SortOrder
+  }
+
+  export type EnumFlagResolutionTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FlagResolutionType | EnumFlagResolutionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FlagResolutionType[] | ListEnumFlagResolutionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FlagResolutionType[] | ListEnumFlagResolutionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFlagResolutionTypeWithAggregatesFilter<$PrismaModel> | $Enums.FlagResolutionType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFlagResolutionTypeFilter<$PrismaModel>
+    _max?: NestedEnumFlagResolutionTypeFilter<$PrismaModel>
+  }
+
+  export type EnumRemediationTaskStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.RemediationTaskStatus | EnumRemediationTaskStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RemediationTaskStatus[] | ListEnumRemediationTaskStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RemediationTaskStatus[] | ListEnumRemediationTaskStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRemediationTaskStatusFilter<$PrismaModel> | $Enums.RemediationTaskStatus
+  }
+
+  export type ResolutionRecordScalarRelationFilter = {
+    is?: ResolutionRecordWhereInput
+    isNot?: ResolutionRecordWhereInput
+  }
+
+  export type ActionItemCountOrderByAggregateInput = {
+    id?: SortOrder
+    resolutionId?: SortOrder
+    title?: SortOrder
+    status?: SortOrder
+    ownerId?: SortOrder
+    dueDate?: SortOrder
+    required?: SortOrder
+    completionNote?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ActionItemMaxOrderByAggregateInput = {
+    id?: SortOrder
+    resolutionId?: SortOrder
+    title?: SortOrder
+    status?: SortOrder
+    ownerId?: SortOrder
+    dueDate?: SortOrder
+    required?: SortOrder
+    completionNote?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ActionItemMinOrderByAggregateInput = {
+    id?: SortOrder
+    resolutionId?: SortOrder
+    title?: SortOrder
+    status?: SortOrder
+    ownerId?: SortOrder
+    dueDate?: SortOrder
+    required?: SortOrder
+    completionNote?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumRemediationTaskStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RemediationTaskStatus | EnumRemediationTaskStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RemediationTaskStatus[] | ListEnumRemediationTaskStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RemediationTaskStatus[] | ListEnumRemediationTaskStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRemediationTaskStatusWithAggregatesFilter<$PrismaModel> | $Enums.RemediationTaskStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRemediationTaskStatusFilter<$PrismaModel>
+    _max?: NestedEnumRemediationTaskStatusFilter<$PrismaModel>
+  }
+
+  export type EnumEvidenceTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.EvidenceType | EnumEvidenceTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.EvidenceType[] | ListEnumEvidenceTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EvidenceType[] | ListEnumEvidenceTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumEvidenceTypeFilter<$PrismaModel> | $Enums.EvidenceType
+  }
+
+  export type ActionItemNullableScalarRelationFilter = {
+    is?: ActionItemWhereInput | null
+    isNot?: ActionItemWhereInput | null
+  }
+
+  export type EvidenceLinkCountOrderByAggregateInput = {
+    id?: SortOrder
+    resolutionId?: SortOrder
+    taskId?: SortOrder
+    type?: SortOrder
+    label?: SortOrder
+    url?: SortOrder
+    metadata?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EvidenceLinkMaxOrderByAggregateInput = {
+    id?: SortOrder
+    resolutionId?: SortOrder
+    taskId?: SortOrder
+    type?: SortOrder
+    label?: SortOrder
+    url?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EvidenceLinkMinOrderByAggregateInput = {
+    id?: SortOrder
+    resolutionId?: SortOrder
+    taskId?: SortOrder
+    type?: SortOrder
+    label?: SortOrder
+    url?: SortOrder
+    createdByUserId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EnumEvidenceTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EvidenceType | EnumEvidenceTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.EvidenceType[] | ListEnumEvidenceTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EvidenceType[] | ListEnumEvidenceTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumEvidenceTypeWithAggregatesFilter<$PrismaModel> | $Enums.EvidenceType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumEvidenceTypeFilter<$PrismaModel>
+    _max?: NestedEnumEvidenceTypeFilter<$PrismaModel>
+  }
+
+  export type EnumVerificationDecisionFilter<$PrismaModel = never> = {
+    equals?: $Enums.VerificationDecision | EnumVerificationDecisionFieldRefInput<$PrismaModel>
+    in?: $Enums.VerificationDecision[] | ListEnumVerificationDecisionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VerificationDecision[] | ListEnumVerificationDecisionFieldRefInput<$PrismaModel>
+    not?: NestedEnumVerificationDecisionFilter<$PrismaModel> | $Enums.VerificationDecision
+  }
+
+  export type VerificationCountOrderByAggregateInput = {
+    id?: SortOrder
+    resolutionId?: SortOrder
+    reviewerId?: SortOrder
+    decision?: SortOrder
+    note?: SortOrder
+    decidedAt?: SortOrder
+  }
+
+  export type VerificationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    resolutionId?: SortOrder
+    reviewerId?: SortOrder
+    decision?: SortOrder
+    note?: SortOrder
+    decidedAt?: SortOrder
+  }
+
+  export type VerificationMinOrderByAggregateInput = {
+    id?: SortOrder
+    resolutionId?: SortOrder
+    reviewerId?: SortOrder
+    decision?: SortOrder
+    note?: SortOrder
+    decidedAt?: SortOrder
+  }
+
+  export type EnumVerificationDecisionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.VerificationDecision | EnumVerificationDecisionFieldRefInput<$PrismaModel>
+    in?: $Enums.VerificationDecision[] | ListEnumVerificationDecisionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VerificationDecision[] | ListEnumVerificationDecisionFieldRefInput<$PrismaModel>
+    not?: NestedEnumVerificationDecisionWithAggregatesFilter<$PrismaModel> | $Enums.VerificationDecision
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumVerificationDecisionFilter<$PrismaModel>
+    _max?: NestedEnumVerificationDecisionFilter<$PrismaModel>
   }
 
   export type EnumAuditActionFilter<$PrismaModel = never> = {
@@ -18082,6 +24463,13 @@ export namespace Prisma {
     connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
   }
 
+  export type ResolutionRecordCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<ResolutionRecordCreateWithoutWorkspaceInput, ResolutionRecordUncheckedCreateWithoutWorkspaceInput> | ResolutionRecordCreateWithoutWorkspaceInput[] | ResolutionRecordUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutWorkspaceInput | ResolutionRecordCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: ResolutionRecordCreateManyWorkspaceInputEnvelope
+    connect?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+  }
+
   export type UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput = {
     create?: XOR<UserWorkspaceCreateWithoutWorkspaceInput, UserWorkspaceUncheckedCreateWithoutWorkspaceInput> | UserWorkspaceCreateWithoutWorkspaceInput[] | UserWorkspaceUncheckedCreateWithoutWorkspaceInput[]
     connectOrCreate?: UserWorkspaceCreateOrConnectWithoutWorkspaceInput | UserWorkspaceCreateOrConnectWithoutWorkspaceInput[]
@@ -18115,6 +24503,13 @@ export namespace Prisma {
     connectOrCreate?: FlagCreateOrConnectWithoutWorkspaceInput | FlagCreateOrConnectWithoutWorkspaceInput[]
     createMany?: FlagCreateManyWorkspaceInputEnvelope
     connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+  }
+
+  export type ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<ResolutionRecordCreateWithoutWorkspaceInput, ResolutionRecordUncheckedCreateWithoutWorkspaceInput> | ResolutionRecordCreateWithoutWorkspaceInput[] | ResolutionRecordUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutWorkspaceInput | ResolutionRecordCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: ResolutionRecordCreateManyWorkspaceInputEnvelope
+    connect?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -18215,6 +24610,20 @@ export namespace Prisma {
     deleteMany?: FlagScalarWhereInput | FlagScalarWhereInput[]
   }
 
+  export type ResolutionRecordUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<ResolutionRecordCreateWithoutWorkspaceInput, ResolutionRecordUncheckedCreateWithoutWorkspaceInput> | ResolutionRecordCreateWithoutWorkspaceInput[] | ResolutionRecordUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutWorkspaceInput | ResolutionRecordCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: ResolutionRecordUpsertWithWhereUniqueWithoutWorkspaceInput | ResolutionRecordUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: ResolutionRecordCreateManyWorkspaceInputEnvelope
+    set?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+    disconnect?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+    delete?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+    connect?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+    update?: ResolutionRecordUpdateWithWhereUniqueWithoutWorkspaceInput | ResolutionRecordUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: ResolutionRecordUpdateManyWithWhereWithoutWorkspaceInput | ResolutionRecordUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: ResolutionRecordScalarWhereInput | ResolutionRecordScalarWhereInput[]
+  }
+
   export type UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput = {
     create?: XOR<UserWorkspaceCreateWithoutWorkspaceInput, UserWorkspaceUncheckedCreateWithoutWorkspaceInput> | UserWorkspaceCreateWithoutWorkspaceInput[] | UserWorkspaceUncheckedCreateWithoutWorkspaceInput[]
     connectOrCreate?: UserWorkspaceCreateOrConnectWithoutWorkspaceInput | UserWorkspaceCreateOrConnectWithoutWorkspaceInput[]
@@ -18285,6 +24694,20 @@ export namespace Prisma {
     deleteMany?: FlagScalarWhereInput | FlagScalarWhereInput[]
   }
 
+  export type ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<ResolutionRecordCreateWithoutWorkspaceInput, ResolutionRecordUncheckedCreateWithoutWorkspaceInput> | ResolutionRecordCreateWithoutWorkspaceInput[] | ResolutionRecordUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutWorkspaceInput | ResolutionRecordCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: ResolutionRecordUpsertWithWhereUniqueWithoutWorkspaceInput | ResolutionRecordUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: ResolutionRecordCreateManyWorkspaceInputEnvelope
+    set?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+    disconnect?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+    delete?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+    connect?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+    update?: ResolutionRecordUpdateWithWhereUniqueWithoutWorkspaceInput | ResolutionRecordUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: ResolutionRecordUpdateManyWithWhereWithoutWorkspaceInput | ResolutionRecordUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: ResolutionRecordScalarWhereInput | ResolutionRecordScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutWorkspacesInput = {
     create?: XOR<UserCreateWithoutWorkspacesInput, UserUncheckedCreateWithoutWorkspacesInput>
     connectOrCreate?: UserCreateOrConnectWithoutWorkspacesInput
@@ -18344,6 +24767,13 @@ export namespace Prisma {
     connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
   }
 
+  export type ResolutionRecordCreateNestedManyWithoutMeetingInput = {
+    create?: XOR<ResolutionRecordCreateWithoutMeetingInput, ResolutionRecordUncheckedCreateWithoutMeetingInput> | ResolutionRecordCreateWithoutMeetingInput[] | ResolutionRecordUncheckedCreateWithoutMeetingInput[]
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutMeetingInput | ResolutionRecordCreateOrConnectWithoutMeetingInput[]
+    createMany?: ResolutionRecordCreateManyMeetingInputEnvelope
+    connect?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+  }
+
   export type VersionUncheckedCreateNestedManyWithoutMeetingInput = {
     create?: XOR<VersionCreateWithoutMeetingInput, VersionUncheckedCreateWithoutMeetingInput> | VersionCreateWithoutMeetingInput[] | VersionUncheckedCreateWithoutMeetingInput[]
     connectOrCreate?: VersionCreateOrConnectWithoutMeetingInput | VersionCreateOrConnectWithoutMeetingInput[]
@@ -18363,6 +24793,13 @@ export namespace Prisma {
     connectOrCreate?: FlagCreateOrConnectWithoutMeetingInput | FlagCreateOrConnectWithoutMeetingInput[]
     createMany?: FlagCreateManyMeetingInputEnvelope
     connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+  }
+
+  export type ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput = {
+    create?: XOR<ResolutionRecordCreateWithoutMeetingInput, ResolutionRecordUncheckedCreateWithoutMeetingInput> | ResolutionRecordCreateWithoutMeetingInput[] | ResolutionRecordUncheckedCreateWithoutMeetingInput[]
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutMeetingInput | ResolutionRecordCreateOrConnectWithoutMeetingInput[]
+    createMany?: ResolutionRecordCreateManyMeetingInputEnvelope
+    connect?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
   }
 
   export type EnumMeetingStatusFieldUpdateOperationsInput = {
@@ -18435,6 +24872,20 @@ export namespace Prisma {
     deleteMany?: FlagScalarWhereInput | FlagScalarWhereInput[]
   }
 
+  export type ResolutionRecordUpdateManyWithoutMeetingNestedInput = {
+    create?: XOR<ResolutionRecordCreateWithoutMeetingInput, ResolutionRecordUncheckedCreateWithoutMeetingInput> | ResolutionRecordCreateWithoutMeetingInput[] | ResolutionRecordUncheckedCreateWithoutMeetingInput[]
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutMeetingInput | ResolutionRecordCreateOrConnectWithoutMeetingInput[]
+    upsert?: ResolutionRecordUpsertWithWhereUniqueWithoutMeetingInput | ResolutionRecordUpsertWithWhereUniqueWithoutMeetingInput[]
+    createMany?: ResolutionRecordCreateManyMeetingInputEnvelope
+    set?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+    disconnect?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+    delete?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+    connect?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+    update?: ResolutionRecordUpdateWithWhereUniqueWithoutMeetingInput | ResolutionRecordUpdateWithWhereUniqueWithoutMeetingInput[]
+    updateMany?: ResolutionRecordUpdateManyWithWhereWithoutMeetingInput | ResolutionRecordUpdateManyWithWhereWithoutMeetingInput[]
+    deleteMany?: ResolutionRecordScalarWhereInput | ResolutionRecordScalarWhereInput[]
+  }
+
   export type VersionUncheckedUpdateManyWithoutMeetingNestedInput = {
     create?: XOR<VersionCreateWithoutMeetingInput, VersionUncheckedCreateWithoutMeetingInput> | VersionCreateWithoutMeetingInput[] | VersionUncheckedCreateWithoutMeetingInput[]
     connectOrCreate?: VersionCreateOrConnectWithoutMeetingInput | VersionCreateOrConnectWithoutMeetingInput[]
@@ -18477,6 +24928,20 @@ export namespace Prisma {
     deleteMany?: FlagScalarWhereInput | FlagScalarWhereInput[]
   }
 
+  export type ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput = {
+    create?: XOR<ResolutionRecordCreateWithoutMeetingInput, ResolutionRecordUncheckedCreateWithoutMeetingInput> | ResolutionRecordCreateWithoutMeetingInput[] | ResolutionRecordUncheckedCreateWithoutMeetingInput[]
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutMeetingInput | ResolutionRecordCreateOrConnectWithoutMeetingInput[]
+    upsert?: ResolutionRecordUpsertWithWhereUniqueWithoutMeetingInput | ResolutionRecordUpsertWithWhereUniqueWithoutMeetingInput[]
+    createMany?: ResolutionRecordCreateManyMeetingInputEnvelope
+    set?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+    disconnect?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+    delete?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+    connect?: ResolutionRecordWhereUniqueInput | ResolutionRecordWhereUniqueInput[]
+    update?: ResolutionRecordUpdateWithWhereUniqueWithoutMeetingInput | ResolutionRecordUpdateWithWhereUniqueWithoutMeetingInput[]
+    updateMany?: ResolutionRecordUpdateManyWithWhereWithoutMeetingInput | ResolutionRecordUpdateManyWithWhereWithoutMeetingInput[]
+    deleteMany?: ResolutionRecordScalarWhereInput | ResolutionRecordScalarWhereInput[]
+  }
+
   export type MeetingCreateNestedOneWithoutVersionsInput = {
     create?: XOR<MeetingCreateWithoutVersionsInput, MeetingUncheckedCreateWithoutVersionsInput>
     connectOrCreate?: MeetingCreateOrConnectWithoutVersionsInput
@@ -18501,6 +24966,18 @@ export namespace Prisma {
     create?: XOR<WorkspaceCreateWithoutFlagsInput, WorkspaceUncheckedCreateWithoutFlagsInput>
     connectOrCreate?: WorkspaceCreateOrConnectWithoutFlagsInput
     connect?: WorkspaceWhereUniqueInput
+  }
+
+  export type ResolutionRecordCreateNestedOneWithoutFlagInput = {
+    create?: XOR<ResolutionRecordCreateWithoutFlagInput, ResolutionRecordUncheckedCreateWithoutFlagInput>
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutFlagInput
+    connect?: ResolutionRecordWhereUniqueInput
+  }
+
+  export type ResolutionRecordUncheckedCreateNestedOneWithoutFlagInput = {
+    create?: XOR<ResolutionRecordCreateWithoutFlagInput, ResolutionRecordUncheckedCreateWithoutFlagInput>
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutFlagInput
+    connect?: ResolutionRecordWhereUniqueInput
   }
 
   export type EnumFlagTypeFieldUpdateOperationsInput = {
@@ -18537,6 +25014,310 @@ export namespace Prisma {
     upsert?: WorkspaceUpsertWithoutFlagsInput
     connect?: WorkspaceWhereUniqueInput
     update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutFlagsInput, WorkspaceUpdateWithoutFlagsInput>, WorkspaceUncheckedUpdateWithoutFlagsInput>
+  }
+
+  export type ResolutionRecordUpdateOneWithoutFlagNestedInput = {
+    create?: XOR<ResolutionRecordCreateWithoutFlagInput, ResolutionRecordUncheckedCreateWithoutFlagInput>
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutFlagInput
+    upsert?: ResolutionRecordUpsertWithoutFlagInput
+    disconnect?: ResolutionRecordWhereInput | boolean
+    delete?: ResolutionRecordWhereInput | boolean
+    connect?: ResolutionRecordWhereUniqueInput
+    update?: XOR<XOR<ResolutionRecordUpdateToOneWithWhereWithoutFlagInput, ResolutionRecordUpdateWithoutFlagInput>, ResolutionRecordUncheckedUpdateWithoutFlagInput>
+  }
+
+  export type ResolutionRecordUncheckedUpdateOneWithoutFlagNestedInput = {
+    create?: XOR<ResolutionRecordCreateWithoutFlagInput, ResolutionRecordUncheckedCreateWithoutFlagInput>
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutFlagInput
+    upsert?: ResolutionRecordUpsertWithoutFlagInput
+    disconnect?: ResolutionRecordWhereInput | boolean
+    delete?: ResolutionRecordWhereInput | boolean
+    connect?: ResolutionRecordWhereUniqueInput
+    update?: XOR<XOR<ResolutionRecordUpdateToOneWithWhereWithoutFlagInput, ResolutionRecordUpdateWithoutFlagInput>, ResolutionRecordUncheckedUpdateWithoutFlagInput>
+  }
+
+  export type FlagCreateNestedOneWithoutResolutionRecordInput = {
+    create?: XOR<FlagCreateWithoutResolutionRecordInput, FlagUncheckedCreateWithoutResolutionRecordInput>
+    connectOrCreate?: FlagCreateOrConnectWithoutResolutionRecordInput
+    connect?: FlagWhereUniqueInput
+  }
+
+  export type MeetingCreateNestedOneWithoutResolutionRecordsInput = {
+    create?: XOR<MeetingCreateWithoutResolutionRecordsInput, MeetingUncheckedCreateWithoutResolutionRecordsInput>
+    connectOrCreate?: MeetingCreateOrConnectWithoutResolutionRecordsInput
+    connect?: MeetingWhereUniqueInput
+  }
+
+  export type WorkspaceCreateNestedOneWithoutResolutionRecordsInput = {
+    create?: XOR<WorkspaceCreateWithoutResolutionRecordsInput, WorkspaceUncheckedCreateWithoutResolutionRecordsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutResolutionRecordsInput
+    connect?: WorkspaceWhereUniqueInput
+  }
+
+  export type ActionItemCreateNestedManyWithoutResolutionInput = {
+    create?: XOR<ActionItemCreateWithoutResolutionInput, ActionItemUncheckedCreateWithoutResolutionInput> | ActionItemCreateWithoutResolutionInput[] | ActionItemUncheckedCreateWithoutResolutionInput[]
+    connectOrCreate?: ActionItemCreateOrConnectWithoutResolutionInput | ActionItemCreateOrConnectWithoutResolutionInput[]
+    createMany?: ActionItemCreateManyResolutionInputEnvelope
+    connect?: ActionItemWhereUniqueInput | ActionItemWhereUniqueInput[]
+  }
+
+  export type EvidenceLinkCreateNestedManyWithoutResolutionInput = {
+    create?: XOR<EvidenceLinkCreateWithoutResolutionInput, EvidenceLinkUncheckedCreateWithoutResolutionInput> | EvidenceLinkCreateWithoutResolutionInput[] | EvidenceLinkUncheckedCreateWithoutResolutionInput[]
+    connectOrCreate?: EvidenceLinkCreateOrConnectWithoutResolutionInput | EvidenceLinkCreateOrConnectWithoutResolutionInput[]
+    createMany?: EvidenceLinkCreateManyResolutionInputEnvelope
+    connect?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+  }
+
+  export type VerificationCreateNestedManyWithoutResolutionInput = {
+    create?: XOR<VerificationCreateWithoutResolutionInput, VerificationUncheckedCreateWithoutResolutionInput> | VerificationCreateWithoutResolutionInput[] | VerificationUncheckedCreateWithoutResolutionInput[]
+    connectOrCreate?: VerificationCreateOrConnectWithoutResolutionInput | VerificationCreateOrConnectWithoutResolutionInput[]
+    createMany?: VerificationCreateManyResolutionInputEnvelope
+    connect?: VerificationWhereUniqueInput | VerificationWhereUniqueInput[]
+  }
+
+  export type ActionItemUncheckedCreateNestedManyWithoutResolutionInput = {
+    create?: XOR<ActionItemCreateWithoutResolutionInput, ActionItemUncheckedCreateWithoutResolutionInput> | ActionItemCreateWithoutResolutionInput[] | ActionItemUncheckedCreateWithoutResolutionInput[]
+    connectOrCreate?: ActionItemCreateOrConnectWithoutResolutionInput | ActionItemCreateOrConnectWithoutResolutionInput[]
+    createMany?: ActionItemCreateManyResolutionInputEnvelope
+    connect?: ActionItemWhereUniqueInput | ActionItemWhereUniqueInput[]
+  }
+
+  export type EvidenceLinkUncheckedCreateNestedManyWithoutResolutionInput = {
+    create?: XOR<EvidenceLinkCreateWithoutResolutionInput, EvidenceLinkUncheckedCreateWithoutResolutionInput> | EvidenceLinkCreateWithoutResolutionInput[] | EvidenceLinkUncheckedCreateWithoutResolutionInput[]
+    connectOrCreate?: EvidenceLinkCreateOrConnectWithoutResolutionInput | EvidenceLinkCreateOrConnectWithoutResolutionInput[]
+    createMany?: EvidenceLinkCreateManyResolutionInputEnvelope
+    connect?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+  }
+
+  export type VerificationUncheckedCreateNestedManyWithoutResolutionInput = {
+    create?: XOR<VerificationCreateWithoutResolutionInput, VerificationUncheckedCreateWithoutResolutionInput> | VerificationCreateWithoutResolutionInput[] | VerificationUncheckedCreateWithoutResolutionInput[]
+    connectOrCreate?: VerificationCreateOrConnectWithoutResolutionInput | VerificationCreateOrConnectWithoutResolutionInput[]
+    createMany?: VerificationCreateManyResolutionInputEnvelope
+    connect?: VerificationWhereUniqueInput | VerificationWhereUniqueInput[]
+  }
+
+  export type EnumFlagResolutionTypeFieldUpdateOperationsInput = {
+    set?: $Enums.FlagResolutionType
+  }
+
+  export type FlagUpdateOneRequiredWithoutResolutionRecordNestedInput = {
+    create?: XOR<FlagCreateWithoutResolutionRecordInput, FlagUncheckedCreateWithoutResolutionRecordInput>
+    connectOrCreate?: FlagCreateOrConnectWithoutResolutionRecordInput
+    upsert?: FlagUpsertWithoutResolutionRecordInput
+    connect?: FlagWhereUniqueInput
+    update?: XOR<XOR<FlagUpdateToOneWithWhereWithoutResolutionRecordInput, FlagUpdateWithoutResolutionRecordInput>, FlagUncheckedUpdateWithoutResolutionRecordInput>
+  }
+
+  export type MeetingUpdateOneRequiredWithoutResolutionRecordsNestedInput = {
+    create?: XOR<MeetingCreateWithoutResolutionRecordsInput, MeetingUncheckedCreateWithoutResolutionRecordsInput>
+    connectOrCreate?: MeetingCreateOrConnectWithoutResolutionRecordsInput
+    upsert?: MeetingUpsertWithoutResolutionRecordsInput
+    connect?: MeetingWhereUniqueInput
+    update?: XOR<XOR<MeetingUpdateToOneWithWhereWithoutResolutionRecordsInput, MeetingUpdateWithoutResolutionRecordsInput>, MeetingUncheckedUpdateWithoutResolutionRecordsInput>
+  }
+
+  export type WorkspaceUpdateOneRequiredWithoutResolutionRecordsNestedInput = {
+    create?: XOR<WorkspaceCreateWithoutResolutionRecordsInput, WorkspaceUncheckedCreateWithoutResolutionRecordsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutResolutionRecordsInput
+    upsert?: WorkspaceUpsertWithoutResolutionRecordsInput
+    connect?: WorkspaceWhereUniqueInput
+    update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutResolutionRecordsInput, WorkspaceUpdateWithoutResolutionRecordsInput>, WorkspaceUncheckedUpdateWithoutResolutionRecordsInput>
+  }
+
+  export type ActionItemUpdateManyWithoutResolutionNestedInput = {
+    create?: XOR<ActionItemCreateWithoutResolutionInput, ActionItemUncheckedCreateWithoutResolutionInput> | ActionItemCreateWithoutResolutionInput[] | ActionItemUncheckedCreateWithoutResolutionInput[]
+    connectOrCreate?: ActionItemCreateOrConnectWithoutResolutionInput | ActionItemCreateOrConnectWithoutResolutionInput[]
+    upsert?: ActionItemUpsertWithWhereUniqueWithoutResolutionInput | ActionItemUpsertWithWhereUniqueWithoutResolutionInput[]
+    createMany?: ActionItemCreateManyResolutionInputEnvelope
+    set?: ActionItemWhereUniqueInput | ActionItemWhereUniqueInput[]
+    disconnect?: ActionItemWhereUniqueInput | ActionItemWhereUniqueInput[]
+    delete?: ActionItemWhereUniqueInput | ActionItemWhereUniqueInput[]
+    connect?: ActionItemWhereUniqueInput | ActionItemWhereUniqueInput[]
+    update?: ActionItemUpdateWithWhereUniqueWithoutResolutionInput | ActionItemUpdateWithWhereUniqueWithoutResolutionInput[]
+    updateMany?: ActionItemUpdateManyWithWhereWithoutResolutionInput | ActionItemUpdateManyWithWhereWithoutResolutionInput[]
+    deleteMany?: ActionItemScalarWhereInput | ActionItemScalarWhereInput[]
+  }
+
+  export type EvidenceLinkUpdateManyWithoutResolutionNestedInput = {
+    create?: XOR<EvidenceLinkCreateWithoutResolutionInput, EvidenceLinkUncheckedCreateWithoutResolutionInput> | EvidenceLinkCreateWithoutResolutionInput[] | EvidenceLinkUncheckedCreateWithoutResolutionInput[]
+    connectOrCreate?: EvidenceLinkCreateOrConnectWithoutResolutionInput | EvidenceLinkCreateOrConnectWithoutResolutionInput[]
+    upsert?: EvidenceLinkUpsertWithWhereUniqueWithoutResolutionInput | EvidenceLinkUpsertWithWhereUniqueWithoutResolutionInput[]
+    createMany?: EvidenceLinkCreateManyResolutionInputEnvelope
+    set?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+    disconnect?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+    delete?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+    connect?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+    update?: EvidenceLinkUpdateWithWhereUniqueWithoutResolutionInput | EvidenceLinkUpdateWithWhereUniqueWithoutResolutionInput[]
+    updateMany?: EvidenceLinkUpdateManyWithWhereWithoutResolutionInput | EvidenceLinkUpdateManyWithWhereWithoutResolutionInput[]
+    deleteMany?: EvidenceLinkScalarWhereInput | EvidenceLinkScalarWhereInput[]
+  }
+
+  export type VerificationUpdateManyWithoutResolutionNestedInput = {
+    create?: XOR<VerificationCreateWithoutResolutionInput, VerificationUncheckedCreateWithoutResolutionInput> | VerificationCreateWithoutResolutionInput[] | VerificationUncheckedCreateWithoutResolutionInput[]
+    connectOrCreate?: VerificationCreateOrConnectWithoutResolutionInput | VerificationCreateOrConnectWithoutResolutionInput[]
+    upsert?: VerificationUpsertWithWhereUniqueWithoutResolutionInput | VerificationUpsertWithWhereUniqueWithoutResolutionInput[]
+    createMany?: VerificationCreateManyResolutionInputEnvelope
+    set?: VerificationWhereUniqueInput | VerificationWhereUniqueInput[]
+    disconnect?: VerificationWhereUniqueInput | VerificationWhereUniqueInput[]
+    delete?: VerificationWhereUniqueInput | VerificationWhereUniqueInput[]
+    connect?: VerificationWhereUniqueInput | VerificationWhereUniqueInput[]
+    update?: VerificationUpdateWithWhereUniqueWithoutResolutionInput | VerificationUpdateWithWhereUniqueWithoutResolutionInput[]
+    updateMany?: VerificationUpdateManyWithWhereWithoutResolutionInput | VerificationUpdateManyWithWhereWithoutResolutionInput[]
+    deleteMany?: VerificationScalarWhereInput | VerificationScalarWhereInput[]
+  }
+
+  export type ActionItemUncheckedUpdateManyWithoutResolutionNestedInput = {
+    create?: XOR<ActionItemCreateWithoutResolutionInput, ActionItemUncheckedCreateWithoutResolutionInput> | ActionItemCreateWithoutResolutionInput[] | ActionItemUncheckedCreateWithoutResolutionInput[]
+    connectOrCreate?: ActionItemCreateOrConnectWithoutResolutionInput | ActionItemCreateOrConnectWithoutResolutionInput[]
+    upsert?: ActionItemUpsertWithWhereUniqueWithoutResolutionInput | ActionItemUpsertWithWhereUniqueWithoutResolutionInput[]
+    createMany?: ActionItemCreateManyResolutionInputEnvelope
+    set?: ActionItemWhereUniqueInput | ActionItemWhereUniqueInput[]
+    disconnect?: ActionItemWhereUniqueInput | ActionItemWhereUniqueInput[]
+    delete?: ActionItemWhereUniqueInput | ActionItemWhereUniqueInput[]
+    connect?: ActionItemWhereUniqueInput | ActionItemWhereUniqueInput[]
+    update?: ActionItemUpdateWithWhereUniqueWithoutResolutionInput | ActionItemUpdateWithWhereUniqueWithoutResolutionInput[]
+    updateMany?: ActionItemUpdateManyWithWhereWithoutResolutionInput | ActionItemUpdateManyWithWhereWithoutResolutionInput[]
+    deleteMany?: ActionItemScalarWhereInput | ActionItemScalarWhereInput[]
+  }
+
+  export type EvidenceLinkUncheckedUpdateManyWithoutResolutionNestedInput = {
+    create?: XOR<EvidenceLinkCreateWithoutResolutionInput, EvidenceLinkUncheckedCreateWithoutResolutionInput> | EvidenceLinkCreateWithoutResolutionInput[] | EvidenceLinkUncheckedCreateWithoutResolutionInput[]
+    connectOrCreate?: EvidenceLinkCreateOrConnectWithoutResolutionInput | EvidenceLinkCreateOrConnectWithoutResolutionInput[]
+    upsert?: EvidenceLinkUpsertWithWhereUniqueWithoutResolutionInput | EvidenceLinkUpsertWithWhereUniqueWithoutResolutionInput[]
+    createMany?: EvidenceLinkCreateManyResolutionInputEnvelope
+    set?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+    disconnect?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+    delete?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+    connect?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+    update?: EvidenceLinkUpdateWithWhereUniqueWithoutResolutionInput | EvidenceLinkUpdateWithWhereUniqueWithoutResolutionInput[]
+    updateMany?: EvidenceLinkUpdateManyWithWhereWithoutResolutionInput | EvidenceLinkUpdateManyWithWhereWithoutResolutionInput[]
+    deleteMany?: EvidenceLinkScalarWhereInput | EvidenceLinkScalarWhereInput[]
+  }
+
+  export type VerificationUncheckedUpdateManyWithoutResolutionNestedInput = {
+    create?: XOR<VerificationCreateWithoutResolutionInput, VerificationUncheckedCreateWithoutResolutionInput> | VerificationCreateWithoutResolutionInput[] | VerificationUncheckedCreateWithoutResolutionInput[]
+    connectOrCreate?: VerificationCreateOrConnectWithoutResolutionInput | VerificationCreateOrConnectWithoutResolutionInput[]
+    upsert?: VerificationUpsertWithWhereUniqueWithoutResolutionInput | VerificationUpsertWithWhereUniqueWithoutResolutionInput[]
+    createMany?: VerificationCreateManyResolutionInputEnvelope
+    set?: VerificationWhereUniqueInput | VerificationWhereUniqueInput[]
+    disconnect?: VerificationWhereUniqueInput | VerificationWhereUniqueInput[]
+    delete?: VerificationWhereUniqueInput | VerificationWhereUniqueInput[]
+    connect?: VerificationWhereUniqueInput | VerificationWhereUniqueInput[]
+    update?: VerificationUpdateWithWhereUniqueWithoutResolutionInput | VerificationUpdateWithWhereUniqueWithoutResolutionInput[]
+    updateMany?: VerificationUpdateManyWithWhereWithoutResolutionInput | VerificationUpdateManyWithWhereWithoutResolutionInput[]
+    deleteMany?: VerificationScalarWhereInput | VerificationScalarWhereInput[]
+  }
+
+  export type ResolutionRecordCreateNestedOneWithoutTasksInput = {
+    create?: XOR<ResolutionRecordCreateWithoutTasksInput, ResolutionRecordUncheckedCreateWithoutTasksInput>
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutTasksInput
+    connect?: ResolutionRecordWhereUniqueInput
+  }
+
+  export type EvidenceLinkCreateNestedManyWithoutTaskInput = {
+    create?: XOR<EvidenceLinkCreateWithoutTaskInput, EvidenceLinkUncheckedCreateWithoutTaskInput> | EvidenceLinkCreateWithoutTaskInput[] | EvidenceLinkUncheckedCreateWithoutTaskInput[]
+    connectOrCreate?: EvidenceLinkCreateOrConnectWithoutTaskInput | EvidenceLinkCreateOrConnectWithoutTaskInput[]
+    createMany?: EvidenceLinkCreateManyTaskInputEnvelope
+    connect?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+  }
+
+  export type EvidenceLinkUncheckedCreateNestedManyWithoutTaskInput = {
+    create?: XOR<EvidenceLinkCreateWithoutTaskInput, EvidenceLinkUncheckedCreateWithoutTaskInput> | EvidenceLinkCreateWithoutTaskInput[] | EvidenceLinkUncheckedCreateWithoutTaskInput[]
+    connectOrCreate?: EvidenceLinkCreateOrConnectWithoutTaskInput | EvidenceLinkCreateOrConnectWithoutTaskInput[]
+    createMany?: EvidenceLinkCreateManyTaskInputEnvelope
+    connect?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+  }
+
+  export type EnumRemediationTaskStatusFieldUpdateOperationsInput = {
+    set?: $Enums.RemediationTaskStatus
+  }
+
+  export type ResolutionRecordUpdateOneRequiredWithoutTasksNestedInput = {
+    create?: XOR<ResolutionRecordCreateWithoutTasksInput, ResolutionRecordUncheckedCreateWithoutTasksInput>
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutTasksInput
+    upsert?: ResolutionRecordUpsertWithoutTasksInput
+    connect?: ResolutionRecordWhereUniqueInput
+    update?: XOR<XOR<ResolutionRecordUpdateToOneWithWhereWithoutTasksInput, ResolutionRecordUpdateWithoutTasksInput>, ResolutionRecordUncheckedUpdateWithoutTasksInput>
+  }
+
+  export type EvidenceLinkUpdateManyWithoutTaskNestedInput = {
+    create?: XOR<EvidenceLinkCreateWithoutTaskInput, EvidenceLinkUncheckedCreateWithoutTaskInput> | EvidenceLinkCreateWithoutTaskInput[] | EvidenceLinkUncheckedCreateWithoutTaskInput[]
+    connectOrCreate?: EvidenceLinkCreateOrConnectWithoutTaskInput | EvidenceLinkCreateOrConnectWithoutTaskInput[]
+    upsert?: EvidenceLinkUpsertWithWhereUniqueWithoutTaskInput | EvidenceLinkUpsertWithWhereUniqueWithoutTaskInput[]
+    createMany?: EvidenceLinkCreateManyTaskInputEnvelope
+    set?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+    disconnect?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+    delete?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+    connect?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+    update?: EvidenceLinkUpdateWithWhereUniqueWithoutTaskInput | EvidenceLinkUpdateWithWhereUniqueWithoutTaskInput[]
+    updateMany?: EvidenceLinkUpdateManyWithWhereWithoutTaskInput | EvidenceLinkUpdateManyWithWhereWithoutTaskInput[]
+    deleteMany?: EvidenceLinkScalarWhereInput | EvidenceLinkScalarWhereInput[]
+  }
+
+  export type EvidenceLinkUncheckedUpdateManyWithoutTaskNestedInput = {
+    create?: XOR<EvidenceLinkCreateWithoutTaskInput, EvidenceLinkUncheckedCreateWithoutTaskInput> | EvidenceLinkCreateWithoutTaskInput[] | EvidenceLinkUncheckedCreateWithoutTaskInput[]
+    connectOrCreate?: EvidenceLinkCreateOrConnectWithoutTaskInput | EvidenceLinkCreateOrConnectWithoutTaskInput[]
+    upsert?: EvidenceLinkUpsertWithWhereUniqueWithoutTaskInput | EvidenceLinkUpsertWithWhereUniqueWithoutTaskInput[]
+    createMany?: EvidenceLinkCreateManyTaskInputEnvelope
+    set?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+    disconnect?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+    delete?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+    connect?: EvidenceLinkWhereUniqueInput | EvidenceLinkWhereUniqueInput[]
+    update?: EvidenceLinkUpdateWithWhereUniqueWithoutTaskInput | EvidenceLinkUpdateWithWhereUniqueWithoutTaskInput[]
+    updateMany?: EvidenceLinkUpdateManyWithWhereWithoutTaskInput | EvidenceLinkUpdateManyWithWhereWithoutTaskInput[]
+    deleteMany?: EvidenceLinkScalarWhereInput | EvidenceLinkScalarWhereInput[]
+  }
+
+  export type ResolutionRecordCreateNestedOneWithoutEvidenceInput = {
+    create?: XOR<ResolutionRecordCreateWithoutEvidenceInput, ResolutionRecordUncheckedCreateWithoutEvidenceInput>
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutEvidenceInput
+    connect?: ResolutionRecordWhereUniqueInput
+  }
+
+  export type ActionItemCreateNestedOneWithoutEvidenceInput = {
+    create?: XOR<ActionItemCreateWithoutEvidenceInput, ActionItemUncheckedCreateWithoutEvidenceInput>
+    connectOrCreate?: ActionItemCreateOrConnectWithoutEvidenceInput
+    connect?: ActionItemWhereUniqueInput
+  }
+
+  export type EnumEvidenceTypeFieldUpdateOperationsInput = {
+    set?: $Enums.EvidenceType
+  }
+
+  export type ResolutionRecordUpdateOneRequiredWithoutEvidenceNestedInput = {
+    create?: XOR<ResolutionRecordCreateWithoutEvidenceInput, ResolutionRecordUncheckedCreateWithoutEvidenceInput>
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutEvidenceInput
+    upsert?: ResolutionRecordUpsertWithoutEvidenceInput
+    connect?: ResolutionRecordWhereUniqueInput
+    update?: XOR<XOR<ResolutionRecordUpdateToOneWithWhereWithoutEvidenceInput, ResolutionRecordUpdateWithoutEvidenceInput>, ResolutionRecordUncheckedUpdateWithoutEvidenceInput>
+  }
+
+  export type ActionItemUpdateOneWithoutEvidenceNestedInput = {
+    create?: XOR<ActionItemCreateWithoutEvidenceInput, ActionItemUncheckedCreateWithoutEvidenceInput>
+    connectOrCreate?: ActionItemCreateOrConnectWithoutEvidenceInput
+    upsert?: ActionItemUpsertWithoutEvidenceInput
+    disconnect?: ActionItemWhereInput | boolean
+    delete?: ActionItemWhereInput | boolean
+    connect?: ActionItemWhereUniqueInput
+    update?: XOR<XOR<ActionItemUpdateToOneWithWhereWithoutEvidenceInput, ActionItemUpdateWithoutEvidenceInput>, ActionItemUncheckedUpdateWithoutEvidenceInput>
+  }
+
+  export type ResolutionRecordCreateNestedOneWithoutVerificationsInput = {
+    create?: XOR<ResolutionRecordCreateWithoutVerificationsInput, ResolutionRecordUncheckedCreateWithoutVerificationsInput>
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutVerificationsInput
+    connect?: ResolutionRecordWhereUniqueInput
+  }
+
+  export type EnumVerificationDecisionFieldUpdateOperationsInput = {
+    set?: $Enums.VerificationDecision
+  }
+
+  export type ResolutionRecordUpdateOneRequiredWithoutVerificationsNestedInput = {
+    create?: XOR<ResolutionRecordCreateWithoutVerificationsInput, ResolutionRecordUncheckedCreateWithoutVerificationsInput>
+    connectOrCreate?: ResolutionRecordCreateOrConnectWithoutVerificationsInput
+    upsert?: ResolutionRecordUpsertWithoutVerificationsInput
+    connect?: ResolutionRecordWhereUniqueInput
+    update?: XOR<XOR<ResolutionRecordUpdateToOneWithWhereWithoutVerificationsInput, ResolutionRecordUpdateWithoutVerificationsInput>, ResolutionRecordUncheckedUpdateWithoutVerificationsInput>
   }
 
   export type WorkspaceCreateNestedOneWithoutAuditEventsInput = {
@@ -19118,6 +25899,74 @@ export namespace Prisma {
     _max?: NestedEnumFlagResolutionTypeNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumFlagResolutionTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.FlagResolutionType | EnumFlagResolutionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FlagResolutionType[] | ListEnumFlagResolutionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FlagResolutionType[] | ListEnumFlagResolutionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFlagResolutionTypeFilter<$PrismaModel> | $Enums.FlagResolutionType
+  }
+
+  export type NestedEnumFlagResolutionTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FlagResolutionType | EnumFlagResolutionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FlagResolutionType[] | ListEnumFlagResolutionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FlagResolutionType[] | ListEnumFlagResolutionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFlagResolutionTypeWithAggregatesFilter<$PrismaModel> | $Enums.FlagResolutionType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFlagResolutionTypeFilter<$PrismaModel>
+    _max?: NestedEnumFlagResolutionTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumRemediationTaskStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.RemediationTaskStatus | EnumRemediationTaskStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RemediationTaskStatus[] | ListEnumRemediationTaskStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RemediationTaskStatus[] | ListEnumRemediationTaskStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRemediationTaskStatusFilter<$PrismaModel> | $Enums.RemediationTaskStatus
+  }
+
+  export type NestedEnumRemediationTaskStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RemediationTaskStatus | EnumRemediationTaskStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RemediationTaskStatus[] | ListEnumRemediationTaskStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RemediationTaskStatus[] | ListEnumRemediationTaskStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRemediationTaskStatusWithAggregatesFilter<$PrismaModel> | $Enums.RemediationTaskStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRemediationTaskStatusFilter<$PrismaModel>
+    _max?: NestedEnumRemediationTaskStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumEvidenceTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.EvidenceType | EnumEvidenceTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.EvidenceType[] | ListEnumEvidenceTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EvidenceType[] | ListEnumEvidenceTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumEvidenceTypeFilter<$PrismaModel> | $Enums.EvidenceType
+  }
+
+  export type NestedEnumEvidenceTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EvidenceType | EnumEvidenceTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.EvidenceType[] | ListEnumEvidenceTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EvidenceType[] | ListEnumEvidenceTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumEvidenceTypeWithAggregatesFilter<$PrismaModel> | $Enums.EvidenceType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumEvidenceTypeFilter<$PrismaModel>
+    _max?: NestedEnumEvidenceTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumVerificationDecisionFilter<$PrismaModel = never> = {
+    equals?: $Enums.VerificationDecision | EnumVerificationDecisionFieldRefInput<$PrismaModel>
+    in?: $Enums.VerificationDecision[] | ListEnumVerificationDecisionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VerificationDecision[] | ListEnumVerificationDecisionFieldRefInput<$PrismaModel>
+    not?: NestedEnumVerificationDecisionFilter<$PrismaModel> | $Enums.VerificationDecision
+  }
+
+  export type NestedEnumVerificationDecisionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.VerificationDecision | EnumVerificationDecisionFieldRefInput<$PrismaModel>
+    in?: $Enums.VerificationDecision[] | ListEnumVerificationDecisionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VerificationDecision[] | ListEnumVerificationDecisionFieldRefInput<$PrismaModel>
+    not?: NestedEnumVerificationDecisionWithAggregatesFilter<$PrismaModel> | $Enums.VerificationDecision
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumVerificationDecisionFilter<$PrismaModel>
+    _max?: NestedEnumVerificationDecisionFilter<$PrismaModel>
+  }
+
   export type NestedEnumAuditActionFilter<$PrismaModel = never> = {
     equals?: $Enums.AuditAction | EnumAuditActionFieldRefInput<$PrismaModel>
     in?: $Enums.AuditAction[] | ListEnumAuditActionFieldRefInput<$PrismaModel>
@@ -19185,6 +26034,7 @@ export namespace Prisma {
     versions?: VersionCreateNestedManyWithoutMeetingInput
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     flags?: FlagCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingUncheckedCreateWithoutWorkspaceInput = {
@@ -19217,6 +26067,7 @@ export namespace Prisma {
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutMeetingInput
     flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingCreateOrConnectWithoutWorkspaceInput = {
@@ -19308,6 +26159,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     meeting: MeetingCreateNestedOneWithoutFlagsInput
+    resolutionRecord?: ResolutionRecordCreateNestedOneWithoutFlagInput
   }
 
   export type FlagUncheckedCreateWithoutWorkspaceInput = {
@@ -19325,6 +26177,7 @@ export namespace Prisma {
     resolutionNote?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    resolutionRecord?: ResolutionRecordUncheckedCreateNestedOneWithoutFlagInput
   }
 
   export type FlagCreateOrConnectWithoutWorkspaceInput = {
@@ -19334,6 +26187,56 @@ export namespace Prisma {
 
   export type FlagCreateManyWorkspaceInputEnvelope = {
     data: FlagCreateManyWorkspaceInput | FlagCreateManyWorkspaceInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ResolutionRecordCreateWithoutWorkspaceInput = {
+    id?: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedForVerificationAt?: Date | string | null
+    closedAt?: Date | string | null
+    closedByUserId?: string | null
+    overrideReason?: string | null
+    overrideCategory?: string | null
+    flag: FlagCreateNestedOneWithoutResolutionRecordInput
+    meeting: MeetingCreateNestedOneWithoutResolutionRecordsInput
+    tasks?: ActionItemCreateNestedManyWithoutResolutionInput
+    evidence?: EvidenceLinkCreateNestedManyWithoutResolutionInput
+    verifications?: VerificationCreateNestedManyWithoutResolutionInput
+  }
+
+  export type ResolutionRecordUncheckedCreateWithoutWorkspaceInput = {
+    id?: string
+    meetingId: string
+    flagId: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedForVerificationAt?: Date | string | null
+    closedAt?: Date | string | null
+    closedByUserId?: string | null
+    overrideReason?: string | null
+    overrideCategory?: string | null
+    tasks?: ActionItemUncheckedCreateNestedManyWithoutResolutionInput
+    evidence?: EvidenceLinkUncheckedCreateNestedManyWithoutResolutionInput
+    verifications?: VerificationUncheckedCreateNestedManyWithoutResolutionInput
+  }
+
+  export type ResolutionRecordCreateOrConnectWithoutWorkspaceInput = {
+    where: ResolutionRecordWhereUniqueInput
+    create: XOR<ResolutionRecordCreateWithoutWorkspaceInput, ResolutionRecordUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type ResolutionRecordCreateManyWorkspaceInputEnvelope = {
+    data: ResolutionRecordCreateManyWorkspaceInput | ResolutionRecordCreateManyWorkspaceInput[]
     skipDuplicates?: boolean
   }
 
@@ -19510,6 +26413,43 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Flag"> | Date | string
   }
 
+  export type ResolutionRecordUpsertWithWhereUniqueWithoutWorkspaceInput = {
+    where: ResolutionRecordWhereUniqueInput
+    update: XOR<ResolutionRecordUpdateWithoutWorkspaceInput, ResolutionRecordUncheckedUpdateWithoutWorkspaceInput>
+    create: XOR<ResolutionRecordCreateWithoutWorkspaceInput, ResolutionRecordUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type ResolutionRecordUpdateWithWhereUniqueWithoutWorkspaceInput = {
+    where: ResolutionRecordWhereUniqueInput
+    data: XOR<ResolutionRecordUpdateWithoutWorkspaceInput, ResolutionRecordUncheckedUpdateWithoutWorkspaceInput>
+  }
+
+  export type ResolutionRecordUpdateManyWithWhereWithoutWorkspaceInput = {
+    where: ResolutionRecordScalarWhereInput
+    data: XOR<ResolutionRecordUpdateManyMutationInput, ResolutionRecordUncheckedUpdateManyWithoutWorkspaceInput>
+  }
+
+  export type ResolutionRecordScalarWhereInput = {
+    AND?: ResolutionRecordScalarWhereInput | ResolutionRecordScalarWhereInput[]
+    OR?: ResolutionRecordScalarWhereInput[]
+    NOT?: ResolutionRecordScalarWhereInput | ResolutionRecordScalarWhereInput[]
+    id?: StringFilter<"ResolutionRecord"> | string
+    workspaceId?: StringFilter<"ResolutionRecord"> | string
+    meetingId?: StringFilter<"ResolutionRecord"> | string
+    flagId?: StringFilter<"ResolutionRecord"> | string
+    resolutionType?: EnumFlagResolutionTypeFilter<"ResolutionRecord"> | $Enums.FlagResolutionType
+    rationale?: StringFilter<"ResolutionRecord"> | string
+    metadata?: JsonNullableFilter<"ResolutionRecord">
+    createdByUserId?: StringFilter<"ResolutionRecord"> | string
+    createdAt?: DateTimeFilter<"ResolutionRecord"> | Date | string
+    updatedAt?: DateTimeFilter<"ResolutionRecord"> | Date | string
+    submittedForVerificationAt?: DateTimeNullableFilter<"ResolutionRecord"> | Date | string | null
+    closedAt?: DateTimeNullableFilter<"ResolutionRecord"> | Date | string | null
+    closedByUserId?: StringNullableFilter<"ResolutionRecord"> | string | null
+    overrideReason?: StringNullableFilter<"ResolutionRecord"> | string | null
+    overrideCategory?: StringNullableFilter<"ResolutionRecord"> | string | null
+  }
+
   export type UserCreateWithoutWorkspacesInput = {
     id?: string
     name?: string | null
@@ -19549,6 +26489,7 @@ export namespace Prisma {
     auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
     invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
     flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutUsersInput = {
@@ -19565,6 +26506,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
     invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
     flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutUsersInput = {
@@ -19628,6 +26570,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
     invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
     flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutUsersInput = {
@@ -19644,6 +26587,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
     invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
     flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateWithoutMeetingsInput = {
@@ -19660,6 +26604,7 @@ export namespace Prisma {
     auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
     invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
     flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutMeetingsInput = {
@@ -19676,6 +26621,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
     invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
     flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutMeetingsInput = {
@@ -19758,6 +26704,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutFlagsInput
+    resolutionRecord?: ResolutionRecordCreateNestedOneWithoutFlagInput
   }
 
   export type FlagUncheckedCreateWithoutMeetingInput = {
@@ -19775,6 +26722,7 @@ export namespace Prisma {
     resolutionNote?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    resolutionRecord?: ResolutionRecordUncheckedCreateNestedOneWithoutFlagInput
   }
 
   export type FlagCreateOrConnectWithoutMeetingInput = {
@@ -19784,6 +26732,56 @@ export namespace Prisma {
 
   export type FlagCreateManyMeetingInputEnvelope = {
     data: FlagCreateManyMeetingInput | FlagCreateManyMeetingInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ResolutionRecordCreateWithoutMeetingInput = {
+    id?: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedForVerificationAt?: Date | string | null
+    closedAt?: Date | string | null
+    closedByUserId?: string | null
+    overrideReason?: string | null
+    overrideCategory?: string | null
+    flag: FlagCreateNestedOneWithoutResolutionRecordInput
+    workspace: WorkspaceCreateNestedOneWithoutResolutionRecordsInput
+    tasks?: ActionItemCreateNestedManyWithoutResolutionInput
+    evidence?: EvidenceLinkCreateNestedManyWithoutResolutionInput
+    verifications?: VerificationCreateNestedManyWithoutResolutionInput
+  }
+
+  export type ResolutionRecordUncheckedCreateWithoutMeetingInput = {
+    id?: string
+    workspaceId: string
+    flagId: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedForVerificationAt?: Date | string | null
+    closedAt?: Date | string | null
+    closedByUserId?: string | null
+    overrideReason?: string | null
+    overrideCategory?: string | null
+    tasks?: ActionItemUncheckedCreateNestedManyWithoutResolutionInput
+    evidence?: EvidenceLinkUncheckedCreateNestedManyWithoutResolutionInput
+    verifications?: VerificationUncheckedCreateNestedManyWithoutResolutionInput
+  }
+
+  export type ResolutionRecordCreateOrConnectWithoutMeetingInput = {
+    where: ResolutionRecordWhereUniqueInput
+    create: XOR<ResolutionRecordCreateWithoutMeetingInput, ResolutionRecordUncheckedCreateWithoutMeetingInput>
+  }
+
+  export type ResolutionRecordCreateManyMeetingInputEnvelope = {
+    data: ResolutionRecordCreateManyMeetingInput | ResolutionRecordCreateManyMeetingInput[]
     skipDuplicates?: boolean
   }
 
@@ -19812,6 +26810,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
     invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
     flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutMeetingsInput = {
@@ -19828,6 +26827,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
     invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
     flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type VersionUpsertWithWhereUniqueWithoutMeetingInput = {
@@ -19891,6 +26891,22 @@ export namespace Prisma {
     data: XOR<FlagUpdateManyMutationInput, FlagUncheckedUpdateManyWithoutMeetingInput>
   }
 
+  export type ResolutionRecordUpsertWithWhereUniqueWithoutMeetingInput = {
+    where: ResolutionRecordWhereUniqueInput
+    update: XOR<ResolutionRecordUpdateWithoutMeetingInput, ResolutionRecordUncheckedUpdateWithoutMeetingInput>
+    create: XOR<ResolutionRecordCreateWithoutMeetingInput, ResolutionRecordUncheckedCreateWithoutMeetingInput>
+  }
+
+  export type ResolutionRecordUpdateWithWhereUniqueWithoutMeetingInput = {
+    where: ResolutionRecordWhereUniqueInput
+    data: XOR<ResolutionRecordUpdateWithoutMeetingInput, ResolutionRecordUncheckedUpdateWithoutMeetingInput>
+  }
+
+  export type ResolutionRecordUpdateManyWithWhereWithoutMeetingInput = {
+    where: ResolutionRecordScalarWhereInput
+    data: XOR<ResolutionRecordUpdateManyMutationInput, ResolutionRecordUncheckedUpdateManyWithoutMeetingInput>
+  }
+
   export type MeetingCreateWithoutVersionsInput = {
     id?: string
     clientName: string
@@ -19921,6 +26937,7 @@ export namespace Prisma {
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     flags?: FlagCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingUncheckedCreateWithoutVersionsInput = {
@@ -19953,6 +26970,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutMeetingInput
     flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingCreateOrConnectWithoutVersionsInput = {
@@ -20001,6 +27019,7 @@ export namespace Prisma {
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     flags?: FlagUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
   }
 
   export type MeetingUncheckedUpdateWithoutVersionsInput = {
@@ -20033,6 +27052,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
     flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
   export type MeetingCreateWithoutFlagsInput = {
@@ -20065,6 +27085,7 @@ export namespace Prisma {
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
     versions?: VersionCreateNestedManyWithoutMeetingInput
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingUncheckedCreateWithoutFlagsInput = {
@@ -20097,6 +27118,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingCreateOrConnectWithoutFlagsInput = {
@@ -20118,6 +27140,7 @@ export namespace Prisma {
     meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
     auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
     invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutFlagsInput = {
@@ -20134,11 +27157,57 @@ export namespace Prisma {
     meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
     invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutFlagsInput = {
     where: WorkspaceWhereUniqueInput
     create: XOR<WorkspaceCreateWithoutFlagsInput, WorkspaceUncheckedCreateWithoutFlagsInput>
+  }
+
+  export type ResolutionRecordCreateWithoutFlagInput = {
+    id?: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedForVerificationAt?: Date | string | null
+    closedAt?: Date | string | null
+    closedByUserId?: string | null
+    overrideReason?: string | null
+    overrideCategory?: string | null
+    meeting: MeetingCreateNestedOneWithoutResolutionRecordsInput
+    workspace: WorkspaceCreateNestedOneWithoutResolutionRecordsInput
+    tasks?: ActionItemCreateNestedManyWithoutResolutionInput
+    evidence?: EvidenceLinkCreateNestedManyWithoutResolutionInput
+    verifications?: VerificationCreateNestedManyWithoutResolutionInput
+  }
+
+  export type ResolutionRecordUncheckedCreateWithoutFlagInput = {
+    id?: string
+    workspaceId: string
+    meetingId: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedForVerificationAt?: Date | string | null
+    closedAt?: Date | string | null
+    closedByUserId?: string | null
+    overrideReason?: string | null
+    overrideCategory?: string | null
+    tasks?: ActionItemUncheckedCreateNestedManyWithoutResolutionInput
+    evidence?: EvidenceLinkUncheckedCreateNestedManyWithoutResolutionInput
+    verifications?: VerificationUncheckedCreateNestedManyWithoutResolutionInput
+  }
+
+  export type ResolutionRecordCreateOrConnectWithoutFlagInput = {
+    where: ResolutionRecordWhereUniqueInput
+    create: XOR<ResolutionRecordCreateWithoutFlagInput, ResolutionRecordUncheckedCreateWithoutFlagInput>
   }
 
   export type MeetingUpsertWithoutFlagsInput = {
@@ -20182,6 +27251,7 @@ export namespace Prisma {
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
     versions?: VersionUpdateManyWithoutMeetingNestedInput
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
   }
 
   export type MeetingUncheckedUpdateWithoutFlagsInput = {
@@ -20214,6 +27284,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
     auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
   export type WorkspaceUpsertWithoutFlagsInput = {
@@ -20241,6 +27312,7 @@ export namespace Prisma {
     meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
     auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
     invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutFlagsInput = {
@@ -20257,6 +27329,974 @@ export namespace Prisma {
     meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
     auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
     invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type ResolutionRecordUpsertWithoutFlagInput = {
+    update: XOR<ResolutionRecordUpdateWithoutFlagInput, ResolutionRecordUncheckedUpdateWithoutFlagInput>
+    create: XOR<ResolutionRecordCreateWithoutFlagInput, ResolutionRecordUncheckedCreateWithoutFlagInput>
+    where?: ResolutionRecordWhereInput
+  }
+
+  export type ResolutionRecordUpdateToOneWithWhereWithoutFlagInput = {
+    where?: ResolutionRecordWhereInput
+    data: XOR<ResolutionRecordUpdateWithoutFlagInput, ResolutionRecordUncheckedUpdateWithoutFlagInput>
+  }
+
+  export type ResolutionRecordUpdateWithoutFlagInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    meeting?: MeetingUpdateOneRequiredWithoutResolutionRecordsNestedInput
+    workspace?: WorkspaceUpdateOneRequiredWithoutResolutionRecordsNestedInput
+    tasks?: ActionItemUpdateManyWithoutResolutionNestedInput
+    evidence?: EvidenceLinkUpdateManyWithoutResolutionNestedInput
+    verifications?: VerificationUpdateManyWithoutResolutionNestedInput
+  }
+
+  export type ResolutionRecordUncheckedUpdateWithoutFlagInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    meetingId?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    tasks?: ActionItemUncheckedUpdateManyWithoutResolutionNestedInput
+    evidence?: EvidenceLinkUncheckedUpdateManyWithoutResolutionNestedInput
+    verifications?: VerificationUncheckedUpdateManyWithoutResolutionNestedInput
+  }
+
+  export type FlagCreateWithoutResolutionRecordInput = {
+    id?: string
+    type: $Enums.FlagType
+    severity?: $Enums.FlagSeverity
+    status?: $Enums.FlagStatus
+    evidence?: NullableJsonNullValueInput | InputJsonValue
+    createdByType?: $Enums.FlagCreatedByType
+    createdByUserId?: string | null
+    resolvedByUserId?: string | null
+    resolvedAt?: Date | string | null
+    resolutionType?: $Enums.FlagResolutionType | null
+    resolutionNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    meeting: MeetingCreateNestedOneWithoutFlagsInput
+    workspace: WorkspaceCreateNestedOneWithoutFlagsInput
+  }
+
+  export type FlagUncheckedCreateWithoutResolutionRecordInput = {
+    id?: string
+    workspaceId: string
+    meetingId: string
+    type: $Enums.FlagType
+    severity?: $Enums.FlagSeverity
+    status?: $Enums.FlagStatus
+    evidence?: NullableJsonNullValueInput | InputJsonValue
+    createdByType?: $Enums.FlagCreatedByType
+    createdByUserId?: string | null
+    resolvedByUserId?: string | null
+    resolvedAt?: Date | string | null
+    resolutionType?: $Enums.FlagResolutionType | null
+    resolutionNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FlagCreateOrConnectWithoutResolutionRecordInput = {
+    where: FlagWhereUniqueInput
+    create: XOR<FlagCreateWithoutResolutionRecordInput, FlagUncheckedCreateWithoutResolutionRecordInput>
+  }
+
+  export type MeetingCreateWithoutResolutionRecordsInput = {
+    id?: string
+    clientName: string
+    meetingType: string
+    meetingDate: Date | string
+    status?: $Enums.MeetingStatus
+    fileUrl?: string | null
+    sourceFileSha256?: string | null
+    sourceFileName?: string | null
+    sourceFileSize?: number | null
+    sourceFileMime?: string | null
+    sourceUploadedAt?: Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
+    finalizedBy?: string | null
+    finalizedAt?: Date | string | null
+    finalizeReason?: $Enums.FinalizeReason | null
+    finalizeNote?: string | null
+    finalizedPolicyVersion?: number | null
+    samplingBucket?: string | null
+    samplingRuleId?: string | null
+    draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
+    readyForCCO?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
+    versions?: VersionCreateNestedManyWithoutMeetingInput
+    auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
+    flags?: FlagCreateNestedManyWithoutMeetingInput
+  }
+
+  export type MeetingUncheckedCreateWithoutResolutionRecordsInput = {
+    id?: string
+    workspaceId: string
+    clientName: string
+    meetingType: string
+    meetingDate: Date | string
+    status?: $Enums.MeetingStatus
+    fileUrl?: string | null
+    sourceFileSha256?: string | null
+    sourceFileName?: string | null
+    sourceFileSize?: number | null
+    sourceFileMime?: string | null
+    sourceUploadedAt?: Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
+    finalizedBy?: string | null
+    finalizedAt?: Date | string | null
+    finalizeReason?: $Enums.FinalizeReason | null
+    finalizeNote?: string | null
+    finalizedPolicyVersion?: number | null
+    samplingBucket?: string | null
+    samplingRuleId?: string | null
+    draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
+    readyForCCO?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutMeetingInput
+    flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
+  }
+
+  export type MeetingCreateOrConnectWithoutResolutionRecordsInput = {
+    where: MeetingWhereUniqueInput
+    create: XOR<MeetingCreateWithoutResolutionRecordsInput, MeetingUncheckedCreateWithoutResolutionRecordsInput>
+  }
+
+  export type WorkspaceCreateWithoutResolutionRecordsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    pilotStartDate?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceUncheckedCreateWithoutResolutionRecordsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    pilotStartDate?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceCreateOrConnectWithoutResolutionRecordsInput = {
+    where: WorkspaceWhereUniqueInput
+    create: XOR<WorkspaceCreateWithoutResolutionRecordsInput, WorkspaceUncheckedCreateWithoutResolutionRecordsInput>
+  }
+
+  export type ActionItemCreateWithoutResolutionInput = {
+    id?: string
+    title: string
+    status?: $Enums.RemediationTaskStatus
+    ownerId: string
+    dueDate: Date | string
+    required?: boolean
+    completionNote?: string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    evidence?: EvidenceLinkCreateNestedManyWithoutTaskInput
+  }
+
+  export type ActionItemUncheckedCreateWithoutResolutionInput = {
+    id?: string
+    title: string
+    status?: $Enums.RemediationTaskStatus
+    ownerId: string
+    dueDate: Date | string
+    required?: boolean
+    completionNote?: string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    evidence?: EvidenceLinkUncheckedCreateNestedManyWithoutTaskInput
+  }
+
+  export type ActionItemCreateOrConnectWithoutResolutionInput = {
+    where: ActionItemWhereUniqueInput
+    create: XOR<ActionItemCreateWithoutResolutionInput, ActionItemUncheckedCreateWithoutResolutionInput>
+  }
+
+  export type ActionItemCreateManyResolutionInputEnvelope = {
+    data: ActionItemCreateManyResolutionInput | ActionItemCreateManyResolutionInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type EvidenceLinkCreateWithoutResolutionInput = {
+    id?: string
+    type: $Enums.EvidenceType
+    label?: string | null
+    url?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    task?: ActionItemCreateNestedOneWithoutEvidenceInput
+  }
+
+  export type EvidenceLinkUncheckedCreateWithoutResolutionInput = {
+    id?: string
+    taskId?: string | null
+    type: $Enums.EvidenceType
+    label?: string | null
+    url?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+  }
+
+  export type EvidenceLinkCreateOrConnectWithoutResolutionInput = {
+    where: EvidenceLinkWhereUniqueInput
+    create: XOR<EvidenceLinkCreateWithoutResolutionInput, EvidenceLinkUncheckedCreateWithoutResolutionInput>
+  }
+
+  export type EvidenceLinkCreateManyResolutionInputEnvelope = {
+    data: EvidenceLinkCreateManyResolutionInput | EvidenceLinkCreateManyResolutionInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type VerificationCreateWithoutResolutionInput = {
+    id?: string
+    reviewerId: string
+    decision: $Enums.VerificationDecision
+    note?: string | null
+    decidedAt?: Date | string
+  }
+
+  export type VerificationUncheckedCreateWithoutResolutionInput = {
+    id?: string
+    reviewerId: string
+    decision: $Enums.VerificationDecision
+    note?: string | null
+    decidedAt?: Date | string
+  }
+
+  export type VerificationCreateOrConnectWithoutResolutionInput = {
+    where: VerificationWhereUniqueInput
+    create: XOR<VerificationCreateWithoutResolutionInput, VerificationUncheckedCreateWithoutResolutionInput>
+  }
+
+  export type VerificationCreateManyResolutionInputEnvelope = {
+    data: VerificationCreateManyResolutionInput | VerificationCreateManyResolutionInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type FlagUpsertWithoutResolutionRecordInput = {
+    update: XOR<FlagUpdateWithoutResolutionRecordInput, FlagUncheckedUpdateWithoutResolutionRecordInput>
+    create: XOR<FlagCreateWithoutResolutionRecordInput, FlagUncheckedCreateWithoutResolutionRecordInput>
+    where?: FlagWhereInput
+  }
+
+  export type FlagUpdateToOneWithWhereWithoutResolutionRecordInput = {
+    where?: FlagWhereInput
+    data: XOR<FlagUpdateWithoutResolutionRecordInput, FlagUncheckedUpdateWithoutResolutionRecordInput>
+  }
+
+  export type FlagUpdateWithoutResolutionRecordInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFlagTypeFieldUpdateOperationsInput | $Enums.FlagType
+    severity?: EnumFlagSeverityFieldUpdateOperationsInput | $Enums.FlagSeverity
+    status?: EnumFlagStatusFieldUpdateOperationsInput | $Enums.FlagStatus
+    evidence?: NullableJsonNullValueInput | InputJsonValue
+    createdByType?: EnumFlagCreatedByTypeFieldUpdateOperationsInput | $Enums.FlagCreatedByType
+    createdByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
+    resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    meeting?: MeetingUpdateOneRequiredWithoutFlagsNestedInput
+    workspace?: WorkspaceUpdateOneRequiredWithoutFlagsNestedInput
+  }
+
+  export type FlagUncheckedUpdateWithoutResolutionRecordInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    meetingId?: StringFieldUpdateOperationsInput | string
+    type?: EnumFlagTypeFieldUpdateOperationsInput | $Enums.FlagType
+    severity?: EnumFlagSeverityFieldUpdateOperationsInput | $Enums.FlagSeverity
+    status?: EnumFlagStatusFieldUpdateOperationsInput | $Enums.FlagStatus
+    evidence?: NullableJsonNullValueInput | InputJsonValue
+    createdByType?: EnumFlagCreatedByTypeFieldUpdateOperationsInput | $Enums.FlagCreatedByType
+    createdByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
+    resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MeetingUpsertWithoutResolutionRecordsInput = {
+    update: XOR<MeetingUpdateWithoutResolutionRecordsInput, MeetingUncheckedUpdateWithoutResolutionRecordsInput>
+    create: XOR<MeetingCreateWithoutResolutionRecordsInput, MeetingUncheckedCreateWithoutResolutionRecordsInput>
+    where?: MeetingWhereInput
+  }
+
+  export type MeetingUpdateToOneWithWhereWithoutResolutionRecordsInput = {
+    where?: MeetingWhereInput
+    data: XOR<MeetingUpdateWithoutResolutionRecordsInput, MeetingUncheckedUpdateWithoutResolutionRecordsInput>
+  }
+
+  export type MeetingUpdateWithoutResolutionRecordsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    clientName?: StringFieldUpdateOperationsInput | string
+    meetingType?: StringFieldUpdateOperationsInput | string
+    meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileName?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    sourceFileMime?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUploadedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalizeReason?: NullableEnumFinalizeReasonFieldUpdateOperationsInput | $Enums.FinalizeReason | null
+    finalizeNote?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
+    samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
+    versions?: VersionUpdateManyWithoutMeetingNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
+    flags?: FlagUpdateManyWithoutMeetingNestedInput
+  }
+
+  export type MeetingUncheckedUpdateWithoutResolutionRecordsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    clientName?: StringFieldUpdateOperationsInput | string
+    meetingType?: StringFieldUpdateOperationsInput | string
+    meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileName?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    sourceFileMime?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUploadedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalizeReason?: NullableEnumFinalizeReasonFieldUpdateOperationsInput | $Enums.FinalizeReason | null
+    finalizeNote?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
+    samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
+  }
+
+  export type WorkspaceUpsertWithoutResolutionRecordsInput = {
+    update: XOR<WorkspaceUpdateWithoutResolutionRecordsInput, WorkspaceUncheckedUpdateWithoutResolutionRecordsInput>
+    create: XOR<WorkspaceCreateWithoutResolutionRecordsInput, WorkspaceUncheckedCreateWithoutResolutionRecordsInput>
+    where?: WorkspaceWhereInput
+  }
+
+  export type WorkspaceUpdateToOneWithWhereWithoutResolutionRecordsInput = {
+    where?: WorkspaceWhereInput
+    data: XOR<WorkspaceUpdateWithoutResolutionRecordsInput, WorkspaceUncheckedUpdateWithoutResolutionRecordsInput>
+  }
+
+  export type WorkspaceUpdateWithoutResolutionRecordsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type WorkspaceUncheckedUpdateWithoutResolutionRecordsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type ActionItemUpsertWithWhereUniqueWithoutResolutionInput = {
+    where: ActionItemWhereUniqueInput
+    update: XOR<ActionItemUpdateWithoutResolutionInput, ActionItemUncheckedUpdateWithoutResolutionInput>
+    create: XOR<ActionItemCreateWithoutResolutionInput, ActionItemUncheckedCreateWithoutResolutionInput>
+  }
+
+  export type ActionItemUpdateWithWhereUniqueWithoutResolutionInput = {
+    where: ActionItemWhereUniqueInput
+    data: XOR<ActionItemUpdateWithoutResolutionInput, ActionItemUncheckedUpdateWithoutResolutionInput>
+  }
+
+  export type ActionItemUpdateManyWithWhereWithoutResolutionInput = {
+    where: ActionItemScalarWhereInput
+    data: XOR<ActionItemUpdateManyMutationInput, ActionItemUncheckedUpdateManyWithoutResolutionInput>
+  }
+
+  export type ActionItemScalarWhereInput = {
+    AND?: ActionItemScalarWhereInput | ActionItemScalarWhereInput[]
+    OR?: ActionItemScalarWhereInput[]
+    NOT?: ActionItemScalarWhereInput | ActionItemScalarWhereInput[]
+    id?: StringFilter<"ActionItem"> | string
+    resolutionId?: StringFilter<"ActionItem"> | string
+    title?: StringFilter<"ActionItem"> | string
+    status?: EnumRemediationTaskStatusFilter<"ActionItem"> | $Enums.RemediationTaskStatus
+    ownerId?: StringFilter<"ActionItem"> | string
+    dueDate?: DateTimeFilter<"ActionItem"> | Date | string
+    required?: BoolFilter<"ActionItem"> | boolean
+    completionNote?: StringNullableFilter<"ActionItem"> | string | null
+    completedAt?: DateTimeNullableFilter<"ActionItem"> | Date | string | null
+    createdAt?: DateTimeFilter<"ActionItem"> | Date | string
+    updatedAt?: DateTimeFilter<"ActionItem"> | Date | string
+  }
+
+  export type EvidenceLinkUpsertWithWhereUniqueWithoutResolutionInput = {
+    where: EvidenceLinkWhereUniqueInput
+    update: XOR<EvidenceLinkUpdateWithoutResolutionInput, EvidenceLinkUncheckedUpdateWithoutResolutionInput>
+    create: XOR<EvidenceLinkCreateWithoutResolutionInput, EvidenceLinkUncheckedCreateWithoutResolutionInput>
+  }
+
+  export type EvidenceLinkUpdateWithWhereUniqueWithoutResolutionInput = {
+    where: EvidenceLinkWhereUniqueInput
+    data: XOR<EvidenceLinkUpdateWithoutResolutionInput, EvidenceLinkUncheckedUpdateWithoutResolutionInput>
+  }
+
+  export type EvidenceLinkUpdateManyWithWhereWithoutResolutionInput = {
+    where: EvidenceLinkScalarWhereInput
+    data: XOR<EvidenceLinkUpdateManyMutationInput, EvidenceLinkUncheckedUpdateManyWithoutResolutionInput>
+  }
+
+  export type EvidenceLinkScalarWhereInput = {
+    AND?: EvidenceLinkScalarWhereInput | EvidenceLinkScalarWhereInput[]
+    OR?: EvidenceLinkScalarWhereInput[]
+    NOT?: EvidenceLinkScalarWhereInput | EvidenceLinkScalarWhereInput[]
+    id?: StringFilter<"EvidenceLink"> | string
+    resolutionId?: StringFilter<"EvidenceLink"> | string
+    taskId?: StringNullableFilter<"EvidenceLink"> | string | null
+    type?: EnumEvidenceTypeFilter<"EvidenceLink"> | $Enums.EvidenceType
+    label?: StringNullableFilter<"EvidenceLink"> | string | null
+    url?: StringNullableFilter<"EvidenceLink"> | string | null
+    metadata?: JsonNullableFilter<"EvidenceLink">
+    createdByUserId?: StringFilter<"EvidenceLink"> | string
+    createdAt?: DateTimeFilter<"EvidenceLink"> | Date | string
+  }
+
+  export type VerificationUpsertWithWhereUniqueWithoutResolutionInput = {
+    where: VerificationWhereUniqueInput
+    update: XOR<VerificationUpdateWithoutResolutionInput, VerificationUncheckedUpdateWithoutResolutionInput>
+    create: XOR<VerificationCreateWithoutResolutionInput, VerificationUncheckedCreateWithoutResolutionInput>
+  }
+
+  export type VerificationUpdateWithWhereUniqueWithoutResolutionInput = {
+    where: VerificationWhereUniqueInput
+    data: XOR<VerificationUpdateWithoutResolutionInput, VerificationUncheckedUpdateWithoutResolutionInput>
+  }
+
+  export type VerificationUpdateManyWithWhereWithoutResolutionInput = {
+    where: VerificationScalarWhereInput
+    data: XOR<VerificationUpdateManyMutationInput, VerificationUncheckedUpdateManyWithoutResolutionInput>
+  }
+
+  export type VerificationScalarWhereInput = {
+    AND?: VerificationScalarWhereInput | VerificationScalarWhereInput[]
+    OR?: VerificationScalarWhereInput[]
+    NOT?: VerificationScalarWhereInput | VerificationScalarWhereInput[]
+    id?: StringFilter<"Verification"> | string
+    resolutionId?: StringFilter<"Verification"> | string
+    reviewerId?: StringFilter<"Verification"> | string
+    decision?: EnumVerificationDecisionFilter<"Verification"> | $Enums.VerificationDecision
+    note?: StringNullableFilter<"Verification"> | string | null
+    decidedAt?: DateTimeFilter<"Verification"> | Date | string
+  }
+
+  export type ResolutionRecordCreateWithoutTasksInput = {
+    id?: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedForVerificationAt?: Date | string | null
+    closedAt?: Date | string | null
+    closedByUserId?: string | null
+    overrideReason?: string | null
+    overrideCategory?: string | null
+    flag: FlagCreateNestedOneWithoutResolutionRecordInput
+    meeting: MeetingCreateNestedOneWithoutResolutionRecordsInput
+    workspace: WorkspaceCreateNestedOneWithoutResolutionRecordsInput
+    evidence?: EvidenceLinkCreateNestedManyWithoutResolutionInput
+    verifications?: VerificationCreateNestedManyWithoutResolutionInput
+  }
+
+  export type ResolutionRecordUncheckedCreateWithoutTasksInput = {
+    id?: string
+    workspaceId: string
+    meetingId: string
+    flagId: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedForVerificationAt?: Date | string | null
+    closedAt?: Date | string | null
+    closedByUserId?: string | null
+    overrideReason?: string | null
+    overrideCategory?: string | null
+    evidence?: EvidenceLinkUncheckedCreateNestedManyWithoutResolutionInput
+    verifications?: VerificationUncheckedCreateNestedManyWithoutResolutionInput
+  }
+
+  export type ResolutionRecordCreateOrConnectWithoutTasksInput = {
+    where: ResolutionRecordWhereUniqueInput
+    create: XOR<ResolutionRecordCreateWithoutTasksInput, ResolutionRecordUncheckedCreateWithoutTasksInput>
+  }
+
+  export type EvidenceLinkCreateWithoutTaskInput = {
+    id?: string
+    type: $Enums.EvidenceType
+    label?: string | null
+    url?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    resolution: ResolutionRecordCreateNestedOneWithoutEvidenceInput
+  }
+
+  export type EvidenceLinkUncheckedCreateWithoutTaskInput = {
+    id?: string
+    resolutionId: string
+    type: $Enums.EvidenceType
+    label?: string | null
+    url?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+  }
+
+  export type EvidenceLinkCreateOrConnectWithoutTaskInput = {
+    where: EvidenceLinkWhereUniqueInput
+    create: XOR<EvidenceLinkCreateWithoutTaskInput, EvidenceLinkUncheckedCreateWithoutTaskInput>
+  }
+
+  export type EvidenceLinkCreateManyTaskInputEnvelope = {
+    data: EvidenceLinkCreateManyTaskInput | EvidenceLinkCreateManyTaskInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ResolutionRecordUpsertWithoutTasksInput = {
+    update: XOR<ResolutionRecordUpdateWithoutTasksInput, ResolutionRecordUncheckedUpdateWithoutTasksInput>
+    create: XOR<ResolutionRecordCreateWithoutTasksInput, ResolutionRecordUncheckedCreateWithoutTasksInput>
+    where?: ResolutionRecordWhereInput
+  }
+
+  export type ResolutionRecordUpdateToOneWithWhereWithoutTasksInput = {
+    where?: ResolutionRecordWhereInput
+    data: XOR<ResolutionRecordUpdateWithoutTasksInput, ResolutionRecordUncheckedUpdateWithoutTasksInput>
+  }
+
+  export type ResolutionRecordUpdateWithoutTasksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    flag?: FlagUpdateOneRequiredWithoutResolutionRecordNestedInput
+    meeting?: MeetingUpdateOneRequiredWithoutResolutionRecordsNestedInput
+    workspace?: WorkspaceUpdateOneRequiredWithoutResolutionRecordsNestedInput
+    evidence?: EvidenceLinkUpdateManyWithoutResolutionNestedInput
+    verifications?: VerificationUpdateManyWithoutResolutionNestedInput
+  }
+
+  export type ResolutionRecordUncheckedUpdateWithoutTasksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    meetingId?: StringFieldUpdateOperationsInput | string
+    flagId?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    evidence?: EvidenceLinkUncheckedUpdateManyWithoutResolutionNestedInput
+    verifications?: VerificationUncheckedUpdateManyWithoutResolutionNestedInput
+  }
+
+  export type EvidenceLinkUpsertWithWhereUniqueWithoutTaskInput = {
+    where: EvidenceLinkWhereUniqueInput
+    update: XOR<EvidenceLinkUpdateWithoutTaskInput, EvidenceLinkUncheckedUpdateWithoutTaskInput>
+    create: XOR<EvidenceLinkCreateWithoutTaskInput, EvidenceLinkUncheckedCreateWithoutTaskInput>
+  }
+
+  export type EvidenceLinkUpdateWithWhereUniqueWithoutTaskInput = {
+    where: EvidenceLinkWhereUniqueInput
+    data: XOR<EvidenceLinkUpdateWithoutTaskInput, EvidenceLinkUncheckedUpdateWithoutTaskInput>
+  }
+
+  export type EvidenceLinkUpdateManyWithWhereWithoutTaskInput = {
+    where: EvidenceLinkScalarWhereInput
+    data: XOR<EvidenceLinkUpdateManyMutationInput, EvidenceLinkUncheckedUpdateManyWithoutTaskInput>
+  }
+
+  export type ResolutionRecordCreateWithoutEvidenceInput = {
+    id?: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedForVerificationAt?: Date | string | null
+    closedAt?: Date | string | null
+    closedByUserId?: string | null
+    overrideReason?: string | null
+    overrideCategory?: string | null
+    flag: FlagCreateNestedOneWithoutResolutionRecordInput
+    meeting: MeetingCreateNestedOneWithoutResolutionRecordsInput
+    workspace: WorkspaceCreateNestedOneWithoutResolutionRecordsInput
+    tasks?: ActionItemCreateNestedManyWithoutResolutionInput
+    verifications?: VerificationCreateNestedManyWithoutResolutionInput
+  }
+
+  export type ResolutionRecordUncheckedCreateWithoutEvidenceInput = {
+    id?: string
+    workspaceId: string
+    meetingId: string
+    flagId: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedForVerificationAt?: Date | string | null
+    closedAt?: Date | string | null
+    closedByUserId?: string | null
+    overrideReason?: string | null
+    overrideCategory?: string | null
+    tasks?: ActionItemUncheckedCreateNestedManyWithoutResolutionInput
+    verifications?: VerificationUncheckedCreateNestedManyWithoutResolutionInput
+  }
+
+  export type ResolutionRecordCreateOrConnectWithoutEvidenceInput = {
+    where: ResolutionRecordWhereUniqueInput
+    create: XOR<ResolutionRecordCreateWithoutEvidenceInput, ResolutionRecordUncheckedCreateWithoutEvidenceInput>
+  }
+
+  export type ActionItemCreateWithoutEvidenceInput = {
+    id?: string
+    title: string
+    status?: $Enums.RemediationTaskStatus
+    ownerId: string
+    dueDate: Date | string
+    required?: boolean
+    completionNote?: string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    resolution: ResolutionRecordCreateNestedOneWithoutTasksInput
+  }
+
+  export type ActionItemUncheckedCreateWithoutEvidenceInput = {
+    id?: string
+    resolutionId: string
+    title: string
+    status?: $Enums.RemediationTaskStatus
+    ownerId: string
+    dueDate: Date | string
+    required?: boolean
+    completionNote?: string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ActionItemCreateOrConnectWithoutEvidenceInput = {
+    where: ActionItemWhereUniqueInput
+    create: XOR<ActionItemCreateWithoutEvidenceInput, ActionItemUncheckedCreateWithoutEvidenceInput>
+  }
+
+  export type ResolutionRecordUpsertWithoutEvidenceInput = {
+    update: XOR<ResolutionRecordUpdateWithoutEvidenceInput, ResolutionRecordUncheckedUpdateWithoutEvidenceInput>
+    create: XOR<ResolutionRecordCreateWithoutEvidenceInput, ResolutionRecordUncheckedCreateWithoutEvidenceInput>
+    where?: ResolutionRecordWhereInput
+  }
+
+  export type ResolutionRecordUpdateToOneWithWhereWithoutEvidenceInput = {
+    where?: ResolutionRecordWhereInput
+    data: XOR<ResolutionRecordUpdateWithoutEvidenceInput, ResolutionRecordUncheckedUpdateWithoutEvidenceInput>
+  }
+
+  export type ResolutionRecordUpdateWithoutEvidenceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    flag?: FlagUpdateOneRequiredWithoutResolutionRecordNestedInput
+    meeting?: MeetingUpdateOneRequiredWithoutResolutionRecordsNestedInput
+    workspace?: WorkspaceUpdateOneRequiredWithoutResolutionRecordsNestedInput
+    tasks?: ActionItemUpdateManyWithoutResolutionNestedInput
+    verifications?: VerificationUpdateManyWithoutResolutionNestedInput
+  }
+
+  export type ResolutionRecordUncheckedUpdateWithoutEvidenceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    meetingId?: StringFieldUpdateOperationsInput | string
+    flagId?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    tasks?: ActionItemUncheckedUpdateManyWithoutResolutionNestedInput
+    verifications?: VerificationUncheckedUpdateManyWithoutResolutionNestedInput
+  }
+
+  export type ActionItemUpsertWithoutEvidenceInput = {
+    update: XOR<ActionItemUpdateWithoutEvidenceInput, ActionItemUncheckedUpdateWithoutEvidenceInput>
+    create: XOR<ActionItemCreateWithoutEvidenceInput, ActionItemUncheckedCreateWithoutEvidenceInput>
+    where?: ActionItemWhereInput
+  }
+
+  export type ActionItemUpdateToOneWithWhereWithoutEvidenceInput = {
+    where?: ActionItemWhereInput
+    data: XOR<ActionItemUpdateWithoutEvidenceInput, ActionItemUncheckedUpdateWithoutEvidenceInput>
+  }
+
+  export type ActionItemUpdateWithoutEvidenceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    status?: EnumRemediationTaskStatusFieldUpdateOperationsInput | $Enums.RemediationTaskStatus
+    ownerId?: StringFieldUpdateOperationsInput | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    required?: BoolFieldUpdateOperationsInput | boolean
+    completionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolution?: ResolutionRecordUpdateOneRequiredWithoutTasksNestedInput
+  }
+
+  export type ActionItemUncheckedUpdateWithoutEvidenceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resolutionId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    status?: EnumRemediationTaskStatusFieldUpdateOperationsInput | $Enums.RemediationTaskStatus
+    ownerId?: StringFieldUpdateOperationsInput | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    required?: BoolFieldUpdateOperationsInput | boolean
+    completionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ResolutionRecordCreateWithoutVerificationsInput = {
+    id?: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedForVerificationAt?: Date | string | null
+    closedAt?: Date | string | null
+    closedByUserId?: string | null
+    overrideReason?: string | null
+    overrideCategory?: string | null
+    flag: FlagCreateNestedOneWithoutResolutionRecordInput
+    meeting: MeetingCreateNestedOneWithoutResolutionRecordsInput
+    workspace: WorkspaceCreateNestedOneWithoutResolutionRecordsInput
+    tasks?: ActionItemCreateNestedManyWithoutResolutionInput
+    evidence?: EvidenceLinkCreateNestedManyWithoutResolutionInput
+  }
+
+  export type ResolutionRecordUncheckedCreateWithoutVerificationsInput = {
+    id?: string
+    workspaceId: string
+    meetingId: string
+    flagId: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedForVerificationAt?: Date | string | null
+    closedAt?: Date | string | null
+    closedByUserId?: string | null
+    overrideReason?: string | null
+    overrideCategory?: string | null
+    tasks?: ActionItemUncheckedCreateNestedManyWithoutResolutionInput
+    evidence?: EvidenceLinkUncheckedCreateNestedManyWithoutResolutionInput
+  }
+
+  export type ResolutionRecordCreateOrConnectWithoutVerificationsInput = {
+    where: ResolutionRecordWhereUniqueInput
+    create: XOR<ResolutionRecordCreateWithoutVerificationsInput, ResolutionRecordUncheckedCreateWithoutVerificationsInput>
+  }
+
+  export type ResolutionRecordUpsertWithoutVerificationsInput = {
+    update: XOR<ResolutionRecordUpdateWithoutVerificationsInput, ResolutionRecordUncheckedUpdateWithoutVerificationsInput>
+    create: XOR<ResolutionRecordCreateWithoutVerificationsInput, ResolutionRecordUncheckedCreateWithoutVerificationsInput>
+    where?: ResolutionRecordWhereInput
+  }
+
+  export type ResolutionRecordUpdateToOneWithWhereWithoutVerificationsInput = {
+    where?: ResolutionRecordWhereInput
+    data: XOR<ResolutionRecordUpdateWithoutVerificationsInput, ResolutionRecordUncheckedUpdateWithoutVerificationsInput>
+  }
+
+  export type ResolutionRecordUpdateWithoutVerificationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    flag?: FlagUpdateOneRequiredWithoutResolutionRecordNestedInput
+    meeting?: MeetingUpdateOneRequiredWithoutResolutionRecordsNestedInput
+    workspace?: WorkspaceUpdateOneRequiredWithoutResolutionRecordsNestedInput
+    tasks?: ActionItemUpdateManyWithoutResolutionNestedInput
+    evidence?: EvidenceLinkUpdateManyWithoutResolutionNestedInput
+  }
+
+  export type ResolutionRecordUncheckedUpdateWithoutVerificationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    meetingId?: StringFieldUpdateOperationsInput | string
+    flagId?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    tasks?: ActionItemUncheckedUpdateManyWithoutResolutionNestedInput
+    evidence?: EvidenceLinkUncheckedUpdateManyWithoutResolutionNestedInput
   }
 
   export type WorkspaceCreateWithoutAuditEventsInput = {
@@ -20273,6 +28313,7 @@ export namespace Prisma {
     meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
     invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
     flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutAuditEventsInput = {
@@ -20289,6 +28330,7 @@ export namespace Prisma {
     meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
     invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
     flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutAuditEventsInput = {
@@ -20326,6 +28368,7 @@ export namespace Prisma {
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
     versions?: VersionCreateNestedManyWithoutMeetingInput
     flags?: FlagCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingUncheckedCreateWithoutAuditEventsInput = {
@@ -20358,6 +28401,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
     flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingCreateOrConnectWithoutAuditEventsInput = {
@@ -20390,6 +28434,7 @@ export namespace Prisma {
     meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
     invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
     flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutAuditEventsInput = {
@@ -20406,6 +28451,7 @@ export namespace Prisma {
     meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
     invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
     flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type MeetingUpsertWithoutAuditEventsInput = {
@@ -20449,6 +28495,7 @@ export namespace Prisma {
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
     versions?: VersionUpdateManyWithoutMeetingNestedInput
     flags?: FlagUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
   }
 
   export type MeetingUncheckedUpdateWithoutAuditEventsInput = {
@@ -20481,6 +28528,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
     flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -20768,6 +28816,7 @@ export namespace Prisma {
     meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
     auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
     flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutInvitationsInput = {
@@ -20784,6 +28833,7 @@ export namespace Prisma {
     meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
     flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutInvitationsInput = {
@@ -20816,6 +28866,7 @@ export namespace Prisma {
     meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
     auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
     flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutInvitationsInput = {
@@ -20832,6 +28883,7 @@ export namespace Prisma {
     meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
     auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
     flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserWorkspaceCreateManyWorkspaceInput = {
@@ -20907,6 +28959,23 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type ResolutionRecordCreateManyWorkspaceInput = {
+    id?: string
+    meetingId: string
+    flagId: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedForVerificationAt?: Date | string | null
+    closedAt?: Date | string | null
+    closedByUserId?: string | null
+    overrideReason?: string | null
+    overrideCategory?: string | null
+  }
+
   export type UserWorkspaceUpdateWithoutWorkspaceInput = {
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
     user?: UserUpdateOneRequiredWithoutWorkspacesNestedInput
@@ -20952,6 +29021,7 @@ export namespace Prisma {
     versions?: VersionUpdateManyWithoutMeetingNestedInput
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     flags?: FlagUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
   }
 
   export type MeetingUncheckedUpdateWithoutWorkspaceInput = {
@@ -20984,6 +29054,7 @@ export namespace Prisma {
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
     auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
     flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
   export type MeetingUncheckedUpdateManyWithoutWorkspaceInput = {
@@ -21096,6 +29167,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meeting?: MeetingUpdateOneRequiredWithoutFlagsNestedInput
+    resolutionRecord?: ResolutionRecordUpdateOneWithoutFlagNestedInput
   }
 
   export type FlagUncheckedUpdateWithoutWorkspaceInput = {
@@ -21113,6 +29185,7 @@ export namespace Prisma {
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolutionRecord?: ResolutionRecordUncheckedUpdateOneWithoutFlagNestedInput
   }
 
   export type FlagUncheckedUpdateManyWithoutWorkspaceInput = {
@@ -21130,6 +29203,63 @@ export namespace Prisma {
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ResolutionRecordUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    flag?: FlagUpdateOneRequiredWithoutResolutionRecordNestedInput
+    meeting?: MeetingUpdateOneRequiredWithoutResolutionRecordsNestedInput
+    tasks?: ActionItemUpdateManyWithoutResolutionNestedInput
+    evidence?: EvidenceLinkUpdateManyWithoutResolutionNestedInput
+    verifications?: VerificationUpdateManyWithoutResolutionNestedInput
+  }
+
+  export type ResolutionRecordUncheckedUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    meetingId?: StringFieldUpdateOperationsInput | string
+    flagId?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    tasks?: ActionItemUncheckedUpdateManyWithoutResolutionNestedInput
+    evidence?: EvidenceLinkUncheckedUpdateManyWithoutResolutionNestedInput
+    verifications?: VerificationUncheckedUpdateManyWithoutResolutionNestedInput
+  }
+
+  export type ResolutionRecordUncheckedUpdateManyWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    meetingId?: StringFieldUpdateOperationsInput | string
+    flagId?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type VersionCreateManyMeetingInput = {
@@ -21167,6 +29297,23 @@ export namespace Prisma {
     resolutionNote?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type ResolutionRecordCreateManyMeetingInput = {
+    id?: string
+    workspaceId: string
+    flagId: string
+    resolutionType: $Enums.FlagResolutionType
+    rationale: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedForVerificationAt?: Date | string | null
+    closedAt?: Date | string | null
+    closedByUserId?: string | null
+    overrideReason?: string | null
+    overrideCategory?: string | null
   }
 
   export type VersionUpdateWithoutMeetingInput = {
@@ -21244,6 +29391,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutFlagsNestedInput
+    resolutionRecord?: ResolutionRecordUpdateOneWithoutFlagNestedInput
   }
 
   export type FlagUncheckedUpdateWithoutMeetingInput = {
@@ -21261,6 +29409,7 @@ export namespace Prisma {
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolutionRecord?: ResolutionRecordUncheckedUpdateOneWithoutFlagNestedInput
   }
 
   export type FlagUncheckedUpdateManyWithoutMeetingInput = {
@@ -21278,6 +29427,237 @@ export namespace Prisma {
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ResolutionRecordUpdateWithoutMeetingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    flag?: FlagUpdateOneRequiredWithoutResolutionRecordNestedInput
+    workspace?: WorkspaceUpdateOneRequiredWithoutResolutionRecordsNestedInput
+    tasks?: ActionItemUpdateManyWithoutResolutionNestedInput
+    evidence?: EvidenceLinkUpdateManyWithoutResolutionNestedInput
+    verifications?: VerificationUpdateManyWithoutResolutionNestedInput
+  }
+
+  export type ResolutionRecordUncheckedUpdateWithoutMeetingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    flagId?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
+    tasks?: ActionItemUncheckedUpdateManyWithoutResolutionNestedInput
+    evidence?: EvidenceLinkUncheckedUpdateManyWithoutResolutionNestedInput
+    verifications?: VerificationUncheckedUpdateManyWithoutResolutionNestedInput
+  }
+
+  export type ResolutionRecordUncheckedUpdateManyWithoutMeetingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    flagId?: StringFieldUpdateOperationsInput | string
+    resolutionType?: EnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType
+    rationale?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedForVerificationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideReason?: NullableStringFieldUpdateOperationsInput | string | null
+    overrideCategory?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ActionItemCreateManyResolutionInput = {
+    id?: string
+    title: string
+    status?: $Enums.RemediationTaskStatus
+    ownerId: string
+    dueDate: Date | string
+    required?: boolean
+    completionNote?: string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EvidenceLinkCreateManyResolutionInput = {
+    id?: string
+    taskId?: string | null
+    type: $Enums.EvidenceType
+    label?: string | null
+    url?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+  }
+
+  export type VerificationCreateManyResolutionInput = {
+    id?: string
+    reviewerId: string
+    decision: $Enums.VerificationDecision
+    note?: string | null
+    decidedAt?: Date | string
+  }
+
+  export type ActionItemUpdateWithoutResolutionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    status?: EnumRemediationTaskStatusFieldUpdateOperationsInput | $Enums.RemediationTaskStatus
+    ownerId?: StringFieldUpdateOperationsInput | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    required?: BoolFieldUpdateOperationsInput | boolean
+    completionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    evidence?: EvidenceLinkUpdateManyWithoutTaskNestedInput
+  }
+
+  export type ActionItemUncheckedUpdateWithoutResolutionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    status?: EnumRemediationTaskStatusFieldUpdateOperationsInput | $Enums.RemediationTaskStatus
+    ownerId?: StringFieldUpdateOperationsInput | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    required?: BoolFieldUpdateOperationsInput | boolean
+    completionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    evidence?: EvidenceLinkUncheckedUpdateManyWithoutTaskNestedInput
+  }
+
+  export type ActionItemUncheckedUpdateManyWithoutResolutionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    status?: EnumRemediationTaskStatusFieldUpdateOperationsInput | $Enums.RemediationTaskStatus
+    ownerId?: StringFieldUpdateOperationsInput | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    required?: BoolFieldUpdateOperationsInput | boolean
+    completionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EvidenceLinkUpdateWithoutResolutionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumEvidenceTypeFieldUpdateOperationsInput | $Enums.EvidenceType
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    task?: ActionItemUpdateOneWithoutEvidenceNestedInput
+  }
+
+  export type EvidenceLinkUncheckedUpdateWithoutResolutionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumEvidenceTypeFieldUpdateOperationsInput | $Enums.EvidenceType
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EvidenceLinkUncheckedUpdateManyWithoutResolutionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumEvidenceTypeFieldUpdateOperationsInput | $Enums.EvidenceType
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VerificationUpdateWithoutResolutionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reviewerId?: StringFieldUpdateOperationsInput | string
+    decision?: EnumVerificationDecisionFieldUpdateOperationsInput | $Enums.VerificationDecision
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VerificationUncheckedUpdateWithoutResolutionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reviewerId?: StringFieldUpdateOperationsInput | string
+    decision?: EnumVerificationDecisionFieldUpdateOperationsInput | $Enums.VerificationDecision
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VerificationUncheckedUpdateManyWithoutResolutionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reviewerId?: StringFieldUpdateOperationsInput | string
+    decision?: EnumVerificationDecisionFieldUpdateOperationsInput | $Enums.VerificationDecision
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    decidedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EvidenceLinkCreateManyTaskInput = {
+    id?: string
+    resolutionId: string
+    type: $Enums.EvidenceType
+    label?: string | null
+    url?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId: string
+    createdAt?: Date | string
+  }
+
+  export type EvidenceLinkUpdateWithoutTaskInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumEvidenceTypeFieldUpdateOperationsInput | $Enums.EvidenceType
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolution?: ResolutionRecordUpdateOneRequiredWithoutEvidenceNestedInput
+  }
+
+  export type EvidenceLinkUncheckedUpdateWithoutTaskInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resolutionId?: StringFieldUpdateOperationsInput | string
+    type?: EnumEvidenceTypeFieldUpdateOperationsInput | $Enums.EvidenceType
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EvidenceLinkUncheckedUpdateManyWithoutTaskInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    resolutionId?: StringFieldUpdateOperationsInput | string
+    type?: EnumEvidenceTypeFieldUpdateOperationsInput | $Enums.EvidenceType
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdByUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AccountCreateManyUserInput = {

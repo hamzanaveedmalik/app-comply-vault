@@ -53,9 +53,20 @@ export default async function MeetingDetailPage({
     orderBy: {
       createdAt: "desc",
     },
+    include: {
+      resolutionRecord: {
+        include: {
+          tasks: true,
+          evidence: true,
+          verifications: true,
+        },
+      },
+    },
   });
 
-  const openFlags = flags.filter((flag) => flag.status === "OPEN");
+  const isFlagOpen = (status: string) =>
+    status !== "CLOSED" && status !== "CLOSED_ACCEPTED_RISK";
+  const openFlags = flags.filter((flag) => isFlagOpen(flag.status));
   const openCriticalFlags = openFlags.filter((flag) => flag.severity === "CRITICAL");
   const openWarningFlags = openFlags.filter((flag) => flag.severity === "WARN");
   const evidenceStats = extraction?.evidenceMap
@@ -183,9 +194,9 @@ export default async function MeetingDetailPage({
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold">
-                  {openCriticalFlags.length > 0
-                    ? `Blocked: ${openCriticalFlags.length} critical flag${openCriticalFlags.length > 1 ? "s" : ""} open`
-                    : "Ready: no critical flags open"}
+        {openCriticalFlags.length > 0
+          ? `Blocked: ${openCriticalFlags.length} critical flag${openCriticalFlags.length > 1 ? "s" : ""} open`
+          : "Ready: no critical flags open"}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {openWarningFlags.length > 0
@@ -208,8 +219,47 @@ export default async function MeetingDetailPage({
             status: flag.status,
             evidence: flag.evidence,
             createdAt: flag.createdAt.toISOString(),
+            resolutionRecord: flag.resolutionRecord
+              ? {
+                  id: flag.resolutionRecord.id,
+                  resolutionType: flag.resolutionRecord.resolutionType,
+                  rationale: flag.resolutionRecord.rationale,
+                  metadata: flag.resolutionRecord.metadata,
+                  submittedForVerificationAt:
+                    flag.resolutionRecord.submittedForVerificationAt?.toISOString() ?? null,
+                  closedAt: flag.resolutionRecord.closedAt?.toISOString() ?? null,
+                  overrideReason: flag.resolutionRecord.overrideReason,
+                  overrideCategory: flag.resolutionRecord.overrideCategory,
+                  tasks: flag.resolutionRecord.tasks.map((task) => ({
+                    id: task.id,
+                    title: task.title,
+                    status: task.status,
+                    ownerId: task.ownerId,
+                    dueDate: task.dueDate.toISOString(),
+                    required: task.required,
+                    completionNote: task.completionNote,
+                    completedAt: task.completedAt?.toISOString() ?? null,
+                  })),
+                  evidence: flag.resolutionRecord.evidence.map((item) => ({
+                    id: item.id,
+                    type: item.type,
+                    label: item.label,
+                    url: item.url,
+                    metadata: item.metadata,
+                    createdAt: item.createdAt.toISOString(),
+                  })),
+                  verifications: flag.resolutionRecord.verifications.map((verification) => ({
+                    id: verification.id,
+                    reviewerId: verification.reviewerId,
+                    decision: verification.decision,
+                    note: verification.note,
+                    decidedAt: verification.decidedAt.toISOString(),
+                  })),
+                }
+              : null,
           }))}
           userRole={session.user.role}
+          currentUserId={session.user.id}
         />
 
         {/* Two-Column Layout: Transcript + Extracted Fields */}

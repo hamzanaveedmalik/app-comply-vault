@@ -38,7 +38,23 @@ export default async function AuditLogsPage({
     where.userId = userId;
   }
 
-  if (action && ["UPLOAD", "VIEW", "EDIT", "FINALIZE", "EXPORT", "DELETE"].includes(action)) {
+  if (
+    action &&
+    [
+      "UPLOAD",
+      "VIEW",
+      "EDIT",
+      "FINALIZE",
+      "EXPORT",
+      "DELETE",
+      "REMEDIATION_START",
+      "REMEDIATION_UPDATE",
+      "TASK_UPDATE",
+      "EVIDENCE_ADD",
+      "VERIFICATION",
+      "OVERRIDE",
+    ].includes(action)
+  ) {
     where.action = action;
   }
 

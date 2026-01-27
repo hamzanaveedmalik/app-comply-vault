@@ -197,6 +197,59 @@ exports.Prisma.FlagScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ResolutionRecordScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  meetingId: 'meetingId',
+  flagId: 'flagId',
+  resolutionType: 'resolutionType',
+  rationale: 'rationale',
+  metadata: 'metadata',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  submittedForVerificationAt: 'submittedForVerificationAt',
+  closedAt: 'closedAt',
+  closedByUserId: 'closedByUserId',
+  overrideReason: 'overrideReason',
+  overrideCategory: 'overrideCategory'
+};
+
+exports.Prisma.ActionItemScalarFieldEnum = {
+  id: 'id',
+  resolutionId: 'resolutionId',
+  title: 'title',
+  status: 'status',
+  ownerId: 'ownerId',
+  dueDate: 'dueDate',
+  required: 'required',
+  completionNote: 'completionNote',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EvidenceLinkScalarFieldEnum = {
+  id: 'id',
+  resolutionId: 'resolutionId',
+  taskId: 'taskId',
+  type: 'type',
+  label: 'label',
+  url: 'url',
+  metadata: 'metadata',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.VerificationScalarFieldEnum = {
+  id: 'id',
+  resolutionId: 'resolutionId',
+  reviewerId: 'reviewerId',
+  decision: 'decision',
+  note: 'note',
+  decidedAt: 'decidedAt'
+};
+
 exports.Prisma.AuditEventScalarFieldEnum = {
   id: 'id',
   workspaceId: 'workspaceId',
@@ -323,9 +376,10 @@ exports.FlagSeverity = exports.$Enums.FlagSeverity = {
 
 exports.FlagStatus = exports.$Enums.FlagStatus = {
   OPEN: 'OPEN',
-  RESOLVED: 'RESOLVED',
-  DISMISSED: 'DISMISSED',
-  OVERRIDDEN: 'OVERRIDDEN'
+  IN_REMEDIATION: 'IN_REMEDIATION',
+  PENDING_VERIFICATION: 'PENDING_VERIFICATION',
+  CLOSED: 'CLOSED',
+  CLOSED_ACCEPTED_RISK: 'CLOSED_ACCEPTED_RISK'
 };
 
 exports.FlagCreatedByType = exports.$Enums.FlagCreatedByType = {
@@ -341,13 +395,38 @@ exports.FlagResolutionType = exports.$Enums.FlagResolutionType = {
   OVERRIDE_APPROVED: 'OVERRIDE_APPROVED'
 };
 
+exports.RemediationTaskStatus = exports.$Enums.RemediationTaskStatus = {
+  OPEN: 'OPEN',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED'
+};
+
+exports.EvidenceType = exports.$Enums.EvidenceType = {
+  TRANSCRIPT_SNIPPET: 'TRANSCRIPT_SNIPPET',
+  DOCUMENT_LINK: 'DOCUMENT_LINK',
+  OUTREACH_PROOF: 'OUTREACH_PROOF',
+  ACKNOWLEDGEMENT: 'ACKNOWLEDGEMENT',
+  NOTE: 'NOTE'
+};
+
+exports.VerificationDecision = exports.$Enums.VerificationDecision = {
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
 exports.AuditAction = exports.$Enums.AuditAction = {
   UPLOAD: 'UPLOAD',
   VIEW: 'VIEW',
   EDIT: 'EDIT',
   FINALIZE: 'FINALIZE',
   EXPORT: 'EXPORT',
-  DELETE: 'DELETE'
+  DELETE: 'DELETE',
+  REMEDIATION_START: 'REMEDIATION_START',
+  REMEDIATION_UPDATE: 'REMEDIATION_UPDATE',
+  TASK_UPDATE: 'TASK_UPDATE',
+  EVIDENCE_ADD: 'EVIDENCE_ADD',
+  VERIFICATION: 'VERIFICATION',
+  OVERRIDE: 'OVERRIDE'
 };
 
 exports.Prisma.ModelName = {
@@ -356,6 +435,10 @@ exports.Prisma.ModelName = {
   Meeting: 'Meeting',
   Version: 'Version',
   Flag: 'Flag',
+  ResolutionRecord: 'ResolutionRecord',
+  ActionItem: 'ActionItem',
+  EvidenceLink: 'EvidenceLink',
+  Verification: 'Verification',
   AuditEvent: 'AuditEvent',
   Account: 'Account',
   Session: 'Session',

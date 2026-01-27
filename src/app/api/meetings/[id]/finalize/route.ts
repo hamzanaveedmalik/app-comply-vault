@@ -64,7 +64,9 @@ export async function POST(
     const openCriticalFlags = await db.flag.findMany({
       where: {
         meetingId: meeting.id,
-        status: "OPEN",
+        status: {
+          in: ["OPEN", "IN_REMEDIATION", "PENDING_VERIFICATION"],
+        },
         severity: "CRITICAL",
       },
     });

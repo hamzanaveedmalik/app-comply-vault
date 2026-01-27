@@ -71,6 +71,16 @@ const getActionVariant = (action: string): "default" | "secondary" | "destructiv
       return "secondary";
     case "DELETE":
       return "destructive";
+    case "REMEDIATION_START":
+    case "REMEDIATION_UPDATE":
+      return "default";
+    case "TASK_UPDATE":
+    case "EVIDENCE_ADD":
+      return "outline";
+    case "VERIFICATION":
+      return "secondary";
+    case "OVERRIDE":
+      return "destructive";
     default:
       return "secondary";
   }
@@ -171,6 +181,12 @@ export default function AuditLogsClient({
                   <SelectItem value="FINALIZE">Finalize</SelectItem>
                   <SelectItem value="EXPORT">Export</SelectItem>
                   <SelectItem value="DELETE">Delete</SelectItem>
+                  <SelectItem value="REMEDIATION_START">Remediation start</SelectItem>
+                  <SelectItem value="REMEDIATION_UPDATE">Remediation update</SelectItem>
+                  <SelectItem value="TASK_UPDATE">Task update</SelectItem>
+                  <SelectItem value="EVIDENCE_ADD">Evidence added</SelectItem>
+                  <SelectItem value="VERIFICATION">Verification</SelectItem>
+                  <SelectItem value="OVERRIDE">Override</SelectItem>
                 </SelectContent>
               </Select>
             </div>

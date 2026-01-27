@@ -4,7 +4,22 @@ import { z } from "zod";
 
 const auditLogQuerySchema = z.object({
   userId: z.string().optional(),
-  action: z.enum(["UPLOAD", "VIEW", "EDIT", "FINALIZE", "EXPORT", "DELETE"]).optional(),
+  action: z
+    .enum([
+      "UPLOAD",
+      "VIEW",
+      "EDIT",
+      "FINALIZE",
+      "EXPORT",
+      "DELETE",
+      "REMEDIATION_START",
+      "REMEDIATION_UPDATE",
+      "TASK_UPDATE",
+      "EVIDENCE_ADD",
+      "VERIFICATION",
+      "OVERRIDE",
+    ])
+    .optional(),
   resourceType: z.string().optional(),
   dateFrom: z.string().optional(),
   dateTo: z.string().optional(),

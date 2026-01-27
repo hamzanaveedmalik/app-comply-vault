@@ -18,6 +18,21 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { name, pilotCode } = createWorkspaceSchema.parse(body);
 
+    await db.user.upsert({
+      where: { id: session.user.id },
+      create: {
+        id: session.user.id,
+        email: session.user.email,
+        name: session.user.name,
+        image: session.user.image,
+      },
+      update: {
+        email: session.user.email,
+        name: session.user.name,
+        image: session.user.image,
+      },
+    });
+
     // Validate pilot code if provided (for free setup)
     // In production, this would check against a database of valid codes
     const setupFee = pilotCode === "FREEPILOT" ? 0 : 500;

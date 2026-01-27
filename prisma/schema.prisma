@@ -34,6 +34,7 @@ model Workspace {
   auditEvents AuditEvent[]
   invitations Invitation[]
   flags       Flag[]
+  resolutionRecords ResolutionRecord[]
 
   @@index([createdAt])
 }
@@ -115,6 +116,7 @@ model Meeting {
   versions    Version[]
   auditEvents AuditEvent[]
   flags       Flag[]
+  resolutionRecords ResolutionRecord[]
 
   @@index([workspaceId])
   @@index([workspaceId, status])
@@ -152,6 +154,12 @@ enum AuditAction {
   FINALIZE
   EXPORT
   DELETE
+  REMEDIATION_START
+  REMEDIATION_UPDATE
+  TASK_UPDATE
+  EVIDENCE_ADD
+  VERIFICATION
+  OVERRIDE
 }
 
 enum FlagType {
@@ -168,9 +176,10 @@ enum FlagSeverity {
 
 enum FlagStatus {
   OPEN
-  RESOLVED
-  DISMISSED
-  OVERRIDDEN
+  IN_REMEDIATION
+  PENDING_VERIFICATION
+  CLOSED
+  CLOSED_ACCEPTED_RISK
 }
 
 enum FlagResolutionType {
@@ -179,6 +188,25 @@ enum FlagResolutionType {
   DISCLOSED_ELSEWHERE
   FOLLOW_UP_REQUIRED
   OVERRIDE_APPROVED
+}
+
+enum RemediationTaskStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum EvidenceType {
+  TRANSCRIPT_SNIPPET
+  DOCUMENT_LINK
+  OUTREACH_PROOF
+  ACKNOWLEDGEMENT
+  NOTE
+}
+
+enum VerificationDecision {
+  APPROVED
+  REJECTED
 }
 
 enum FlagCreatedByType {
@@ -205,11 +233,93 @@ model Flag {
 
   meeting   Meeting   @relation(fields: [meetingId], references: [id], onDelete: Cascade)
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  resolutionRecord ResolutionRecord?
 
   @@index([workspaceId])
   @@index([workspaceId, meetingId])
   @@index([workspaceId, status])
   @@index([meetingId, type])
+}
+
+model ResolutionRecord {
+  id             String   @id @default(cuid())
+  workspaceId    String
+  meetingId      String
+  flagId         String   @unique
+  resolutionType FlagResolutionType
+  rationale      String
+  metadata       Json?
+  createdByUserId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  submittedForVerificationAt DateTime?
+  closedAt       DateTime?
+  closedByUserId String?
+  overrideReason String?
+  overrideCategory String?
+
+  flag      Flag      @relation(fields: [flagId], references: [id], onDelete: Cascade)
+  meeting   Meeting   @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  tasks     ActionItem[]
+  evidence  EvidenceLink[]
+  verifications Verification[]
+
+  @@index([workspaceId])
+  @@index([meetingId])
+}
+
+model ActionItem {
+  id            String   @id @default(cuid())
+  resolutionId  String
+  title         String
+  status        RemediationTaskStatus @default(OPEN)
+  ownerId       String
+  dueDate       DateTime
+  required      Boolean  @default(true)
+  completionNote String?
+  completedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  resolution ResolutionRecord @relation(fields: [resolutionId], references: [id], onDelete: Cascade)
+  evidence EvidenceLink[]
+
+  @@index([resolutionId])
+  @@index([ownerId])
+  @@index([dueDate])
+}
+
+model EvidenceLink {
+  id            String   @id @default(cuid())
+  resolutionId  String
+  taskId        String?
+  type          EvidenceType
+  label         String?
+  url           String?
+  metadata      Json?
+  createdByUserId String
+  createdAt     DateTime @default(now())
+
+  resolution ResolutionRecord @relation(fields: [resolutionId], references: [id], onDelete: Cascade)
+  task      ActionItem? @relation(fields: [taskId], references: [id], onDelete: SetNull)
+
+  @@index([resolutionId])
+  @@index([taskId])
+}
+
+model Verification {
+  id            String   @id @default(cuid())
+  resolutionId  String
+  reviewerId    String
+  decision      VerificationDecision
+  note          String?
+  decidedAt     DateTime @default(now())
+
+  resolution ResolutionRecord @relation(fields: [resolutionId], references: [id], onDelete: Cascade)
+
+  @@index([resolutionId])
+  @@index([reviewerId])
 }
 
 model AuditEvent {

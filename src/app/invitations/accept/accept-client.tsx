@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 
 export default function AcceptInvitationClient({ token }: { token?: string }) {
   const router = useRouter();
+  const { data: session } = useSession();
+  const signedInEmail = session?.user?.email ?? null;
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -130,12 +132,40 @@ export default function AcceptInvitationClient({ token }: { token?: string }) {
           )}
 
           {invitation && (
+            <div className="space-y-1 text-xs text-muted-foreground">
+              <div>
+                Invited email: <span className="font-medium text-foreground">{invitation.email}</span>
+              </div>
+              <div>
+                Signed in as:{" "}
+                <span className="font-medium text-foreground">
+                  {signedInEmail ?? "Not signed in"}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {invitation && (
             <Button
               onClick={handleAccept}
               disabled={isLoading}
               className="w-full"
             >
               {isLoading ? "Accepting..." : "Accept Invitation"}
+            </Button>
+          )}
+
+          {invitation && signedInEmail && signedInEmail !== invitation.email && (
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() =>
+                signOut({
+                  callbackUrl: `/invitations/accept?token=${token}`,
+                })
+              }
+            >
+              Sign in with a different email
             </Button>
           )}
         </CardContent>

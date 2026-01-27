@@ -94,12 +94,16 @@ export async function POST(
     if (existingInvitation && !existingInvitation.acceptedAt) {
       // Resend invitation if not expired
       if (existingInvitation.expiresAt > new Date()) {
-        await sendInvitationEmail({
-          email,
-          workspaceName: workspace.name,
-          invitationToken: existingInvitation.token,
-          role: existingInvitation.role,
-        });
+        try {
+          await sendInvitationEmail({
+            email,
+            workspaceName: workspace.name,
+            invitationToken: existingInvitation.token,
+            role: existingInvitation.role,
+          });
+        } catch (emailError) {
+          console.error("Error resending invitation email:", emailError);
+        }
 
         // Log invitation resend
         await db.auditEvent.create({
@@ -141,12 +145,16 @@ export async function POST(
     });
 
     // Send invitation email
-    await sendInvitationEmail({
-      email,
-      workspaceName: workspace.name,
-      invitationToken: token,
-      role,
-    });
+    try {
+      await sendInvitationEmail({
+        email,
+        workspaceName: workspace.name,
+        invitationToken: token,
+        role,
+      });
+    } catch (emailError) {
+      console.error("Error sending invitation email:", emailError);
+    }
 
     // Log invitation creation
     await db.auditEvent.create({

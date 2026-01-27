@@ -16,6 +16,7 @@ import {
 import { Badge } from "~/components/ui/badge";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 import { Download } from "lucide-react";
+import { cn } from "~/lib/utils";
 import {
   Table,
   TableBody,
@@ -57,33 +58,93 @@ interface AuditLogsClientProps {
   error: string | null;
 }
 
-const getActionVariant = (action: string): "default" | "secondary" | "destructive" | "outline" => {
+const getActionPillClass = (action: string) => {
+  switch (action) {
+    case "VIEW":
+      return "bg-slate-100 text-slate-700 border-slate-200";
+    case "EDIT":
+    case "UPLOAD":
+    case "REMEDIATION_START":
+      return "bg-blue-100 text-blue-700 border-blue-200";
+    case "REMEDIATION_UPDATE":
+      return "bg-indigo-100 text-indigo-700 border-indigo-200";
+    case "TASK_UPDATE":
+    case "INVITE_RESENT":
+      return "bg-amber-100 text-amber-800 border-amber-200";
+    case "EVIDENCE_ADD":
+    case "WORKSPACE_CREATED":
+      return "bg-teal-100 text-teal-800 border-teal-200";
+    case "INVITE_SENT":
+      return "bg-sky-100 text-sky-700 border-sky-200";
+    case "INVITE_ACCEPTED":
+    case "FINALIZE":
+    case "VERIFICATION":
+      return "bg-emerald-100 text-emerald-800 border-emerald-200";
+    case "EXPORT":
+      return "bg-purple-100 text-purple-700 border-purple-200";
+    case "DELETE":
+    case "OVERRIDE":
+      return "bg-red-100 text-red-700 border-red-200";
+    default:
+      return "bg-slate-100 text-slate-700 border-slate-200";
+  }
+};
+
+const getActionLabel = (action: string) => {
   switch (action) {
     case "UPLOAD":
-      return "default";
+      return "Upload";
     case "VIEW":
-      return "secondary";
+      return "View";
     case "EDIT":
-      return "outline";
+      return "Edit";
     case "FINALIZE":
-      return "default";
+      return "Finalize";
     case "EXPORT":
-      return "secondary";
+      return "Export";
     case "DELETE":
-      return "destructive";
+      return "Delete";
     case "REMEDIATION_START":
+      return "Remediation start";
     case "REMEDIATION_UPDATE":
-      return "default";
+      return "Remediation update";
     case "TASK_UPDATE":
+      return "Task update";
     case "EVIDENCE_ADD":
-      return "outline";
+      return "Evidence added";
     case "VERIFICATION":
-      return "secondary";
+      return "Verification";
     case "OVERRIDE":
-      return "destructive";
+      return "Override";
+    case "WORKSPACE_CREATED":
+      return "Workspace created";
+    case "INVITE_SENT":
+      return "Invite sent";
+    case "INVITE_RESENT":
+      return "Invite resent";
+    case "INVITE_ACCEPTED":
+      return "Invite accepted";
     default:
-      return "secondary";
+      return action.replace(/_/g, " ").toLowerCase();
   }
+};
+
+const getMetadataSummary = (metadata: any) => {
+  if (!metadata || typeof metadata !== "object") {
+    return null;
+  }
+  const items: string[] = [];
+  if (metadata.action) items.push(String(metadata.action).replace(/_/g, " "));
+  if (metadata.email) items.push(`email: ${metadata.email}`);
+  if (metadata.role) items.push(`role: ${metadata.role}`);
+  if (metadata.resolutionType) items.push(`resolution: ${metadata.resolutionType}`);
+  if (metadata.status) items.push(`status: ${metadata.status}`);
+  if (metadata.decision) items.push(`decision: ${metadata.decision}`);
+  if (metadata.taskId) items.push(`task: ${metadata.taskId}`);
+  if (metadata.evidenceId) items.push(`evidence: ${metadata.evidenceId}`);
+  if (metadata.ipAddress) items.push(`ip: ${metadata.ipAddress}`);
+  if (metadata.userAgent) items.push(`ua: ${String(metadata.userAgent).slice(0, 28)}...`);
+  return items.length > 0 ? items.slice(0, 3).join(" • ") : null;
 };
 
 export default function AuditLogsClient({
@@ -187,6 +248,10 @@ export default function AuditLogsClient({
                   <SelectItem value="EVIDENCE_ADD">Evidence added</SelectItem>
                   <SelectItem value="VERIFICATION">Verification</SelectItem>
                   <SelectItem value="OVERRIDE">Override</SelectItem>
+                  <SelectItem value="WORKSPACE_CREATED">Workspace created</SelectItem>
+                  <SelectItem value="INVITE_SENT">Invite sent</SelectItem>
+                  <SelectItem value="INVITE_RESENT">Invite resent</SelectItem>
+                  <SelectItem value="INVITE_ACCEPTED">Invite accepted</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -269,8 +334,11 @@ export default function AuditLogsClient({
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={getActionVariant(event.action)} className="whitespace-nowrap">
-                          {event.action}
+                        <Badge
+                          variant="outline"
+                          className={cn("whitespace-nowrap border", getActionPillClass(event.action))}
+                        >
+                          {getActionLabel(event.action)}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -295,16 +363,23 @@ export default function AuditLogsClient({
                       </TableCell>
                       <TableCell>
                         {event.metadata ? (
-                          <details className="text-xs">
-                            <summary className="cursor-pointer text-muted-foreground hover:text-foreground transition-colors">
-                              View metadata
-                            </summary>
-                            <div className="mt-2 max-w-md">
-                              <pre className="whitespace-pre-wrap break-words text-xs bg-muted p-2 rounded border overflow-auto max-h-48">
-                                {JSON.stringify(event.metadata, null, 2)}
-                              </pre>
-                            </div>
-                          </details>
+                          <div className="space-y-2">
+                            {getMetadataSummary(event.metadata) && (
+                              <div className="text-xs text-muted-foreground">
+                                {getMetadataSummary(event.metadata)}
+                              </div>
+                            )}
+                            <details className="text-xs">
+                              <summary className="cursor-pointer text-muted-foreground hover:text-foreground transition-colors">
+                                View metadata
+                              </summary>
+                              <div className="mt-2 max-w-md">
+                                <pre className="whitespace-pre-wrap break-words text-xs bg-muted p-2 rounded border overflow-auto max-h-48">
+                                  {JSON.stringify(event.metadata, null, 2)}
+                                </pre>
+                              </div>
+                            </details>
+                          </div>
                         ) : (
                           <span className="text-muted-foreground">—</span>
                         )}

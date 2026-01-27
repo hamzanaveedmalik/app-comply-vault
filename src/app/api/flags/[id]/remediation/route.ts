@@ -75,6 +75,12 @@ export async function POST(
     const body = await request.json();
     const payload = remediationSchema.parse(body);
 
+    const ipAddress =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      request.headers.get("x-real-ip");
+    const userAgent = request.headers.get("user-agent");
+    const requestMetadata = { ipAddress, userAgent };
+
     const flag = await db.flag.findFirst({
       where: {
         id,
@@ -262,6 +268,7 @@ export async function POST(
               resolutionType: payload.resolutionType,
               rationale: payload.rationale.trim(),
               taskCount: tasks.length,
+              ...requestMetadata,
             },
           },
         });
@@ -278,6 +285,7 @@ export async function POST(
               metadata: {
                 count: evidence.length,
                 types: evidence.map((item) => item.type),
+                ...requestMetadata,
               },
             },
           });
@@ -317,6 +325,7 @@ export async function POST(
             metadata: {
               evidenceId: evidenceRecord.id,
               type: evidenceRecord.type,
+              ...requestMetadata,
             },
           },
         });
@@ -358,6 +367,7 @@ export async function POST(
             metadata: {
               taskId: task.id,
               status: "COMPLETED",
+              ...requestMetadata,
             },
           },
         });
@@ -462,6 +472,7 @@ export async function POST(
             meetingId: flag.meetingId,
             metadata: {
               status: isCritical ? "PENDING_VERIFICATION" : "CLOSED",
+              ...requestMetadata,
             },
           },
         });
@@ -517,6 +528,7 @@ export async function POST(
             meetingId: flag.meetingId,
             metadata: {
               decision: "APPROVED",
+              ...requestMetadata,
             },
           },
         });
@@ -562,6 +574,7 @@ export async function POST(
             meetingId: flag.meetingId,
             metadata: {
               decision: "REJECTED",
+              ...requestMetadata,
             },
           },
         });
@@ -643,6 +656,7 @@ export async function POST(
             meetingId: flag.meetingId,
             metadata: {
               category: payload.category.trim(),
+              ...requestMetadata,
             },
           },
         });

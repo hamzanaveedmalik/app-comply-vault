@@ -23,6 +23,11 @@ export async function POST(
     const body = await request.json();
     const { email, role } = inviteUserSchema.parse(body);
 
+    const ipAddress =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      request.headers.get("x-real-ip");
+    const userAgent = request.headers.get("user-agent");
+
     await db.user.upsert({
       where: { id: session.user.id },
       create: {
@@ -110,13 +115,15 @@ export async function POST(
           data: {
             workspaceId,
             userId: session.user.id,
-            action: "UPLOAD", // Placeholder - invitation action can be added later
+            action: "INVITE_RESENT",
             resourceType: "invitation",
             resourceId: existingInvitation.id,
             metadata: {
               email,
               role,
               action: "invitation_resent",
+              ipAddress,
+              userAgent,
             },
           },
         });
@@ -161,13 +168,15 @@ export async function POST(
       data: {
         workspaceId,
         userId: session.user.id,
-        action: "UPLOAD", // Placeholder - invitation action can be added later
+        action: "INVITE_SENT",
         resourceType: "invitation",
         resourceId: invitation.id,
         metadata: {
           email,
           role,
           action: "invitation_created",
+          ipAddress,
+          userAgent,
         },
       },
     });

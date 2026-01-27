@@ -49,6 +49,13 @@ export default function AcceptInvitationClient({
   const handleAccept = async () => {
     if (!token) return;
 
+    if (!signedInEmail) {
+      await signIn(undefined, {
+        callbackUrl: `/invitations/accept?token=${token}`,
+      });
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
@@ -64,6 +71,12 @@ export default function AcceptInvitationClient({
 
       if (!response.ok) {
         const data = await response.json();
+        if (response.status === 401 && data.requiresAuth) {
+          await signIn(undefined, {
+            callbackUrl: `/invitations/accept?token=${token}`,
+          });
+          return;
+        }
         throw new Error(data.error || "Failed to accept invitation");
       }
 
@@ -150,12 +163,12 @@ export default function AcceptInvitationClient({
           )}
 
           {invitation && (
-            <Button
-              onClick={handleAccept}
-              disabled={isLoading}
-              className="w-full"
-            >
-              {isLoading ? "Accepting..." : "Accept Invitation"}
+            <Button onClick={handleAccept} disabled={isLoading} className="w-full">
+              {isLoading
+                ? "Accepting..."
+                : signedInEmail
+                ? "Accept Invitation"
+                : "Sign in to accept"}
             </Button>
           )}
 

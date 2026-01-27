@@ -12,6 +12,11 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { token } = acceptInvitationSchema.parse(body);
 
+    const ipAddress =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      request.headers.get("x-real-ip");
+    const userAgent = request.headers.get("user-agent");
+
     // Verify invitation
     const invitation = await db.invitation.findUnique({
       where: { token },
@@ -100,12 +105,14 @@ export async function POST(request: Request) {
       data: {
         workspaceId: invitation.workspaceId,
         userId: session.user.id,
-        action: "UPLOAD", // Placeholder
+        action: "INVITE_ACCEPTED",
         resourceType: "invitation",
         resourceId: invitation.id,
         metadata: {
           action: "invitation_accepted",
           role: invitation.role,
+          ipAddress,
+          userAgent,
         },
       },
     });

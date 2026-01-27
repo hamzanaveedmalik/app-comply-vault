@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
 import { Alert, AlertDescription } from "~/components/ui/alert";
-import { CheckCircle2, Circle } from "lucide-react";
+import { Check, Circle } from "lucide-react";
 
 interface ReadyForCCOButtonProps {
   meetingId: string;
@@ -64,7 +64,9 @@ export default function ReadyForCCOButton({
       >
         {isReady ? (
           <>
-            <CheckCircle2 className="mr-2 h-4 w-4" />
+            <span className="mr-2 flex h-4 w-4 items-center justify-center rounded-full bg-green-600 text-white">
+              <Check className="h-1 w-1" />
+            </span>
             Marked Ready for CCO
           </>
         ) : (

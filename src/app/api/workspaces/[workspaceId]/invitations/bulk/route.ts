@@ -27,6 +27,11 @@ export async function POST(
     const body = await request.json();
     const { invitations } = bulkInviteSchema.parse(body);
 
+    const ipAddress =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      request.headers.get("x-real-ip");
+    const userAgent = request.headers.get("user-agent");
+
     await db.user.upsert({
       where: { id: session.user.id },
       create: {
@@ -124,7 +129,7 @@ export async function POST(
               data: {
                 workspaceId,
                 userId: session.user.id,
-                action: "UPLOAD",
+                action: "INVITE_RESENT",
                 resourceType: "invitation",
                 resourceId: existingInvitation.id,
                 metadata: {
@@ -132,6 +137,8 @@ export async function POST(
                   role: existingInvitation.role,
                   action: "invitation_resent",
                   bulk: true,
+                  ipAddress,
+                  userAgent,
                 },
               },
             });
@@ -178,7 +185,7 @@ export async function POST(
           data: {
             workspaceId,
             userId: session.user.id,
-            action: "UPLOAD",
+            action: "INVITE_SENT",
             resourceType: "invitation",
             resourceId: invitation.id,
             metadata: {
@@ -186,6 +193,8 @@ export async function POST(
               role,
               action: "invitation_created",
               bulk: true,
+              ipAddress,
+              userAgent,
             },
           },
         });

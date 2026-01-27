@@ -33,6 +33,11 @@ export async function POST(request: Request) {
       },
     });
 
+    const ipAddress =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      request.headers.get("x-real-ip");
+    const userAgent = request.headers.get("user-agent");
+
     // Validate pilot code if provided (for free setup)
     // In production, this would check against a database of valid codes
     const setupFee = pilotCode === "FREEPILOT" ? 0 : 500;
@@ -60,7 +65,7 @@ export async function POST(request: Request) {
       data: {
         workspaceId: workspace.id,
         userId: session.user.id,
-        action: "UPLOAD", // Using existing action; workspace creation action can be added to enum later
+        action: "WORKSPACE_CREATED",
         resourceType: "workspace",
         resourceId: workspace.id,
         metadata: {
@@ -70,6 +75,8 @@ export async function POST(request: Request) {
           setupFee,
           pilotCode: pilotCode || null,
           pilotStartDate: pilotStartDate.toISOString(),
+          ipAddress,
+          userAgent,
         },
       },
     });

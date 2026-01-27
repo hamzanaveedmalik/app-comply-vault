@@ -18,6 +18,10 @@ const auditLogQuerySchema = z.object({
       "EVIDENCE_ADD",
       "VERIFICATION",
       "OVERRIDE",
+      "WORKSPACE_CREATED",
+      "INVITE_SENT",
+      "INVITE_RESENT",
+      "INVITE_ACCEPTED",
     ])
     .optional(),
   resourceType: z.string().optional(),

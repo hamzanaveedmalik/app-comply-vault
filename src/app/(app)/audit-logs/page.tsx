@@ -53,6 +53,10 @@ export default async function AuditLogsPage({
       "EVIDENCE_ADD",
       "VERIFICATION",
       "OVERRIDE",
+      "WORKSPACE_CREATED",
+      "INVITE_SENT",
+      "INVITE_RESENT",
+      "INVITE_ACCEPTED",
     ].includes(action)
   ) {
     where.action = action;

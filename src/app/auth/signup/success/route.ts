@@ -73,5 +73,5 @@ export async function GET(request: Request) {
   }
 
   const query = redirectParams.toString();
-  redirect(`/app/welcome${query ? `?${query}` : ""}`);
+  redirect(`/welcome${query ? `?${query}` : ""}`);
 }

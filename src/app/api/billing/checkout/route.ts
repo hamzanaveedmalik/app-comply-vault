@@ -114,7 +114,7 @@ export async function POST(request: Request) {
       customer: customerId,
       line_items: lineItems,
       success_url: `${baseUrl}/billing/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/app/welcome?checkout=cancelled`,
+      cancel_url: `${baseUrl}/welcome?checkout=cancelled`,
       metadata: {
         workspaceId,
         plan,

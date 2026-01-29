@@ -4,6 +4,7 @@ import { generateAuditPack, generateExportFilename } from "~/server/export";
 import type { ExtractionData } from "~/server/extraction/types";
 import type { TranscriptSegment } from "~/server/transcription/types";
 import type { Meeting, User } from "~/server/export/types";
+import { getEntitlements, isPaywallBypassed, isTrialExpired } from "~/server/billing/entitlements";
 
 // Force Node.js runtime for this route (needed for Buffer and archiver)
 export const runtime = "nodejs";
@@ -100,6 +101,23 @@ export async function POST(
       return Response.json({ error: "Workspace not found" }, { status: 404 });
     }
 
+    if (!isPaywallBypassed(workspace.billingStatus)) {
+      if (
+        workspace.billingStatus !== "ACTIVE" &&
+        workspace.billingStatus !== "TRIALING"
+      ) {
+        return Response.json(
+          { error: "Subscription inactive. Please update billing to export." },
+          { status: 402 }
+        );
+      }
+    }
+
+    const trialExpired =
+      workspace.billingStatus === "TRIALING" && isTrialExpired(workspace.trialEndsAt);
+    const entitlements = getEntitlements(workspace);
+    const watermarked = entitlements.exportsWatermarked || trialExpired;
+
     // Get version history
     const versionsRaw = await db.version.findMany({
       where: {
@@ -136,10 +154,11 @@ export async function POST(
       transcript,
       versions,
       workspace,
+      watermarked,
     });
 
     // Generate filename
-    const filename = generateExportFilename(workspace.name, meeting.clientName);
+    const filename = generateExportFilename(workspace.name, meeting.clientName, { watermarked });
 
     // Log export event
     await db.auditEvent.create({
@@ -153,6 +172,9 @@ export async function POST(
           exportFormat: "audit_pack_zip",
           filename,
           exportedAt: new Date().toISOString(),
+          watermarked,
+          billingStatus: workspace.billingStatus,
+          planTier: workspace.planTier,
         },
       },
     });

@@ -6,6 +6,7 @@ interface GeneratePDFOptions {
   meeting: Meeting & { finalizedBy?: User | null };
   extraction: ExtractionData;
   workspaceName: string;
+  watermarked?: boolean;
 }
 
 /**
@@ -16,6 +17,7 @@ export async function generateComplianceNotePDF({
   meeting,
   extraction,
   workspaceName,
+  watermarked = false,
 }: GeneratePDFOptions): Promise<Buffer> {
   try {
     const doc = new jsPDF({
@@ -222,6 +224,22 @@ export async function generateComplianceNotePDF({
       pageHeight - 30,
       { align: "center" }
     );
+
+    if (watermarked) {
+      const watermarkText = "TRIAL EXPORT";
+      const totalPages = doc.getNumberOfPages();
+      for (let page = 1; page <= totalPages; page += 1) {
+        doc.setPage(page);
+        doc.setFontSize(48);
+        doc.setTextColor(220, 220, 220);
+        doc.setFont("helvetica", "bold");
+        doc.text(watermarkText, pageWidth / 2, pageHeight / 2, {
+          align: "center",
+          angle: 30,
+        });
+        doc.setTextColor(0, 0, 0);
+      }
+    }
 
     // Convert to Buffer
     const pdfOutput = doc.output("arraybuffer");

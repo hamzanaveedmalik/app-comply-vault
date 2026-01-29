@@ -20,13 +20,23 @@ type Workspace = {
 
 export function WorkspaceSettingsForm({
   workspace,
+  members,
+  currentUserId,
 }: {
   workspace: Workspace;
+  members: Array<{
+    userId: string;
+    role: "OWNER_CCO" | "MEMBER";
+    name: string | null;
+    email: string | null;
+  }>;
+  currentUserId: string;
 }) {
   const router = useRouter();
   const [retentionYears, setRetentionYears] = useState(workspace.retentionYears);
   const [legalHold, setLegalHold] = useState(workspace.legalHold);
   const [isSaving, setIsSaving] = useState(false);
+  const [isRemoving, setIsRemoving] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
@@ -62,6 +72,36 @@ export function WorkspaceSettingsForm({
     }
   };
 
+  const handleRemoveMember = async (userId: string) => {
+    setIsRemoving(userId);
+    setError(null);
+    try {
+      const response = await fetch(`/api/workspaces/${workspace.id}/members/${userId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to remove member");
+      }
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsRemoving(null);
+    }
+  };
+
+  const billingLabel =
+    workspace.billingStatus === "PILOT"
+      ? "Pilot"
+      : workspace.billingStatus === "TRIALING"
+      ? "Trialing"
+      : workspace.billingStatus === "ACTIVE"
+      ? "Active"
+      : workspace.billingStatus === "PAST_DUE"
+      ? "Past Due"
+      : "Canceled";
+
   return (
     <div className="space-y-6">
       <Card>
@@ -78,7 +118,7 @@ export function WorkspaceSettingsForm({
               <dt className="text-sm font-medium text-muted-foreground">Billing Status</dt>
               <dd className="mt-1">
                 <Badge variant="secondary">
-                  {workspace.billingStatus === "PILOT" ? "Pilot" : workspace.billingStatus === "ACTIVE" ? "Active" : "Cancelled"}
+                  {billingLabel}
                 </Badge>
               </dd>
             </div>
@@ -94,9 +134,47 @@ export function WorkspaceSettingsForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button asChild>
-            <Link href={`/workspaces/${workspace.id}/invite`}>Invite Team Members</Link>
-          </Button>
+          <div className="space-y-4">
+            <Button asChild>
+              <Link href={`/workspaces/${workspace.id}/invite`}>Invite Team Members</Link>
+            </Button>
+            <div className="space-y-2">
+              {members.map((member) => {
+                const label = member.name || member.email || member.userId;
+                const isCurrentUser = member.userId === currentUserId;
+                return (
+                  <div
+                    key={member.userId}
+                    className="flex items-center justify-between rounded-md border px-3 py-2 text-sm"
+                  >
+                    <div>
+                      <div className="font-medium">
+                        {label} {isCurrentUser ? "(You)" : ""}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {member.role === "OWNER_CCO" ? "Owner/CCO" : "Member"}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {member.role === "OWNER_CCO" && (
+                        <Badge variant="secondary">Owner</Badge>
+                      )}
+                      {!isCurrentUser && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={isRemoving === member.userId}
+                          onClick={() => handleRemoveMember(member.userId)}
+                        >
+                          {isRemoving === member.userId ? "Removing..." : "Remove"}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </CardContent>
       </Card>
 

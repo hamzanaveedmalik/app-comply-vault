@@ -129,8 +129,18 @@ exports.Prisma.WorkspaceScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   billingStatus: 'billingStatus',
+  planTier: 'planTier',
+  billingCurrency: 'billingCurrency',
   pilotStartDate: 'pilotStartDate',
-  subscriptionStartDate: 'subscriptionStartDate'
+  trialStartedAt: 'trialStartedAt',
+  trialEndsAt: 'trialEndsAt',
+  subscriptionStartDate: 'subscriptionStartDate',
+  stripeCustomerId: 'stripeCustomerId',
+  stripeSubscriptionId: 'stripeSubscriptionId',
+  currentPeriodStart: 'currentPeriodStart',
+  currentPeriodEnd: 'currentPeriodEnd',
+  onboardingType: 'onboardingType',
+  onboardingPaidAt: 'onboardingPaidAt'
 };
 
 exports.Prisma.UserWorkspaceScalarFieldEnum = {
@@ -338,8 +348,21 @@ exports.Prisma.JsonNullValueFilter = {
 };
 exports.BillingStatus = exports.$Enums.BillingStatus = {
   PILOT: 'PILOT',
+  TRIALING: 'TRIALING',
   ACTIVE: 'ACTIVE',
-  CANCELLED: 'CANCELLED'
+  PAST_DUE: 'PAST_DUE',
+  CANCELED: 'CANCELED'
+};
+
+exports.PlanTier = exports.$Enums.PlanTier = {
+  FREE: 'FREE',
+  SOLO: 'SOLO',
+  TEAM: 'TEAM'
+};
+
+exports.BillingCurrency = exports.$Enums.BillingCurrency = {
+  USD: 'USD',
+  GBP: 'GBP'
 };
 
 exports.WorkspaceRole = exports.$Enums.WorkspaceRole = {
@@ -430,7 +453,8 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   WORKSPACE_CREATED: 'WORKSPACE_CREATED',
   INVITE_SENT: 'INVITE_SENT',
   INVITE_RESENT: 'INVITE_RESENT',
-  INVITE_ACCEPTED: 'INVITE_ACCEPTED'
+  INVITE_ACCEPTED: 'INVITE_ACCEPTED',
+  MEMBER_REMOVED: 'MEMBER_REMOVED'
 };
 
 exports.Prisma.ModelName = {

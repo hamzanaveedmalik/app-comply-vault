@@ -1,18 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Alert, AlertDescription } from "~/components/ui/alert";
-import { Separator } from "~/components/ui/separator";
+import { parseBillingIntent } from "~/lib/billing-intent";
 
 export default function NewWorkspacePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { intent, currency, onboarding } = parseBillingIntent(searchParams);
   const [name, setName] = useState("");
-  const [pilotCode, setPilotCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -31,7 +32,9 @@ export default function NewWorkspacePage() {
         },
         body: JSON.stringify({ 
           name,
-          pilotCode: pilotCode.trim() || undefined,
+          intent: intent || undefined,
+          currency: currency || undefined,
+          onboarding: onboarding || undefined,
         }),
       });
 
@@ -42,23 +45,10 @@ export default function NewWorkspacePage() {
 
       const data = await response.json();
       
-      // Check if setup fee is required
-      if (data.setupFee > 0) {
-        // Show message with demo code option
-        setSuccess(
-          `Workspace created! Use demo code "FREEPILOT" to skip the $500 setup fee. Redirecting to dashboard...`
-        );
-        // Force full page reload to refresh session with new workspace
-        setTimeout(() => {
-          window.location.href = "/dashboard";
-        }, 3000);
-      } else {
-        // No setup fee, redirect immediately with full reload
-        setSuccess(data.message || "Workspace created successfully! Redirecting...");
-        setTimeout(() => {
-          window.location.href = "/dashboard";
-        }, 2000);
-      }
+      setSuccess(data.message || "Workspace created successfully! Redirecting...");
+      setTimeout(() => {
+        window.location.href = "/welcome";
+      }, 1200);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
       setIsLoading(false);
@@ -69,9 +59,9 @@ export default function NewWorkspacePage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Create Your Pilot Workspace</CardTitle>
+          <CardTitle>Create Your Trial Workspace</CardTitle>
           <CardDescription>
-            Set up your firm&apos;s compliance documentation system. Start your 60-day free pilot period.
+            Set up your firm&apos;s compliance documentation system. Start your 7-day free trial.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -92,39 +82,6 @@ export default function NewWorkspacePage() {
               </p>
             </div>
 
-            <Separator />
-
-            <div className="space-y-2">
-              <Label htmlFor="pilotCode">Pilot Code (Optional)</Label>
-              <Input
-                id="pilotCode"
-                type="text"
-                value={pilotCode}
-                onChange={(e) => setPilotCode(e.target.value)}
-                placeholder="Enter pilot code (e.g., FREEPILOT)"
-              />
-              <div className="space-y-1">
-                <p className="text-xs text-muted-foreground">
-                  Enter a pilot code to skip the $500 setup fee. 
-                </p>
-                <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
-                  <p className="text-xs font-medium">Demo Code:</p>
-                  <code className="text-xs bg-background px-2 py-1 rounded font-mono">FREEPILOT</code>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 px-2 text-xs"
-                    onClick={() => {
-                      setPilotCode("FREEPILOT");
-                    }}
-                  >
-                    Use
-                  </Button>
-                </div>
-              </div>
-            </div>
-
             {error && (
               <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
@@ -143,11 +100,10 @@ export default function NewWorkspacePage() {
                 disabled={isLoading || !name.trim()}
                 className="w-full"
               >
-                {isLoading ? "Creating..." : "Create Pilot Workspace"}
+                {isLoading ? "Creating..." : "Create Trial Workspace"}
               </Button>
               <p className="text-xs text-center text-muted-foreground">
-                By creating a workspace, you agree to start your 60-day free pilot period.
-                {!pilotCode.trim() && " A $500 setup fee will be required to activate."}
+                By creating a workspace, you agree to start your 7-day free trial.
               </p>
             </div>
           </form>

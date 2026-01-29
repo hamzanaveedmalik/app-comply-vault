@@ -2,14 +2,17 @@ import { auth } from "~/server/auth";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { SignInForm } from "./signin-form";
+import { buildBillingIntentQuery, parseBillingIntent } from "~/lib/billing-intent";
 
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ callbackUrl?: string; error?: string }>;
+  searchParams: Promise<{ callbackUrl?: string; error?: string; intent?: string; currency?: string; onboarding?: string }>;
 }) {
   const session = await auth();
   const params = await searchParams;
+  const intentParams = parseBillingIntent(params);
+  const intentQuery = buildBillingIntentQuery(intentParams);
 
   // If already authenticated, redirect based on workspace
   if (session?.user) {
@@ -17,7 +20,7 @@ export default async function SignInPage({
     if (session.user.workspaceId && session.user.workspaceId !== "") {
       redirect("/dashboard");
     } else {
-      redirect("/workspaces/new");
+      redirect(`/workspaces/new${intentQuery}`);
     }
   }
 
@@ -71,7 +74,7 @@ export default async function SignInPage({
           )}
 
           {/* Sign In / Sign Up Form */}
-          <SignInForm callbackUrl={params.callbackUrl} />
+          <SignInForm callbackUrl={params.callbackUrl} intentParams={intentParams} />
 
           {/* Trust Indicators */}
           <div className="mt-8 pt-6 border-t border-white/10">

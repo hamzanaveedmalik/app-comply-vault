@@ -6,6 +6,7 @@ import { publishProcessMeetingJob } from "~/server/qstash";
 import { sha256FromBuffer } from "~/server/hash";
 import { env } from "~/env";
 import { z } from "zod";
+import { assertCanUpload } from "~/server/billing/guards";
 
 const uploadSchema = z.object({
   clientName: z.string().min(1, "Client name is required"),
@@ -23,6 +24,11 @@ export async function POST(request: Request) {
     const session = await auth();
     if (!session?.user?.workspaceId) {
       return new Response("Unauthorized", { status: 401 });
+    }
+
+    const gate = await assertCanUpload(session.user.workspaceId);
+    if (!gate.ok) {
+      return Response.json({ error: gate.error }, { status: gate.status });
     }
 
     const formData = await request.formData();

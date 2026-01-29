@@ -3,6 +3,7 @@ import { db } from "~/server/db";
 import { sendInvitationEmail } from "~/server/email";
 import { z } from "zod";
 import { randomBytes } from "crypto";
+import { assertCanInvite } from "~/server/billing/guards";
 
 const inviteUserSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -67,6 +68,11 @@ export async function POST(
       return new Response("Workspace not found or access denied", {
         status: 404,
       });
+    }
+
+    const gate = await assertCanInvite(workspaceId);
+    if (!gate.ok) {
+      return Response.json({ error: gate.error }, { status: gate.status });
     }
 
     // Check if user is already a member

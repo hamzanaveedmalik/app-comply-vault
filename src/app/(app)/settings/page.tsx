@@ -20,6 +20,18 @@ export default async function SettingsPage() {
     where: { id: session.user.workspaceId },
   });
 
+  const members = await db.userWorkspace.findMany({
+    where: { workspaceId: session.user.workspaceId },
+    include: {
+      user: true,
+    },
+    orderBy: [
+      { role: "asc" },
+      { user: { name: "asc" } },
+      { user: { email: "asc" } },
+    ],
+  });
+
   if (!workspace) {
     redirect("/dashboard");
   }
@@ -33,7 +45,16 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      <WorkspaceSettingsForm workspace={workspace} />
+      <WorkspaceSettingsForm
+        workspace={workspace}
+        members={members.map((member) => ({
+          userId: member.userId,
+          role: member.role,
+          name: member.user.name,
+          email: member.user.email,
+        }))}
+        currentUserId={session.user.id}
+      />
     </div>
   );
 }

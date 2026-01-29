@@ -110,14 +110,10 @@ export async function sendWelcomeEmail({
   email,
   workspaceName,
   userName,
-  setupFee,
-  pilotCode,
 }: {
   email: string;
   workspaceName: string;
   userName: string;
-  setupFee: number;
-  pilotCode: string | null;
 }) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const dashboardUrl = `${baseUrl}/dashboard`;
@@ -127,21 +123,14 @@ export async function sendWelcomeEmail({
   const emailContent = {
     from: process.env.EMAIL_FROM || "noreply@ria-compliance.com",
     to: email,
-    subject: `Welcome to Comply Vault - ${workspaceName} Pilot Setup`,
+    subject: `Welcome to Comply Vault - ${workspaceName} Trial`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
         <h2>Welcome to Comply Vault, ${userName}!</h2>
-        <p>Your pilot workspace <strong>${workspaceName}</strong> has been successfully created.</p>
-        
-        ${setupFee > 0 ? `
-          <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; margin: 20px 0;">
-            <p style="margin: 0;"><strong>Next Step:</strong> Complete your $500 setup fee to activate your 60-day free pilot period.</p>
-          </div>
-        ` : `
-          <div style="background-color: #d1fae5; border-left: 4px solid #10b981; padding: 12px; margin: 20px 0;">
-            <p style="margin: 0;"><strong>Pilot Activated:</strong> Your 60-day free pilot period has started!</p>
-          </div>
-        `}
+        <p>Your trial workspace <strong>${workspaceName}</strong> has been successfully created.</p>
+        <div style="background-color: #d1fae5; border-left: 4px solid #10b981; padding: 12px; margin: 20px 0;">
+          <p style="margin: 0;"><strong>Trial Active:</strong> Your 7-day free trial has started.</p>
+        </div>
         
         <h3 style="margin-top: 30px 0 15px 0;">Onboarding Checklist</h3>
         <p>Get started with these steps:</p>
@@ -171,7 +160,7 @@ export async function sendWelcomeEmail({
         </div>
         
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 12px;">
-          <p><strong>Pilot Period:</strong> Your 60-day free pilot period starts today and includes full access to all features.</p>
+          <p><strong>Trial Period:</strong> Your 7-day free trial starts today and includes access to core features.</p>
           <p><strong>Support:</strong> If you need help, reply to this email or contact support@complyvault.com</p>
         </div>
       </div>
@@ -179,9 +168,9 @@ export async function sendWelcomeEmail({
     text: `
       Welcome to Comply Vault, ${userName}!
       
-      Your pilot workspace ${workspaceName} has been successfully created.
+      Your trial workspace ${workspaceName} has been successfully created.
       
-      ${setupFee > 0 ? `Next Step: Complete your $500 setup fee to activate your 60-day free pilot period.` : `Pilot Activated: Your 60-day free pilot period has started!`}
+      Trial Active: Your 7-day free trial has started.
       
       Onboarding Checklist:
       1. Complete Workspace Setup: ${settingsUrl}
@@ -191,7 +180,7 @@ export async function sendWelcomeEmail({
       
       Go to Dashboard: ${dashboardUrl}
       
-      Pilot Period: Your 60-day free pilot period starts today and includes full access to all features.
+      Trial Period: Your 7-day free trial starts today and includes access to core features.
       Support: If you need help, reply to this email or contact support@complyvault.com
     `,
   };

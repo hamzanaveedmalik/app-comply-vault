@@ -4,7 +4,6 @@ import { z } from "zod";
 
 const setupBillingSchema = z.object({
   workspaceId: z.string(),
-  pilotCode: z.string().optional(), // For free pilot setup
 });
 
 export async function POST(request: Request) {
@@ -22,7 +21,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { workspaceId, pilotCode } = setupBillingSchema.parse(body);
+    const { workspaceId } = setupBillingSchema.parse(body);
 
     // Verify workspace exists and user belongs to it
     const workspace = await db.workspace.findFirst({
@@ -51,10 +50,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate pilot code if provided (for free setup)
-    // In production, this would check against a database of valid codes
-    const setupFee = pilotCode === "FREEPILOT" ? 0 : 500;
-
     // Update workspace billing status
     const updated = await db.workspace.update({
       where: { id: workspaceId },
@@ -74,8 +69,6 @@ export async function POST(request: Request) {
         resourceId: workspaceId,
         metadata: {
           action: "billing_setup",
-          setupFee,
-          pilotCode: pilotCode || null,
         },
       },
     });
@@ -85,11 +78,8 @@ export async function POST(request: Request) {
         id: updated.id,
         billingStatus: updated.billingStatus,
         pilotStartDate: updated.pilotStartDate,
-        setupFee,
       },
-      message: setupFee === 0 
-        ? "Pilot setup completed (free)" 
-        : "Please complete payment of $500 to activate pilot period",
+      message: "Billing setup completed.",
     });
   } catch (error) {
     if (error instanceof z.ZodError) {

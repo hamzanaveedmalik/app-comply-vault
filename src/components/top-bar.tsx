@@ -8,9 +8,16 @@ interface TopBarProps {
   userName?: string | null;
   userImage?: string | null;
   userRole?: string | null;
+  billingStatus?: string | null;
 }
 
-export function TopBar({ userEmail, userName, userImage, userRole }: TopBarProps) {
+export function TopBar({
+  userEmail,
+  userName,
+  userImage,
+  userRole,
+  billingStatus,
+}: TopBarProps) {
   return (
     <div className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-14 items-center gap-4 px-4 sm:px-6 lg:px-8">
@@ -25,6 +32,7 @@ export function TopBar({ userEmail, userName, userImage, userRole }: TopBarProps
             userName={userName}
             userImage={userImage}
             userRole={userRole}
+            billingStatus={billingStatus}
           />
         </div>
       </div>

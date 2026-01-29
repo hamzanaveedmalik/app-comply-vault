@@ -95,11 +95,30 @@ export type Invitation = $Result.DefaultSelection<Prisma.$InvitationPayload>
 export namespace $Enums {
   export const BillingStatus: {
   PILOT: 'PILOT',
+  TRIALING: 'TRIALING',
   ACTIVE: 'ACTIVE',
-  CANCELLED: 'CANCELLED'
+  PAST_DUE: 'PAST_DUE',
+  CANCELED: 'CANCELED'
 };
 
 export type BillingStatus = (typeof BillingStatus)[keyof typeof BillingStatus]
+
+
+export const PlanTier: {
+  FREE: 'FREE',
+  SOLO: 'SOLO',
+  TEAM: 'TEAM'
+};
+
+export type PlanTier = (typeof PlanTier)[keyof typeof PlanTier]
+
+
+export const BillingCurrency: {
+  USD: 'USD',
+  GBP: 'GBP'
+};
+
+export type BillingCurrency = (typeof BillingCurrency)[keyof typeof BillingCurrency]
 
 
 export const WorkspaceRole: {
@@ -147,7 +166,8 @@ export const AuditAction: {
   WORKSPACE_CREATED: 'WORKSPACE_CREATED',
   INVITE_SENT: 'INVITE_SENT',
   INVITE_RESENT: 'INVITE_RESENT',
-  INVITE_ACCEPTED: 'INVITE_ACCEPTED'
+  INVITE_ACCEPTED: 'INVITE_ACCEPTED',
+  MEMBER_REMOVED: 'MEMBER_REMOVED'
 };
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction]
@@ -233,6 +253,14 @@ export type FlagCreatedByType = (typeof FlagCreatedByType)[keyof typeof FlagCrea
 export type BillingStatus = $Enums.BillingStatus
 
 export const BillingStatus: typeof $Enums.BillingStatus
+
+export type PlanTier = $Enums.PlanTier
+
+export const PlanTier: typeof $Enums.PlanTier
+
+export type BillingCurrency = $Enums.BillingCurrency
+
+export const BillingCurrency: typeof $Enums.BillingCurrency
 
 export type WorkspaceRole = $Enums.WorkspaceRole
 
@@ -2618,8 +2646,18 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     billingStatus: $Enums.BillingStatus | null
+    planTier: $Enums.PlanTier | null
+    billingCurrency: $Enums.BillingCurrency | null
     pilotStartDate: Date | null
+    trialStartedAt: Date | null
+    trialEndsAt: Date | null
     subscriptionStartDate: Date | null
+    stripeCustomerId: string | null
+    stripeSubscriptionId: string | null
+    currentPeriodStart: Date | null
+    currentPeriodEnd: Date | null
+    onboardingType: string | null
+    onboardingPaidAt: Date | null
   }
 
   export type WorkspaceMaxAggregateOutputType = {
@@ -2630,8 +2668,18 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     billingStatus: $Enums.BillingStatus | null
+    planTier: $Enums.PlanTier | null
+    billingCurrency: $Enums.BillingCurrency | null
     pilotStartDate: Date | null
+    trialStartedAt: Date | null
+    trialEndsAt: Date | null
     subscriptionStartDate: Date | null
+    stripeCustomerId: string | null
+    stripeSubscriptionId: string | null
+    currentPeriodStart: Date | null
+    currentPeriodEnd: Date | null
+    onboardingType: string | null
+    onboardingPaidAt: Date | null
   }
 
   export type WorkspaceCountAggregateOutputType = {
@@ -2642,8 +2690,18 @@ export namespace Prisma {
     createdAt: number
     updatedAt: number
     billingStatus: number
+    planTier: number
+    billingCurrency: number
     pilotStartDate: number
+    trialStartedAt: number
+    trialEndsAt: number
     subscriptionStartDate: number
+    stripeCustomerId: number
+    stripeSubscriptionId: number
+    currentPeriodStart: number
+    currentPeriodEnd: number
+    onboardingType: number
+    onboardingPaidAt: number
     _all: number
   }
 
@@ -2664,8 +2722,18 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     billingStatus?: true
+    planTier?: true
+    billingCurrency?: true
     pilotStartDate?: true
+    trialStartedAt?: true
+    trialEndsAt?: true
     subscriptionStartDate?: true
+    stripeCustomerId?: true
+    stripeSubscriptionId?: true
+    currentPeriodStart?: true
+    currentPeriodEnd?: true
+    onboardingType?: true
+    onboardingPaidAt?: true
   }
 
   export type WorkspaceMaxAggregateInputType = {
@@ -2676,8 +2744,18 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     billingStatus?: true
+    planTier?: true
+    billingCurrency?: true
     pilotStartDate?: true
+    trialStartedAt?: true
+    trialEndsAt?: true
     subscriptionStartDate?: true
+    stripeCustomerId?: true
+    stripeSubscriptionId?: true
+    currentPeriodStart?: true
+    currentPeriodEnd?: true
+    onboardingType?: true
+    onboardingPaidAt?: true
   }
 
   export type WorkspaceCountAggregateInputType = {
@@ -2688,8 +2766,18 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     billingStatus?: true
+    planTier?: true
+    billingCurrency?: true
     pilotStartDate?: true
+    trialStartedAt?: true
+    trialEndsAt?: true
     subscriptionStartDate?: true
+    stripeCustomerId?: true
+    stripeSubscriptionId?: true
+    currentPeriodStart?: true
+    currentPeriodEnd?: true
+    onboardingType?: true
+    onboardingPaidAt?: true
     _all?: true
   }
 
@@ -2787,8 +2875,18 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     billingStatus: $Enums.BillingStatus
+    planTier: $Enums.PlanTier
+    billingCurrency: $Enums.BillingCurrency
     pilotStartDate: Date | null
+    trialStartedAt: Date | null
+    trialEndsAt: Date | null
     subscriptionStartDate: Date | null
+    stripeCustomerId: string | null
+    stripeSubscriptionId: string | null
+    currentPeriodStart: Date | null
+    currentPeriodEnd: Date | null
+    onboardingType: string | null
+    onboardingPaidAt: Date | null
     _count: WorkspaceCountAggregateOutputType | null
     _avg: WorkspaceAvgAggregateOutputType | null
     _sum: WorkspaceSumAggregateOutputType | null
@@ -2818,8 +2916,18 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     billingStatus?: boolean
+    planTier?: boolean
+    billingCurrency?: boolean
     pilotStartDate?: boolean
+    trialStartedAt?: boolean
+    trialEndsAt?: boolean
     subscriptionStartDate?: boolean
+    stripeCustomerId?: boolean
+    stripeSubscriptionId?: boolean
+    currentPeriodStart?: boolean
+    currentPeriodEnd?: boolean
+    onboardingType?: boolean
+    onboardingPaidAt?: boolean
     users?: boolean | Workspace$usersArgs<ExtArgs>
     meetings?: boolean | Workspace$meetingsArgs<ExtArgs>
     auditEvents?: boolean | Workspace$auditEventsArgs<ExtArgs>
@@ -2837,8 +2945,18 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     billingStatus?: boolean
+    planTier?: boolean
+    billingCurrency?: boolean
     pilotStartDate?: boolean
+    trialStartedAt?: boolean
+    trialEndsAt?: boolean
     subscriptionStartDate?: boolean
+    stripeCustomerId?: boolean
+    stripeSubscriptionId?: boolean
+    currentPeriodStart?: boolean
+    currentPeriodEnd?: boolean
+    onboardingType?: boolean
+    onboardingPaidAt?: boolean
   }, ExtArgs["result"]["workspace"]>
 
   export type WorkspaceSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2849,8 +2967,18 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     billingStatus?: boolean
+    planTier?: boolean
+    billingCurrency?: boolean
     pilotStartDate?: boolean
+    trialStartedAt?: boolean
+    trialEndsAt?: boolean
     subscriptionStartDate?: boolean
+    stripeCustomerId?: boolean
+    stripeSubscriptionId?: boolean
+    currentPeriodStart?: boolean
+    currentPeriodEnd?: boolean
+    onboardingType?: boolean
+    onboardingPaidAt?: boolean
   }, ExtArgs["result"]["workspace"]>
 
   export type WorkspaceSelectScalar = {
@@ -2861,11 +2989,21 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     billingStatus?: boolean
+    planTier?: boolean
+    billingCurrency?: boolean
     pilotStartDate?: boolean
+    trialStartedAt?: boolean
+    trialEndsAt?: boolean
     subscriptionStartDate?: boolean
+    stripeCustomerId?: boolean
+    stripeSubscriptionId?: boolean
+    currentPeriodStart?: boolean
+    currentPeriodEnd?: boolean
+    onboardingType?: boolean
+    onboardingPaidAt?: boolean
   }
 
-  export type WorkspaceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "retentionYears" | "legalHold" | "createdAt" | "updatedAt" | "billingStatus" | "pilotStartDate" | "subscriptionStartDate", ExtArgs["result"]["workspace"]>
+  export type WorkspaceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "retentionYears" | "legalHold" | "createdAt" | "updatedAt" | "billingStatus" | "planTier" | "billingCurrency" | "pilotStartDate" | "trialStartedAt" | "trialEndsAt" | "subscriptionStartDate" | "stripeCustomerId" | "stripeSubscriptionId" | "currentPeriodStart" | "currentPeriodEnd" | "onboardingType" | "onboardingPaidAt", ExtArgs["result"]["workspace"]>
   export type WorkspaceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     users?: boolean | Workspace$usersArgs<ExtArgs>
     meetings?: boolean | Workspace$meetingsArgs<ExtArgs>
@@ -2896,8 +3034,18 @@ export namespace Prisma {
       createdAt: Date
       updatedAt: Date
       billingStatus: $Enums.BillingStatus
+      planTier: $Enums.PlanTier
+      billingCurrency: $Enums.BillingCurrency
       pilotStartDate: Date | null
+      trialStartedAt: Date | null
+      trialEndsAt: Date | null
       subscriptionStartDate: Date | null
+      stripeCustomerId: string | null
+      stripeSubscriptionId: string | null
+      currentPeriodStart: Date | null
+      currentPeriodEnd: Date | null
+      onboardingType: string | null
+      onboardingPaidAt: Date | null
     }, ExtArgs["result"]["workspace"]>
     composites: {}
   }
@@ -3334,8 +3482,18 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"Workspace", 'DateTime'>
     readonly updatedAt: FieldRef<"Workspace", 'DateTime'>
     readonly billingStatus: FieldRef<"Workspace", 'BillingStatus'>
+    readonly planTier: FieldRef<"Workspace", 'PlanTier'>
+    readonly billingCurrency: FieldRef<"Workspace", 'BillingCurrency'>
     readonly pilotStartDate: FieldRef<"Workspace", 'DateTime'>
+    readonly trialStartedAt: FieldRef<"Workspace", 'DateTime'>
+    readonly trialEndsAt: FieldRef<"Workspace", 'DateTime'>
     readonly subscriptionStartDate: FieldRef<"Workspace", 'DateTime'>
+    readonly stripeCustomerId: FieldRef<"Workspace", 'String'>
+    readonly stripeSubscriptionId: FieldRef<"Workspace", 'String'>
+    readonly currentPeriodStart: FieldRef<"Workspace", 'DateTime'>
+    readonly currentPeriodEnd: FieldRef<"Workspace", 'DateTime'>
+    readonly onboardingType: FieldRef<"Workspace", 'String'>
+    readonly onboardingPaidAt: FieldRef<"Workspace", 'DateTime'>
   }
     
 
@@ -20012,8 +20170,18 @@ export namespace Prisma {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     billingStatus: 'billingStatus',
+    planTier: 'planTier',
+    billingCurrency: 'billingCurrency',
     pilotStartDate: 'pilotStartDate',
-    subscriptionStartDate: 'subscriptionStartDate'
+    trialStartedAt: 'trialStartedAt',
+    trialEndsAt: 'trialEndsAt',
+    subscriptionStartDate: 'subscriptionStartDate',
+    stripeCustomerId: 'stripeCustomerId',
+    stripeSubscriptionId: 'stripeSubscriptionId',
+    currentPeriodStart: 'currentPeriodStart',
+    currentPeriodEnd: 'currentPeriodEnd',
+    onboardingType: 'onboardingType',
+    onboardingPaidAt: 'onboardingPaidAt'
   };
 
   export type WorkspaceScalarFieldEnum = (typeof WorkspaceScalarFieldEnum)[keyof typeof WorkspaceScalarFieldEnum]
@@ -20349,6 +20517,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'PlanTier'
+   */
+  export type EnumPlanTierFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PlanTier'>
+    
+
+
+  /**
+   * Reference to a field of type 'PlanTier[]'
+   */
+  export type ListEnumPlanTierFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PlanTier[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'BillingCurrency'
+   */
+  export type EnumBillingCurrencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BillingCurrency'>
+    
+
+
+  /**
+   * Reference to a field of type 'BillingCurrency[]'
+   */
+  export type ListEnumBillingCurrencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BillingCurrency[]'>
+    
+
+
+  /**
    * Reference to a field of type 'WorkspaceRole'
    */
   export type EnumWorkspaceRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WorkspaceRole'>
@@ -20558,8 +20754,18 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Workspace"> | Date | string
     updatedAt?: DateTimeFilter<"Workspace"> | Date | string
     billingStatus?: EnumBillingStatusFilter<"Workspace"> | $Enums.BillingStatus
+    planTier?: EnumPlanTierFilter<"Workspace"> | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFilter<"Workspace"> | $Enums.BillingCurrency
     pilotStartDate?: DateTimeNullableFilter<"Workspace"> | Date | string | null
+    trialStartedAt?: DateTimeNullableFilter<"Workspace"> | Date | string | null
+    trialEndsAt?: DateTimeNullableFilter<"Workspace"> | Date | string | null
     subscriptionStartDate?: DateTimeNullableFilter<"Workspace"> | Date | string | null
+    stripeCustomerId?: StringNullableFilter<"Workspace"> | string | null
+    stripeSubscriptionId?: StringNullableFilter<"Workspace"> | string | null
+    currentPeriodStart?: DateTimeNullableFilter<"Workspace"> | Date | string | null
+    currentPeriodEnd?: DateTimeNullableFilter<"Workspace"> | Date | string | null
+    onboardingType?: StringNullableFilter<"Workspace"> | string | null
+    onboardingPaidAt?: DateTimeNullableFilter<"Workspace"> | Date | string | null
     users?: UserWorkspaceListRelationFilter
     meetings?: MeetingListRelationFilter
     auditEvents?: AuditEventListRelationFilter
@@ -20576,8 +20782,18 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     billingStatus?: SortOrder
+    planTier?: SortOrder
+    billingCurrency?: SortOrder
     pilotStartDate?: SortOrderInput | SortOrder
+    trialStartedAt?: SortOrderInput | SortOrder
+    trialEndsAt?: SortOrderInput | SortOrder
     subscriptionStartDate?: SortOrderInput | SortOrder
+    stripeCustomerId?: SortOrderInput | SortOrder
+    stripeSubscriptionId?: SortOrderInput | SortOrder
+    currentPeriodStart?: SortOrderInput | SortOrder
+    currentPeriodEnd?: SortOrderInput | SortOrder
+    onboardingType?: SortOrderInput | SortOrder
+    onboardingPaidAt?: SortOrderInput | SortOrder
     users?: UserWorkspaceOrderByRelationAggregateInput
     meetings?: MeetingOrderByRelationAggregateInput
     auditEvents?: AuditEventOrderByRelationAggregateInput
@@ -20597,8 +20813,18 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Workspace"> | Date | string
     updatedAt?: DateTimeFilter<"Workspace"> | Date | string
     billingStatus?: EnumBillingStatusFilter<"Workspace"> | $Enums.BillingStatus
+    planTier?: EnumPlanTierFilter<"Workspace"> | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFilter<"Workspace"> | $Enums.BillingCurrency
     pilotStartDate?: DateTimeNullableFilter<"Workspace"> | Date | string | null
+    trialStartedAt?: DateTimeNullableFilter<"Workspace"> | Date | string | null
+    trialEndsAt?: DateTimeNullableFilter<"Workspace"> | Date | string | null
     subscriptionStartDate?: DateTimeNullableFilter<"Workspace"> | Date | string | null
+    stripeCustomerId?: StringNullableFilter<"Workspace"> | string | null
+    stripeSubscriptionId?: StringNullableFilter<"Workspace"> | string | null
+    currentPeriodStart?: DateTimeNullableFilter<"Workspace"> | Date | string | null
+    currentPeriodEnd?: DateTimeNullableFilter<"Workspace"> | Date | string | null
+    onboardingType?: StringNullableFilter<"Workspace"> | string | null
+    onboardingPaidAt?: DateTimeNullableFilter<"Workspace"> | Date | string | null
     users?: UserWorkspaceListRelationFilter
     meetings?: MeetingListRelationFilter
     auditEvents?: AuditEventListRelationFilter
@@ -20615,8 +20841,18 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     billingStatus?: SortOrder
+    planTier?: SortOrder
+    billingCurrency?: SortOrder
     pilotStartDate?: SortOrderInput | SortOrder
+    trialStartedAt?: SortOrderInput | SortOrder
+    trialEndsAt?: SortOrderInput | SortOrder
     subscriptionStartDate?: SortOrderInput | SortOrder
+    stripeCustomerId?: SortOrderInput | SortOrder
+    stripeSubscriptionId?: SortOrderInput | SortOrder
+    currentPeriodStart?: SortOrderInput | SortOrder
+    currentPeriodEnd?: SortOrderInput | SortOrder
+    onboardingType?: SortOrderInput | SortOrder
+    onboardingPaidAt?: SortOrderInput | SortOrder
     _count?: WorkspaceCountOrderByAggregateInput
     _avg?: WorkspaceAvgOrderByAggregateInput
     _max?: WorkspaceMaxOrderByAggregateInput
@@ -20635,8 +20871,18 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Workspace"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Workspace"> | Date | string
     billingStatus?: EnumBillingStatusWithAggregatesFilter<"Workspace"> | $Enums.BillingStatus
+    planTier?: EnumPlanTierWithAggregatesFilter<"Workspace"> | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyWithAggregatesFilter<"Workspace"> | $Enums.BillingCurrency
     pilotStartDate?: DateTimeNullableWithAggregatesFilter<"Workspace"> | Date | string | null
+    trialStartedAt?: DateTimeNullableWithAggregatesFilter<"Workspace"> | Date | string | null
+    trialEndsAt?: DateTimeNullableWithAggregatesFilter<"Workspace"> | Date | string | null
     subscriptionStartDate?: DateTimeNullableWithAggregatesFilter<"Workspace"> | Date | string | null
+    stripeCustomerId?: StringNullableWithAggregatesFilter<"Workspace"> | string | null
+    stripeSubscriptionId?: StringNullableWithAggregatesFilter<"Workspace"> | string | null
+    currentPeriodStart?: DateTimeNullableWithAggregatesFilter<"Workspace"> | Date | string | null
+    currentPeriodEnd?: DateTimeNullableWithAggregatesFilter<"Workspace"> | Date | string | null
+    onboardingType?: StringNullableWithAggregatesFilter<"Workspace"> | string | null
+    onboardingPaidAt?: DateTimeNullableWithAggregatesFilter<"Workspace"> | Date | string | null
   }
 
   export type UserWorkspaceWhereInput = {
@@ -21805,8 +22051,18 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
     pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
     subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
     users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
     meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
     auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
@@ -21823,8 +22079,18 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
     pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
     subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
     users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
     meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -21841,8 +22107,18 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
     pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
     meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
     auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
@@ -21859,8 +22135,18 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
     pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
     meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
     auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -21877,8 +22163,18 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
     pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
     subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
   }
 
   export type WorkspaceUpdateManyMutationInput = {
@@ -21889,8 +22185,18 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
     pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type WorkspaceUncheckedUpdateManyInput = {
@@ -21901,8 +22207,18 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
     pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type UserWorkspaceCreateInput = {
@@ -23230,6 +23546,20 @@ export namespace Prisma {
     not?: NestedEnumBillingStatusFilter<$PrismaModel> | $Enums.BillingStatus
   }
 
+  export type EnumPlanTierFilter<$PrismaModel = never> = {
+    equals?: $Enums.PlanTier | EnumPlanTierFieldRefInput<$PrismaModel>
+    in?: $Enums.PlanTier[] | ListEnumPlanTierFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PlanTier[] | ListEnumPlanTierFieldRefInput<$PrismaModel>
+    not?: NestedEnumPlanTierFilter<$PrismaModel> | $Enums.PlanTier
+  }
+
+  export type EnumBillingCurrencyFilter<$PrismaModel = never> = {
+    equals?: $Enums.BillingCurrency | EnumBillingCurrencyFieldRefInput<$PrismaModel>
+    in?: $Enums.BillingCurrency[] | ListEnumBillingCurrencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BillingCurrency[] | ListEnumBillingCurrencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumBillingCurrencyFilter<$PrismaModel> | $Enums.BillingCurrency
+  }
+
   export type DateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -23239,6 +23569,21 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type UserWorkspaceListRelationFilter = {
@@ -23314,8 +23659,18 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     billingStatus?: SortOrder
+    planTier?: SortOrder
+    billingCurrency?: SortOrder
     pilotStartDate?: SortOrder
+    trialStartedAt?: SortOrder
+    trialEndsAt?: SortOrder
     subscriptionStartDate?: SortOrder
+    stripeCustomerId?: SortOrder
+    stripeSubscriptionId?: SortOrder
+    currentPeriodStart?: SortOrder
+    currentPeriodEnd?: SortOrder
+    onboardingType?: SortOrder
+    onboardingPaidAt?: SortOrder
   }
 
   export type WorkspaceAvgOrderByAggregateInput = {
@@ -23330,8 +23685,18 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     billingStatus?: SortOrder
+    planTier?: SortOrder
+    billingCurrency?: SortOrder
     pilotStartDate?: SortOrder
+    trialStartedAt?: SortOrder
+    trialEndsAt?: SortOrder
     subscriptionStartDate?: SortOrder
+    stripeCustomerId?: SortOrder
+    stripeSubscriptionId?: SortOrder
+    currentPeriodStart?: SortOrder
+    currentPeriodEnd?: SortOrder
+    onboardingType?: SortOrder
+    onboardingPaidAt?: SortOrder
   }
 
   export type WorkspaceMinOrderByAggregateInput = {
@@ -23342,8 +23707,18 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     billingStatus?: SortOrder
+    planTier?: SortOrder
+    billingCurrency?: SortOrder
     pilotStartDate?: SortOrder
+    trialStartedAt?: SortOrder
+    trialEndsAt?: SortOrder
     subscriptionStartDate?: SortOrder
+    stripeCustomerId?: SortOrder
+    stripeSubscriptionId?: SortOrder
+    currentPeriodStart?: SortOrder
+    currentPeriodEnd?: SortOrder
+    onboardingType?: SortOrder
+    onboardingPaidAt?: SortOrder
   }
 
   export type WorkspaceSumOrderByAggregateInput = {
@@ -23416,6 +23791,26 @@ export namespace Prisma {
     _max?: NestedEnumBillingStatusFilter<$PrismaModel>
   }
 
+  export type EnumPlanTierWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PlanTier | EnumPlanTierFieldRefInput<$PrismaModel>
+    in?: $Enums.PlanTier[] | ListEnumPlanTierFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PlanTier[] | ListEnumPlanTierFieldRefInput<$PrismaModel>
+    not?: NestedEnumPlanTierWithAggregatesFilter<$PrismaModel> | $Enums.PlanTier
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPlanTierFilter<$PrismaModel>
+    _max?: NestedEnumPlanTierFilter<$PrismaModel>
+  }
+
+  export type EnumBillingCurrencyWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BillingCurrency | EnumBillingCurrencyFieldRefInput<$PrismaModel>
+    in?: $Enums.BillingCurrency[] | ListEnumBillingCurrencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BillingCurrency[] | ListEnumBillingCurrencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumBillingCurrencyWithAggregatesFilter<$PrismaModel> | $Enums.BillingCurrency
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBillingCurrencyFilter<$PrismaModel>
+    _max?: NestedEnumBillingCurrencyFilter<$PrismaModel>
+  }
+
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -23428,6 +23823,24 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type EnumWorkspaceRoleFilter<$PrismaModel = never> = {
@@ -23485,21 +23898,6 @@ export namespace Prisma {
     in?: $Enums.MeetingStatus[] | ListEnumMeetingStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.MeetingStatus[] | ListEnumMeetingStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumMeetingStatusFilter<$PrismaModel> | $Enums.MeetingStatus
-  }
-
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type IntNullableFilter<$PrismaModel = never> = {
@@ -23659,24 +24057,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumMeetingStatusFilter<$PrismaModel>
     _max?: NestedEnumMeetingStatusFilter<$PrismaModel>
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -24540,8 +24920,20 @@ export namespace Prisma {
     set?: $Enums.BillingStatus
   }
 
+  export type EnumPlanTierFieldUpdateOperationsInput = {
+    set?: $Enums.PlanTier
+  }
+
+  export type EnumBillingCurrencyFieldUpdateOperationsInput = {
+    set?: $Enums.BillingCurrency
+  }
+
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type UserWorkspaceUpdateManyWithoutWorkspaceNestedInput = {
@@ -24808,10 +25200,6 @@ export namespace Prisma {
 
   export type EnumMeetingStatusFieldUpdateOperationsInput = {
     set?: $Enums.MeetingStatus
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
   }
 
   export type NullableIntFieldUpdateOperationsInput = {
@@ -25574,6 +25962,20 @@ export namespace Prisma {
     not?: NestedEnumBillingStatusFilter<$PrismaModel> | $Enums.BillingStatus
   }
 
+  export type NestedEnumPlanTierFilter<$PrismaModel = never> = {
+    equals?: $Enums.PlanTier | EnumPlanTierFieldRefInput<$PrismaModel>
+    in?: $Enums.PlanTier[] | ListEnumPlanTierFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PlanTier[] | ListEnumPlanTierFieldRefInput<$PrismaModel>
+    not?: NestedEnumPlanTierFilter<$PrismaModel> | $Enums.PlanTier
+  }
+
+  export type NestedEnumBillingCurrencyFilter<$PrismaModel = never> = {
+    equals?: $Enums.BillingCurrency | EnumBillingCurrencyFieldRefInput<$PrismaModel>
+    in?: $Enums.BillingCurrency[] | ListEnumBillingCurrencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BillingCurrency[] | ListEnumBillingCurrencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumBillingCurrencyFilter<$PrismaModel> | $Enums.BillingCurrency
+  }
+
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -25583,6 +25985,20 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -25661,6 +26077,26 @@ export namespace Prisma {
     _max?: NestedEnumBillingStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumPlanTierWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PlanTier | EnumPlanTierFieldRefInput<$PrismaModel>
+    in?: $Enums.PlanTier[] | ListEnumPlanTierFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PlanTier[] | ListEnumPlanTierFieldRefInput<$PrismaModel>
+    not?: NestedEnumPlanTierWithAggregatesFilter<$PrismaModel> | $Enums.PlanTier
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPlanTierFilter<$PrismaModel>
+    _max?: NestedEnumPlanTierFilter<$PrismaModel>
+  }
+
+  export type NestedEnumBillingCurrencyWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BillingCurrency | EnumBillingCurrencyFieldRefInput<$PrismaModel>
+    in?: $Enums.BillingCurrency[] | ListEnumBillingCurrencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BillingCurrency[] | ListEnumBillingCurrencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumBillingCurrencyWithAggregatesFilter<$PrismaModel> | $Enums.BillingCurrency
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBillingCurrencyFilter<$PrismaModel>
+    _max?: NestedEnumBillingCurrencyFilter<$PrismaModel>
+  }
+
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -25684,6 +26120,23 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumWorkspaceRoleFilter<$PrismaModel = never> = {
@@ -25710,20 +26163,6 @@ export namespace Prisma {
     not?: NestedEnumMeetingStatusFilter<$PrismaModel> | $Enums.MeetingStatus
   }
 
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type NestedEnumFinalizeReasonNullableFilter<$PrismaModel = never> = {
     equals?: $Enums.FinalizeReason | EnumFinalizeReasonFieldRefInput<$PrismaModel> | null
     in?: $Enums.FinalizeReason[] | ListEnumFinalizeReasonFieldRefInput<$PrismaModel> | null
@@ -25739,23 +26178,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumMeetingStatusFilter<$PrismaModel>
     _max?: NestedEnumMeetingStatusFilter<$PrismaModel>
-  }
-
-  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -26487,8 +26909,18 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
     pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
     subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
     meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
     auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
     invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
@@ -26504,8 +26936,18 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
     pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
     subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
     meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
     invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -26568,8 +27010,18 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
     pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
     auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
     invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
@@ -26585,8 +27037,18 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
     pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
     auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
     invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -26602,8 +27064,18 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
     pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
     subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
     users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
     auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
     invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
@@ -26619,8 +27091,18 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
     pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
     subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
     users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
     invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -26808,8 +27290,18 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
     pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
     auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
     invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
@@ -26825,8 +27317,18 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
     pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
     auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
     invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -27138,8 +27640,18 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
     pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
     subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
     users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
     meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
     auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
@@ -27155,8 +27667,18 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
     pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
     subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
     users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
     meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -27310,8 +27832,18 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
     pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
     meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
     auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
@@ -27327,8 +27859,18 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
     pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
     meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
     auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -27507,8 +28049,18 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
     pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
     subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
     users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
     meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
     auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
@@ -27524,8 +28076,18 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
     pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
     subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
     users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
     meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -27777,8 +28339,18 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
     pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
     meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
     auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
@@ -27794,8 +28366,18 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
     pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
     meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
     auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -28311,8 +28893,18 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
     pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
     subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
     users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
     meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
     invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
@@ -28328,8 +28920,18 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
     pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
     subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
     users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
     meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
     invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -28432,8 +29034,18 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
     pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
     meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
     invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
@@ -28449,8 +29061,18 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
     pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
     meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
     invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
@@ -28814,8 +29436,18 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
     pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
     subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
     users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
     meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
     auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
@@ -28831,8 +29463,18 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
     pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
     subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
     users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
     meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
@@ -28864,8 +29506,18 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
     pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
     meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
     auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
@@ -28881,8 +29533,18 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
     pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
     meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
     auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput

@@ -56,7 +56,17 @@ export interface Workspace {
   createdAt: Date;
   updatedAt: Date;
   billingStatus: string;
+  planTier: string;
+  billingCurrency: string;
   pilotStartDate: Date | null;
+  trialStartedAt: Date | null;
+  trialEndsAt: Date | null;
   subscriptionStartDate: Date | null;
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
+  currentPeriodStart: Date | null;
+  currentPeriodEnd: Date | null;
+  onboardingType: string | null;
+  onboardingPaidAt: Date | null;
 }
 

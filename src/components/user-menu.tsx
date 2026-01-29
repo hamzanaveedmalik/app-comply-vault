@@ -22,9 +22,16 @@ interface UserMenuProps {
   userName?: string | null;
   userImage?: string | null;
   userRole?: string | null;
+  billingStatus?: string | null;
 }
 
-export function UserMenu({ userEmail, userName, userImage, userRole }: UserMenuProps) {
+export function UserMenu({
+  userEmail,
+  userName,
+  userImage,
+  userRole,
+  billingStatus,
+}: UserMenuProps) {
   const router = useRouter();
   const { notificationCount } = useNotifications();
 
@@ -105,6 +112,11 @@ export function UserMenu({ userEmail, userName, userImage, userRole }: UserMenuP
               {userRole && (
                 <Badge variant="outline" className="mt-1 w-fit text-xs">
                   {userRole === "OWNER_CCO" ? "Owner/CCO" : "Member"}
+                </Badge>
+              )}
+              {billingStatus === "TRIALING" && (
+                <Badge variant="secondary" className="mt-1 w-fit text-xs">
+                  Free Trial
                 </Badge>
               )}
             </div>

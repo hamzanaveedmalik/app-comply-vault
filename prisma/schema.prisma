@@ -24,9 +24,19 @@ model Workspace {
   updatedAt      DateTime @updatedAt
 
   // Billing fields
-  billingStatus  BillingStatus @default(PILOT)
-  pilotStartDate DateTime?
+  billingStatus      BillingStatus  @default(PILOT)
+  planTier           PlanTier        @default(FREE)
+  billingCurrency    BillingCurrency @default(USD)
+  pilotStartDate     DateTime?
+  trialStartedAt     DateTime?
+  trialEndsAt        DateTime?
   subscriptionStartDate DateTime?
+  stripeCustomerId   String?
+  stripeSubscriptionId String?
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  onboardingType     String?
+  onboardingPaidAt   DateTime?
 
   // Relations
   users       UserWorkspace[]
@@ -41,8 +51,21 @@ model Workspace {
 
 enum BillingStatus {
   PILOT
+  TRIALING
   ACTIVE
-  CANCELLED
+  PAST_DUE
+  CANCELED
+}
+
+enum PlanTier {
+  FREE
+  SOLO
+  TEAM
+}
+
+enum BillingCurrency {
+  USD
+  GBP
 }
 
 enum WorkspaceRole {
@@ -164,6 +187,7 @@ enum AuditAction {
   INVITE_SENT
   INVITE_RESENT
   INVITE_ACCEPTED
+  MEMBER_REMOVED
 }
 
 enum FlagType {

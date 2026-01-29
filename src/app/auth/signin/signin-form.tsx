@@ -7,11 +7,14 @@ import { Label } from "~/components/ui/label";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { buildBillingIntentQuery, type BillingIntentParams } from "~/lib/billing-intent";
+
 interface SignInFormProps {
   callbackUrl?: string;
+  intentParams?: BillingIntentParams;
 }
 
-export function SignInForm({ callbackUrl }: SignInFormProps) {
+export function SignInForm({ callbackUrl, intentParams }: SignInFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin");
@@ -21,12 +24,15 @@ export function SignInForm({ callbackUrl }: SignInFormProps) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
+  const intentQuery = buildBillingIntentQuery(intentParams ?? {});
+  const signupRedirect = `/workspaces/new${intentQuery}`;
+
   const handleGoogleAuth = async (mode: "signin" | "signup") => {
     setIsLoading(`google-${mode}`);
     setError(null);
     try {
       const result = await signIn("google", {
-        callbackUrl: callbackUrl || "/dashboard",
+        callbackUrl: mode === "signup" ? signupRedirect : callbackUrl || "/dashboard",
         redirect: true,
       });
       if (result?.error) {
@@ -114,7 +120,7 @@ export function SignInForm({ callbackUrl }: SignInFormProps) {
         setError("Account created but failed to sign in. Please try signing in.");
         setIsLoading(null);
       } else {
-        router.push(callbackUrl || "/dashboard");
+        router.push(signupRedirect);
         router.refresh();
       }
     } catch (error) {

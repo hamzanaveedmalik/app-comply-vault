@@ -57,6 +57,7 @@ export default async function AuditLogsPage({
       "INVITE_SENT",
       "INVITE_RESENT",
       "INVITE_ACCEPTED",
+      "MEMBER_REMOVED",
     ].includes(action)
   ) {
     where.action = action;

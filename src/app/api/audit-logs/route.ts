@@ -22,6 +22,7 @@ const auditLogQuerySchema = z.object({
       "INVITE_SENT",
       "INVITE_RESENT",
       "INVITE_ACCEPTED",
+      "MEMBER_REMOVED",
     ])
     .optional(),
   resourceType: z.string().optional(),

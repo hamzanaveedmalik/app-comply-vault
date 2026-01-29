@@ -12,6 +12,7 @@ interface ExportData {
   transcript: { segments: TranscriptSegment[] } | null;
   versions: Version[];
   workspace: Workspace;
+  watermarked?: boolean;
 }
 
 /**
@@ -37,7 +38,7 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
     // Use async IIFE to handle async operations
     (async () => {
       try {
-        const { meeting, extraction, transcript, versions, workspace } = data;
+        const { meeting, extraction, transcript, versions, workspace, watermarked = false } = data;
 
         // Sanitize filename components
         const sanitizeFilename = (str: string): string => {
@@ -46,7 +47,9 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
 
         const clientName = sanitizeFilename(meeting.clientName);
         const exportDate = new Date().toISOString().split("T")[0];
-        const baseFilename = `${sanitizeFilename(workspace.name)}_${clientName}_${exportDate}`;
+        const baseFilename = `${sanitizeFilename(workspace.name)}_${clientName}_${exportDate}${
+          watermarked ? "_trial" : ""
+        }`;
 
         // 1. Generate and add PDF
         try {
@@ -54,6 +57,7 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
             meeting,
             extraction,
             workspaceName: workspace.name,
+            watermarked,
           });
           archive.append(pdfBuffer, { name: `${baseFilename}_compliance_note.pdf` });
         } catch (pdfError) {
@@ -65,7 +69,10 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
         // 2. Generate and add Evidence Map CSV
         try {
           const evidenceMapCSV = generateEvidenceMapCSV(extraction);
-          archive.append(Buffer.from(evidenceMapCSV, "utf-8"), {
+          const evidenceContent = watermarked
+            ? `TRIAL EXPORT - WATERMARKED\n${evidenceMapCSV}`
+            : evidenceMapCSV;
+          archive.append(Buffer.from(evidenceContent, "utf-8"), {
             name: `${baseFilename}_evidence_map.csv`,
           });
         } catch (csvError) {
@@ -77,7 +84,10 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
         // 3. Generate and add Version History CSV
         try {
           const versionHistoryCSV = generateVersionHistoryCSV(versions);
-          archive.append(Buffer.from(versionHistoryCSV, "utf-8"), {
+          const versionContent = watermarked
+            ? `TRIAL EXPORT - WATERMARKED\n${versionHistoryCSV}`
+            : versionHistoryCSV;
+          archive.append(Buffer.from(versionContent, "utf-8"), {
             name: `${baseFilename}_version_history.csv`,
           });
         } catch (csvError) {
@@ -90,7 +100,10 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
         if (transcript && transcript.segments) {
           try {
             const transcriptTXT = generateTranscriptTXT(transcript.segments);
-            archive.append(Buffer.from(transcriptTXT, "utf-8"), {
+            const transcriptContent = watermarked
+              ? `TRIAL EXPORT - WATERMARKED\n${transcriptTXT}`
+              : transcriptTXT;
+            archive.append(Buffer.from(transcriptContent, "utf-8"), {
               name: `${baseFilename}_transcript.txt`,
             });
           } catch (txtError) {
@@ -103,7 +116,10 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
         // 5. Generate and add Interaction Log CSV
         try {
           const interactionLogCSV = generateInteractionLogCSV(meeting, extraction);
-          archive.append(Buffer.from(interactionLogCSV, "utf-8"), {
+          const interactionContent = watermarked
+            ? `TRIAL EXPORT - WATERMARKED\n${interactionLogCSV}`
+            : interactionLogCSV;
+          archive.append(Buffer.from(interactionContent, "utf-8"), {
             name: `${baseFilename}_interaction_log.csv`,
           });
         } catch (csvError) {
@@ -128,12 +144,17 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
 /**
  * Generate export filename
  */
-export function generateExportFilename(workspaceName: string, clientName: string): string {
+export function generateExportFilename(
+  workspaceName: string,
+  clientName: string,
+  options?: { watermarked?: boolean }
+): string {
   const sanitize = (str: string): string => {
     return str.replace(/[^a-z0-9]/gi, "_").toLowerCase();
   };
 
   const exportDate = new Date().toISOString().split("T")[0];
-  return `${sanitize(workspaceName)}_${sanitize(clientName)}_${exportDate}_audit_pack.zip`;
+  const suffix = options?.watermarked ? "_trial" : "";
+  return `${sanitize(workspaceName)}_${sanitize(clientName)}_${exportDate}${suffix}_audit_pack.zip`;
 }
 

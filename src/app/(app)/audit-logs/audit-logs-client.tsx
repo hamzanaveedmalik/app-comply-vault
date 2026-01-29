@@ -84,6 +84,7 @@ const getActionPillClass = (action: string) => {
       return "bg-purple-100 text-purple-700 border-purple-200";
     case "DELETE":
     case "OVERRIDE":
+    case "MEMBER_REMOVED":
       return "bg-red-100 text-red-700 border-red-200";
     default:
       return "bg-slate-100 text-slate-700 border-slate-200";
@@ -124,6 +125,8 @@ const getActionLabel = (action: string) => {
       return "Invite resent";
     case "INVITE_ACCEPTED":
       return "Invite accepted";
+    case "MEMBER_REMOVED":
+      return "Member removed";
     default:
       return action.replace(/_/g, " ").toLowerCase();
   }
@@ -252,6 +255,7 @@ export default function AuditLogsClient({
                   <SelectItem value="INVITE_SENT">Invite sent</SelectItem>
                   <SelectItem value="INVITE_RESENT">Invite resent</SelectItem>
                   <SelectItem value="INVITE_ACCEPTED">Invite accepted</SelectItem>
+                  <SelectItem value="MEMBER_REMOVED">Member removed</SelectItem>
                 </SelectContent>
               </Select>
             </div>

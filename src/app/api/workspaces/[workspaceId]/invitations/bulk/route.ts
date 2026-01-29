@@ -3,6 +3,7 @@ import { db } from "~/server/db";
 import { sendInvitationEmail } from "~/server/email";
 import { z } from "zod";
 import { randomBytes } from "crypto";
+import { getEntitlements, isPaywallBypassed, isTrialExpired } from "~/server/billing/entitlements";
 
 const bulkInviteSchema = z.object({
   invitations: z.array(
@@ -65,6 +66,13 @@ export async function POST(
           },
         },
       },
+      select: {
+        id: true,
+        name: true,
+        billingStatus: true,
+        planTier: true,
+        trialEndsAt: true,
+      },
     });
 
     if (!workspace) {
@@ -78,6 +86,28 @@ export async function POST(
       resent: [] as Array<{ email: string; role: string; invitationId: string }>,
       skipped: [] as Array<{ email: string; reason: string }>,
     };
+
+    let remainingSeats = Infinity;
+    if (!isPaywallBypassed(workspace.billingStatus)) {
+      if (workspace.billingStatus === "TRIALING" && isTrialExpired(workspace.trialEndsAt)) {
+        return Response.json(
+          { error: "Trial expired. Please upgrade to invite users." },
+          { status: 402 }
+        );
+      }
+      if (workspace.billingStatus !== "ACTIVE" && workspace.billingStatus !== "TRIALING") {
+        return Response.json(
+          { error: "Subscription inactive. Please update billing to invite users." },
+          { status: 402 }
+        );
+      }
+      const ent = getEntitlements(workspace);
+      const memberCount = await db.userWorkspace.count({ where: { workspaceId } });
+      const pendingInvites = await db.invitation.count({
+        where: { workspaceId, acceptedAt: null, expiresAt: { gt: new Date() } },
+      });
+      remainingSeats = ent.maxUsers - (memberCount + pendingInvites);
+    }
 
     // Process each invitation
     for (const { email, role } of invitations) {
@@ -152,6 +182,11 @@ export async function POST(
           }
         }
 
+        if (remainingSeats <= 0) {
+          results.skipped.push({ email, reason: "User limit reached for current plan" });
+          continue;
+        }
+
         // Create new invitation
         const token = randomBytes(32).toString("hex");
         const expiresAt = new Date();
@@ -204,6 +239,9 @@ export async function POST(
           role,
           invitationId: invitation.id,
         });
+        if (remainingSeats !== Infinity) {
+          remainingSeats -= 1;
+        }
       } catch (error) {
         console.error(`Error processing invitation for ${email}:`, error);
         results.skipped.push({

@@ -1,0 +1,10 @@
+installation:
+  version: 6.0.0-alpha.23
+  installDate: 2026-01-22T00:44:01.658Z
+  lastUpdated: 2026-01-22T00:44:01.658Z
+modules:
+  - core
+  - bmb
+  - bmm
+ides:
+  - cursor

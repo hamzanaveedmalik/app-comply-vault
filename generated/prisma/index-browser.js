@@ -321,6 +321,16 @@ exports.Prisma.InvitationScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.LeadScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  name: 'name',
+  company: 'company',
+  source: 'source',
+  ipAddress: 'ipAddress',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -472,7 +482,8 @@ exports.Prisma.ModelName = {
   Session: 'Session',
   User: 'User',
   VerificationToken: 'VerificationToken',
-  Invitation: 'Invitation'
+  Invitation: 'Invitation',
+  Lead: 'Lead'
 };
 
 /**

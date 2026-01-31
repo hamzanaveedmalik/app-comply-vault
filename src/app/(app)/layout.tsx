@@ -1,4 +1,4 @@
-import { auth } from "~/server/auth";
+import { requireAuthAndEmailVerified } from "~/server/auth/guards";
 import { db } from "~/server/db";
 import { redirect } from "next/navigation";
 import { Sidebar } from "~/components/sidebar";
@@ -9,12 +9,21 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect("/auth/signin");
+  // Require authentication and email verification for all app routes
+  // Individual pages will enforce workspace membership and entitlements
+  const authCheck = await requireAuthAndEmailVerified();
+  
+  if (!authCheck.ok) {
+    if (authCheck.status === 401) {
+      redirect("/auth/signin");
+    }
+    redirect(`/auth/signin?error=${encodeURIComponent(authCheck.error)}`);
   }
 
+  const { session } = authCheck;
+
+  // If user has a workspace, fetch it for the UI
+  // If not, they'll be on the workspace creation page
   const workspace =
     session.user.workspaceId && session.user.workspaceId !== ""
       ? await db.workspace.findUnique({
@@ -22,10 +31,6 @@ export default async function AppLayout({
           select: { billingStatus: true },
         })
       : null;
-
-  // Note: Workspace check is handled in middleware
-  // This layout only checks authentication
-  // The workspace creation page is allowed to render without a workspace
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -194,9 +194,9 @@ export default async function MeetingDetailPage({
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold">
-        {openCriticalFlags.length > 0
-          ? `Blocked: ${openCriticalFlags.length} critical flag${openCriticalFlags.length > 1 ? "s" : ""} open`
-          : "Ready: no critical flags open"}
+                  {openCriticalFlags.length > 0
+                    ? `Blocked: ${openCriticalFlags.length} critical flag${openCriticalFlags.length > 1 ? "s" : ""} open`
+                    : "Ready: no critical flags open"}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {openWarningFlags.length > 0

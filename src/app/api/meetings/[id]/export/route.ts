@@ -1,10 +1,10 @@
-import { auth } from "~/server/auth";
+import { requireAppAccess } from "~/server/auth/guards";
 import { db } from "~/server/db";
 import { generateAuditPack, generateExportFilename } from "~/server/export";
 import type { ExtractionData } from "~/server/extraction/types";
 import type { TranscriptSegment } from "~/server/transcription/types";
 import type { Meeting, User } from "~/server/export/types";
-import { getEntitlements, isPaywallBypassed, isTrialExpired } from "~/server/billing/entitlements";
+import { getEntitlements, isTrialExpired } from "~/server/billing/entitlements";
 
 // Force Node.js runtime for this route (needed for Buffer and archiver)
 export const runtime = "nodejs";
@@ -14,10 +14,13 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.workspaceId) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    const access = await requireAppAccess();
+    if (!access.ok) {
+      return Response.json({ error: access.error }, { status: access.status });
     }
+    // TypeScript narrowing: access.ok === true means we have session and workspaceId
+    const session = access.session;
+    const workspaceId = access.workspaceId;
 
     const { id } = await params;
 
@@ -25,7 +28,7 @@ export async function POST(
     const meeting = await db.meeting.findFirst({
       where: {
         id,
-        workspaceId: session.user.workspaceId,
+        workspaceId: workspaceId,
       },
     });
 
@@ -92,31 +95,27 @@ export async function POST(
       );
     }
 
-    // Get workspace
+    // Get workspace for export metadata
+    // Note: requireAppAccess already validates workspace exists and user has access
     const workspace = await db.workspace.findUnique({
-      where: { id: session.user.workspaceId },
+      where: { id: workspaceId },
     });
 
     if (!workspace) {
       return Response.json({ error: "Workspace not found" }, { status: 404 });
     }
 
-    if (!isPaywallBypassed(workspace.billingStatus)) {
-      if (
-        workspace.billingStatus !== "ACTIVE" &&
-        workspace.billingStatus !== "TRIALING"
-      ) {
-        return Response.json(
-          { error: "Subscription inactive. Please update billing to export." },
-          { status: 402 }
-        );
-      }
-    }
-
+    // Determine if export should be watermarked
+    // requireAppAccess already ensures workspace is active/trialing, so we only need to check for watermarking
     const trialExpired =
       workspace.billingStatus === "TRIALING" && isTrialExpired(workspace.trialEndsAt);
-    const entitlements = getEntitlements(workspace);
-    const watermarked = entitlements.exportsWatermarked || trialExpired;
+    const entitlements = getEntitlements({
+      billingStatus: workspace.billingStatus,
+      planTier: workspace.planTier,
+      trialEndsAt: workspace.trialEndsAt,
+    });
+    // getEntitlements always returns a value (fallback to ENTITLEMENTS.FREE)
+    const watermarked = (entitlements?.exportsWatermarked ?? false) || trialExpired;
 
     // Get version history
     const versionsRaw = await db.version.findMany({
@@ -147,7 +146,7 @@ export async function POST(
       ...meetingWithoutFinalizedBy,
       finalizedBy: finalizedByUser,
     } as Meeting & { finalizedBy?: User | null };
-    
+
     const zipBuffer = await generateAuditPack({
       meeting: meetingForExport,
       extraction,
@@ -161,10 +160,17 @@ export async function POST(
     const filename = generateExportFilename(workspace.name, meeting.clientName, { watermarked });
 
     // Log export event
+    // requireAppAccess ensures session exists and has user
+    // Type assertion needed because TypeScript doesn't narrow the union type properly
+    const userId = (session as { user?: { id?: string } })?.user?.id;
+    if (!userId) {
+      return Response.json({ error: "User ID not found in session" }, { status: 401 });
+    }
+
     await db.auditEvent.create({
       data: {
-        workspaceId: session.user.workspaceId,
-        userId: session.user.id,
+        workspaceId: workspaceId,
+        userId: userId,
         action: "EXPORT",
         resourceType: "meeting",
         resourceId: meeting.id,
@@ -182,7 +188,7 @@ export async function POST(
     // Return ZIP file
     // Convert Buffer to Uint8Array for Edge Runtime compatibility
     const uint8Array = new Uint8Array(zipBuffer);
-    
+
     return new Response(uint8Array, {
       headers: {
         "Content-Type": "application/zip",
@@ -200,7 +206,7 @@ export async function POST(
       name: error instanceof Error ? error.name : undefined,
     });
     return Response.json(
-      { 
+      {
         error: "Failed to export audit pack",
         details: process.env.NODE_ENV === "development" ? errorMessage : undefined,
         stack: process.env.NODE_ENV === "development" ? errorStack : undefined,

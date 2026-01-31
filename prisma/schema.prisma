@@ -445,3 +445,21 @@ model Invitation {
   @@index([workspaceId])
   @@index([email])
 }
+
+// ============================================
+// Lead/Trial Request Models
+// ============================================
+
+model Lead {
+  id        String   @id @default(cuid())
+  email     String
+  name      String?
+  company   String?
+  source    String?  // Marketing source (e.g., "complyvault.co", "complyvault.co/uk")
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@unique([email]) // One lead per email (prevent duplicates)
+  @@index([email])
+  @@index([createdAt])
+}

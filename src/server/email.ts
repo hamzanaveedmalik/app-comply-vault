@@ -128,9 +128,9 @@ export async function sendWelcomeEmail({
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
         <h2>Welcome to Comply Vault, ${userName}!</h2>
         <p>Your trial workspace <strong>${workspaceName}</strong> has been successfully created.</p>
-        <div style="background-color: #d1fae5; border-left: 4px solid #10b981; padding: 12px; margin: 20px 0;">
+          <div style="background-color: #d1fae5; border-left: 4px solid #10b981; padding: 12px; margin: 20px 0;">
           <p style="margin: 0;"><strong>Trial Active:</strong> Your 7-day free trial has started.</p>
-        </div>
+          </div>
         
         <h3 style="margin-top: 30px 0 15px 0;">Onboarding Checklist</h3>
         <p>Get started with these steps:</p>

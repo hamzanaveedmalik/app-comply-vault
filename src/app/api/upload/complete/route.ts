@@ -1,4 +1,4 @@
-import { auth } from "~/server/auth";
+import { requireAppAccess } from "~/server/auth/guards";
 import { db } from "~/server/db";
 import { publishProcessMeetingJob } from "~/server/qstash";
 import { getSignedFileUrl } from "~/server/storage";
@@ -20,10 +20,11 @@ export const runtime = "nodejs";
  */
 export async function POST(request: Request) {
   try {
-    const session = await auth();
-    if (!session?.user?.workspaceId) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    const access = await requireAppAccess();
+    if (!access.ok) {
+      return Response.json({ error: access.error }, { status: access.status });
     }
+    const { session, workspaceId } = access;
 
     const body = await request.json();
     const { meetingId } = completeUploadSchema.parse(body);
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
     const meeting = await db.meeting.findFirst({
       where: {
         id: meetingId,
-        workspaceId: session.user.workspaceId,
+        workspaceId: workspaceId,
       },
     });
 
@@ -94,7 +95,7 @@ export async function POST(request: Request) {
       try {
         const messageId = await publishProcessMeetingJob({
           meetingId: meeting.id,
-          workspaceId: session.user.workspaceId,
+          workspaceId: workspaceId,
           fileUrl: meeting.fileUrl ?? "",
         });
 
@@ -125,7 +126,7 @@ export async function POST(request: Request) {
     // Log upload completion - always log, even if QStash job publishing failed
     await db.auditEvent.create({
       data: {
-        workspaceId: session.user.workspaceId,
+        workspaceId: workspaceId,
         userId: session.user.id,
         action: "UPLOAD",
         resourceType: "meeting",

@@ -1,4 +1,4 @@
-import { auth } from "~/server/auth";
+import { requireAppAccess } from "~/server/auth/guards";
 import { db } from "~/server/db";
 import { z } from "zod";
 import type { ExtractionData } from "~/server/extraction/types";
@@ -26,10 +26,11 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.workspaceId || !session.user.id) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    const access = await requireAppAccess();
+    if (!access.ok) {
+      return Response.json({ error: access.error }, { status: access.status });
     }
+    const { session, workspaceId } = access;
 
     const { id } = await params;
     const body = await request.json();
@@ -39,7 +40,7 @@ export async function POST(
     const meeting = await db.meeting.findFirst({
       where: {
         id,
-        workspaceId: session.user.workspaceId,
+        workspaceId: workspaceId,
       },
     });
 
@@ -172,7 +173,7 @@ export async function POST(
     // Log edit event in audit log
     await db.auditEvent.create({
       data: {
-        workspaceId: session.user.workspaceId,
+        workspaceId: workspaceId,
         userId: session.user.id,
         action: "EDIT",
         resourceType: "meeting",

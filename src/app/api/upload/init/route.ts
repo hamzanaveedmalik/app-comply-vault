@@ -1,4 +1,4 @@
-import { auth } from "~/server/auth";
+import { requireAppAccess } from "~/server/auth/guards";
 import { db } from "~/server/db";
 import { generatePresignedUploadUrl } from "~/server/storage";
 import { validateFile, getContentType } from "~/server/storage-utils";
@@ -22,10 +22,11 @@ const initUploadSchema = z.object({
  */
 export async function POST(request: Request) {
   try {
-    const session = await auth();
-    if (!session?.user?.workspaceId) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    const access = await requireAppAccess();
+    if (!access.ok) {
+      return Response.json({ error: access.error }, { status: access.status });
     }
+    const { session, workspaceId } = access;
 
     const body = await request.json();
     const validation = initUploadSchema.parse(body);
@@ -60,7 +61,7 @@ export async function POST(request: Request) {
     // Create meeting record
     const meeting = await db.meeting.create({
       data: {
-        workspaceId: session.user.workspaceId,
+        workspaceId: workspaceId,
         clientName: validation.clientName,
         meetingType: validation.meetingType,
         meetingDate: new Date(validation.meetingDate),
@@ -73,7 +74,7 @@ export async function POST(request: Request) {
 
     // Generate presigned URL for direct S3 upload
     const { key, uploadUrl } = await generatePresignedUploadUrl(
-      session.user.workspaceId,
+      workspaceId,
       meeting.id,
       validation.fileName,
       getContentType(validation.fileName)
@@ -93,7 +94,7 @@ export async function POST(request: Request) {
     // Log upload initiation
     await db.auditEvent.create({
       data: {
-        workspaceId: session.user.workspaceId,
+        workspaceId: workspaceId,
         userId: session.user.id,
         action: "UPLOAD",
         resourceType: "meeting",

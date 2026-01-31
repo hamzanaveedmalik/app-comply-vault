@@ -1,4 +1,4 @@
-import { auth } from "~/server/auth";
+import { requireAppAccess } from "~/server/auth/guards";
 import { db } from "~/server/db";
 import { NextResponse } from "next/server";
 import { withPerformance } from "~/server/performance";
@@ -16,11 +16,11 @@ interface SearchResult {
 export const GET = withPerformance("Search operation", 
   async function GET(request: Request) {
     try {
-      const session = await auth();
-
-      if (!session?.user?.workspaceId) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      const access = await requireAppAccess();
+      if (!access.ok) {
+        return NextResponse.json({ error: access.error }, { status: access.status });
       }
+      const { workspaceId } = access;
 
       const { searchParams } = new URL(request.url);
       const query = searchParams.get("q")?.trim() || "";
@@ -28,8 +28,6 @@ export const GET = withPerformance("Search operation",
       if (query.length < 2) {
         return NextResponse.json({ results: [] });
       }
-
-      const workspaceId = session.user.workspaceId;
       const results: SearchResult[] = [];
 
     // Parse date range (format: "2024-01-01 to 2024-12-31" or "2024-01-01-2024-12-31")

@@ -373,16 +373,16 @@ export default function AuditLogsClient({
                                 {getMetadataSummary(event.metadata)}
                               </div>
                             )}
-                            <details className="text-xs">
-                              <summary className="cursor-pointer text-muted-foreground hover:text-foreground transition-colors">
-                                View metadata
-                              </summary>
-                              <div className="mt-2 max-w-md">
-                                <pre className="whitespace-pre-wrap break-words text-xs bg-muted p-2 rounded border overflow-auto max-h-48">
-                                  {JSON.stringify(event.metadata, null, 2)}
-                                </pre>
-                              </div>
-                            </details>
+                          <details className="text-xs">
+                            <summary className="cursor-pointer text-muted-foreground hover:text-foreground transition-colors">
+                              View metadata
+                            </summary>
+                            <div className="mt-2 max-w-md">
+                              <pre className="whitespace-pre-wrap break-words text-xs bg-muted p-2 rounded border overflow-auto max-h-48">
+                                {JSON.stringify(event.metadata, null, 2)}
+                              </pre>
+                            </div>
+                          </details>
                           </div>
                         ) : (
                           <span className="text-muted-foreground">—</span>

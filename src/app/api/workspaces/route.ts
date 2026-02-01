@@ -51,13 +51,16 @@ export async function POST(request: Request) {
     const billingCurrency = currency ?? "USD";
     const onboardingType =
       onboarding && onboarding !== "none" ? onboarding.toUpperCase() : null;
-    const isTrialIntent = intent === "trial" || intent === "solo" || intent === "team";
+    
+    // Default to trial if no intent specified (new signups should get a trial)
+    const effectiveIntent = intent ?? "trial";
+    const isTrialIntent = effectiveIntent === "trial" || effectiveIntent === "solo" || effectiveIntent === "team";
     const trialStartedAt = isTrialIntent ? now : null;
     const trialEndsAt = isTrialIntent
       ? new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 7, 0, 0, 0))
       : null;
     const planTier =
-      intent === "solo" ? "SOLO" : intent === "team" ? "TEAM" : "FREE";
+      effectiveIntent === "solo" ? "SOLO" : effectiveIntent === "team" ? "TEAM" : "FREE";
 
     const workspace = await db.workspace.create({
       data: {

@@ -206,7 +206,16 @@ export async function requireAuthAndEmailVerified(): Promise<
     select: { emailVerified: true },
   });
 
-  if (!user?.emailVerified) {
+  // If user doesn't exist in database (e.g., after database flush), treat as unauthenticated
+  if (!user) {
+    return {
+      ok: false,
+      status: 401,
+      error: "User not found. Please sign in again.",
+    };
+  }
+
+  if (!user.emailVerified) {
     return {
       ok: false,
       status: 403,

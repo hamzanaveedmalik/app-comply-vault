@@ -128,7 +128,12 @@ export default function WelcomeClient({
           <CardHeader>
             <CardTitle>Plan overview</CardTitle>
             <CardDescription>
-              {workspace.planTier === "TEAM" ? "Team plan" : "Solo plan"} for {workspace.name}.
+              {workspace.planTier === "TEAM"
+                ? "Team plan"
+                : workspace.planTier === "FREE"
+                  ? "Free Trial"
+                  : "Solo plan"}{" "}
+              for {workspace.name}.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

@@ -11,7 +11,7 @@ export type Entitlements = {
 export const ENTITLEMENTS: Record<PlanTier, Entitlements> = {
   FREE: {
     maxUsers: 1,
-    maxUploadsPerPeriod: 0,
+    maxUploadsPerPeriod: 3, // Free trial gets 3 uploads
     allowApiAccess: false,
     allowZipExport: false,
     exportsWatermarked: true,
@@ -33,9 +33,10 @@ export const ENTITLEMENTS: Record<PlanTier, Entitlements> = {
 };
 
 const getTrialEntitlements = (planTier: PlanTier): Entitlements => {
-  const maxUsers = planTier === "TEAM" ? 10 : 1;
+  // For free trials, always limit to 1 user and low uploads
+  // Even if they selected SOLO or TEAM plan, during trial they get limited access
   return {
-    maxUsers,
+    maxUsers: 1,
     maxUploadsPerPeriod: 3,
     allowApiAccess: false,
     allowZipExport: false,

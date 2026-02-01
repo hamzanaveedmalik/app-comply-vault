@@ -14,13 +14,25 @@ export default async function SignInPage({
   const intentParams = parseBillingIntent(params);
   const intentQuery = buildBillingIntentQuery(intentParams);
 
-  // If already authenticated, redirect based on workspace
+  // If already authenticated, check email verification before redirecting
   if (session?.user) {
-    // Check if user has a workspace (workspaceId should be a non-empty string)
-    if (session.user.workspaceId && session.user.workspaceId !== "") {
-      redirect("/dashboard");
+    // Check if user exists and email is verified
+    const user = await db.user.findUnique({
+      where: { id: session.user.id },
+      select: { emailVerified: true },
+    });
+
+    // If user doesn't exist or email not verified, show sign-in page with error
+    if (!user || !user.emailVerified) {
+      // Don't redirect - show the sign-in form with error message
+      // The error will be displayed in the form
     } else {
-      redirect(`/workspaces/new${intentQuery}`);
+      // User is authenticated and verified - redirect based on workspace
+      if (session.user.workspaceId && session.user.workspaceId !== "") {
+        redirect("/dashboard");
+      } else {
+        redirect(`/workspaces/new${intentQuery}`);
+      }
     }
   }
 

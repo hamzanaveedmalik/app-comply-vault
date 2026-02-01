@@ -131,6 +131,17 @@ export const authConfig = {
   },
   callbacks: {
     signIn: async ({ user, account }) => {
+      // For OAuth providers (Google, etc.), automatically verify email
+      // since the OAuth provider has already verified it
+      if (account?.provider !== "credentials" && user.email) {
+        // Update user to mark email as verified
+        await db.user.update({
+          where: { email: user.email },
+          data: {
+            emailVerified: new Date(),
+          },
+        });
+      }
       // Allow sign-in - account linking will be handled by allowDangerousEmailAccountLinking
       // or manually if needed
       return true;

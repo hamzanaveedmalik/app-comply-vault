@@ -1,4 +1,5 @@
 import { auth } from "~/server/auth";
+import { db } from "~/server/db";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { SignInForm } from "./signin-form";

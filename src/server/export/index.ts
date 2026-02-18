@@ -1,10 +1,22 @@
 import archiver from "archiver";
+import path from "node:path";
 import type { Meeting, User, Version, Workspace } from "./types";
 import type { ExtractionData } from "../extraction/types";
 import type { TranscriptSegment } from "../transcription/types";
 import { generateComplianceNotePDF } from "./pdf";
-import { generateEvidenceMapCSV, generateVersionHistoryCSV, generateInteractionLogCSV } from "./csv";
+import { generateEvidenceMapCSV, generateVersionHistoryCSV } from "./csv";
 import { generateTranscriptTXT } from "./txt";
+import {
+  buildExportPayload,
+  runPythonPDFGenerator,
+} from "./python-pdf";
+
+export interface ExportFlag {
+  type: string;
+  severity: string;
+  status: string;
+  evidence?: unknown;
+}
 
 interface ExportData {
   meeting: Meeting & { finalizedBy?: User | null };
@@ -12,6 +24,7 @@ interface ExportData {
   transcript: { segments: TranscriptSegment[] } | null;
   versions: Version[];
   workspace: Workspace;
+  flags: ExportFlag[];
   watermarked?: boolean;
 }
 
@@ -38,95 +51,77 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
     // Use async IIFE to handle async operations
     (async () => {
       try {
-        const { meeting, extraction, transcript, versions, workspace, watermarked = false } = data;
+        const { meeting, extraction, transcript, versions, workspace, flags, watermarked = false } = data;
 
-        // Sanitize filename components
-        const sanitizeFilename = (str: string): string => {
-          return str.replace(/[^a-z0-9]/gi, "_").toLowerCase();
+        // Slugify: lowercase, letters/numbers/underscores only, spaces → underscores
+        const slugify = (str: string): string => {
+          return str
+            .toLowerCase()
+            .replace(/\s+/g, "_")
+            .replace(/[^a-z0-9_]/g, "")
+            .replace(/_+/g, "_")
+            .replace(/^_|_$/g, "") || "client";
         };
 
-        const clientName = sanitizeFilename(meeting.clientName);
-        const exportDate = new Date().toISOString().split("T")[0];
-        const baseFilename = `${sanitizeFilename(workspace.name)}_${clientName}_${exportDate}${
-          watermarked ? "_trial" : ""
-        }`;
-
-        // 1. Generate and add PDF
+        // 1. Generate PDF (Python ReportLab first, silent fallback to jsPDF)
+        let pdfBuffer: Buffer;
+        const logoPath = path.join(process.cwd(), "public", "complyvault-logo.png");
         try {
-          const pdfBuffer = await generateComplianceNotePDF({
+          const payload = buildExportPayload(
+            meeting,
+            extraction,
+            transcript,
+            versions,
+            workspace,
+            flags,
+            watermarked
+          );
+          pdfBuffer = await runPythonPDFGenerator(payload, logoPath);
+        } catch {
+          pdfBuffer = await generateComplianceNotePDF({
             meeting,
             extraction,
             workspaceName: workspace.name,
             watermarked,
           });
-          archive.append(pdfBuffer, { name: `${baseFilename}_compliance_note.pdf` });
-        } catch (pdfError) {
-          console.error("PDF generation error:", pdfError);
-          reject(new Error(`PDF generation failed: ${pdfError instanceof Error ? pdfError.message : "Unknown error"}`));
-          return;
         }
+        archive.append(pdfBuffer, { name: "01_Compliance_Note.pdf" });
 
-        // 2. Generate and add Evidence Map CSV
-        try {
-          const evidenceMapCSV = generateEvidenceMapCSV(extraction);
-          const evidenceContent = watermarked
-            ? `TRIAL EXPORT - WATERMARKED\n${evidenceMapCSV}`
-            : evidenceMapCSV;
-          archive.append(Buffer.from(evidenceContent, "utf-8"), {
-            name: `${baseFilename}_evidence_map.csv`,
+        // 2. Evidence Map CSV
+        const evidenceMapCSV = generateEvidenceMapCSV(
+          extraction,
+          transcript?.segments
+        );
+        const evidenceContent = watermarked
+          ? `TRIAL EXPORT - WATERMARKED\n${evidenceMapCSV}`
+          : evidenceMapCSV;
+        archive.append(Buffer.from(evidenceContent, "utf-8"), {
+          name: "02_Evidence_Map.csv",
+        });
+
+        // 3. Version History CSV
+        const versionHistoryCSV = generateVersionHistoryCSV(versions);
+        const versionContent = watermarked
+          ? `TRIAL EXPORT - WATERMARKED\n${versionHistoryCSV}`
+          : versionHistoryCSV;
+        archive.append(Buffer.from(versionContent, "utf-8"), {
+          name: "03_Version_History.csv",
+        });
+
+        // 4. Transcript TXT
+        if (transcript?.segments) {
+          const transcriptTXT = generateTranscriptTXT(transcript.segments);
+          const transcriptContent = watermarked
+            ? `TRIAL EXPORT - WATERMARKED\n${transcriptTXT}`
+            : transcriptTXT;
+          archive.append(Buffer.from(transcriptContent, "utf-8"), {
+            name: "04_Transcript.txt",
           });
-        } catch (csvError) {
-          console.error("Evidence Map CSV generation error:", csvError);
-          reject(new Error(`Evidence Map CSV generation failed: ${csvError instanceof Error ? csvError.message : "Unknown error"}`));
-          return;
         }
 
-        // 3. Generate and add Version History CSV
-        try {
-          const versionHistoryCSV = generateVersionHistoryCSV(versions);
-          const versionContent = watermarked
-            ? `TRIAL EXPORT - WATERMARKED\n${versionHistoryCSV}`
-            : versionHistoryCSV;
-          archive.append(Buffer.from(versionContent, "utf-8"), {
-            name: `${baseFilename}_version_history.csv`,
-          });
-        } catch (csvError) {
-          console.error("Version History CSV generation error:", csvError);
-          reject(new Error(`Version History CSV generation failed: ${csvError instanceof Error ? csvError.message : "Unknown error"}`));
-          return;
-        }
-
-        // 4. Generate and add Transcript TXT
-        if (transcript && transcript.segments) {
-          try {
-            const transcriptTXT = generateTranscriptTXT(transcript.segments);
-            const transcriptContent = watermarked
-              ? `TRIAL EXPORT - WATERMARKED\n${transcriptTXT}`
-              : transcriptTXT;
-            archive.append(Buffer.from(transcriptContent, "utf-8"), {
-              name: `${baseFilename}_transcript.txt`,
-            });
-          } catch (txtError) {
-            console.error("Transcript TXT generation error:", txtError);
-            reject(new Error(`Transcript TXT generation failed: ${txtError instanceof Error ? txtError.message : "Unknown error"}`));
-            return;
-          }
-        }
-
-        // 5. Generate and add Interaction Log CSV
-        try {
-          const interactionLogCSV = generateInteractionLogCSV(meeting, extraction);
-          const interactionContent = watermarked
-            ? `TRIAL EXPORT - WATERMARKED\n${interactionLogCSV}`
-            : interactionLogCSV;
-          archive.append(Buffer.from(interactionContent, "utf-8"), {
-            name: `${baseFilename}_interaction_log.csv`,
-          });
-        } catch (csvError) {
-          console.error("Interaction Log CSV generation error:", csvError);
-          reject(new Error(`Interaction Log CSV generation failed: ${csvError instanceof Error ? csvError.message : "Unknown error"}`));
-          return;
-        }
+        // 5. README.txt
+        const readmeText = generateReadmeTXT(watermarked);
+        archive.append(Buffer.from(readmeText, "utf-8"), { name: "README.txt" });
 
         // Finalize the archive
         archive.finalize().catch((err) => {
@@ -143,18 +138,42 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
 
 /**
  * Generate export filename
+ * Format: [SlugifiedClientName]_[YYYY-MM-DD]_AuditPack.zip
  */
 export function generateExportFilename(
-  workspaceName: string,
+  _workspaceName: string,
   clientName: string,
   options?: { watermarked?: boolean }
 ): string {
-  const sanitize = (str: string): string => {
-    return str.replace(/[^a-z0-9]/gi, "_").toLowerCase();
-  };
+  const slugify = (str: string): string =>
+    str
+      .toLowerCase()
+      .replace(/\s+/g, "_")
+      .replace(/[^a-z0-9_]/g, "")
+      .replace(/_+/g, "_")
+      .replace(/^_|_$/g, "") || "client";
 
   const exportDate = new Date().toISOString().split("T")[0];
   const suffix = options?.watermarked ? "_trial" : "";
-  return `${sanitize(workspaceName)}_${sanitize(clientName)}_${exportDate}${suffix}_audit_pack.zip`;
+  return `${slugify(clientName)}_${exportDate}_AuditPack${suffix}.zip`;
 }
 
+function generateReadmeTXT(watermarked: boolean): string {
+  const prefix = watermarked ? "TRIAL EXPORT - WATERMARKED\n\n" : "";
+  return (
+    prefix +
+    "ComplyVault Audit Pack Contents\n" +
+    "====================================\n\n" +
+    "01_Compliance_Note.pdf\n" +
+    "  Branded compliance note containing cover summary, structured compliance sections\n" +
+    "  (topics, recommendations, disclosures), evidence map, and advisor sign-off.\n\n" +
+    "02_Evidence_Map.csv\n" +
+    "  Links each compliance claim to its source in the meeting transcript.\n\n" +
+    "03_Version_History.csv\n" +
+    "  Full audit trail of edits to the compliance note.\n\n" +
+    "04_Transcript.txt\n" +
+    "  Speaker-labeled, timestamped transcript in [HH:MM:SS] Speaker: text format.\n\n" +
+    "This pack is designed to satisfy examiner requests for source documentation.\n" +
+    "complyvault.co"
+  );
+}

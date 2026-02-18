@@ -117,6 +117,17 @@ export async function POST(
     // getEntitlements always returns a value (fallback to ENTITLEMENTS.FREE)
     const watermarked = (entitlements?.exportsWatermarked ?? false) || trialExpired;
 
+    // Get flags for this meeting
+    const flagsRaw = await db.flag.findMany({
+      where: { meetingId: meeting.id },
+    });
+    const flags = flagsRaw.map((f) => ({
+      type: f.type,
+      severity: f.severity,
+      status: f.status,
+      evidence: f.evidence,
+    }));
+
     // Get version history
     const versionsRaw = await db.version.findMany({
       where: {
@@ -153,6 +164,7 @@ export async function POST(
       transcript,
       versions,
       workspace,
+      flags,
       watermarked,
     });
 

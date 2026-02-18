@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 
@@ -8,12 +9,14 @@ interface ExportButtonProps {
   meetingId: string;
   status: string;
   hasExtraction: boolean;
+  openFlagsCount?: number;
 }
 
 export default function ExportButton({
   meetingId,
   status,
   hasExtraction,
+  openFlagsCount: _openFlagsCount,
 }: ExportButtonProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -81,7 +84,14 @@ export default function ExportButton({
         disabled={isExporting}
         variant="default"
       >
-        {isExporting ? "Exporting..." : "Export Audit Pack"}
+        {isExporting ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Exporting...
+          </>
+        ) : (
+          "Export Audit Pack"
+        )}
       </Button>
       {error && (
         <Alert variant="destructive">
@@ -89,7 +99,7 @@ export default function ExportButton({
         </Alert>
       )}
       <p className="text-xs text-muted-foreground">
-        Downloads a ZIP file containing PDF, CSV, and TXT exports
+        Downloads a ZIP file with branded PDF, Evidence Map, Version History, and Transcript
       </p>
     </div>
   );

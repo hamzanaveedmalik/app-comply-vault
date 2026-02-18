@@ -1,14 +1,38 @@
-import type { ExtractionData, EvidenceMapItem } from "../extraction/types";
+import type { ExtractionData } from "../extraction/types";
+import type { TranscriptSegment } from "../transcription/types";
 import type { Version } from "./types";
+
+function getSpeakerAtTime(segments: TranscriptSegment[], startTime: number): string {
+  for (const s of segments) {
+    const start = s.startTime ?? 0;
+    const end = s.endTime ?? start + 60;
+    if (start <= startTime && startTime <= end) return s.speaker ?? "Unknown";
+  }
+  return "Unknown";
+}
 
 /**
  * Generate Evidence Map CSV
+ * Columns: Evidence ID, Compliance Claim, Section Reference, Timestamp, Speaker,
+ * Transcript Snippet, Confidence Score, Flag Triggered, Notes
  */
-export function generateEvidenceMapCSV(extraction: ExtractionData): string {
-  const headers = ["Field", "Claim", "Start Time", "End Time", "Transcript Snippet", "Confidence", "Edited"];
+export function generateEvidenceMapCSV(
+  extraction: ExtractionData,
+  segments?: TranscriptSegment[]
+): string {
+  const headers = [
+    "Evidence ID",
+    "Compliance Claim",
+    "Section Reference",
+    "Timestamp",
+    "Speaker",
+    "Transcript Snippet",
+    "Confidence Score",
+    "Flag Triggered",
+    "Notes",
+  ];
   const rows: string[][] = [headers];
 
-  // Escape CSV values (handle commas, quotes, newlines)
   const escapeCSV = (value: string): string => {
     if (value.includes(",") || value.includes('"') || value.includes("\n")) {
       return `"${value.replace(/"/g, '""')}"`;
@@ -20,20 +44,25 @@ export function generateEvidenceMapCSV(extraction: ExtractionData): string {
     return headers.join(",") + "\n";
   }
 
-  extraction.evidenceMap.forEach((item) => {
-    const startTime = formatTime(item.startTime ?? 0);
-    const endTime = formatTime(item.endTime ?? 0);
-    const confidence = item.confidence !== undefined && item.confidence !== null ? item.confidence.toFixed(2) : "";
-    const edited = item.edited ? "Yes" : "No";
-
+  const segs = segments ?? [];
+  extraction.evidenceMap.forEach((item, i) => {
+    const startTime = item.startTime ?? 0;
+    const timestamp = formatTime(startTime);
+    const speaker = getSpeakerAtTime(segs, startTime);
+    const confidence =
+      item.confidence !== undefined && item.confidence !== null
+        ? (item.confidence * 100).toFixed(0) + "%"
+        : "";
     rows.push([
-      item.field ?? "",
+      `E${i + 1}`,
       escapeCSV(item.claim ?? ""),
-      startTime,
-      endTime,
+      item.field ?? "",
+      timestamp,
+      escapeCSV(speaker),
       escapeCSV(item.snippet ?? ""),
       confidence,
-      edited,
+      "",
+      item.edited ? "Edited" : "",
     ]);
   });
 
@@ -42,34 +71,49 @@ export function generateEvidenceMapCSV(extraction: ExtractionData): string {
 
 /**
  * Generate Version History CSV
+ * Columns: Version, Timestamp, User, Role, Action Type, Section Affected,
+ * Field Changed, Previous Value, New Value, Reason/Notes
  */
 export function generateVersionHistoryCSV(versions: Version[]): string {
-  const headers = ["Version", "Editor", "Timestamp", "What Changed", "Reason"];
+  const headers = [
+    "Version",
+    "Timestamp",
+    "User",
+    "Role",
+    "Action Type",
+    "Section Affected",
+    "Field Changed",
+    "Previous Value",
+    "New Value",
+    "Reason/Notes",
+  ];
   const rows: string[][] = [headers];
+
+  const escapeCSV = (value: string): string => {
+    if (value.includes(",") || value.includes('"') || value.includes("\n")) {
+      return `"${value.replace(/"/g, '""')}"`;
+    }
+    return value;
+  };
 
   versions.forEach((version) => {
     const timestamp = new Date(version.timestamp).toLocaleString();
-    const whatChanged = version.whatChanged || "N/A";
-    const reason = version.reason || "N/A";
-
-    // Escape CSV values
-    const escapeCSV = (value: string): string => {
-      if (value.includes(",") || value.includes('"') || value.includes("\n")) {
-        return `"${value.replace(/"/g, '""')}"`;
-      }
-      return value;
-    };
-
+    const whatChanged = version.whatChanged || "";
+    const reason = version.reason || "";
     rows.push([
       version.version.toString(),
-      version.editorId || "Unknown",
       timestamp,
+      version.editorId || "Unknown",
+      "",
+      "Edit",
+      "",
+      "",
+      "",
       escapeCSV(whatChanged),
       escapeCSV(reason),
     ]);
   });
 
-  // If no versions, return header only
   if (versions.length === 0) {
     return headers.join(",") + "\n";
   }

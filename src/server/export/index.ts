@@ -1,15 +1,12 @@
 import archiver from "archiver";
-import path from "node:path";
 import type { Meeting, User, Version, Workspace } from "./types";
 import type { ExtractionData } from "../extraction/types";
 import type { TranscriptSegment } from "../transcription/types";
 import { generateComplianceNotePDF } from "./pdf";
 import { generateEvidenceMapCSV, generateVersionHistoryCSV } from "./csv";
 import { generateTranscriptTXT } from "./txt";
-import {
-  buildExportPayload,
-  runPythonPDFGenerator,
-} from "./python-pdf";
+import { buildExportPayload } from "./python-pdf";
+import { generateBrandedPDF } from "./pdf-branded";
 
 export interface ExportFlag {
   type: string;
@@ -63,9 +60,8 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
             .replace(/^_|_$/g, "") || "client";
         };
 
-        // 1. Generate PDF (Python ReportLab first, silent fallback to jsPDF)
+        // 1. Generate branded PDF (PDFKit, works on Vercel; silent fallback to jsPDF)
         let pdfBuffer: Buffer;
-        const logoPath = path.join(process.cwd(), "public", "complyvault-logo.png");
         try {
           const payload = buildExportPayload(
             meeting,
@@ -76,7 +72,7 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
             flags,
             watermarked
           );
-          pdfBuffer = await runPythonPDFGenerator(payload, logoPath);
+          pdfBuffer = await generateBrandedPDF(payload);
         } catch {
           pdfBuffer = await generateComplianceNotePDF({
             meeting,

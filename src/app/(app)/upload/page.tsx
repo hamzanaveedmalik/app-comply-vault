@@ -171,8 +171,8 @@ export default function UploadPage() {
           throw new Error(errorMessage);
         }
 
-        // Redirect to meeting detail page
-        router.push(`/meetings/${meetingId}`);
+        // Redirect to dashboard
+        router.push("/dashboard");
       } else {
         // Transcript-only upload
         let transcriptResponse;
@@ -210,7 +210,8 @@ export default function UploadPage() {
         if (!data.meetingId) {
           throw new Error("No meeting ID received from server");
         }
-        router.push(`/meetings/${data.meetingId}`);
+        // Redirect to dashboard
+        router.push("/dashboard");
       }
     } catch (err) {
       let errorMessage = "An error occurred";

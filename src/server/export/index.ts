@@ -1,3 +1,4 @@
+import path from "node:path";
 import archiver from "archiver";
 import type { Meeting, User, Version, Workspace } from "./types";
 import type { ExtractionData } from "../extraction/types";
@@ -5,8 +6,7 @@ import type { TranscriptSegment } from "../transcription/types";
 import { generateComplianceNotePDF } from "./pdf";
 import { generateEvidenceMapCSV, generateVersionHistoryCSV } from "./csv";
 import { generateTranscriptTXT } from "./txt";
-import { buildExportPayload } from "./python-pdf";
-import { generateBrandedPDF } from "./pdf-branded";
+import { buildExportPayload, runPythonPDFGenerator } from "./python-pdf";
 
 export interface ExportFlag {
   type: string;
@@ -23,6 +23,7 @@ interface ExportData {
   workspace: Workspace;
   flags: ExportFlag[];
   watermarked?: boolean;
+  exportingUserName?: string;
 }
 
 /**
@@ -48,7 +49,16 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
     // Use async IIFE to handle async operations
     (async () => {
       try {
-        const { meeting, extraction, transcript, versions, workspace, flags, watermarked = false } = data;
+        const {
+          meeting,
+          extraction,
+          transcript,
+          versions,
+          workspace,
+          flags,
+          watermarked = false,
+          exportingUserName,
+        } = data;
 
         // Slugify: lowercase, letters/numbers/underscores only, spaces → underscores
         const slugify = (str: string): string => {
@@ -60,7 +70,7 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
             .replace(/^_|_$/g, "") || "client";
         };
 
-        // 1. Generate branded PDF (PDFKit, works on Vercel; silent fallback to jsPDF)
+        // 1. Generate branded PDF (Python ReportLab first; silent fallback to jsPDF)
         let pdfBuffer: Buffer;
         try {
           const payload = buildExportPayload(
@@ -70,9 +80,11 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
             versions,
             workspace,
             flags,
-            watermarked
+            watermarked,
+            { exportingUserName }
           );
-          pdfBuffer = await generateBrandedPDF(payload);
+          const logoPath = path.join(process.cwd(), "public", "complyvault-logo.png");
+          pdfBuffer = await runPythonPDFGenerator(payload, logoPath);
         } catch {
           pdfBuffer = await generateComplianceNotePDF({
             meeting,

@@ -158,6 +158,12 @@ export async function POST(
       finalizedBy: finalizedByUser,
     } as Meeting & { finalizedBy?: User | null };
 
+    const sessionUser = session?.user;
+    const exportingUserName =
+      (sessionUser as { name?: string })?.name ??
+      (sessionUser as { email?: string })?.email ??
+      "System";
+
     const zipBuffer = await generateAuditPack({
       meeting: meetingForExport,
       extraction,
@@ -166,6 +172,7 @@ export async function POST(
       workspace,
       flags,
       watermarked,
+      exportingUserName,
     });
 
     // Generate filename

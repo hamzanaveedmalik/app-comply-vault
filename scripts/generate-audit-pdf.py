@@ -3,6 +3,7 @@
 Generate branded ComplyVault compliance note PDF using ReportLab.
 Reads JSON payload from stdin, outputs PDF to stdout.
 Usage: python generate-audit-pdf.py [--logo-path /path/to/logo.png]
+Matches exact styling from ComplyVault sample PDF.
 """
 
 import argparse
@@ -15,7 +16,6 @@ try:
     from reportlab.lib import colors
     from reportlab.lib.pagesizes import letter
     from reportlab.lib.styles import ParagraphStyle
-    from reportlab.lib.utils import ImageReader
     from reportlab.pdfgen import canvas
     from reportlab.platypus import (
         KeepTogether,
@@ -30,7 +30,7 @@ except ImportError as e:
     print(f"ReportLab required: {e}", file=sys.stderr)
     sys.exit(1)
 
-# Brand colors
+# Color palette (exact hex from spec)
 DARK_GREEN = colors.HexColor("#0D2818")
 MID_GREEN = colors.HexColor("#1A4731")
 ACCENT_GREEN = colors.HexColor("#2ECC71")
@@ -48,6 +48,9 @@ AMBER_TEXT = colors.HexColor("#92400E")
 BORDER_LIGHT = colors.HexColor("#D1FAE5")
 GRID_LIGHT = colors.HexColor("#E5E7EB")
 NOTICE_BG = colors.HexColor("#F9FAFB")
+NOTICE_BORDER = colors.HexColor("#D1FAE5")
+FOOTER_GRAY = colors.HexColor("#9CA3AF")
+NOTICE_TEXT = colors.HexColor("#374151")
 
 PAGE_W = 612
 PAGE_H = 792
@@ -76,19 +79,21 @@ def truncate_lines(text, max_lines, ellipsis="..."):
     """Truncate text to max_lines, add ellipsis after."""
     if not text:
         return ""
-    lines = text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    lines = str(text).replace("\r\n", "\n").replace("\r", "\n").split("\n")
     result = []
     for i, line in enumerate(lines):
         if i >= max_lines:
             return "\n".join(result) + ellipsis
-        result.append(line.strip())
+        result.append(line.strip()[:500])
     return "\n".join(result) if result else ""
 
 
 def get_speaker_at_time(segments, start_time):
     """Find speaker for a given timestamp from transcript segments."""
     for s in segments or []:
-        if s.get("startTime", 0) <= start_time <= s.get("endTime", float("inf")):
+        start = s.get("startTime", 0)
+        end = s.get("endTime", float("inf"))
+        if start <= start_time <= end:
             return s.get("speaker", "Unknown")
     return "Unknown"
 
@@ -99,63 +104,59 @@ def severity_to_spec(sev):
     return m.get(str(sev).upper(), "INFO")
 
 
-def build_header_footer(data):
-    """Return (header_func, footer_func) for canvas."""
+def build_header_footer_watermark(data):
+    """Return (header_func, footer_func, watermark_func) for canvas."""
     firm = data.get("firm_name", "Firm")
     client = data.get("client_name", "Client")
-    advisor = data.get("advisor_name", "Advisor")
-    date_str = data.get("date", "")[:10] if data.get("date") else ""
+    date_str = (data.get("date") or "")[:10]
     logo_path = data.get("_logo_path")
     watermarked = data.get("watermarked", False)
 
+    header_right_top = "REDACTED SAMPLE DOCUMENT" if watermarked else "COMPLIANCE AUDIT PACK"
+    header_right_bottom = "complyvault.co"
+
     def header(canv, doc):
         h = PAGE_H
-        # Dark green header rect
         canv.setFillColor(DARK_GREEN)
         canv.rect(0, h - HEADER_H, PAGE_W, HEADER_H, fill=1, stroke=0)
-        # Logo
+
         if logo_path and os.path.isfile(logo_path):
             try:
-                img = ImageReader(logo_path)
-                img_w, img_h = img.getSize()
-                scale = min(LOGO_W / img_w, LOGO_H / img_h) if img_w and img_h else 1
-                w, ht = LOGO_W, LOGO_H
                 x_logo = 32
                 y_logo = h - HEADER_H + (HEADER_H - LOGO_H) / 2
-                canv.drawImage(logo_path, x_logo, y_logo, width=w, height=ht)
+                canv.drawImage(logo_path, x_logo, y_logo, width=LOGO_W, height=LOGO_H)
             except Exception:
                 pass
-        # ComplyVault text
+
         canv.setFillColor(colors.white)
         canv.setFont("Helvetica-Bold", 13)
         canv.drawString(72, h - 30, "ComplyVault")
-        # Right side
+
         canv.setFillColor(ACCENT_GREEN)
         canv.setFont("Helvetica", 7.5)
-        canv.drawRightString(PAGE_W - 36, h - 22, "COMPLIANCE AUDIT PACK")
-        canv.setFillColor(GRAY)
-        canv.drawRightString(PAGE_W - 36, h - 36, f"{firm}  ·  {date_str}")
+        canv.drawRightString(PAGE_W - 36, h - 22, header_right_top)
+
+        canv.setFillColor(FOOTER_GRAY)
+        canv.drawRightString(PAGE_W - 36, h - 36, header_right_bottom)
 
     def footer(canv, doc):
         page_num = canv.getPageNumber()
-        # Dark green footer rect
         canv.setFillColor(DARK_GREEN)
         canv.rect(0, 0, PAGE_W, FOOTER_H, fill=1, stroke=0)
-        canv.setFillColor(GRAY)
+        canv.setFillColor(FOOTER_GRAY)
         canv.setFont("Helvetica", 7)
-        canv.drawString(36, 11, f"Page {page_num}  |  {firm}  |  {client}  |  {date_str}")
+        left_text = f"Page {page_num}  |  {firm}  |  {client} Review  |  {date_str}"
+        canv.drawString(36, 11, left_text)
         canv.drawRightString(PAGE_W - 36, 11, "Generated by ComplyVault  |  complyvault.co")
 
-    def watermark(canv, doc):
-        if not watermarked:
-            return
+    def watermark_fn(canv, doc):
         canv.saveState()
         canv.translate(306, 396)
         canv.rotate(35)
         try:
             canv.setFillAlpha(0.04)
         except Exception:
-            pass  # fallback: use blended color
+            pass
         canv.setFillColor(ACCENT_GREEN)
         canv.setFont("Helvetica-Bold", 48)
         canv.drawCentredString(0, 50, "COMPLYVAULT")
@@ -166,24 +167,34 @@ def build_header_footer(data):
             pass
         canv.restoreState()
 
-    return header, footer, watermark
-
-
-def draw_watermark_on_first(canv, doc, watermark_fn):
-    watermark_fn(canv, doc)
-
-
-def draw_watermark_later(canv, doc, watermark_fn):
-    watermark_fn(canv, doc)
+    return header, footer, watermark_fn
 
 
 def build_styles():
+    """Build paragraph styles per spec typography."""
+    scope_line = ParagraphStyle(
+        name="ScopeLine",
+        fontName="Helvetica-Oblique",
+        fontSize=8.5,
+        leading=13,
+        spaceBefore=0,
+        spaceAfter=10,
+        textColor=MID_GREEN,
+    )
+    ev_time = ParagraphStyle(
+        name="EvTime",
+        fontName="Helvetica-Bold",
+        fontSize=7.5,
+        leading=10,
+        textColor=MID_GREEN,
+    )
     return {
         "title": ParagraphStyle(
             name="Title",
             fontName="Helvetica-Bold",
             fontSize=20,
             leading=26,
+            spaceBefore=0,
             spaceAfter=4,
             textColor=DARK_GREEN,
         ),
@@ -192,9 +203,11 @@ def build_styles():
             fontName="Helvetica",
             fontSize=9.5,
             leading=14,
+            spaceBefore=0,
             spaceAfter=10,
             textColor=GRAY,
         ),
+        "scope_line": scope_line,
         "h1": ParagraphStyle(
             name="H1",
             fontName="Helvetica-Bold",
@@ -218,23 +231,15 @@ def build_styles():
             fontName="Helvetica",
             fontSize=8.5,
             leading=13,
+            spaceBefore=0,
             spaceAfter=4,
             textColor=DARK_TEXT,
-        ),
-        "body_italic": ParagraphStyle(
-            name="BodyItalic",
-            fontName="Helvetica-Oblique",
-            fontSize=8,
-            leading=12,
-            spaceAfter=4,
-            textColor=GRAY,
         ),
         "label": ParagraphStyle(
             name="Label",
             fontName="Helvetica-Bold",
             fontSize=7.5,
             leading=10,
-            spaceAfter=1,
             textColor=GRAY,
         ),
         "value": ParagraphStyle(
@@ -242,15 +247,7 @@ def build_styles():
             fontName="Helvetica",
             fontSize=8.5,
             leading=12,
-            spaceAfter=2,
             textColor=DARK_TEXT,
-        ),
-        "small": ParagraphStyle(
-            name="Small",
-            fontName="Helvetica",
-            fontSize=7.5,
-            leading=10,
-            textColor=GRAY,
         ),
         "ev_id": ParagraphStyle(
             name="EvId",
@@ -280,12 +277,20 @@ def build_styles():
             leading=10,
             textColor=ACCENT_GREEN,
         ),
+        "ev_time": ev_time,
         "notice": ParagraphStyle(
             name="Notice",
             fontName="Helvetica",
             fontSize=7.5,
             leading=11,
-            textColor=colors.HexColor("#374151"),
+            textColor=NOTICE_TEXT,
+        ),
+        "notice_bold": ParagraphStyle(
+            name="NoticeBold",
+            fontName="Helvetica-Bold",
+            fontSize=7.5,
+            leading=11,
+            textColor=NOTICE_TEXT,
         ),
     }
 
@@ -303,45 +308,73 @@ def create_pdf(data):
     styles = build_styles()
     flowables = []
 
-    # ----- PAGE 1: Cover Summary -----
-    # 1. Disclaimer banner
-    disclaimer = (
+    header_fn, footer_fn, watermark_fn = build_header_footer_watermark(data)
+
+    def on_page(canv, doc):
+        header_fn(canv, doc)
+        footer_fn(canv, doc)
+        if data.get("watermarked"):
+            watermark_fn(canv, doc)
+
+    # ========== PAGE 1 — COVER SUMMARY ==========
+    flowables.append(Spacer(1, 6))
+
+    # 1. DISCLAIMER BANNER
+    disclaimer_text = (
         "This compliance note is generated from an AI-assisted transcription. "
         "The advisor must review, edit if necessary, and sign off before this "
         "document is considered final."
     )
-    disclaimer_para = Paragraph(disclaimer, ParagraphStyle(
-        name="Disclaimer",
-        fontName="Helvetica-Bold",
-        fontSize=8,
-        textColor=AMBER_TEXT,
-        alignment=1,
-        backColor=AMBER_BG,
-        borderColor=AMBER_BORDER,
-        borderWidth=1,
-        borderPadding=7,
-        leftIndent=10,
-        rightIndent=10,
-    ))
+    disclaimer_para = Paragraph(
+        disclaimer_text,
+        ParagraphStyle(
+            name="Disclaimer",
+            fontName="Helvetica-Bold",
+            fontSize=8,
+            leading=12,
+            textColor=AMBER_TEXT,
+            alignment=1,
+        ),
+    )
     disclaimer_table = Table([[disclaimer_para]], colWidths=[USABLE_WIDTH])
     disclaimer_table.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, -1), AMBER_BG),
         ("BOX", (0, 0), (-1, -1), 1, AMBER_BORDER),
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("TOPPADDING", (0, 0), (-1, -1), 7),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+        ("LEFTPADDING", (0, 0), (-1, -1), 10),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 10),
     ]))
     flowables.append(disclaimer_table)
-    flowables.append(Spacer(1, 14))
+    flowables.append(Spacer(1, 10))
 
-    # 2. Title & Subtitle
+    # 2. TITLE BLOCK
     meeting_type = data.get("meeting_type", "Meeting")
     client = data.get("client_name", "Client")
     date_str = (data.get("date") or "")[:10]
     advisor = data.get("advisor_name", "Advisor")
     flowables.append(Paragraph(meeting_type, styles["title"]))
     flowables.append(Paragraph(f"{client}  ·  {date_str}  ·  {advisor}", styles["subtitle"]))
-    flowables.append(Spacer(1, 10))
 
-    # 3. Meeting Details table
+    scope_text = (
+        "Designed to support RIA supervision and exam documentation workflows "
+        "(SEC / state regulator). Audit-style format with timestamped evidence links "
+        "and advisor sign-off. All uploads encrypted — exportable audit log — configurable retention."
+    )
+    flowables.append(Paragraph(scope_text, styles["scope_line"]))
+
+    hr_2pt = Table([[""]], colWidths=[USABLE_WIDTH])
+    hr_2pt.setStyle(TableStyle([("LINEABOVE", (0, 0), (-1, 0), 2, ACCENT_GREEN)]))
+    flowables.append(hr_2pt)
+
+    # 3. MEETING DETAILS
+    flowables.append(Paragraph("MEETING DETAILS", styles["h1"]))
+    hr_h1 = Table([[""]], colWidths=[USABLE_WIDTH])
+    hr_h1.setStyle(TableStyle([("LINEABOVE", (0, 0), (-1, 0), 0.5, ACCENT_GREEN)]))
+    flowables.append(hr_h1)
+    flowables.append(Spacer(1, 2))
+
     details_data = [
         ["CLIENT", data.get("client_name", "N/A"), "ADVISOR", data.get("advisor_name", "N/A")],
         ["FIRM", data.get("firm_name", "N/A"), "MEETING DATE", date_str or "N/A"],
@@ -353,12 +386,19 @@ def create_pdf(data):
     details_style = [
         ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
         ("FONTNAME", (2, 0), (2, -1), "Helvetica-Bold"),
-        ("FONTSIZE", (0, 0), (-1, -1), 8.5),
+        ("FONTSIZE", (0, 0), (0, -1), 7.5),
+        ("FONTSIZE", (2, 0), (2, -1), 7.5),
+        ("FONTSIZE", (1, 0), (1, -1), 8.5),
+        ("FONTSIZE", (3, 0), (3, -1), 8.5),
         ("TEXTCOLOR", (0, 0), (0, -1), GRAY),
         ("TEXTCOLOR", (2, 0), (2, -1), GRAY),
-        ("BACKGROUND", (0, 0), (-1, -1), colors.white),
+        ("TEXTCOLOR", (1, 0), (1, -1), DARK_TEXT),
+        ("TEXTCOLOR", (3, 0), (3, -1), DARK_TEXT),
+        ("BACKGROUND", (0, 0), (-1, 0), colors.white),
         ("BACKGROUND", (0, 1), (-1, 1), LIGHT_GREEN),
+        ("BACKGROUND", (0, 2), (-1, 2), colors.white),
         ("BACKGROUND", (0, 3), (-1, 3), LIGHT_GREEN),
+        ("BACKGROUND", (0, 4), (-1, 4), colors.white),
         ("GRID", (0, 0), (-1, -1), 0.25, GRID_LIGHT),
         ("BOX", (0, 0), (-1, -1), 0.5, BORDER_LIGHT),
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
@@ -369,44 +409,48 @@ def create_pdf(data):
     ]
     details_table.setStyle(TableStyle(details_style))
     flowables.append(details_table)
-    flowables.append(Spacer(1, 14))
 
     # 4. COMPLIANCE FLAGS
+    flowables.append(Spacer(1, 14))
     flowables.append(Paragraph("COMPLIANCE FLAGS", styles["h1"]))
-    flowables.append(Spacer(1, 2))
-    hr_table = Table([[""]], colWidths=[USABLE_WIDTH])
-    hr_table.setStyle(TableStyle([("LINEABOVE", (0, 0), (-1, 0), 0.5, ACCENT_GREEN)]))
-    flowables.append(hr_table)
+    hr_flags = Table([[""]], colWidths=[USABLE_WIDTH])
+    hr_flags.setStyle(TableStyle([("LINEABOVE", (0, 0), (-1, 0), 0.5, ACCENT_GREEN)]))
+    flowables.append(hr_flags)
     flowables.append(Spacer(1, 6))
 
     flags = data.get("flags", [])
     if flags:
-        flags_rows = [["SEV.", "FLAG", "DETAIL", "STATUS"]]
+        flags_header = [["SEV.", "FLAG", "DETAIL", "STATUS"]]
+        flags_rows = flags_header[:]
         for f in flags:
             sev_spec = severity_to_spec(f.get("severity", "INFO"))
-            flag_type = f.get("type", f.get("flag", "N/A"))
-            detail = str(f.get("evidence") or f.get("detail", ""))[:200]
-            status = f.get("status", "N/A")
-            flags_rows.append([f"● {sev_spec}", flag_type, detail, status])
+            flag_type = str(f.get("type", f.get("flag", "N/A")))
+            detail = str(f.get("evidence") or f.get("detail", ""))[:300]
+            status = str(f.get("status", "N/A"))
+            bullet = "\u25CF"  # U+25CF
+            sev_cell = f"{bullet}\n{sev_spec}"
+            flags_rows.append([sev_cell, flag_type, detail, status])
 
         flags_table = Table(flags_rows, colWidths=[52, 104, 300, 84])
         flags_style = [
             ("BACKGROUND", (0, 0), (-1, 0), DARK_GREEN),
             ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
             ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-            ("FONTSIZE", (0, 0), (-1, -1), 7.5),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("FONTSIZE", (0, 0), (-1, 0), 7.5),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
             ("LEFTPADDING", (0, 0), (-1, -1), 7),
             ("TOPPADDING", (0, 0), (-1, -1), 6),
             ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+            ("GRID", (0, 0), (-1, -1), 0.25, GRID_LIGHT),
+            ("BOX", (0, 0), (-1, -1), 0.5, GRID_LIGHT),
         ]
         for i, f in enumerate(flags):
             r = i + 1
             sev = str(f.get("severity", "INFO")).upper()
-            if sev == "CRITICAL":
+            if sev in ("CRITICAL", "HIGH"):
                 flags_style.append(("BACKGROUND", (0, r), (-1, r), ROW_RED))
                 flags_style.append(("TEXTCOLOR", (0, r), (-1, r), RED_FLAG))
-            elif sev == "WARN":
+            elif sev in ("WARN", "MEDIUM"):
                 flags_style.append(("BACKGROUND", (0, r), (-1, r), ROW_YELLOW))
                 flags_style.append(("TEXTCOLOR", (0, r), (-1, r), YELLOW_FLAG))
             else:
@@ -421,24 +465,27 @@ def create_pdf(data):
             ("TEXTCOLOR", (0, 0), (-1, -1), GRAY),
         ]))
         flowables.append(empty_flags)
-    flowables.append(Spacer(1, 14))
 
     # 5. ACTION ITEMS
+    flowables.append(Spacer(1, 14))
     flowables.append(Paragraph("ACTION ITEMS", styles["h1"]))
-    flowables.append(Spacer(1, 2))
-    hr_table2 = Table([[""]], colWidths=[USABLE_WIDTH])
-    hr_table2.setStyle(TableStyle([("LINEABOVE", (0, 0), (-1, 0), 0.5, ACCENT_GREEN)]))
-    flowables.append(hr_table2)
+    hr_ai = Table([[""]], colWidths=[USABLE_WIDTH])
+    hr_ai.setStyle(TableStyle([("LINEABOVE", (0, 0), (-1, 0), 0.5, ACCENT_GREEN)]))
+    flowables.append(hr_ai)
     flowables.append(Spacer(1, 6))
 
     action_items = data.get("action_items", [])
     if action_items:
-        ai_rows = [["#", "ACTION", "OWNER", "DUE", "PRI."]]
+        ai_header = [["#", "ACTION", "OWNER", "DUE", "PRI."]]
+        ai_rows = ai_header[:]
         for i, ai in enumerate(action_items):
             action = truncate_lines(ai.get("action", ai.get("text", "")), 2)
             owner = ai.get("owner", "Advisor")
-            due = ai.get("due", "TBD")[:10] if isinstance(ai.get("due"), str) else "TBD"
-            pri = ai.get("priority", "LOW")
+            due_val = ai.get("due", "TBD")
+            due = due_val[:10] if isinstance(due_val, str) else "TBD"
+            pri = str(ai.get("priority", "LOW")).upper()
+            if pri == "MEDIUM":
+                pri = "MED"
             ai_rows.append([str(i + 1), action, owner, due, pri])
 
         ai_table = Table(ai_rows, colWidths=[18, 259, 54, 54, 47])
@@ -446,28 +493,33 @@ def create_pdf(data):
             ("BACKGROUND", (0, 0), (-1, 0), DARK_GREEN),
             ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
             ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-            ("FONTSIZE", (0, 0), (-1, -1), 7.5),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("FONTSIZE", (0, 0), (-1, 0), 7.5),
+            ("FONTNAME", (0, 1), (0, -1), "Helvetica-Bold"),
+            ("FONTSIZE", (0, 1), (0, -1), 8.5),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
             ("LEFTPADDING", (0, 0), (-1, -1), 6),
             ("TOPPADDING", (0, 0), (-1, -1), 5),
             ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
-            ("BACKGROUND", (0, 1), (-1, 1), LIGHT_GREEN),
-            ("BACKGROUND", (0, 3), (-1, 3), LIGHT_GREEN),
+            ("GRID", (0, 0), (-1, -1), 0.25, GRID_LIGHT),
+            ("BOX", (0, 0), (-1, -1), 0.5, GRID_LIGHT),
         ]
         for i in range(1, len(ai_rows)):
-            if i % 2 == 0:
-                ai_style.append(("BACKGROUND", (0, i), (-1, i), colors.white))
-            else:
+            if i % 2 == 1:
                 ai_style.append(("BACKGROUND", (0, i), (-1, i), LIGHT_GREEN))
+            else:
+                ai_style.append(("BACKGROUND", (0, i), (-1, i), colors.white))
         for i, ai in enumerate(action_items):
             r = i + 1
             pri = str(ai.get("priority", "LOW")).upper()
             if pri == "HIGH":
                 ai_style.append(("TEXTCOLOR", (4, r), (4, r), RED_FLAG))
-            elif pri == "MEDIUM" or pri == "MED":
+                ai_style.append(("FONTNAME", (4, r), (4, r), "Helvetica-Bold"))
+            elif pri in ("MEDIUM", "MED"):
                 ai_style.append(("TEXTCOLOR", (4, r), (4, r), YELLOW_FLAG))
+                ai_style.append(("FONTNAME", (4, r), (4, r), "Helvetica-Bold"))
             else:
                 ai_style.append(("TEXTCOLOR", (4, r), (4, r), ACCENT_GREEN))
+                ai_style.append(("FONTNAME", (4, r), (4, r), "Helvetica-Bold"))
         ai_table.setStyle(TableStyle(ai_style))
         flowables.append(ai_table)
     else:
@@ -476,17 +528,31 @@ def create_pdf(data):
 
     flowables.append(PageBreak())
 
-    # ----- PAGE 2: Structured Compliance Note -----
-    for sec_num, sec_title, items_key, get_text in [
-        (1, "1. TOPICS DISCUSSED", "topics", lambda x: x if isinstance(x, str) else str(x)),
-        (2, "2. RECOMMENDATIONS MADE", "recommendations", lambda x: x.get("text", str(x)) if isinstance(x, dict) else str(x)),
-        (3, "3. DISCLOSURES PROVIDED", "disclosures", lambda x: x.get("text", str(x)) if isinstance(x, dict) else str(x)),
+    # ========== PAGE 2+ — STRUCTURED COMPLIANCE NOTE ==========
+    flowables.append(Paragraph("Structured Compliance Note", styles["title"]))
+    flowables.append(Paragraph(
+        "Full advisor documentation — topics, recommendations, disclosures",
+        styles["subtitle"],
+    ))
+    hr_note = Table([[""]], colWidths=[USABLE_WIDTH])
+    hr_note.setStyle(TableStyle([("LINEABOVE", (0, 0), (-1, 0), 2, ACCENT_GREEN)]))
+    flowables.append(hr_note)
+
+    for sec_num, sec_title, items_key, get_title_and_body in [
+        (1, "1. TOPICS DISCUSSED", "topics", lambda x: (str(x), str(x))),
+        (2, "2. RECOMMENDATIONS MADE", "recommendations", lambda x: (
+            x.get("text", str(x)) if isinstance(x, dict) else str(x),
+            x.get("text", str(x)) if isinstance(x, dict) else str(x),
+        )),
+        (3, "3. DISCLOSURES PROVIDED", "disclosures", lambda x: (
+            x.get("text", str(x)) if isinstance(x, dict) else str(x),
+            x.get("text", str(x)) if isinstance(x, dict) else str(x),
+        )),
     ]:
         flowables.append(Paragraph(sec_title, styles["h1"]))
-        hr = Table([[""]], colWidths=[USABLE_WIDTH])
-        hr.setStyle(TableStyle([("LINEABOVE", (0, 0), (-1, 0), 2, ACCENT_GREEN)]))
-        flowables.append(hr)
-        flowables.append(Spacer(1, 8))
+        hr_sec = Table([[""]], colWidths=[USABLE_WIDTH])
+        hr_sec.setStyle(TableStyle([("LINEABOVE", (0, 0), (-1, 0), 0.5, ACCENT_GREEN)]))
+        flowables.append(hr_sec)
 
         items = data.get(items_key, [])
         if not items:
@@ -504,158 +570,215 @@ def create_pdf(data):
                 flowables.append(Paragraph("None documented.", styles["body"]))
         else:
             for item in items:
-                title = get_text(item)
-                if sec_num == 2 and (not title or str(title).strip().lower() in ("n/a", "none", "not applicable")):
-                    title = "NOT YET RECOMMENDED"
-                body = title if isinstance(item, str) else (item.get("text") or str(item))
+                title, body = get_title_and_body(item)
+                title_str = str(title).strip()
+                if sec_num == 2 and (not title_str or title_str.lower() in ("n/a", "none", "not applicable")):
+                    title_str = "NOT YET RECOMMENDED"
+                if sec_num == 3 and (not title_str or title_str.lower() in ("n/a", "none", "not applicable")):
+                    title_str = "NO RECOMMENDATION MADE"
                 block = KeepTogether([
-                    Paragraph(str(title)[:200], styles["h2"]),
+                    Paragraph(title_str[:500], styles["h2"]),
                     Paragraph(str(body), styles["body"]),
                 ])
                 flowables.append(block)
-                flowables.append(Spacer(1, 6))
-        flowables.append(Spacer(1, 10))
+        flowables.append(Spacer(1, 8))
 
     flowables.append(PageBreak())
 
-    # ----- PAGE 3: Evidence Map -----
+    # ========== PAGE — EVIDENCE MAP ==========
+    flowables.append(Paragraph("Evidence Map", styles["title"]))
+    n_ev = len(data.get("evidence_links", data.get("evidenceMap", [])))
     flowables.append(Paragraph(
-        "Each row links a compliance claim to its precise moment in the meeting transcript. "
-        "This map is generated automatically by ComplyVault and is designed to satisfy "
+        f"Every compliance claim linked to a timestamped transcript source · {n_ev} evidence links",
+        styles["subtitle"],
+    ))
+    hr_ev = Table([[""]], colWidths=[USABLE_WIDTH])
+    hr_ev.setStyle(TableStyle([("LINEABOVE", (0, 0), (-1, 0), 2, ACCENT_GREEN)]))
+    flowables.append(hr_ev)
+
+    intro_para = Paragraph(
+        "Each row links a specific claim in the compliance note to its precise moment in the meeting "
+        "transcript. This map is generated automatically by ComplyVault and is designed to satisfy "
         "examiner requests for source documentation during regulatory review.",
         styles["body"],
-    ))
-    flowables.append(Spacer(1, 10))
+    )
+    flowables.append(intro_para)
+    flowables.append(Spacer(1, 8))
 
     evidence = data.get("evidence_links", data.get("evidenceMap", []))
     segments = data.get("_transcript_segments", [])
     if evidence:
-        ev_rows = [["ID", "CLAIM", "TIME", "SPEAKER", "TRANSCRIPT SNIPPET", "CONF"]]
+        ev_header = [["ID", "CLAIM", "TIME", "SPEAKER", "TRANSCRIPT SNIPPET", "CONF"]]
+        ev_rows = ev_header[:]
         for i, ev in enumerate(evidence):
-            eid = ev.get("id", str(i + 1))
-            claim = ev.get("claim", "")
+            eid = ev.get("id", f"E{i + 1}")
+            claim = str(ev.get("claim", ""))
             start = ev.get("startTime", 0)
             time_str = format_time(start)
             speaker = ev.get("speaker") or get_speaker_at_time(segments, start)
             snippet = truncate_lines(ev.get("snippet", ""), 3)
             conf = ev.get("confidence")
             conf_str = f"{(conf * 100):.0f}%" if conf is not None else ""
+            ev_rows.append([eid, claim, time_str, speaker, snippet, conf_str])
 
-            ev_rows.append([eid, claim[:150], time_str, speaker, snippet, conf_str])
-
-        ev_table = Table(ev_rows, colWidths=[32, 133, 32, 47, 216, 25])
+        ev_table = Table(ev_rows, colWidths=[32, 133, 32, 47, 261, 25])
         ev_style = [
             ("BACKGROUND", (0, 0), (-1, 0), DARK_GREEN),
             ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
             ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-            ("FONTSIZE", (0, 0), (-1, -1), 7.5),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("FONTSIZE", (0, 0), (-1, 0), 7.5),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
             ("LEFTPADDING", (0, 0), (-1, -1), 5),
             ("TOPPADDING", (0, 0), (-1, -1), 4),
             ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
-            ("BACKGROUND", (0, 1), (-1, 1), LIGHT_GREEN),
-            ("BACKGROUND", (0, 3), (-1, 3), LIGHT_GREEN),
+            ("GRID", (0, 0), (-1, -1), 0.25, GRID_LIGHT),
+            ("BOX", (0, 0), (-1, -1), 0.5, GRID_LIGHT),
         ]
         for i in range(1, len(ev_rows)):
-            if i % 2 == 0:
+            if i % 2 == 1:
+                ev_style.append(("BACKGROUND", (0, i), (-1, i), LIGHT_GREEN))
+            else:
                 ev_style.append(("BACKGROUND", (0, i), (-1, i), colors.white))
         ev_table.setStyle(TableStyle(ev_style))
+        ev_table.repeatRows = 1
         flowables.append(ev_table)
     else:
         flowables.append(Paragraph("No evidence links.", styles["body"]))
 
     flowables.append(PageBreak())
 
-    # ----- PAGE 4: Advisor Sign-off & Audit Trail -----
-    flowables.append(Paragraph("ADVISOR CERTIFICATION", styles["h1"]))
-    hr3 = Table([[""]], colWidths=[USABLE_WIDTH])
-    hr3.setStyle(TableStyle([("LINEABOVE", (0, 0), (-1, 0), 0.5, ACCENT_GREEN)]))
-    flowables.append(hr3)
-    flowables.append(Spacer(1, 8))
+    # ========== PAGE — ADVISOR SIGN-OFF & AUDIT TRAIL ==========
+    flowables.append(Paragraph("Advisor Sign-Off & Audit Trail", styles["title"]))
     flowables.append(Paragraph(
+        "Finalization record, certification, and complete system audit log",
+        styles["subtitle"],
+    ))
+    hr_sign = Table([[""]], colWidths=[USABLE_WIDTH])
+    hr_sign.setStyle(TableStyle([("LINEABOVE", (0, 0), (-1, 0), 2, ACCENT_GREEN)]))
+    flowables.append(hr_sign)
+
+    flowables.append(Paragraph("ADVISOR CERTIFICATION", styles["h1"]))
+    hr_cert = Table([[""]], colWidths=[USABLE_WIDTH])
+    hr_cert.setStyle(TableStyle([("LINEABOVE", (0, 0), (-1, 0), 0.5, ACCENT_GREEN)]))
+    flowables.append(hr_cert)
+    flowables.append(Spacer(1, 5))
+
+    cert_para = Paragraph(
         "I certify that this compliance note accurately reflects the topics discussed, "
         "recommendations made, disclosures provided, and action items agreed during the "
         "client meeting referenced above. This document has been reviewed for completeness "
         "and accuracy prior to finalization.",
         styles["body"],
-    ))
-    flowables.append(Spacer(1, 14))
+    )
+    flowables.append(cert_para)
+    flowables.append(Spacer(1, 10))
 
-    # Sign-off table
     advisor_name = data.get("advisor_name", "N/A")
-    date_reviewed = data.get("date_reviewed") or ""
-    date_signed = data.get("date_signed") or (data.get("finalized_at", "")[:10] if data.get("finalized_at") else "")
+    date_reviewed_raw = data.get("date_reviewed") or ""
+    date_signed_raw = data.get("date_signed") or ""
+    date_reviewed = date_reviewed_raw[:10] if date_reviewed_raw else "Pending"
+    date_signed = date_signed_raw[:10] if date_signed_raw else "Pending"
     pack_ver = str(data.get("pack_version", "1"))
+    crd = data.get("crd_number", "[REDACTED]") if data.get("crd_number") else "[REDACTED]"
+
     signoff_data = [
-        ["ADVISOR NAME", advisor_name, "DATE REVIEWED", date_reviewed[:10] if date_reviewed else ""],
+        ["ADVISOR NAME", advisor_name, "DATE REVIEWED", date_reviewed],
         ["FIRM", data.get("firm_name", "N/A"), "DATE SIGNED", date_signed],
-        ["CRD NUMBER", data.get("crd_number", ""), "PACK VERSION", pack_ver],
-        ["SIGNATURE", "", "", ""],
+        ["CRD NUMBER", crd, "PACK VERSION", pack_ver],
+        ["SIGNATURE", "____________", "", ""],
     ]
     signoff_table = Table(signoff_data, colWidths=[80, 190, 80, 190])
     signoff_style = [
         ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
         ("FONTNAME", (2, 0), (2, -1), "Helvetica-Bold"),
-        ("FONTSIZE", (0, 0), (-1, -1), 8.5),
+        ("FONTSIZE", (0, 0), (0, -1), 7.5),
+        ("FONTSIZE", (2, 0), (2, -1), 7.5),
+        ("FONTSIZE", (1, 0), (1, -1), 8.5),
+        ("FONTSIZE", (3, 0), (3, -1), 8.5),
         ("TEXTCOLOR", (0, 0), (0, -1), GRAY),
         ("TEXTCOLOR", (2, 0), (2, -1), GRAY),
         ("BACKGROUND", (0, 0), (-1, 0), LIGHT_GREEN),
         ("BACKGROUND", (0, 2), (-1, 2), LIGHT_GREEN),
+        ("GRID", (0, 0), (-1, -1), 0.25, GRID_LIGHT),
         ("BOX", (0, 0), (-1, -1), 0.5, BORDER_LIGHT),
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
         ("LEFTPADDING", (0, 0), (-1, -1), 8),
-        ("TOPPADDING", (0, 0), (-1, -1), 6),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+        ("TOPPADDING", (0, 0), (-1, -1), 7),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
     ]
     signoff_table.setStyle(TableStyle(signoff_style))
     flowables.append(signoff_table)
-    flowables.append(Spacer(1, 14))
+    flowables.append(Spacer(1, 18))
 
     flowables.append(Paragraph("SYSTEM AUDIT TRAIL", styles["h1"]))
-    hr4 = Table([[""]], colWidths=[USABLE_WIDTH])
-    hr4.setStyle(TableStyle([("LINEABOVE", (0, 0), (-1, 0), 0.5, ACCENT_GREEN)]))
-    flowables.append(hr4)
-    flowables.append(Spacer(1, 8))
+    hr_audit = Table([[""]], colWidths=[USABLE_WIDTH])
+    hr_audit.setStyle(TableStyle([("LINEABOVE", (0, 0), (-1, 0), 0.5, ACCENT_GREEN)]))
+    flowables.append(hr_audit)
+    flowables.append(Spacer(1, 5))
 
     audit_trail = data.get("audit_trail", [])
     if audit_trail:
-        at_rows = [["TIMESTAMP", "EVENT", "USER", "DETAIL"]]
-        for row in audit_trail:
-            at_rows.append([
+        at_header = [["TIMESTAMP", "EVENT", "USER", "DETAIL"]]
+        at_rows = at_header + [
+            [
                 row.get("timestamp", ""),
                 row.get("event", ""),
                 row.get("user", ""),
                 row.get("detail", ""),
-            ])
+            ]
+            for row in audit_trail
+        ]
         at_table = Table(at_rows, colWidths=[108, 130, 72, 194])
         at_style = [
             ("BACKGROUND", (0, 0), (-1, 0), DARK_GREEN),
             ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
             ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-            ("FONTSIZE", (0, 0), (-1, -1), 7.5),
-            ("BACKGROUND", (0, 1), (-1, 1), LIGHT_GREEN),
-            ("BACKGROUND", (0, 3), (-1, 3), LIGHT_GREEN),
+            ("FONTSIZE", (0, 0), (-1, -1), 8),
+            ("TEXTCOLOR", (0, 1), (-1, -1), DARK_TEXT),
+            ("GRID", (0, 0), (-1, -1), 0.25, GRID_LIGHT),
+            ("BOX", (0, 0), (-1, -1), 0.5, GRID_LIGHT),
+            ("LEFTPADDING", (0, 0), (-1, -1), 7),
+            ("TOPPADDING", (0, 0), (-1, -1), 5),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
         ]
         for i in range(1, len(at_rows)):
-            if i % 2 == 0:
-                at_style.append(("BACKGROUND", (0, i), (-1, i), colors.white))
-            else:
+            if i % 2 == 1:
                 at_style.append(("BACKGROUND", (0, i), (-1, i), LIGHT_GREEN))
+            else:
+                at_style.append(("BACKGROUND", (0, i), (-1, i), colors.white))
         at_table.setStyle(TableStyle(at_style))
         flowables.append(at_table)
-    flowables.append(Spacer(1, 14))
 
-    # Redacted notice box
-    notice_text = (
-        "This compliance note has been generated by ComplyVault AI from a meeting recording. "
-        "All content must be reviewed and approved by the advisor of record before use. "
-        "complyvault.co"
-    )
-    notice_para = Paragraph(notice_text, styles["notice"])
+    flowables.append(Spacer(1, 20))
+
+    # REDACTED NOTICE BOX
+    watermarked = data.get("watermarked", False)
+    if watermarked:
+        notice_content = (
+            "<b>REDACTED SAMPLE DOCUMENT</b> — This is a fictional example created by ComplyVault "
+            "to demonstrate output format and quality. All client names, firm names, financial figures, "
+            "and personal details are entirely fabricated and do not represent any real client, advisor, "
+            "or firm. <b>complyvault.co</b>"
+        )
+    else:
+        notice_content = (
+            "This compliance note has been generated by ComplyVault AI from a meeting recording. "
+            "All content must be reviewed and approved by the advisor of record before use. "
+            "<b>complyvault.co</b>"
+        )
+    notice_para = Paragraph(notice_content, ParagraphStyle(
+        name="NoticeBox",
+        fontName="Helvetica",
+        fontSize=7.5,
+        leading=11,
+        textColor=NOTICE_TEXT,
+        spaceBefore=0,
+        spaceAfter=0,
+    ))
     notice_table = Table([[notice_para]], colWidths=[USABLE_WIDTH])
     notice_table.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, -1), NOTICE_BG),
-        ("BOX", (0, 0), (-1, -1), 0.5, BORDER_LIGHT),
+        ("BOX", (0, 0), (-1, -1), 0.5, NOTICE_BORDER),
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
         ("LEFTPADDING", (0, 0), (-1, -1), 10),
         ("RIGHTPADDING", (0, 0), (-1, -1), 10),
@@ -664,20 +787,7 @@ def create_pdf(data):
     ]))
     flowables.append(notice_table)
 
-    # Build with callbacks
-    def on_first(canv, doc):
-        header_fn, footer_fn, watermark_fn = build_header_footer(data)
-        header_fn(canv, doc)
-        footer_fn(canv, doc)
-        watermark_fn(canv, doc)
-
-    def on_later(canv, doc):
-        header_fn, footer_fn, watermark_fn = build_header_footer(data)
-        header_fn(canv, doc)
-        footer_fn(canv, doc)
-        watermark_fn(canv, doc)
-
-    doc.build(flowables, onFirstPage=on_first, onLaterPages=on_later)
+    doc.build(flowables, onFirstPage=on_page, onLaterPages=on_page)
     return buf.getvalue()
 
 

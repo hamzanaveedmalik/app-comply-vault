@@ -54,10 +54,10 @@ function formatDuration(segments: TranscriptSegment[]): string {
   if (!segments?.length) return "N/A";
   const last = segments[segments.length - 1];
   const endSec = last?.endTime ?? 0;
-  const min = Math.floor(endSec / 60);
-  if (min < 60) return `${min} min`;
-  const h = Math.floor(min / 60);
-  const m = min % 60;
+  const totalMinutes = Math.floor(endSec / 60);
+  if (totalMinutes < 60) return `${totalMinutes} minutes`;
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
   return m > 0 ? `${h}h ${m}m` : `${h}h`;
 }
 
@@ -76,7 +76,8 @@ export function buildExportPayload(
     status: string;
     evidence?: unknown;
   }>,
-  watermarked: boolean
+  watermarked: boolean,
+  options?: { exportingUserName?: string }
 ): ExportPayload {
   const segments = transcript?.segments ?? [];
   const dateStr: string = meeting.meetingDate
@@ -112,14 +113,18 @@ export function buildExportPayload(
   const medCount = flags.filter((f) => f.severity === "WARN").length;
   const infoCount = flags.filter((f) => f.severity === "INFO").length;
 
+  const format = "Virtual / Zoom";
+  const duration = formatDuration(segments);
+  const exportingUser = options?.exportingUserName ?? "System";
+
   const auditTrail: ExportPayload["audit_trail"] = [
     {
       timestamp: meeting.sourceUploadedAt
         ? new Date(meeting.sourceUploadedAt).toLocaleString()
         : new Date(meeting.createdAt).toLocaleString(),
-      event: "Recording uploaded",
+      event: "Meeting recording uploaded",
       user: "System",
-      detail: "",
+      detail: `${format} — ${duration}`,
     },
     {
       timestamp: meeting.draftReadyAt
@@ -127,35 +132,35 @@ export function buildExportPayload(
         : new Date(meeting.updatedAt).toLocaleString(),
       event: "Transcription completed",
       user: "System",
-      detail: `(${wordCount} words)`,
+      detail: `Speaker-labeled transcript — ${wordCount} words`,
     },
     {
       timestamp: extraction.extractedAt
         ? new Date(extraction.extractedAt).toLocaleString()
         : new Date().toLocaleString(),
       event: "Compliance note generated",
-      user: "System",
-      detail: `(${extraction.topics?.length ?? 0} sections, ${evidenceLinks.length} evidence links)`,
+      user: "System (AI)",
+      detail: `Initial draft — ${extraction.topics?.length ?? 0} sections, ${evidenceLinks.length} evidence links`,
     },
     {
       timestamp: new Date().toLocaleString(),
       event: "Compliance flags raised",
-      user: "System",
-      detail: `(${highCount} HIGH, ${medCount} MEDIUM, ${infoCount} INFO)`,
+      user: "System (AI)",
+      detail: `${flags.length} flags: ${highCount} HIGH, ${medCount} MEDIUM, ${infoCount} INFO`,
     },
     {
       timestamp: new Date().toLocaleString(),
       event: "Pack exported",
-      user: "System",
-      detail: "PDF + Evidence CSV + Version History + TXT",
+      user: exportingUser,
+      detail: "PDF + Evidence CSV + Version History + Transcript TXT",
     },
     {
       timestamp: meeting.finalizedAt
         ? new Date(meeting.finalizedAt).toLocaleString()
-        : "",
+        : "Pending",
       event: "Advisor sign-off",
-      user: meeting.finalizedAt ? advisorName : "Pending",
-      detail: meeting.finalizedAt ? "Completed" : "Pending",
+      user: meeting.finalizedAt ? advisorName : exportingUser,
+      detail: meeting.finalizedAt ? "Completed" : "Awaiting review and digital signature",
     },
   ];
 

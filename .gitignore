@@ -46,3 +46,7 @@ yarn-error.log*
 
 # idea files
 .idea
+
+# local AI skills (not part of app source)
+/founder-sales
+/docs/founder-sales

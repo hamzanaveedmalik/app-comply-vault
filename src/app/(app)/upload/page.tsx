@@ -1,23 +1,29 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
-import { Alert, AlertDescription } from "~/components/ui/alert";
-import { Textarea } from "~/components/ui/textarea";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '~/components/ui/button';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '~/components/ui/card';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { Textarea } from '~/components/ui/textarea';
 
 export default function UploadPage() {
   const router = useRouter();
-  const [uploadMode, setUploadMode] = useState<"audio" | "transcript">("audio");
+  const [uploadMode, setUploadMode] = useState<'audio' | 'transcript'>('audio');
   const [file, setFile] = useState<File | null>(null);
   const [transcriptFile, setTranscriptFile] = useState<File | null>(null);
-  const [transcriptText, setTranscriptText] = useState("");
-  const [clientName, setClientName] = useState("");
-  const [meetingType, setMeetingType] = useState("");
-  const [meetingDate, setMeetingDate] = useState("");
+  const [transcriptText, setTranscriptText] = useState('');
+  const [clientName, setClientName] = useState('');
+  const [meetingType, setMeetingType] = useState('');
+  const [meetingDate, setMeetingDate] = useState('');
   const [consent, setConsent] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +36,9 @@ export default function UploadPage() {
     }
   };
 
-  const handleTranscriptFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTranscriptFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       try {
@@ -39,7 +47,9 @@ export default function UploadPage() {
         setTranscriptText(text);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to read transcript file");
+        setError(
+          err instanceof Error ? err.message : 'Failed to read transcript file',
+        );
       }
     }
   };
@@ -48,12 +58,12 @@ export default function UploadPage() {
     e.preventDefault();
     setError(null);
 
-    if (uploadMode === "audio" && !file) {
-      setError("Please select a file");
+    if (uploadMode === 'audio' && !file) {
+      setError('Please select a file');
       return;
     }
-    if (uploadMode === "transcript" && !transcriptText.trim()) {
-      setError("Please paste or upload a transcript");
+    if (uploadMode === 'transcript' && !transcriptText.trim()) {
+      setError('Please paste or upload a transcript');
       return;
     }
 
@@ -62,16 +72,18 @@ export default function UploadPage() {
     try {
       // Convert datetime-local format to ISO string
       // datetime-local returns "YYYY-MM-DDTHH:mm" format
-      const dateISO = meetingDate ? new Date(meetingDate).toISOString() : new Date().toISOString();
+      const dateISO = meetingDate
+        ? new Date(meetingDate).toISOString()
+        : new Date().toISOString();
 
-      if (uploadMode === "audio") {
+      if (uploadMode === 'audio') {
         // Step 1: Initialize upload - get presigned URL
         let initResponse;
         try {
-          initResponse = await fetch("/api/upload/init", {
-            method: "POST",
+          initResponse = await fetch('/api/upload/init', {
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
               clientName,
@@ -83,17 +95,21 @@ export default function UploadPage() {
             }),
           });
         } catch (err) {
-          throw new Error(`Network error: ${err instanceof Error ? err.message : "Failed to connect to server"}`);
+          throw new Error(
+            `Network error: ${err instanceof Error ? err.message : 'Failed to connect to server'}`,
+          );
         }
 
         if (!initResponse.ok) {
-          let errorMessage = "Failed to initialize upload";
+          let errorMessage = 'Failed to initialize upload';
           try {
             const data = await initResponse.json();
             if (data.error) {
               if (Array.isArray(data.error)) {
-                errorMessage = data.error.map((e: any) => e.message || e).join(", ");
-              } else if (typeof data.error === "string") {
+                errorMessage = data.error
+                  .map((e: any) => e.message || e)
+                  .join(', ');
+              } else if (typeof data.error === 'string') {
                 errorMessage = data.error;
               } else if (data.error?.message) {
                 errorMessage = data.error.message;
@@ -109,16 +125,16 @@ export default function UploadPage() {
         const { meetingId, uploadUrl } = initData;
 
         if (!meetingId) {
-          throw new Error("No meeting ID received from server");
+          throw new Error('No meeting ID received from server');
         }
 
         if (!uploadUrl) {
-          throw new Error("No upload URL received from server");
+          throw new Error('No upload URL received from server');
         }
 
         // Validate meetingId is present (Prisma uses CUID format, not UUID)
-        if (typeof meetingId !== "string" || meetingId.length === 0) {
-          console.error("Invalid meetingId:", meetingId);
+        if (typeof meetingId !== 'string' || meetingId.length === 0) {
+          console.error('Invalid meetingId:', meetingId);
           throw new Error(`Invalid meeting ID: ${meetingId}`);
         }
 
@@ -129,39 +145,45 @@ export default function UploadPage() {
           // Some S3-compatible services require exact header match
           const headers: HeadersInit = {};
           if (file!.type) {
-            headers["Content-Type"] = file!.type;
+            headers['Content-Type'] = file!.type;
           }
-          
+
           uploadResponse = await fetch(uploadUrl, {
-            method: "PUT",
+            method: 'PUT',
             body: file,
             headers,
           });
         } catch (err) {
-          const errorMsg = err instanceof Error ? err.message : "Network error";
-          throw new Error(`Upload to storage failed: ${errorMsg}. Check CORS configuration on your R2 bucket.`);
+          const errorMsg = err instanceof Error ? err.message : 'Network error';
+          throw new Error(
+            `Upload to storage failed: ${errorMsg}. Check CORS configuration on your R2 bucket.`,
+          );
         }
 
         if (!uploadResponse.ok) {
-          throw new Error(`Upload failed: ${uploadResponse.status} ${uploadResponse.statusText}`);
+          throw new Error(
+            `Upload failed: ${uploadResponse.status} ${uploadResponse.statusText}`,
+          );
         }
 
         // Step 3: Notify API that upload is complete
         let completeResponse;
         try {
-          completeResponse = await fetch("/api/upload/complete", {
-            method: "POST",
+          completeResponse = await fetch('/api/upload/complete', {
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({ meetingId }),
           });
         } catch (err) {
-          throw new Error(`Failed to complete upload: ${err instanceof Error ? err.message : "Network error"}`);
+          throw new Error(
+            `Failed to complete upload: ${err instanceof Error ? err.message : 'Network error'}`,
+          );
         }
 
         if (!completeResponse.ok) {
-          let errorMessage = "Failed to complete upload";
+          let errorMessage = 'Failed to complete upload';
           try {
             const data = await completeResponse.json();
             errorMessage = data.error || errorMessage;
@@ -172,15 +194,15 @@ export default function UploadPage() {
         }
 
         // Redirect to dashboard
-        router.push("/dashboard");
+        router.push('/dashboard');
       } else {
         // Transcript-only upload
         let transcriptResponse;
         try {
-          transcriptResponse = await fetch("/api/upload/transcript", {
-            method: "POST",
+          transcriptResponse = await fetch('/api/upload/transcript', {
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
               clientName,
@@ -188,15 +210,17 @@ export default function UploadPage() {
               meetingDate: dateISO,
               consent,
               transcriptText: transcriptText.trim(),
-              fileName: transcriptFile?.name || "transcript.txt",
+              fileName: transcriptFile?.name || 'transcript.txt',
             }),
           });
         } catch (err) {
-          throw new Error(`Network error: ${err instanceof Error ? err.message : "Failed to connect to server"}`);
+          throw new Error(
+            `Network error: ${err instanceof Error ? err.message : 'Failed to connect to server'}`,
+          );
         }
 
         if (!transcriptResponse.ok) {
-          let errorMessage = "Failed to upload transcript";
+          let errorMessage = 'Failed to upload transcript';
           try {
             const data = await transcriptResponse.json();
             errorMessage = data.error || errorMessage;
@@ -208,23 +232,23 @@ export default function UploadPage() {
 
         const data = await transcriptResponse.json();
         if (!data.meetingId) {
-          throw new Error("No meeting ID received from server");
+          throw new Error('No meeting ID received from server');
         }
         // Redirect to dashboard
-        router.push("/dashboard");
+        router.push('/dashboard');
       }
     } catch (err) {
-      let errorMessage = "An error occurred";
+      let errorMessage = 'An error occurred';
       if (err instanceof Error) {
         errorMessage = err.message;
-      } else if (typeof err === "string") {
+      } else if (typeof err === 'string') {
         errorMessage = err;
       } else {
         errorMessage = JSON.stringify(err);
       }
       setError(errorMessage);
       setIsUploading(false);
-      console.error("Upload error:", err);
+      console.error('Upload error:', err);
     }
   };
 
@@ -241,7 +265,8 @@ export default function UploadPage() {
         <CardHeader>
           <CardTitle>Meeting Details</CardTitle>
           <CardDescription>
-            Provide the meeting information and upload an audio file or transcript
+            Provide the meeting information and upload an audio file or
+            transcript
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -251,15 +276,15 @@ export default function UploadPage() {
               <div className="flex gap-3">
                 <Button
                   type="button"
-                  variant={uploadMode === "audio" ? "default" : "outline"}
-                  onClick={() => setUploadMode("audio")}
+                  variant={uploadMode === 'audio' ? 'default' : 'outline'}
+                  onClick={() => setUploadMode('audio')}
                 >
                   Audio Recording
                 </Button>
                 <Button
                   type="button"
-                  variant={uploadMode === "transcript" ? "default" : "outline"}
-                  onClick={() => setUploadMode("transcript")}
+                  variant={uploadMode === 'transcript' ? 'default' : 'outline'}
+                  onClick={() => setUploadMode('transcript')}
                 >
                   Transcript (TXT)
                 </Button>
@@ -267,7 +292,7 @@ export default function UploadPage() {
             </div>
 
             <div className="space-y-2">
-              {uploadMode === "audio" ? (
+              {uploadMode === 'audio' ? (
                 <>
                   <Label htmlFor="file">Recording File</Label>
                   <Input
@@ -299,7 +324,8 @@ export default function UploadPage() {
                     className="min-h-[200px]"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Format: timestamps like [00:05:10] and speaker lines like "Sarah: ..."
+                    Format: timestamps like [00:05:10] and speaker lines like
+                    "Sarah: ..."
                   </p>
                 </>
               )}
@@ -375,12 +401,12 @@ export default function UploadPage() {
                 disabled={
                   isUploading ||
                   !consent ||
-                  (uploadMode === "audio" && !file) ||
-                  (uploadMode === "transcript" && !transcriptText.trim())
+                  (uploadMode === 'audio' && !file) ||
+                  (uploadMode === 'transcript' && !transcriptText.trim())
                 }
                 className="flex-1"
               >
-                {isUploading ? "Uploading..." : "Upload"}
+                {isUploading ? 'Uploading...' : 'Upload'}
               </Button>
             </div>
           </form>
@@ -389,5 +415,3 @@ export default function UploadPage() {
     </div>
   );
 }
-
-

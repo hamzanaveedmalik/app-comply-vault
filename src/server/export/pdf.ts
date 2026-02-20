@@ -23,6 +23,7 @@ const USABLE = 540;
 
 const COLORS = {
   DARK_GREEN: "#0D2818",
+  HEADER_GREEN: "#117A4B",
   MID_GREEN: "#1A4731",
   ACCENT_GREEN: "#2ECC71",
   LIGHT_GREEN: "#E8F5EE",
@@ -84,6 +85,11 @@ function safeString(val: unknown): string {
   return String(val);
 }
 
+/** PDF uses bottom-left origin. Convert "y from top of content area" to PDF y. */
+function toPdfY(yFromTop: number): number {
+  return PAGE_H - TOP - yFromTop;
+}
+
 export async function generateComplianceNotePDF(payload: ExportPayload): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     try {
@@ -102,7 +108,7 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
       let hasLogo = false;
       let logoPath = "";
       try {
-        logoPath = path.join(process.cwd(), "public", "complyvault-logo.png");
+        logoPath = path.join(process.cwd(), "public", "ComplyVaultLogo.png");
         hasLogo = fs.existsSync(logoPath);
       } catch {
         hasLogo = false;
@@ -112,7 +118,7 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
       pageNum++;
       doc.save();
       const h = PAGE_H;
-      doc.rect(0, h - HEADER_H, PAGE_W, HEADER_H).fill(COLORS.DARK_GREEN);
+      doc.rect(0, h - HEADER_H, PAGE_W, HEADER_H).fill(COLORS.HEADER_GREEN);
       if (hasLogo) {
         try {
           doc.image(logoPath, 32, h - HEADER_H + (HEADER_H - LOGO_H) / 2, {
@@ -135,7 +141,7 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
 
     const drawFooter = () => {
       doc.save();
-      doc.rect(0, 0, PAGE_W, FOOTER_H).fill(COLORS.DARK_GREEN);
+      doc.rect(0, 0, PAGE_W, FOOTER_H).fill(COLORS.HEADER_GREEN);
       doc.fillColor(COLORS.FOOTER_GRAY).fontSize(7).font("Helvetica");
       const leftText = `Page ${pageNum}  |  ${payload.firm_name}  |  ${payload.client_name} Review  |  ${payload.date}`;
       doc.text(leftText, LEFT, 11, { width: 320 });
@@ -171,41 +177,41 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
 
     // 1. DISCLAIMER BANNER
     const disclaimerH = 40;
-    drawRect(doc, LEFT, y, USABLE, disclaimerH, COLORS.AMBER_BG, COLORS.AMBER_BORDER);
+    drawRect(doc, LEFT, toPdfY(y + disclaimerH), USABLE, disclaimerH, COLORS.AMBER_BG, COLORS.AMBER_BORDER);
     doc.fillColor(COLORS.AMBER_TEXT).fontSize(8).font("Helvetica-Bold");
     doc.text(
       "This compliance note is generated from an AI-assisted transcription. The advisor must review, edit if necessary, and sign off before this document is considered final.",
       LEFT + 10,
-      y + 12,
+      toPdfY(y + 12),
       { width: USABLE - 20, align: "center" }
     );
     y += disclaimerH + 10;
 
     // 2. TITLE BLOCK
     doc.fillColor(COLORS.DARK_GREEN).fontSize(20).font("Helvetica-Bold");
-    doc.text(safeString(payload.meeting_type) || "Meeting", LEFT, y);
+    doc.text(safeString(payload.meeting_type) || "Meeting", LEFT, toPdfY(y));
     y += 26;
     doc.fillColor(COLORS.GRAY).fontSize(9.5).font("Helvetica");
-    doc.text(`${safeString(payload.client_name)}  ·  ${safeString(payload.date)}  ·  ${safeString(payload.advisor_name)}`, LEFT, y);
+    doc.text(`${safeString(payload.client_name)}  ·  ${safeString(payload.date)}  ·  ${safeString(payload.advisor_name)}`, LEFT, toPdfY(y));
     y += 20;
     doc.fillColor(COLORS.MID_GREEN).fontSize(8.5).font("Helvetica-Oblique");
     doc.text(
       "Designed to support RIA supervision and exam documentation workflows (SEC / state regulator). Audit-style format with timestamped evidence links and advisor sign-off. All uploads encrypted — exportable audit log — configurable retention.",
       LEFT,
-      y,
+      toPdfY(y),
       { width: USABLE }
     );
     y += 20;
 
     // 2pt HR
-    doc.moveTo(LEFT, y).lineTo(LEFT + USABLE, y).strokeColor(COLORS.ACCENT_GREEN).lineWidth(2).stroke();
+    doc.moveTo(LEFT, toPdfY(y)).lineTo(LEFT + USABLE, toPdfY(y)).strokeColor(COLORS.ACCENT_GREEN).lineWidth(2).stroke();
     y += 14;
 
     // 3. MEETING DETAILS
     doc.fillColor(COLORS.DARK_GREEN).fontSize(11.5).font("Helvetica-Bold");
-    doc.text("MEETING DETAILS", LEFT, y);
+    doc.text("MEETING DETAILS", LEFT, toPdfY(y));
     y += 16;
-    doc.moveTo(LEFT, y).lineTo(LEFT + USABLE, y).strokeColor(COLORS.ACCENT_GREEN).lineWidth(0.5).stroke();
+    doc.moveTo(LEFT, toPdfY(y)).lineTo(LEFT + USABLE, toPdfY(y)).strokeColor(COLORS.ACCENT_GREEN).lineWidth(0.5).stroke();
     y += 8;
 
     const details = [
@@ -219,34 +225,35 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
     const rowH = 24;
     details.forEach((row, i) => {
       const bg = i % 2 === 1 ? COLORS.LIGHT_GREEN : COLORS.WHITE;
-      drawRect(doc, LEFT, y, USABLE, rowH, bg, COLORS.BORDER);
+      drawRect(doc, LEFT, toPdfY(y + rowH), USABLE, rowH, bg, COLORS.BORDER);
       doc.fillColor(COLORS.GRAY).fontSize(7.5).font("Helvetica-Bold");
-      doc.text(row[0]!, LEFT + 8, y + 8, { width: 72 });
-      doc.text(row[2]!, LEFT + 278, y + 8, { width: 72 });
+      doc.text(row[0]!, LEFT + 8, toPdfY(y + 8), { width: 72 });
+      doc.text(row[2]!, LEFT + 278, toPdfY(y + 8), { width: 72 });
       doc.fillColor(COLORS.DARK_TEXT).fontSize(8.5).font("Helvetica");
-      doc.text(row[1]!, LEFT + 88, y + 8, { width: 182 });
-      doc.text(row[3]!, LEFT + 368, y + 8, { width: 162 });
+      doc.text(row[1]!, LEFT + 88, toPdfY(y + 8), { width: 182 });
+      doc.text(row[3]!, LEFT + 368, toPdfY(y + 8), { width: 162 });
       y += rowH;
     });
     y += 14;
 
     // 4. COMPLIANCE FLAGS
     doc.fillColor(COLORS.DARK_GREEN).fontSize(11.5).font("Helvetica-Bold");
-    doc.text("COMPLIANCE FLAGS", LEFT, y);
+    doc.text("COMPLIANCE FLAGS", LEFT, toPdfY(y));
     y += 16;
-    doc.moveTo(LEFT, y).lineTo(LEFT + USABLE, y).strokeColor(COLORS.ACCENT_GREEN).lineWidth(0.5).stroke();
+    doc.moveTo(LEFT, toPdfY(y)).lineTo(LEFT + USABLE, toPdfY(y)).strokeColor(COLORS.ACCENT_GREEN).lineWidth(0.5).stroke();
     y += 8;
 
     if (payload.flags?.length) {
-      drawRect(doc, LEFT, y, 52, 24, COLORS.DARK_GREEN);
-      drawRect(doc, LEFT + 52, y, 104, 24, COLORS.DARK_GREEN);
-      drawRect(doc, LEFT + 156, y, 300, 24, COLORS.DARK_GREEN);
-      drawRect(doc, LEFT + 456, y, 84, 24, COLORS.DARK_GREEN);
+      const flagHeaderH = 24;
+      drawRect(doc, LEFT, toPdfY(y + flagHeaderH), 52, flagHeaderH, COLORS.DARK_GREEN);
+      drawRect(doc, LEFT + 52, toPdfY(y + flagHeaderH), 104, flagHeaderH, COLORS.DARK_GREEN);
+      drawRect(doc, LEFT + 156, toPdfY(y + flagHeaderH), 300, flagHeaderH, COLORS.DARK_GREEN);
+      drawRect(doc, LEFT + 456, toPdfY(y + flagHeaderH), 84, flagHeaderH, COLORS.DARK_GREEN);
       doc.fillColor(COLORS.WHITE).fontSize(7.5).font("Helvetica-Bold");
-      doc.text("SEV.", LEFT + 7, y + 9);
-      doc.text("FLAG", LEFT + 59, y + 9);
-      doc.text("DETAIL", LEFT + 163, y + 9);
-      doc.text("STATUS", LEFT + 463, y + 9);
+      doc.text("SEV.", LEFT + 7, toPdfY(y + 9));
+      doc.text("FLAG", LEFT + 59, toPdfY(y + 9));
+      doc.text("DETAIL", LEFT + 163, toPdfY(y + 9));
+      doc.text("STATUS", LEFT + 463, toPdfY(y + 9));
       y += 24;
       payload.flags.forEach((f) => {
         const sev = (f.severity ?? "INFO").toUpperCase();
@@ -262,47 +269,50 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
             : sev === "WARN"
               ? COLORS.YELLOW_FLAG
               : COLORS.ACCENT_GREEN;
-        drawRect(doc, LEFT, y, USABLE, 28, bg, COLORS.GRID);
+        const flagRowH = 28;
+        drawRect(doc, LEFT, toPdfY(y + flagRowH), USABLE, flagRowH, bg, COLORS.GRID);
         doc.fillColor(textColor).fontSize(8).font("Helvetica-Bold");
-        doc.text(`●`, LEFT + 7, y + 6);
-        doc.text(severityToSpec(f.severity), LEFT + 7, y + 18);
+        doc.text("\u2022", LEFT + 7, toPdfY(y + 6));
+        doc.text(severityToSpec(f.severity), LEFT + 7, toPdfY(y + 18));
         doc.fontSize(7.5).font("Helvetica");
-        doc.text(String(f.type ?? "N/A"), LEFT + 59, y + 10, { width: 93 });
-        doc.text(String((f.evidence as string) ?? "").slice(0, 300), LEFT + 163, y + 10, {
+        doc.text(String(f.type ?? "N/A"), LEFT + 59, toPdfY(y + 10), { width: 93 });
+        doc.text(String((f.evidence as string) ?? "").slice(0, 300), LEFT + 163, toPdfY(y + 10), {
           width: 288,
         });
-        doc.font("Helvetica-Bold").text(String(f.status ?? "N/A"), LEFT + 463, y + 10);
+        doc.font("Helvetica-Bold").text(String(f.status ?? "N/A"), LEFT + 463, toPdfY(y + 10));
         y += 28;
       });
     } else {
-      doc.fillColor(COLORS.GRAY).fontSize(8).text("No flags raised", LEFT, y);
+      doc.fillColor(COLORS.GRAY).fontSize(8).text("No flags raised", LEFT, toPdfY(y));
       y += 16;
     }
     y += 14;
 
     // 5. ACTION ITEMS
     doc.fillColor(COLORS.DARK_GREEN).fontSize(11.5).font("Helvetica-Bold");
-    doc.text("ACTION ITEMS", LEFT, y);
+    doc.text("ACTION ITEMS", LEFT, toPdfY(y));
     y += 16;
-    doc.moveTo(LEFT, y).lineTo(LEFT + USABLE, y).strokeColor(COLORS.ACCENT_GREEN).lineWidth(0.5).stroke();
+    doc.moveTo(LEFT, toPdfY(y)).lineTo(LEFT + USABLE, toPdfY(y)).strokeColor(COLORS.ACCENT_GREEN).lineWidth(0.5).stroke();
     y += 8;
 
     const aiColWidths = [18, 259, 54, 54, 47];
+    const aiHeaderH = 20;
+    const aiRowH = 24;
     if (payload.action_items?.length) {
       ["#", "ACTION", "OWNER", "DUE", "PRI."].forEach((h, i) => {
         const x = LEFT + aiColWidths.slice(0, i).reduce((a, b) => a + b, 0);
-        drawRect(doc, x, y, aiColWidths[i]!, 20, COLORS.DARK_GREEN);
+        drawRect(doc, x, toPdfY(y + aiHeaderH), aiColWidths[i]!, aiHeaderH, COLORS.DARK_GREEN);
       });
       doc.fillColor(COLORS.WHITE).fontSize(7.5).font("Helvetica-Bold");
-      doc.text("#", LEFT + 6, y + 7);
-      doc.text("ACTION", LEFT + 24, y + 7);
-      doc.text("OWNER", LEFT + 283, y + 7);
-      doc.text("DUE", LEFT + 337, y + 7);
-      doc.text("PRI.", LEFT + 391, y + 7);
+      doc.text("#", LEFT + 6, toPdfY(y + 7));
+      doc.text("ACTION", LEFT + 24, toPdfY(y + 7));
+      doc.text("OWNER", LEFT + 283, toPdfY(y + 7));
+      doc.text("DUE", LEFT + 337, toPdfY(y + 7));
+      doc.text("PRI.", LEFT + 391, toPdfY(y + 7));
       y += 20;
       payload.action_items.forEach((ai, i) => {
         const bg = i % 2 === 0 ? COLORS.LIGHT_GREEN : COLORS.WHITE;
-        drawRect(doc, LEFT, y, USABLE, 24, bg, COLORS.GRID);
+        drawRect(doc, LEFT, toPdfY(y + aiRowH), USABLE, aiRowH, bg, COLORS.GRID);
         const pri = (ai.priority ?? "LOW").toUpperCase();
         const priColor =
           pri === "HIGH"
@@ -311,17 +321,17 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
               ? COLORS.YELLOW_FLAG
               : COLORS.ACCENT_GREEN;
         doc.fillColor(COLORS.DARK_TEXT).fontSize(8.5).font("Helvetica-Bold");
-        doc.text(String(i + 1), LEFT + 6, y + 8, { width: 10, align: "center" });
+        doc.text(String(i + 1), LEFT + 6, toPdfY(y + 8), { width: 10, align: "center" });
         doc.font("Helvetica");
         const actionStr = truncateLines(ai.action ?? "", 2);
-        doc.text(actionStr, LEFT + 24, y + 8, { width: 250 });
-        doc.text(ai.owner ?? "Advisor", LEFT + 283, y + 8, { width: 48 });
-        doc.text((ai.due ?? "TBD").slice(0, 10), LEFT + 337, y + 8, { width: 48 });
-        doc.fillColor(priColor).font("Helvetica-Bold").text(pri === "MEDIUM" ? "MED" : pri, LEFT + 391, y + 8);
+        doc.text(actionStr, LEFT + 24, toPdfY(y + 8), { width: 250 });
+        doc.text(ai.owner ?? "Advisor", LEFT + 283, toPdfY(y + 8), { width: 48 });
+        doc.text((ai.due ?? "TBD").slice(0, 10), LEFT + 337, toPdfY(y + 8), { width: 48 });
+        doc.fillColor(priColor).font("Helvetica-Bold").text(pri === "MEDIUM" ? "MED" : pri, LEFT + 391, toPdfY(y + 8));
         y += 24;
       });
     } else {
-      doc.fillColor(COLORS.GRAY).fontSize(8).text("No action items", LEFT, y);
+      doc.fillColor(COLORS.GRAY).fontSize(8).text("No action items", LEFT, toPdfY(y));
       y += 16;
     }
 
@@ -331,17 +341,17 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
     y = TOP;
 
     doc.fillColor(COLORS.DARK_GREEN).fontSize(20).font("Helvetica-Bold");
-    doc.text("Structured Compliance Note", LEFT, y);
+    doc.text("Structured Compliance Note", LEFT, toPdfY(y));
     y += 26;
     doc.fillColor(COLORS.GRAY).fontSize(9.5).font("Helvetica");
     doc.text(
       "Full advisor documentation — topics, recommendations, disclosures",
       LEFT,
-      y,
+      toPdfY(y),
       { width: USABLE }
     );
     y += 20;
-    doc.moveTo(LEFT, y).lineTo(LEFT + USABLE, y).strokeColor(COLORS.ACCENT_GREEN).lineWidth(2).stroke();
+    doc.moveTo(LEFT, toPdfY(y)).lineTo(LEFT + USABLE, toPdfY(y)).strokeColor(COLORS.ACCENT_GREEN).lineWidth(2).stroke();
     y += 14;
 
     const sections: Array<{
@@ -372,43 +382,55 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
 
     for (const sec of sections) {
       doc.fillColor(COLORS.DARK_GREEN).fontSize(11.5).font("Helvetica-Bold");
-      doc.text(sec.title, LEFT, y);
+      doc.text(sec.title, LEFT, toPdfY(y));
       y += 16;
-      doc.moveTo(LEFT, y).lineTo(LEFT + USABLE, y).strokeColor(COLORS.ACCENT_GREEN).lineWidth(0.5).stroke();
+      doc.moveTo(LEFT, toPdfY(y)).lineTo(LEFT + USABLE, toPdfY(y)).strokeColor(COLORS.ACCENT_GREEN).lineWidth(0.5).stroke();
       y += 8;
       const items = payload[sec.key] ?? [];
       if (!items.length) {
         doc.fillColor(COLORS.MID_GREEN).fontSize(10).font("Helvetica-Bold");
-        doc.text(sec.emptyTitle, LEFT, y, { width: USABLE });
+        doc.text(sec.emptyTitle, LEFT, toPdfY(y), { width: USABLE });
         y += 14;
         if (sec.emptyBody) {
           doc.fillColor(COLORS.DARK_TEXT).fontSize(8.5).font("Helvetica");
-          doc.text(sec.emptyBody, LEFT, y, { width: USABLE });
+          doc.text(sec.emptyBody, LEFT, toPdfY(y), { width: USABLE });
           y += 18;
         }
       } else {
-        items.forEach((item: string | { text: string }) => {
-          let text = typeof item === "string" ? item : (item.text ?? "");
-          const trimmed = text.trim().toLowerCase();
-          if (
-            sec.key === "recommendations" &&
-            (!text || trimmed === "n/a" || trimmed === "none" || trimmed === "not applicable")
-          ) {
-            text = "NOT YET RECOMMENDED";
-          }
-          if (
-            sec.key === "disclosures" &&
-            (!text || trimmed === "n/a" || trimmed === "none" || trimmed === "not applicable")
-          ) {
-            text = "NO RECOMMENDATION MADE";
-          }
-          doc.fillColor(COLORS.MID_GREEN).fontSize(10).font("Helvetica-Bold");
-          doc.text(text.slice(0, 200), LEFT, y, { width: USABLE });
-          y += 14;
-          doc.fillColor(COLORS.DARK_TEXT).fontSize(8.5).font("Helvetica");
-          doc.text(text, LEFT, y, { width: USABLE });
-          y += 13 * Math.ceil((text.length || 1) / 65) + 8;
-        });
+        if (sec.key === "topics" && payload.topics_display?.length) {
+          payload.topics_display.forEach((item: { title: string; description: string }) => {
+            doc.fillColor(COLORS.MID_GREEN).fontSize(10).font("Helvetica-Bold");
+            doc.text(item.title || "—", LEFT, toPdfY(y), { width: USABLE });
+            y += 14;
+            if (item.description) {
+              doc.fillColor(COLORS.DARK_TEXT).fontSize(8.5).font("Helvetica");
+              doc.text(item.description, LEFT, toPdfY(y), { width: USABLE });
+              y += Math.max(13, Math.ceil((item.description.length || 1) / 72) * 13) + 8;
+            }
+            y += 6;
+          });
+        } else {
+          items.forEach((item: string | { text: string }) => {
+            let text = typeof item === "string" ? item : (item.text ?? "");
+            const trimmed = text.trim().toLowerCase();
+            if (
+              sec.key === "recommendations" &&
+              (!text || trimmed === "n/a" || trimmed === "none" || trimmed === "not applicable")
+            ) {
+              text = "NOT YET RECOMMENDED";
+            }
+            if (
+              sec.key === "disclosures" &&
+              (!text || trimmed === "n/a" || trimmed === "none" || trimmed === "not applicable")
+            ) {
+              text = "NO RECOMMENDATION MADE";
+            }
+            doc.fillColor(COLORS.DARK_TEXT).fontSize(9).font("Helvetica");
+            doc.text(text, LEFT, toPdfY(y), { width: USABLE });
+            const lineCount = Math.max(1, Math.ceil((text.length || 1) / 72));
+            y += lineCount * 13 + 10;
+          });
+        }
       }
       y += 10;
     }
@@ -419,61 +441,71 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
     y = TOP;
 
     doc.fillColor(COLORS.DARK_GREEN).fontSize(20).font("Helvetica-Bold");
-    doc.text("Evidence Map", LEFT, y);
+    doc.text("Evidence Map", LEFT, toPdfY(y));
     y += 26;
     doc.fillColor(COLORS.GRAY).fontSize(9.5).font("Helvetica");
     doc.text(
       `Every compliance claim linked to a timestamped transcript source · ${payload.evidence_links?.length ?? 0} evidence links`,
       LEFT,
-      y,
+      toPdfY(y),
       { width: USABLE }
     );
     y += 20;
-    doc.moveTo(LEFT, y).lineTo(LEFT + USABLE, y).strokeColor(COLORS.ACCENT_GREEN).lineWidth(2).stroke();
+    doc.moveTo(LEFT, toPdfY(y)).lineTo(LEFT + USABLE, toPdfY(y)).strokeColor(COLORS.ACCENT_GREEN).lineWidth(2).stroke();
     y += 14;
 
     doc.fillColor(COLORS.DARK_TEXT).fontSize(8.5).font("Helvetica");
     doc.text(
       "Each row links a specific claim in the compliance note to its precise moment in the meeting transcript. This map is generated automatically by ComplyVault and is designed to satisfy examiner requests for source documentation during regulatory review.",
       LEFT,
-      y,
+      toPdfY(y),
       { width: USABLE }
     );
     y += 36;
 
     const evColWidths = [32, 133, 32, 47, 261, 25];
+    const evRowPadding = 10;
+    const evLineHeight = 11;
+    const evHeaderH = 20;
     if (payload.evidence_links?.length) {
       evColWidths.forEach((cw, i) => {
         const x = LEFT + evColWidths.slice(0, i).reduce((a, b) => a + b, 0);
-        drawRect(doc, x, y, cw, 20, COLORS.DARK_GREEN);
+        drawRect(doc, x, toPdfY(y + evHeaderH), cw, evHeaderH, COLORS.DARK_GREEN);
       });
       doc.fillColor(COLORS.WHITE).fontSize(7.5).font("Helvetica-Bold");
-      doc.text("ID", LEFT + 5, y + 7);
-      doc.text("CLAIM", LEFT + 37, y + 7);
-      doc.text("TIME", LEFT + 170, y + 7);
-      doc.text("SPEAKER", LEFT + 202, y + 7);
-      doc.text("TRANSCRIPT SNIPPET", LEFT + 249, y + 7);
-      doc.text("CONF", LEFT + 515, y + 7);
+      doc.text("ID", LEFT + 5, toPdfY(y + 7));
+      doc.text("CLAIM", LEFT + 37, toPdfY(y + 7));
+      doc.text("TIME", LEFT + 170, toPdfY(y + 7));
+      doc.text("SPEAKER", LEFT + 202, toPdfY(y + 7));
+      doc.text("TRANSCRIPT SNIPPET", LEFT + 249, toPdfY(y + 7));
+      doc.text("CONF", LEFT + 515, toPdfY(y + 7));
       y += 20;
+      doc.fontSize(8).font("Helvetica");
       payload.evidence_links.forEach((ev, i) => {
+        const claimText = (ev.claim ?? "").slice(0, 200);
+        const snippetText = truncateLines(ev.snippet ?? "", 4);
+        const claimLines = Math.max(1, Math.ceil((claimText.length || 1) / 18));
+        const snippetLines = Math.max(1, Math.ceil((snippetText.length || 1) / 42));
+        const rowH = Math.min(72, Math.max(36, (Math.max(claimLines, snippetLines) * evLineHeight) + evRowPadding * 2));
         const bg = i % 2 === 0 ? COLORS.LIGHT_GREEN : COLORS.WHITE;
-        drawRect(doc, LEFT, y, USABLE, 24, bg, COLORS.GRID);
+        drawRect(doc, LEFT, toPdfY(y + rowH), USABLE, rowH, bg, COLORS.GRID);
+        const cellY = y + evRowPadding;
         doc.fillColor(COLORS.ACCENT_GREEN).fontSize(7.5).font("Helvetica-Bold");
-        doc.text(ev.id ?? `E${i + 1}`, LEFT + 5, y + 9);
-        doc.fillColor(COLORS.DARK_TEXT).font("Helvetica");
-        doc.text((ev.claim ?? "").slice(0, 150), LEFT + 37, y + 9, { width: 125 });
+        doc.text(ev.id ?? `E${i + 1}`, LEFT + 5, toPdfY(cellY));
+        doc.fillColor(COLORS.DARK_TEXT).font("Helvetica").fontSize(8);
+        doc.text(claimText, LEFT + 37, toPdfY(cellY), { width: 125 });
         doc.fillColor(COLORS.MID_GREEN).font("Helvetica-Bold");
-        doc.text(formatTime(ev.startTime ?? 0), LEFT + 170, y + 9);
+        doc.text(formatTime(ev.startTime ?? 0), LEFT + 170, toPdfY(cellY));
         doc.fillColor(COLORS.DARK_TEXT).font("Helvetica");
-        doc.text(ev.speaker ?? "Unknown", LEFT + 202, y + 9, { width: 40 });
+        doc.text((ev.speaker ?? "Unknown").slice(0, 12), LEFT + 202, toPdfY(cellY), { width: 40 });
         doc.fillColor(COLORS.GRAY).font("Helvetica-Oblique");
-        doc.text(truncateLines(ev.snippet ?? "", 3), LEFT + 249, y + 9, { width: 253 });
+        doc.text(snippetText, LEFT + 249, toPdfY(cellY), { width: 253 });
         doc.fillColor(COLORS.ACCENT_GREEN).font("Helvetica-Bold");
-        doc.text(ev.confidence != null ? `${Math.round(ev.confidence * 100)}%` : "", LEFT + 515, y + 9);
-        y += 24;
+        doc.text(ev.confidence != null ? `${Math.round(ev.confidence * 100)}%` : "", LEFT + 515, toPdfY(cellY));
+        y += rowH;
       });
     } else {
-      doc.fillColor(COLORS.GRAY).fontSize(8).text("No evidence links.", LEFT, y);
+      doc.fillColor(COLORS.GRAY).fontSize(8).text("No evidence links.", LEFT, toPdfY(y));
     }
 
     // Page break — Advisor Sign-Off & Audit Trail
@@ -482,30 +514,30 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
     y = TOP;
 
     doc.fillColor(COLORS.DARK_GREEN).fontSize(20).font("Helvetica-Bold");
-    doc.text("Advisor Sign-Off & Audit Trail", LEFT, y);
+    doc.text("Advisor Sign-Off & Audit Trail", LEFT, toPdfY(y));
     y += 26;
     doc.fillColor(COLORS.GRAY).fontSize(9.5).font("Helvetica");
     doc.text(
       "Finalization record, certification, and complete system audit log",
       LEFT,
-      y,
+      toPdfY(y),
       { width: USABLE }
     );
     y += 20;
-    doc.moveTo(LEFT, y).lineTo(LEFT + USABLE, y).strokeColor(COLORS.ACCENT_GREEN).lineWidth(2).stroke();
+    doc.moveTo(LEFT, toPdfY(y)).lineTo(LEFT + USABLE, toPdfY(y)).strokeColor(COLORS.ACCENT_GREEN).lineWidth(2).stroke();
     y += 14;
 
     doc.fillColor(COLORS.DARK_GREEN).fontSize(11.5).font("Helvetica-Bold");
-    doc.text("ADVISOR CERTIFICATION", LEFT, y);
+    doc.text("ADVISOR CERTIFICATION", LEFT, toPdfY(y));
     y += 16;
-    doc.moveTo(LEFT, y).lineTo(LEFT + USABLE, y).strokeColor(COLORS.ACCENT_GREEN).lineWidth(0.5).stroke();
+    doc.moveTo(LEFT, toPdfY(y)).lineTo(LEFT + USABLE, toPdfY(y)).strokeColor(COLORS.ACCENT_GREEN).lineWidth(0.5).stroke();
     y += 8;
 
     doc.fillColor(COLORS.DARK_TEXT).fontSize(8.5).font("Helvetica");
     doc.text(
       "I certify that this compliance note accurately reflects the topics discussed, recommendations made, disclosures provided, and action items agreed during the client meeting referenced above. This document has been reviewed for completeness and accuracy prior to finalization.",
       LEFT,
-      y,
+      toPdfY(y),
       { width: USABLE }
     );
     y += 40;
@@ -518,45 +550,47 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
       ["CRD NUMBER", "[REDACTED]", "PACK VERSION", String(payload.pack_version)],
       ["SIGNATURE", "____________", "", ""],
     ];
+    const signoffRowH = 26;
     signoff.forEach((row, i) => {
       const bg = i % 2 === 0 ? COLORS.LIGHT_GREEN : COLORS.WHITE;
-      drawRect(doc, LEFT, y, USABLE, 26, bg, COLORS.BORDER);
+      drawRect(doc, LEFT, toPdfY(y + signoffRowH), USABLE, signoffRowH, bg, COLORS.BORDER);
       doc.fillColor(COLORS.GRAY).fontSize(7.5).font("Helvetica-Bold");
-      doc.text(row[0]!, LEFT + 8, y + 10);
-      doc.text(row[2]!, LEFT + 278, y + 10);
+      doc.text(row[0]!, LEFT + 8, toPdfY(y + 10));
+      doc.text(row[2]!, LEFT + 278, toPdfY(y + 10));
       doc.fillColor(COLORS.DARK_TEXT).fontSize(8.5).font("Helvetica");
-      doc.text(row[1]!, LEFT + 88, y + 10);
-      doc.text(row[3]!, LEFT + 368, y + 10);
+      doc.text(row[1]!, LEFT + 88, toPdfY(y + 10));
+      doc.text(row[3]!, LEFT + 368, toPdfY(y + 10));
       y += 26;
     });
     y += 18;
 
     doc.fillColor(COLORS.DARK_GREEN).fontSize(11.5).font("Helvetica-Bold");
-    doc.text("SYSTEM AUDIT TRAIL", LEFT, y);
+    doc.text("SYSTEM AUDIT TRAIL", LEFT, toPdfY(y));
     y += 16;
-    doc.moveTo(LEFT, y).lineTo(LEFT + USABLE, y).strokeColor(COLORS.ACCENT_GREEN).lineWidth(0.5).stroke();
+    doc.moveTo(LEFT, toPdfY(y)).lineTo(LEFT + USABLE, toPdfY(y)).strokeColor(COLORS.ACCENT_GREEN).lineWidth(0.5).stroke();
     y += 8;
 
     const atColWidths = [108, 130, 72, 194];
+    const atRowH = 22;
     if (payload.audit_trail?.length) {
       atColWidths.forEach((cw, i) => {
         const x = LEFT + atColWidths.slice(0, i).reduce((a, b) => a + b, 0);
-        drawRect(doc, x, y, cw, 22, COLORS.DARK_GREEN);
+        drawRect(doc, x, toPdfY(y + atRowH), cw, atRowH, COLORS.DARK_GREEN);
       });
       doc.fillColor(COLORS.WHITE).fontSize(7.5).font("Helvetica-Bold");
-      doc.text("TIMESTAMP", LEFT + 5, y + 8);
-      doc.text("EVENT", LEFT + 118, y + 8);
-      doc.text("USER", LEFT + 253, y + 8);
-      doc.text("DETAIL", LEFT + 330, y + 8);
+      doc.text("TIMESTAMP", LEFT + 5, toPdfY(y + 8));
+      doc.text("EVENT", LEFT + 118, toPdfY(y + 8));
+      doc.text("USER", LEFT + 253, toPdfY(y + 8));
+      doc.text("DETAIL", LEFT + 330, toPdfY(y + 8));
       y += 22;
       payload.audit_trail.forEach((row, i) => {
         const bg = i % 2 === 0 ? COLORS.LIGHT_GREEN : COLORS.WHITE;
-        drawRect(doc, LEFT, y, USABLE, 22, bg, COLORS.GRID);
+        drawRect(doc, LEFT, toPdfY(y + atRowH), USABLE, atRowH, bg, COLORS.GRID);
         doc.fillColor(COLORS.DARK_TEXT).fontSize(8).font("Helvetica");
-        doc.text(row.timestamp ?? "", LEFT + 7, y + 8, { width: 98 });
-        doc.text(row.event ?? "", LEFT + 118, y + 8, { width: 122 });
-        doc.text(row.user ?? "", LEFT + 253, y + 8, { width: 64 });
-        doc.text(row.detail ?? "", LEFT + 330, y + 8, { width: 186 });
+        doc.text(row.timestamp ?? "", LEFT + 7, toPdfY(y + 8), { width: 98 });
+        doc.text(row.event ?? "", LEFT + 118, toPdfY(y + 8), { width: 122 });
+        doc.text(row.user ?? "", LEFT + 253, toPdfY(y + 8), { width: 64 });
+        doc.text(row.detail ?? "", LEFT + 330, toPdfY(y + 8), { width: 186 });
         y += 22;
       });
     }
@@ -564,12 +598,12 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
 
     // Redacted notice box
     const noticeH = 58;
-    drawRect(doc, LEFT, y, USABLE, noticeH, COLORS.NOTICE_BG, COLORS.BORDER);
+    drawRect(doc, LEFT, toPdfY(y + noticeH), USABLE, noticeH, COLORS.NOTICE_BG, COLORS.BORDER);
     doc.fillColor(COLORS.NOTICE_TEXT).fontSize(7.5);
     const noticeText = payload.watermarked
       ? "REDACTED SAMPLE DOCUMENT — This is a fictional example created by ComplyVault to demonstrate output format and quality. All client names, firm names, financial figures, and personal details are entirely fabricated and do not represent any real client, advisor, or firm. complyvault.co"
       : "This compliance note has been generated by ComplyVault AI from a meeting recording. All content must be reviewed and approved by the advisor of record before use. complyvault.co";
-    doc.font("Helvetica").text(noticeText, LEFT + 10, y + 10, { width: USABLE - 20 });
+    doc.font("Helvetica").text(noticeText, LEFT + 10, toPdfY(y + 10), { width: USABLE - 20 });
 
       doc.end();
     } catch (err) {

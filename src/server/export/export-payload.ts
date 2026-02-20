@@ -3,6 +3,7 @@
  * Used by PDFKit implementation.
  */
 
+import { topicToTitleDescription } from "~/lib/topics";
 import type { Meeting, User, Version, Workspace } from "./types";
 import type { ExtractionData } from "../extraction/types";
 import type { TranscriptSegment } from "../transcription/types";
@@ -21,6 +22,8 @@ export interface ExportPayload {
   flags: Array<{ type: string; severity: string; status: string; evidence?: unknown }>;
   action_items: Array<{ action: string; owner: string; due: string; priority: string }>;
   topics: string[];
+  /** Resolved topics with title (short) and description (longer) for display */
+  topics_display?: Array<{ title: string; description: string }>;
   recommendations: Array<{ text: string }>;
   disclosures: Array<{ text: string }>;
   evidence_links: Array<{
@@ -37,6 +40,34 @@ export interface ExportPayload {
   date_signed?: string;
   watermarked?: boolean;
   _transcript_segments?: TranscriptSegment[];
+}
+
+function inferAdvisorFromTranscript(segments: TranscriptSegment[]): string | null {
+  const exclude = new Set(["Unknown", "Note", "Speaker 1", "Speaker 2", ""]);
+  const counts: Record<string, number> = {};
+  for (const s of segments) {
+    const sp = (s.speaker ?? "").trim();
+    if (!sp || exclude.has(sp)) continue;
+    counts[sp] = (counts[sp] ?? 0) + 1;
+  }
+  let best: string | null = null;
+  let bestCount = 0;
+  for (const [sp, c] of Object.entries(counts)) {
+    if (c > bestCount) {
+      bestCount = c;
+      best = sp;
+    }
+  }
+  return best;
+}
+
+function inferMeetingFormat(meeting: Meeting): string {
+  const mime = meeting.sourceFileMime?.toLowerCase();
+  const name = meeting.sourceFileName?.toLowerCase() ?? "";
+  if (mime === "text/plain" || name.endsWith(".txt") || name.includes("transcript")) {
+    return "Transcript Upload";
+  }
+  return "Virtual / Zoom";
 }
 
 function getSpeakerAtTime(
@@ -87,7 +118,10 @@ export function buildExportPayload(
     ? (new Date(meeting.meetingDate).toISOString().split("T")[0] ?? "")
     : "";
 
+  // Infer advisor from transcript (primary speaker) or fall back to finalized user
+  const advisorFromTranscript = inferAdvisorFromTranscript(segments);
   const advisorName =
+    advisorFromTranscript ??
     meeting.finalizedBy?.name ??
     meeting.finalizedBy?.email ??
     "Advisor";
@@ -116,7 +150,7 @@ export function buildExportPayload(
   const medCount = flags.filter((f) => f.severity === "WARN").length;
   const infoCount = flags.filter((f) => f.severity === "INFO").length;
 
-  const format = "Virtual / Zoom";
+  const format = inferMeetingFormat(meeting);
   const duration = formatDuration(segments);
   const exportingUser = options?.exportingUserName ?? "System";
 
@@ -174,7 +208,7 @@ export function buildExportPayload(
     date: dateStr,
     meeting_type: meeting.meetingType ?? "N/A",
     duration: formatDuration(segments),
-    format: "Virtual / Zoom",
+    format,
     generated_at: (extraction.extractedAt as string | undefined) ?? new Date().toISOString(),
     review_status: meeting.status ?? "N/A",
     pack_version: versions.length || 1,
@@ -186,6 +220,9 @@ export function buildExportPayload(
     })),
     action_items: actionItems,
     topics: extraction.topics ?? [],
+    topics_display: (extraction.topics ?? []).map((t) =>
+      topicToTitleDescription(typeof t === "string" ? t : String(t))
+    ),
     recommendations: (extraction.recommendations ?? []).map((r) => ({
       text: typeof r === "string" ? r : r.text ?? "",
     })),

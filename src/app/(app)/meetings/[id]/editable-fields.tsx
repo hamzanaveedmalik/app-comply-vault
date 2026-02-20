@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { topicToTitleDescription } from "~/lib/topics";
 import type { ExtractionData } from "~/server/extraction/types";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -474,12 +475,16 @@ export default function EditableFields({
       {extraction.topics && extraction.topics.length > 0 && (
         <div>
           <h3 className="text-sm font-semibold text-gray-700 mb-2">Topics</h3>
-          <ul className="space-y-1">
-            {extraction.topics.map((topic, idx) => (
-              <li key={idx} className="text-sm text-gray-600">
-                • {topic}
-              </li>
-            ))}
+          <ul className="space-y-2">
+            {(extraction.topics as string[]).map((topic, idx) => {
+              const { title, description } = topicToTitleDescription(typeof topic === "string" ? topic : String(topic));
+              return (
+                <li key={idx} className="text-sm">
+                  <span className="font-medium text-gray-900">{title}</span>
+                  {description && <p className="text-gray-600 mt-0.5">{description}</p>}
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

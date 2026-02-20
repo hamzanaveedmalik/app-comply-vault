@@ -1,4 +1,3 @@
-import path from "node:path";
 import archiver from "archiver";
 import type { Meeting, User, Version, Workspace } from "./types";
 import type { ExtractionData } from "../extraction/types";
@@ -6,7 +5,7 @@ import type { TranscriptSegment } from "../transcription/types";
 import { generateComplianceNotePDF } from "./pdf";
 import { generateEvidenceMapCSV, generateVersionHistoryCSV } from "./csv";
 import { generateTranscriptTXT } from "./txt";
-import { buildExportPayload, runPythonPDFGenerator } from "./python-pdf";
+import { buildExportPayload } from "./export-payload";
 
 export interface ExportFlag {
   type: string;
@@ -70,29 +69,18 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
             .replace(/^_|_$/g, "") || "client";
         };
 
-        // 1. Generate branded PDF (Python ReportLab first; silent fallback to jsPDF)
-        let pdfBuffer: Buffer;
-        try {
-          const payload = buildExportPayload(
-            meeting,
-            extraction,
-            transcript,
-            versions,
-            workspace,
-            flags,
-            watermarked,
-            { exportingUserName }
-          );
-          const logoPath = path.join(process.cwd(), "public", "complyvault-logo.png");
-          pdfBuffer = await runPythonPDFGenerator(payload, logoPath);
-        } catch {
-          pdfBuffer = await generateComplianceNotePDF({
-            meeting,
-            extraction,
-            workspaceName: workspace.name,
-            watermarked,
-          });
-        }
+        // 1. Generate branded PDF (PDFKit)
+        const payload = buildExportPayload(
+          meeting,
+          extraction,
+          transcript,
+          versions,
+          workspace,
+          flags,
+          watermarked,
+          { exportingUserName }
+        );
+        const pdfBuffer = await generateComplianceNotePDF(payload);
         archive.append(pdfBuffer, { name: "01_Compliance_Note.pdf" });
 
         // 2. Evidence Map CSV

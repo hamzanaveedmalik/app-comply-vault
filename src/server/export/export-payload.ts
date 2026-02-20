@@ -1,5 +1,8 @@
-import { spawn } from "node:child_process";
-import path from "node:path";
+/**
+ * Build export payload for PDF generation.
+ * Used by PDFKit implementation.
+ */
+
 import type { Meeting, User, Version, Workspace } from "./types";
 import type { ExtractionData } from "../extraction/types";
 import type { TranscriptSegment } from "../transcription/types";
@@ -62,7 +65,7 @@ function formatDuration(segments: TranscriptSegment[]): string {
 }
 
 /**
- * Build JSON payload for Python ReportLab PDF generator
+ * Build export payload for PDF generation
  */
 export function buildExportPayload(
   meeting: Meeting & { finalizedBy?: User | null },
@@ -203,51 +206,4 @@ export function buildExportPayload(
     watermarked,
     _transcript_segments: segments,
   };
-}
-
-/**
- * Invoke Python script to generate branded PDF. Returns Buffer or throws.
- */
-export async function runPythonPDFGenerator(
-  payload: ExportPayload,
-  logoPath: string
-): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    const scriptPath = path.join(process.cwd(), "scripts", "generate-audit-pdf.py");
-    const python =
-      process.platform === "win32" ? "python" : "python3";
-    const args = ["--logo-path", logoPath];
-
-    const child = spawn(python, [scriptPath, ...args], {
-      stdio: ["pipe", "pipe", "pipe"],
-    });
-
-    const chunks: Buffer[] = [];
-    let stderr = "";
-
-    child.stdout.on("data", (chunk: Buffer) => chunks.push(chunk));
-    child.stderr.on("data", (chunk: Buffer) => {
-      stderr += chunk.toString();
-    });
-
-    child.on("error", (err) => {
-      reject(new Error(`Python spawn failed: ${err.message}`));
-    });
-
-    child.on("close", (code) => {
-      if (code !== 0) {
-        reject(new Error(`Python script failed (${code}): ${stderr || "Unknown error"}`));
-        return;
-      }
-      resolve(Buffer.concat(chunks));
-    });
-
-    child.stdin.write(JSON.stringify(payload), "utf-8", (err) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      child.stdin.end();
-    });
-  });
 }

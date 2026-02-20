@@ -46,8 +46,12 @@ export default function ExportButton({
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to export audit pack");
+        const data = (await response.json().catch(() => ({}))) as {
+          error?: string;
+          details?: string;
+        };
+        const message = data.details ?? data.error ?? "Failed to export audit pack";
+        throw new Error(message);
       }
 
       // Get filename from Content-Disposition header or generate one

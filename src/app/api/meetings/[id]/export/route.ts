@@ -6,8 +6,10 @@ import type { TranscriptSegment } from "~/server/transcription/types";
 import type { Meeting, User } from "~/server/export/types";
 import { getEntitlements, isTrialExpired } from "~/server/billing/entitlements";
 
-// Force Node.js runtime for this route (needed for Buffer and archiver)
+// Force Node.js runtime for this route (needed for Buffer, archiver, PDFKit)
 export const runtime = "nodejs";
+// PDF + ZIP generation can take 10-30s; allow up to 60s
+export const maxDuration = 60;
 
 export async function POST(
   request: Request,
@@ -224,11 +226,16 @@ export async function POST(
       stack: errorStack,
       name: error instanceof Error ? error.name : undefined,
     });
+    // Include error details in staging/preview for debugging
+    const isPreview =
+      process.env.NODE_ENV === "development" ||
+      process.env.VERCEL_ENV === "preview" ||
+      process.env.VERCEL_ENV === "development";
     return Response.json(
       {
         error: "Failed to export audit pack",
-        details: process.env.NODE_ENV === "development" ? errorMessage : undefined,
-        stack: process.env.NODE_ENV === "development" ? errorStack : undefined,
+        details: isPreview ? errorMessage : undefined,
+        stack: isPreview ? errorStack : undefined,
       },
       { status: 500 }
     );

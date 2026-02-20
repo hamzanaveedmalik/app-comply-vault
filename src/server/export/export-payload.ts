@@ -3,7 +3,6 @@
  * Used by PDFKit implementation.
  */
 
-import { topicToTitleDescription } from "~/lib/topics";
 import type { Meeting, User, Version, Workspace } from "./types";
 import type { ExtractionData } from "../extraction/types";
 import type { TranscriptSegment } from "../transcription/types";
@@ -22,8 +21,6 @@ export interface ExportPayload {
   flags: Array<{ type: string; severity: string; status: string; evidence?: unknown }>;
   action_items: Array<{ action: string; owner: string; due: string; priority: string }>;
   topics: string[];
-  /** Resolved topics with title (short) and description (longer) for display */
-  topics_display?: Array<{ title: string; description: string }>;
   recommendations: Array<{ text: string }>;
   disclosures: Array<{ text: string }>;
   evidence_links: Array<{
@@ -42,77 +39,18 @@ export interface ExportPayload {
   _transcript_segments?: TranscriptSegment[];
 }
 
-function sanitizeTranscriptText(s: string): string {
-  if (!s) return "";
-  return s
-    .replace(/\uFFFE/g, "-")
-    .replace(/[\u0000-\u001F\u007F-\u009F]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function inferAdvisorFromTranscript(segments: TranscriptSegment[]): string | null {
-  const exclude = new Set([
-    "Unknown",
-    "Note",
-    "Client",
-    "Speaker 1",
-    "Speaker 2",
-    "Total Words",
-    "Words",
-    "",
-  ]);
-  const counts: Record<string, number> = {};
-  for (const s of segments) {
-    const sp = (s.speaker ?? "").trim();
-    if (!sp || exclude.has(sp)) continue;
-    counts[sp] = (counts[sp] ?? 0) + 1;
-  }
-  let best: string | null = null;
-  let bestCount = 0;
-  for (const [sp, c] of Object.entries(counts)) {
-    if (c > bestCount) {
-      bestCount = c;
-      best = sp;
-    }
-  }
-  return best;
-}
-
-function inferMeetingFormat(meeting: Meeting): string {
-  const mime = meeting.sourceFileMime?.toLowerCase();
-  const name = meeting.sourceFileName?.toLowerCase() ?? "";
-  if (mime === "text/plain" || name.endsWith(".txt") || name.includes("transcript")) {
-    return "Transcript Upload";
-  }
-  return "Virtual / Zoom";
-}
-
 function getSpeakerAtTime(
   segments: TranscriptSegment[],
   startTime: number
 ): string {
-  const tolerance = 5;
   for (const s of segments) {
     const start = s.startTime ?? 0;
     const end = s.endTime ?? start + 60;
-    if (start - tolerance <= startTime && startTime <= end + tolerance) {
-      const sp = (s.speaker ?? "").trim();
-      if (sp && !["Unknown", "Note", "Total Words", "Words"].includes(sp)) return sp;
+    if (start <= startTime && startTime <= end) {
+      return s.speaker ?? "Unknown";
     }
   }
-  const invalidSpeakers = new Set(["Unknown", "Note", "Total Words", "Words", ""]);
-  let best: { speaker: string; dist: number } | null = null;
-  for (const s of segments) {
-    const start = s.startTime ?? 0;
-    const dist = Math.abs(start - startTime);
-    const sp = (s.speaker ?? "").trim();
-    if (invalidSpeakers.has(sp)) continue;
-    if (!best || dist < best.dist) {
-      best = { speaker: sp, dist };
-    }
-  }
-  return best?.speaker ?? "Unassigned";
+  return "Unknown";
 }
 
 function formatDuration(segments: TranscriptSegment[]): string {
@@ -149,38 +87,27 @@ export function buildExportPayload(
     ? (new Date(meeting.meetingDate).toISOString().split("T")[0] ?? "")
     : "";
 
-  // Infer advisor from transcript (primary speaker) or fall back to finalized user
-  const advisorFromTranscript = inferAdvisorFromTranscript(segments);
   const advisorName =
-    advisorFromTranscript ??
     meeting.finalizedBy?.name ??
     meeting.finalizedBy?.email ??
-    "[REDACTED]";
+    options?.exportingUserName ??
+    "Advisor";
 
   const evidenceLinks = (extraction.evidenceMap ?? []).map((ev, i) => ({
-    id: `E-${String(i + 1).padStart(3, "0")}`,
-    claim: sanitizeTranscriptText(ev.claim ?? ""),
+    id: `E${i + 1}`,
+    claim: ev.claim ?? "",
     startTime: ev.startTime ?? 0,
     speaker: getSpeakerAtTime(segments, ev.startTime ?? 0),
-    snippet: sanitizeTranscriptText(ev.snippet ?? ""),
+    snippet: ev.snippet ?? "",
     confidence: ev.confidence,
   }));
 
-  const actionItems = (extraction.followUps ?? []).map((fu) => {
-    const text = (fu.text ?? "").toLowerCase();
-    let priority = "LOW";
-    if (/urgent|asap|immediately|critical|high priority|right away/.test(text)) {
-      priority = "HIGH";
-    } else if (/soon|shortly|next week|medium|moderate/.test(text)) {
-      priority = "MEDIUM";
-    }
-    return {
-      action: fu.text ?? "",
-      owner: "Unassigned",
-      due: "Not captured",
-      priority,
-    };
-  });
+  const actionItems = (extraction.followUps ?? []).map((fu) => ({
+    action: fu.text ?? "",
+    owner: "Advisor",
+    due: "TBD",
+    priority: "LOW",
+  }));
 
   const wordCount =
     segments.reduce((acc, s) => acc + (s.text?.split(/\s+/).length ?? 0), 0) ||
@@ -190,7 +117,11 @@ export function buildExportPayload(
   const medCount = flags.filter((f) => f.severity === "WARN").length;
   const infoCount = flags.filter((f) => f.severity === "INFO").length;
 
-  const format = inferMeetingFormat(meeting);
+  // Transcript upload (no recording file) vs Virtual/Zoom recording
+  const format =
+    !meeting.fileUrl && meeting.sourceFileMime === "text/plain"
+      ? "Transcript Upload"
+      : "Virtual / Zoom";
   const duration = formatDuration(segments);
   const exportingUser = options?.exportingUserName ?? "System";
 
@@ -248,7 +179,10 @@ export function buildExportPayload(
     date: dateStr,
     meeting_type: meeting.meetingType ?? "N/A",
     duration: formatDuration(segments),
-    format,
+    format:
+      !meeting.fileUrl && meeting.sourceFileMime === "text/plain"
+        ? "Transcript Upload"
+        : "Virtual / Zoom",
     generated_at: (extraction.extractedAt as string | undefined) ?? new Date().toISOString(),
     review_status: meeting.status ?? "N/A",
     pack_version: versions.length || 1,
@@ -260,9 +194,6 @@ export function buildExportPayload(
     })),
     action_items: actionItems,
     topics: extraction.topics ?? [],
-    topics_display: (extraction.topics ?? []).map((t) =>
-      topicToTitleDescription(typeof t === "string" ? t : String(t))
-    ),
     recommendations: (extraction.recommendations ?? []).map((r) => ({
       text: typeof r === "string" ? r : r.text ?? "",
     })),

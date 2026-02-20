@@ -135,6 +135,7 @@ export function toExtractionData(
 
   return {
     topics: extraction.topics,
+    advisorName: extraction.advisorName,
     recommendations: extraction.recommendations,
     disclosures: extraction.disclosures,
     decisions: extraction.decisions,

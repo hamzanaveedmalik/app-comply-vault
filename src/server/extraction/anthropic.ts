@@ -26,8 +26,9 @@ export class AnthropicExtractionProvider {
     const systemPrompt = `You are a compliance assistant that extracts structured information from financial advisor meeting transcripts.
 
 Extract the following information:
-1. Topics: List of main topics discussed (as an array of strings)
-2. Recommendations: Investment or financial recommendations made to the client (with timestamps)
+1. Topics: List of main topics discussed. For each topic, provide a concise title (max 60 chars) and a slightly more descriptive paragraph. Format: [{"title": "Concise topic", "description": "More detailed description..."}]
+2. Advisor: If the advisor's name can be identified from the transcript (e.g., self-introduction, signature), include it as "advisorName". Otherwise omit.
+3. Recommendations: Investment or financial recommendations made to the client (with timestamps)
 3. Disclosures: Risk disclosures, conflicts of interest, or regulatory disclosures mentioned (with timestamps)
 4. Decisions: Client decisions or agreements made during the meeting (with timestamps)
 5. Follow-ups: Action items or follow-up tasks mentioned (with timestamps)
@@ -40,7 +41,8 @@ For each recommendation, disclosure, decision, and follow-up, you must:
 
 Return your response as valid JSON matching this structure:
 {
-  "topics": ["topic1", "topic2"],
+  "topics": [{"title": "Concise topic", "description": "Descriptive paragraph"}, ...],
+  "advisorName": "Advisor name if identifiable",
   "recommendations": [
     {
       "text": "I recommend...",
@@ -93,9 +95,21 @@ Return the extraction as JSON.`;
 
       const parsed = JSON.parse(jsonText);
 
+      // Normalize topics: support both legacy string[] and new {title, description}[]
+      const rawTopics = Array.isArray(parsed.topics) ? parsed.topics : [];
+      const topics: Array<{ title: string; description: string }> = rawTopics.map((t: unknown) => {
+        if (typeof t === "object" && t && "title" in t && "description" in t) {
+          return { title: String((t as { title: string }).title), description: String((t as { description: string }).description) };
+        }
+        const s = String(t);
+        const title = s.length > 55 ? s.slice(0, 52).trim() + "..." : s;
+        return { title, description: s };
+      });
+
       // Validate and normalize the response
       const result: ExtractionResult = {
-        topics: Array.isArray(parsed.topics) ? parsed.topics : [],
+        topics,
+        advisorName: typeof parsed.advisorName === "string" && parsed.advisorName.trim() ? parsed.advisorName.trim() : undefined,
         recommendations: this.normalizeExtractedItems(parsed.recommendations || [], "recommendation"),
         disclosures: this.normalizeExtractedItems(parsed.disclosures || [], "disclosure"),
         decisions: this.normalizeExtractedItems(parsed.decisions || [], "decision"),

@@ -85,21 +85,6 @@ function safeString(val: unknown): string {
   return String(val);
 }
 
-/** PDFKit: origin bottom-left, y increases upward. Convert our top-down bodyY to PDF y. */
-function toPdfY(bodyY: number): number {
-  return PAGE_H - bodyY;
-}
-
-/** Baseline for text at bodyY from top (approx) */
-function toBaseline(bodyY: number, fontSize = 10): number {
-  return PAGE_H - bodyY - fontSize * 0.8;
-}
-
-/** Rect: y is bottom in PDF. Top of rect at bodyY with height h => bottom = bodyY + h in our coords */
-function rectTopToPdfBottom(bodyY: number, h: number): number {
-  return PAGE_H - bodyY - h;
-}
-
 export async function generateComplianceNotePDF(payload: ExportPayload): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     try {
@@ -115,6 +100,10 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
       doc.on("error", reject);
 
       let pageNum = 0;
+      // Redraw header/footer when PDFKit auto-adds a page (content overflow)
+      doc.on("pageAdded", () => {
+        drawPageDecorations();
+      });
       let hasLogo = false;
       let logoPath = "";
       try {
@@ -279,9 +268,10 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
               ? COLORS.YELLOW_FLAG
               : COLORS.ACCENT_GREEN;
         drawRect(doc, LEFT, y, USABLE, 28, bg, COLORS.GRID);
+        // Use doc.circle for bullet (Unicode ● can render as %ï in some fonts)
+        doc.circle(LEFT + 12, y + 10, 2.5).fill(textColor);
         doc.fillColor(textColor).fontSize(8).font("Helvetica-Bold");
-        doc.text(`●`, LEFT + 7, y + 6);
-        doc.text(severityToSpec(f.severity), LEFT + 7, y + 18);
+        doc.text(severityToSpec(f.severity), LEFT + 12, y + 18);
         doc.fontSize(7.5).font("Helvetica");
         doc.text(String(f.type ?? "N/A"), LEFT + 59, y + 10, { width: 93 });
         doc.text(String((f.evidence as string) ?? "").slice(0, 300), LEFT + 163, y + 10, {
@@ -403,8 +393,19 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
           y += 18;
         }
       } else {
-        items.forEach((item: string | { text: string }) => {
-          let text = typeof item === "string" ? item : (item.text ?? "");
+        const itemsList = sec.key === "topics"
+          ? (payload.topics ?? [])
+          : (payload[sec.key] ?? []) as Array<{ title?: string; text?: string; description?: string } | string>;
+        itemsList.forEach((item) => {
+          const isTopic = sec.key === "topics";
+          const itemObj = item as { title?: string; text?: string; description?: string };
+          const title = isTopic && itemObj?.title
+            ? itemObj.title
+            : "text" in itemObj && itemObj.text ? itemObj.text : String(item);
+          const body = isTopic && itemObj?.description
+            ? itemObj.description
+            : "text" in itemObj && itemObj.text ? itemObj.text : String(item);
+          let text = body;
           const trimmed = text.trim().toLowerCase();
           if (
             sec.key === "recommendations" &&
@@ -418,12 +419,18 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
           ) {
             text = "NO RECOMMENDATION MADE";
           }
+          const displayTitle = title || String(item).slice(0, 200);
           doc.fillColor(COLORS.MID_GREEN).fontSize(10).font("Helvetica-Bold");
-          doc.text(text.slice(0, 200), LEFT, y, { width: USABLE });
-          y += 14;
-          doc.fillColor(COLORS.DARK_TEXT).fontSize(8.5).font("Helvetica");
-          doc.text(text, LEFT, y, { width: USABLE });
-          y += 13 * Math.ceil((text.length || 1) / 65) + 8;
+          doc.text(displayTitle, LEFT, y, { width: USABLE });
+          y += doc.heightOfString(displayTitle, { width: USABLE }) + 4;
+          if (text && (isTopic ? title !== text : true)) {
+            doc.fillColor(COLORS.DARK_TEXT).fontSize(8.5).font("Helvetica");
+            const textH = doc.heightOfString(text, { width: USABLE });
+            doc.text(text, LEFT, y, { width: USABLE });
+            y += textH + 10;
+          } else {
+            y += 6;
+          }
         });
       }
       y += 10;
@@ -471,22 +478,30 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
       doc.text("TRANSCRIPT SNIPPET", LEFT + 249, y + 7);
       doc.text("CONF", LEFT + 515, y + 7);
       y += 20;
+      const claimW = 125;
+      const snippetW = 253;
       payload.evidence_links.forEach((ev, i) => {
+        const claimText = (ev.claim ?? "").slice(0, 150);
+        const snippetText = truncateLines(ev.snippet ?? "", 4);
+        doc.fontSize(7.5).font("Helvetica");
+        const claimH = doc.heightOfString(claimText, { width: claimW });
+        const snippetH = doc.heightOfString(snippetText, { width: snippetW });
+        const rowH = Math.max(28, claimH + snippetH + 14);
         const bg = i % 2 === 0 ? COLORS.LIGHT_GREEN : COLORS.WHITE;
-        drawRect(doc, LEFT, y, USABLE, 24, bg, COLORS.GRID);
-        doc.fillColor(COLORS.ACCENT_GREEN).fontSize(7.5).font("Helvetica-Bold");
+        drawRect(doc, LEFT, y, USABLE, rowH, bg, COLORS.GRID);
+        doc.fillColor(COLORS.ACCENT_GREEN).font("Helvetica-Bold");
         doc.text(ev.id ?? `E${i + 1}`, LEFT + 5, y + 9);
         doc.fillColor(COLORS.DARK_TEXT).font("Helvetica");
-        doc.text((ev.claim ?? "").slice(0, 150), LEFT + 37, y + 9, { width: 125 });
+        doc.text(claimText, LEFT + 37, y + 9, { width: claimW });
         doc.fillColor(COLORS.MID_GREEN).font("Helvetica-Bold");
         doc.text(formatTime(ev.startTime ?? 0), LEFT + 170, y + 9);
         doc.fillColor(COLORS.DARK_TEXT).font("Helvetica");
         doc.text(ev.speaker ?? "Unknown", LEFT + 202, y + 9, { width: 40 });
         doc.fillColor(COLORS.GRAY).font("Helvetica-Oblique");
-        doc.text(truncateLines(ev.snippet ?? "", 3), LEFT + 249, y + 9, { width: 253 });
+        doc.text(snippetText, LEFT + 249, y + 9, { width: snippetW });
         doc.fillColor(COLORS.ACCENT_GREEN).font("Helvetica-Bold");
         doc.text(ev.confidence != null ? `${Math.round(ev.confidence * 100)}%` : "", LEFT + 515, y + 9);
-        y += 24;
+        y += rowH;
       });
     } else {
       doc.fillColor(COLORS.GRAY).fontSize(8).text("No evidence links.", LEFT, y);

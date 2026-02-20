@@ -59,7 +59,8 @@ export interface ExtractedFollowUp {
  * Complete extraction result from LLM
  */
 export interface ExtractionResult {
-  topics: string[];
+  topics: Array<string | { title: string; description: string }>;
+  advisorName?: string;
   recommendations: ExtractedRecommendation[];
   disclosures: ExtractedDisclosure[];
   decisions: ExtractedDecision[];
@@ -85,7 +86,8 @@ export interface EvidenceMapItem {
  * Extraction data stored in Meeting.extraction JSON field
  */
 export interface ExtractionData {
-  topics: string[];
+  topics: Array<string | { title: string; description: string }>;
+  advisorName?: string; // Extracted from transcript when identifiable
   recommendations: ExtractedRecommendation[];
   disclosures: ExtractedDisclosure[];
   decisions: ExtractedDecision[];

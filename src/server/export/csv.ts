@@ -1,5 +1,6 @@
 import type { ExtractionData } from "../extraction/types";
 import type { TranscriptSegment } from "../transcription/types";
+import { topicToString } from "~/lib/topics";
 import type { Version } from "./types";
 
 function getSpeakerAtTime(segments: TranscriptSegment[], startTime: number): string {
@@ -132,7 +133,7 @@ export function generateInteractionLogCSV(
   const rows: string[][] = [headers];
 
   // Extract keywords from topics (first 5 topics as keywords)
-  const keywords = extraction.topics?.slice(0, 5).join("; ") || "N/A";
+  const keywords = extraction.topics?.slice(0, 5).map(topicToString).join("; ") || "N/A";
   
   // Recommendations Y/N
   const hasRecommendations = extraction.recommendations && extraction.recommendations.length > 0 ? "Y" : "N";

@@ -5,6 +5,7 @@
 
 import type { Meeting, User, Version, Workspace } from "./types";
 import type { ExtractionData } from "../extraction/types";
+import { normalizeTopic } from "~/lib/topics";
 import type { TranscriptSegment } from "../transcription/types";
 
 export interface ExportPayload {
@@ -20,7 +21,7 @@ export interface ExportPayload {
   pack_version: number;
   flags: Array<{ type: string; severity: string; status: string; evidence?: unknown }>;
   action_items: Array<{ action: string; owner: string; due: string; priority: string }>;
-  topics: string[];
+  topics: Array<{ title: string; description: string }>;
   recommendations: Array<{ text: string }>;
   disclosures: Array<{ text: string }>;
   evidence_links: Array<{
@@ -90,6 +91,7 @@ export function buildExportPayload(
   const advisorName =
     meeting.finalizedBy?.name ??
     meeting.finalizedBy?.email ??
+    (extraction as { advisorName?: string }).advisorName ??
     options?.exportingUserName ??
     "Advisor";
 
@@ -193,7 +195,7 @@ export function buildExportPayload(
       evidence: f.evidence,
     })),
     action_items: actionItems,
-    topics: extraction.topics ?? [],
+    topics: (extraction.topics ?? []).map((t) => normalizeTopic(t)),
     recommendations: (extraction.recommendations ?? []).map((r) => ({
       text: typeof r === "string" ? r : r.text ?? "",
     })),

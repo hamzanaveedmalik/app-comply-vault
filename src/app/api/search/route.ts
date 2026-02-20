@@ -1,5 +1,6 @@
 import { requireAppAccess } from "~/server/auth/guards";
 import { db } from "~/server/db";
+import { topicToString } from "~/lib/topics";
 import { NextResponse } from "next/server";
 import { withPerformance } from "~/server/performance";
 
@@ -159,7 +160,7 @@ export const GET = withPerformance("Search operation",
         // If no transcript match, try extraction fields
         if (!snippet && meeting.extraction) {
           const extraction = meeting.extraction as {
-            topics?: string[];
+            topics?: Array<string | { title?: string; description?: string; text?: string }>;
             recommendations?: Array<{ text?: string }>;
             disclosures?: Array<{ text?: string }>;
             decisions?: Array<{ text?: string }>;
@@ -167,7 +168,7 @@ export const GET = withPerformance("Search operation",
           };
 
           const allFields = [
-            ...(extraction.topics || []),
+            ...(extraction.topics?.map(topicToString) || []),
             ...(extraction.recommendations?.map((r) => r.text || "") || []),
             ...(extraction.disclosures?.map((d) => d.text || "") || []),
             ...(extraction.decisions?.map((d) => d.text || "") || []),

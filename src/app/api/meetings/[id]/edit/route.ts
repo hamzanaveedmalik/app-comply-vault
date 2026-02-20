@@ -90,18 +90,23 @@ export async function POST(
       }
       oldValue = JSON.stringify(fieldArray[validatedData.index]);
       if (validatedData.item) {
-        fieldArray[validatedData.index] = {
-          ...fieldArray[validatedData.index],
-          ...validatedData.item,
-        };
+        let merged = { ...fieldArray[validatedData.index], ...validatedData.item } as any;
+        if (fieldType === "topics" && merged.text) {
+          merged = { title: merged.text.length > 55 ? merged.text.slice(0, 52).trim() + "..." : merged.text, description: merged.text };
+        }
+        fieldArray[validatedData.index] = merged;
         newValue = JSON.stringify(fieldArray[validatedData.index]);
       }
     } else if (validatedData.action === "add") {
       if (!validatedData.item) {
         return Response.json({ error: "Item required for add action" }, { status: 400 });
       }
-      fieldArray.push(validatedData.item);
-      newValue = JSON.stringify(validatedData.item);
+      let item = validatedData.item as any;
+      if (fieldType === "topics" && item.text) {
+        item = { title: item.text.length > 55 ? item.text.slice(0, 52).trim() + "..." : item.text, description: item.text };
+      }
+      fieldArray.push(item);
+      newValue = JSON.stringify(item);
     } else if (validatedData.action === "remove" && validatedData.index !== undefined) {
       if (validatedData.index < 0 || validatedData.index >= fieldArray.length) {
         return Response.json({ error: "Invalid index" }, { status: 400 });
@@ -118,20 +123,31 @@ export async function POST(
       [fieldType]: fieldArray,
     };
 
-    // Update evidence map if item was edited
-    if (validatedData.action === "update" && validatedData.index !== undefined && validatedData.item) {
-      // Find corresponding evidence map item and mark as edited
-      const item = fieldArray[validatedData.index];
+    // Update evidence map if item was edited (topics don't have evidence map entries)
+    const fieldToEvidenceField: Record<string, "recommendation" | "disclosure" | "decision" | "followUp"> = {
+      recommendations: "recommendation",
+      disclosures: "disclosure",
+      decisions: "decision",
+      followUps: "followUp",
+    };
+    if (
+      validatedData.action === "update" &&
+      validatedData.index !== undefined &&
+      validatedData.item &&
+      fieldToEvidenceField[fieldType]
+    ) {
+      const item = fieldArray[validatedData.index] as { startTime?: number; text?: string };
       if (item.startTime !== undefined) {
+        const evidenceField = fieldToEvidenceField[fieldType]!;
         const evidenceMap = updatedExtraction.evidenceMap || [];
         const evidenceIndex = evidenceMap.findIndex(
-          (e) => e.field === fieldType && e.startTime === item.startTime
+          (e) => e.field === evidenceField && e.startTime === item.startTime
         );
         if (evidenceIndex >= 0) {
           evidenceMap[evidenceIndex] = {
             ...evidenceMap[evidenceIndex],
             edited: true,
-            claim: item.text || evidenceMap[evidenceIndex].claim,
+            claim: item.text || evidenceMap[evidenceIndex]!.claim,
           };
           updatedExtraction.evidenceMap = evidenceMap;
         }

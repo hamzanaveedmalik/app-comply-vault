@@ -7,6 +7,7 @@
 
 import type { Transcript } from "~/server/transcription/types";
 import type { ExtractionData } from "~/server/extraction/types";
+import { topicToString } from "~/lib/topics";
 
 /**
  * Generates searchable text from transcript and extraction data
@@ -31,7 +32,7 @@ export function generateSearchableText(
   if (extraction) {
     // Topics
     if (extraction.topics && extraction.topics.length > 0) {
-      parts.push(extraction.topics.join(" ").toLowerCase());
+      parts.push(extraction.topics.map(topicToString).join(" ").toLowerCase());
     }
 
     // Recommendations

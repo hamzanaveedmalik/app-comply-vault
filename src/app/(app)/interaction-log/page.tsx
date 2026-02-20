@@ -1,5 +1,6 @@
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
+import { topicToString } from "~/lib/topics";
 import { redirect } from "next/navigation";
 import InteractionLogClient from "./interaction-log-client";
 
@@ -143,7 +144,7 @@ export default async function InteractionLogPage({
     } | null;
 
     // Extract keywords from topics
-    const keywordsList = extraction?.topics || [];
+    const keywordsList = (extraction?.topics || []).map(topicToString);
 
     // Check if has recommendations
     const hasRecommendations = (extraction?.recommendations?.length ?? 0) > 0;

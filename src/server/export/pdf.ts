@@ -85,6 +85,16 @@ function safeString(val: unknown): string {
   return String(val);
 }
 
+/** Remove control chars and fix broken Unicode (e.g. ￾ → -) for clean PDF output */
+function sanitizeText(s: string): string {
+  if (!s) return "";
+  return s
+    .replace(/\uFFFE/g, "-")
+    .replace(/[\u0000-\u001F\u007F-\u009F]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 /** Serialise flag evidence object to readable text (avoids [object Object]) */
 function flagEvidenceToText(ev: unknown): string {
   if (ev == null) return "";
@@ -164,10 +174,11 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
       pageNum++;
       doc.save();
       const h = PAGE_H;
-      doc.rect(0, h - HEADER_H, PAGE_W, HEADER_H).fill(COLORS.HEADER_GREEN);
+      const headerTop = h - HEADER_H;
+      doc.rect(0, headerTop, PAGE_W, HEADER_H).fill(COLORS.HEADER_GREEN);
       if (hasLogo) {
         try {
-          doc.image(logoPath, 32, h - HEADER_H + (HEADER_H - LOGO_H) / 2, {
+          doc.image(logoPath, 32, headerTop + (HEADER_H - LOGO_H) / 2, {
             width: LOGO_W,
             height: LOGO_H,
           });
@@ -175,13 +186,14 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
           /* ignore */
         }
       }
+      const baselineY = h - HEADER_H / 2 - 4;
       doc.fillColor(COLORS.WHITE).fontSize(13).font("Helvetica-Bold");
-      doc.text("ComplyVault", 72, h - 30);
+      doc.text("ComplyVault", 72, baselineY);
+      const rightLabel = payload.watermarked
+        ? "REDACTED SAMPLE DOCUMENT  |  complyvault.co"
+        : "COMPLIANCE AUDIT PACK  |  complyvault.co";
       doc.fillColor(COLORS.ACCENT_GREEN).fontSize(7.5).font("Helvetica");
-      const headerRightTop = payload.watermarked ? "REDACTED SAMPLE DOCUMENT" : "COMPLIANCE AUDIT PACK";
-      doc.text(headerRightTop, LEFT, h - 22, { width: PAGE_W - LEFT - RIGHT, align: "right" });
-      doc.fillColor(COLORS.FOOTER_GRAY);
-      doc.text("complyvault.co", LEFT, h - 36, { width: PAGE_W - LEFT - RIGHT, align: "right" });
+      doc.text(rightLabel, 200, baselineY, { width: PAGE_W - 220, align: "right" });
       doc.restore();
     };
 
@@ -228,6 +240,43 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
       return currentY;
     };
 
+    // Cover page — branded front matter (appears once at document start)
+    drawPageDecorations();
+    doc.save();
+    const coverCenterX = PAGE_W / 2;
+    const coverCenterY = PAGE_H / 2 + 60;
+    if (hasLogo) {
+      try {
+        doc.image(logoPath, coverCenterX - (LOGO_W * 1.5) / 2, coverCenterY + 60, {
+          width: LOGO_W * 1.5,
+          height: LOGO_H * 1.5,
+        });
+      } catch {
+        /* ignore */
+      }
+    }
+    doc.fillColor(COLORS.HEADER_GREEN).fontSize(11).font("Helvetica-Bold");
+    doc.text("ComplyVault", coverCenterX, coverCenterY + 20, { align: "center" });
+    doc.fillColor(COLORS.DARK_GREEN).fontSize(18).font("Helvetica-Bold");
+    doc.text(safeString(payload.meeting_type) || "Compliance Note", coverCenterX, coverCenterY - 10, {
+      align: "center",
+      width: USABLE,
+    });
+    doc.fillColor(COLORS.GRAY).fontSize(10).font("Helvetica");
+    doc.text(
+      `${safeString(payload.client_name)}  ·  ${safeString(payload.date)}  ·  ${payload.watermarked ? "[REDACTED]" : safeString(payload.advisor_name)}`,
+      coverCenterX,
+      coverCenterY - 36,
+      { align: "center", width: USABLE }
+    );
+    doc.fillColor(COLORS.ACCENT_GREEN).fontSize(9).font("Helvetica");
+    const coverLabel = payload.watermarked ? "REDACTED SAMPLE DOCUMENT" : "COMPLIANCE AUDIT PACK";
+    doc.text(coverLabel, coverCenterX, coverCenterY - 58, { align: "center" });
+    doc.fillColor(COLORS.FOOTER_GRAY).fontSize(8).font("Helvetica");
+    doc.text("complyvault.co", coverCenterX, coverCenterY - 76, { align: "center" });
+    doc.restore();
+
+    doc.addPage();
     let y = TOP;
     drawPageDecorations();
 
@@ -338,7 +387,7 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
         doc.text(severityToSpec(f.severity), LEFT + 7, toPdfY(y + 18));
         doc.fontSize(7.5).font("Helvetica");
         doc.text(String(f.type ?? "N/A"), LEFT + 59, toPdfY(y + 10), { width: 93 });
-        doc.text(evText, LEFT + 163, toPdfY(y + 10), {
+        doc.text(sanitizeText(evText), LEFT + 163, toPdfY(y + 10), {
           width: 288,
         });
         doc.font("Helvetica-Bold").text(String(f.status ?? "N/A"), LEFT + 463, toPdfY(y + 10));
@@ -388,8 +437,8 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
         doc.font("Helvetica");
         const actionStr = truncateLines(ai.action ?? "", 2);
         doc.text(actionStr, LEFT + 24, toPdfY(y + 8), { width: 250 });
-        doc.text(ai.owner ?? "Advisor", LEFT + 283, toPdfY(y + 8), { width: 48 });
-        doc.text((ai.due ?? "TBD").slice(0, 10), LEFT + 337, toPdfY(y + 8), { width: 48 });
+        doc.text(ai.owner ?? "Unassigned", LEFT + 283, toPdfY(y + 8), { width: 48 });
+        doc.text((ai.due ?? "Not captured").slice(0, 12), LEFT + 337, toPdfY(y + 8), { width: 48 });
         doc.fillColor(priColor).font("Helvetica-Bold").text(pri === "MEDIUM" ? "MED" : pri, LEFT + 391, toPdfY(y + 8));
         y += 24;
       });
@@ -575,15 +624,15 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
         drawRect(doc, LEFT, toPdfY(y + rowH), USABLE, rowH, bg, COLORS.GRID);
         const cellY = y + evRowPadding;
         doc.fillColor(COLORS.ACCENT_GREEN).fontSize(7.5).font("Helvetica-Bold");
-        doc.text(ev.id ?? `E${i + 1}`, LEFT + 5, toPdfY(cellY));
+        doc.text(ev.id ?? `E-${String(i + 1).padStart(3, "0")}`, LEFT + 5, toPdfY(cellY));
         doc.fillColor(COLORS.DARK_TEXT).font("Helvetica").fontSize(8);
-        doc.text(claimText, LEFT + 37, toPdfY(cellY), { width: 125 });
+        doc.text(sanitizeText(claimText), LEFT + 37, toPdfY(cellY), { width: 125 });
         doc.fillColor(COLORS.MID_GREEN).font("Helvetica-Bold");
         doc.text(formatTime(ev.startTime ?? 0), LEFT + 170, toPdfY(cellY));
         doc.fillColor(COLORS.DARK_TEXT).font("Helvetica");
-        doc.text((ev.speaker ?? "Unknown").slice(0, 12), LEFT + 202, toPdfY(cellY), { width: 40 });
+        doc.text(sanitizeText((ev.speaker ?? "Unassigned").slice(0, 12)), LEFT + 202, toPdfY(cellY), { width: 40 });
         doc.fillColor(COLORS.GRAY).font("Helvetica-Oblique");
-        doc.text(snippetText, LEFT + 249, toPdfY(cellY), { width: 253 });
+        doc.text(sanitizeText(snippetText), LEFT + 249, toPdfY(cellY), { width: 253 });
         doc.fillColor(COLORS.ACCENT_GREEN).font("Helvetica-Bold");
         doc.text(ev.confidence != null ? `${Math.round(ev.confidence * 100)}%` : "", LEFT + 515, toPdfY(cellY));
         y += rowH;

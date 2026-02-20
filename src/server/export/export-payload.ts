@@ -42,8 +42,26 @@ export interface ExportPayload {
   _transcript_segments?: TranscriptSegment[];
 }
 
+function sanitizeTranscriptText(s: string): string {
+  if (!s) return "";
+  return s
+    .replace(/\uFFFE/g, "-")
+    .replace(/[\u0000-\u001F\u007F-\u009F]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function inferAdvisorFromTranscript(segments: TranscriptSegment[]): string | null {
-  const exclude = new Set(["Unknown", "Note", "Speaker 1", "Speaker 2", "Client", ""]);
+  const exclude = new Set([
+    "Unknown",
+    "Note",
+    "Client",
+    "Speaker 1",
+    "Speaker 2",
+    "Total Words",
+    "Words",
+    "",
+  ]);
   const counts: Record<string, number> = {};
   for (const s of segments) {
     const sp = (s.speaker ?? "").trim();
@@ -79,20 +97,22 @@ function getSpeakerAtTime(
     const start = s.startTime ?? 0;
     const end = s.endTime ?? start + 60;
     if (start - tolerance <= startTime && startTime <= end + tolerance) {
-      const sp = s.speaker?.trim();
-      return sp && sp !== "Unknown" ? sp : (s.speaker ?? "Unknown");
+      const sp = (s.speaker ?? "").trim();
+      if (sp && !["Unknown", "Note", "Total Words", "Words"].includes(sp)) return sp;
     }
   }
+  const invalidSpeakers = new Set(["Unknown", "Note", "Total Words", "Words", ""]);
   let best: { speaker: string; dist: number } | null = null;
   for (const s of segments) {
     const start = s.startTime ?? 0;
     const dist = Math.abs(start - startTime);
+    const sp = (s.speaker ?? "").trim();
+    if (invalidSpeakers.has(sp)) continue;
     if (!best || dist < best.dist) {
-      const sp = s.speaker?.trim();
-      best = { speaker: sp && sp !== "Unknown" ? sp : "Unknown", dist };
+      best = { speaker: sp, dist };
     }
   }
-  return best?.speaker ?? "Unknown";
+  return best?.speaker ?? "Unassigned";
 }
 
 function formatDuration(segments: TranscriptSegment[]): string {
@@ -135,14 +155,14 @@ export function buildExportPayload(
     advisorFromTranscript ??
     meeting.finalizedBy?.name ??
     meeting.finalizedBy?.email ??
-    "Advisor";
+    "[REDACTED]";
 
   const evidenceLinks = (extraction.evidenceMap ?? []).map((ev, i) => ({
-    id: `E${i + 1}`,
-    claim: ev.claim ?? "",
+    id: `E-${String(i + 1).padStart(3, "0")}`,
+    claim: sanitizeTranscriptText(ev.claim ?? ""),
     startTime: ev.startTime ?? 0,
     speaker: getSpeakerAtTime(segments, ev.startTime ?? 0),
-    snippet: ev.snippet ?? "",
+    snippet: sanitizeTranscriptText(ev.snippet ?? ""),
     confidence: ev.confidence,
   }));
 
@@ -156,8 +176,8 @@ export function buildExportPayload(
     }
     return {
       action: fu.text ?? "",
-      owner: "Advisor",
-      due: "TBD",
+      owner: "Unassigned",
+      due: "Not captured",
       priority,
     };
   });

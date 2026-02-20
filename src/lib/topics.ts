@@ -10,7 +10,11 @@ export function normalizeTopic(topic: TopicEntry): { title: string; description:
     const title = topic.length > 55 ? topic.slice(0, 52).trim() + "..." : topic;
     return { title, description: topic };
   }
-  return { title: topic.title, description: topic.description };
+  const t = topic as { title?: string; description?: string };
+  return {
+    title: typeof t.title === "string" ? t.title : (t.description ?? ""),
+    description: typeof t.description === "string" ? t.description : (t.title ?? ""),
+  };
 }
 
 export function getTopicTitle(topic: TopicEntry): string {

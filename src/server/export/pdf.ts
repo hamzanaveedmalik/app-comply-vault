@@ -100,10 +100,6 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
       doc.on("error", reject);
 
       let pageNum = 0;
-      // Redraw header/footer when PDFKit auto-adds a page (content overflow)
-      doc.on("pageAdded", () => {
-        drawPageDecorations();
-      });
       let hasLogo = false;
       let logoPath = "";
       try {

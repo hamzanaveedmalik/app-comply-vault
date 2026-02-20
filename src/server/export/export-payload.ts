@@ -43,7 +43,7 @@ export interface ExportPayload {
 }
 
 function inferAdvisorFromTranscript(segments: TranscriptSegment[]): string | null {
-  const exclude = new Set(["Unknown", "Note", "Speaker 1", "Speaker 2", ""]);
+  const exclude = new Set(["Unknown", "Note", "Speaker 1", "Speaker 2", "Client", ""]);
   const counts: Record<string, number> = {};
   for (const s of segments) {
     const sp = (s.speaker ?? "").trim();
@@ -74,14 +74,25 @@ function getSpeakerAtTime(
   segments: TranscriptSegment[],
   startTime: number
 ): string {
+  const tolerance = 5;
   for (const s of segments) {
     const start = s.startTime ?? 0;
     const end = s.endTime ?? start + 60;
-    if (start <= startTime && startTime <= end) {
-      return s.speaker ?? "Unknown";
+    if (start - tolerance <= startTime && startTime <= end + tolerance) {
+      const sp = s.speaker?.trim();
+      return sp && sp !== "Unknown" ? sp : (s.speaker ?? "Unknown");
     }
   }
-  return "Unknown";
+  let best: { speaker: string; dist: number } | null = null;
+  for (const s of segments) {
+    const start = s.startTime ?? 0;
+    const dist = Math.abs(start - startTime);
+    if (!best || dist < best.dist) {
+      const sp = s.speaker?.trim();
+      best = { speaker: sp && sp !== "Unknown" ? sp : "Unknown", dist };
+    }
+  }
+  return best?.speaker ?? "Unknown";
 }
 
 function formatDuration(segments: TranscriptSegment[]): string {
@@ -135,12 +146,21 @@ export function buildExportPayload(
     confidence: ev.confidence,
   }));
 
-  const actionItems = (extraction.followUps ?? []).map((fu) => ({
-    action: fu.text ?? "",
-    owner: "Advisor",
-    due: "TBD",
-    priority: "LOW",
-  }));
+  const actionItems = (extraction.followUps ?? []).map((fu) => {
+    const text = (fu.text ?? "").toLowerCase();
+    let priority = "LOW";
+    if (/urgent|asap|immediately|critical|high priority|right away/.test(text)) {
+      priority = "HIGH";
+    } else if (/soon|shortly|next week|medium|moderate/.test(text)) {
+      priority = "MEDIUM";
+    }
+    return {
+      action: fu.text ?? "",
+      owner: "Advisor",
+      due: "TBD",
+      priority,
+    };
+  });
 
   const wordCount =
     segments.reduce((acc, s) => acc + (s.text?.split(/\s+/).length ?? 0), 0) ||

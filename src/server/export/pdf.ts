@@ -85,6 +85,52 @@ function safeString(val: unknown): string {
   return String(val);
 }
 
+/** Serialise flag evidence object to readable text (avoids [object Object]) */
+function flagEvidenceToText(ev: unknown): string {
+  if (ev == null) return "";
+  if (typeof ev === "string") return ev.slice(0, 300);
+  if (Array.isArray(ev)) {
+    return ev
+      .map((item: unknown) => {
+        if (typeof item === "string") return item;
+        if (item && typeof item === "object") {
+          const o = item as Record<string, unknown>;
+          if (typeof o.text === "string") return o.text;
+          if (typeof o.snippet === "string") return o.snippet;
+          if (typeof o.claim === "string") return o.claim;
+          if (typeof o.summary === "string") return o.summary;
+          if (o.recommendation && typeof o.recommendation === "object") {
+            const rec = o.recommendation as Record<string, unknown>;
+            return typeof rec.text === "string" ? rec.text : "";
+          }
+        }
+        return "";
+      })
+      .filter(Boolean)
+      .join("; ")
+      .slice(0, 300);
+  }
+  if (typeof ev === "object") {
+    const o = ev as Record<string, unknown>;
+    if (typeof o.summary === "string") return o.summary;
+    if (typeof o.description === "string") return o.description;
+    if (typeof o.text === "string") return o.text;
+    if (o.recommendation && typeof o.recommendation === "object") {
+      const rec = o.recommendation as Record<string, unknown>;
+      return (typeof rec.text === "string" ? rec.text : "").slice(0, 300);
+    }
+    const parts: string[] = [];
+    for (const v of Object.values(o)) {
+      if (typeof v === "string" && v.length < 200) parts.push(v);
+    }
+    if (parts.length) return parts.join(" ").slice(0, 300);
+  }
+  return "";
+}
+
+/** Max content y before we need a new page (y-from-top coords) */
+const AVAILABLE_HEIGHT = PAGE_H - TOP - BOTTOM;
+
 /** PDF uses bottom-left origin. Convert "y from top of content area" to PDF y. */
 function toPdfY(yFromTop: number): number {
   return PAGE_H - TOP - yFromTop;
@@ -167,6 +213,19 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
       drawHeader();
       drawFooter();
       drawWatermark();
+    };
+
+    const ensurePageSpace = (
+      currentY: number,
+      blockHeight: number,
+      onNewPage?: () => number
+    ): number => {
+      if (currentY + blockHeight > AVAILABLE_HEIGHT) {
+        doc.addPage();
+        drawPageDecorations();
+        return onNewPage ? onNewPage() : TOP;
+      }
+      return currentY;
     };
 
     let y = TOP;
@@ -256,6 +315,10 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
       doc.text("STATUS", LEFT + 463, toPdfY(y + 9));
       y += 24;
       payload.flags.forEach((f) => {
+        const evText = flagEvidenceToText(f.evidence);
+        const estLines = Math.max(1, Math.ceil((evText.length || 1) / 48));
+        const flagRowH = Math.min(56, 28 + estLines * 12);
+        y = ensurePageSpace(y, flagRowH);
         const sev = (f.severity ?? "INFO").toUpperCase();
         const bg =
           sev === "CRITICAL"
@@ -269,18 +332,17 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
             : sev === "WARN"
               ? COLORS.YELLOW_FLAG
               : COLORS.ACCENT_GREEN;
-        const flagRowH = 28;
         drawRect(doc, LEFT, toPdfY(y + flagRowH), USABLE, flagRowH, bg, COLORS.GRID);
         doc.fillColor(textColor).fontSize(8).font("Helvetica-Bold");
         doc.text("\u2022", LEFT + 7, toPdfY(y + 6));
         doc.text(severityToSpec(f.severity), LEFT + 7, toPdfY(y + 18));
         doc.fontSize(7.5).font("Helvetica");
         doc.text(String(f.type ?? "N/A"), LEFT + 59, toPdfY(y + 10), { width: 93 });
-        doc.text(String((f.evidence as string) ?? "").slice(0, 300), LEFT + 163, toPdfY(y + 10), {
+        doc.text(evText, LEFT + 163, toPdfY(y + 10), {
           width: 288,
         });
         doc.font("Helvetica-Bold").text(String(f.status ?? "N/A"), LEFT + 463, toPdfY(y + 10));
-        y += 28;
+        y += flagRowH;
       });
     } else {
       doc.fillColor(COLORS.GRAY).fontSize(8).text("No flags raised", LEFT, toPdfY(y));
@@ -311,6 +373,7 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
       doc.text("PRI.", LEFT + 391, toPdfY(y + 7));
       y += 20;
       payload.action_items.forEach((ai, i) => {
+        y = ensurePageSpace(y, aiRowH);
         const bg = i % 2 === 0 ? COLORS.LIGHT_GREEN : COLORS.WHITE;
         drawRect(doc, LEFT, toPdfY(y + aiRowH), USABLE, aiRowH, bg, COLORS.GRID);
         const pri = (ai.priority ?? "LOW").toUpperCase();
@@ -381,6 +444,7 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
     ];
 
     for (const sec of sections) {
+      y = ensurePageSpace(y, 40);
       doc.fillColor(COLORS.DARK_GREEN).fontSize(11.5).font("Helvetica-Bold");
       doc.text(sec.title, LEFT, toPdfY(y));
       y += 16;
@@ -399,6 +463,7 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
       } else {
         if (sec.key === "topics" && payload.topics_display?.length) {
           payload.topics_display.forEach((item: { title: string; description: string }) => {
+            y = ensurePageSpace(y, 30);
             doc.fillColor(COLORS.MID_GREEN).fontSize(10).font("Helvetica-Bold");
             doc.text(item.title || "—", LEFT, toPdfY(y), { width: USABLE });
             y += 14;
@@ -411,6 +476,8 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
           });
         } else {
           items.forEach((item: string | { text: string }) => {
+            const estH = 40;
+            y = ensurePageSpace(y, estH);
             let text = typeof item === "string" ? item : (item.text ?? "");
             const trimmed = text.trim().toLowerCase();
             if (
@@ -481,12 +548,29 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
       doc.text("CONF", LEFT + 515, toPdfY(y + 7));
       y += 20;
       doc.fontSize(8).font("Helvetica");
+      const drawEvTableHeader = (): number => {
+        const h = evHeaderH;
+        evColWidths.forEach((cw, i) => {
+          const x = LEFT + evColWidths.slice(0, i).reduce((a, b) => a + b, 0);
+          drawRect(doc, x, toPdfY(TOP + h), cw, h, COLORS.DARK_GREEN);
+        });
+        doc.fillColor(COLORS.WHITE).fontSize(7.5).font("Helvetica-Bold");
+        doc.text("ID", LEFT + 5, toPdfY(TOP + 7));
+        doc.text("CLAIM", LEFT + 37, toPdfY(TOP + 7));
+        doc.text("TIME", LEFT + 170, toPdfY(TOP + 7));
+        doc.text("SPEAKER", LEFT + 202, toPdfY(TOP + 7));
+        doc.text("TRANSCRIPT SNIPPET", LEFT + 249, toPdfY(TOP + 7));
+        doc.text("CONF", LEFT + 515, toPdfY(TOP + 7));
+        doc.fontSize(8).font("Helvetica");
+        return TOP + evHeaderH;
+      };
       payload.evidence_links.forEach((ev, i) => {
         const claimText = (ev.claim ?? "").slice(0, 200);
         const snippetText = truncateLines(ev.snippet ?? "", 4);
         const claimLines = Math.max(1, Math.ceil((claimText.length || 1) / 18));
         const snippetLines = Math.max(1, Math.ceil((snippetText.length || 1) / 42));
         const rowH = Math.min(72, Math.max(36, (Math.max(claimLines, snippetLines) * evLineHeight) + evRowPadding * 2));
+        y = ensurePageSpace(y, rowH, () => drawEvTableHeader());
         const bg = i % 2 === 0 ? COLORS.LIGHT_GREEN : COLORS.WHITE;
         drawRect(doc, LEFT, toPdfY(y + rowH), USABLE, rowH, bg, COLORS.GRID);
         const cellY = y + evRowPadding;

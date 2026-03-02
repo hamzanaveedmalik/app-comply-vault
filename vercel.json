@@ -1,5 +1,6 @@
 {
   "github": {"autoDeployOnPush": true, "autoJobCancelation": true},
+  "buildCommand": "prisma migrate deploy && next build",
   "crons": [
       {"path": "/api/jobs/integration-token-refresh", "schedule": "*/15 * * * *"},
       {"path": "/api/jobs/process-integration-queue", "schedule": "* * * * *"}

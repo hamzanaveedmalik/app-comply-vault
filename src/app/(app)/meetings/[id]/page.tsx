@@ -80,7 +80,7 @@ export default async function MeetingDetailPage({
       provider: c.provider,
       action: l.action,
       status: (l.status === "success" ? "Synced" : l.status === "failed" ? "Failed" : "Pending") as "Synced" | "Pending" | "Failed",
-      lastSyncAt: l.completedAt,
+      lastSyncAt: l.completedAt?.toISOString() ?? null,
       errorMessage: l.errorMessage,
     }));
   });

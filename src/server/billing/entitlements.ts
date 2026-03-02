@@ -1,4 +1,4 @@
-import type { BillingStatus, PlanTier, Workspace } from "@prisma/client";
+import type { BillingStatus, PlanTier, Workspace } from "../../../generated/prisma";
 
 export type Entitlements = {
   maxUsers: number;

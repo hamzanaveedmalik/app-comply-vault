@@ -28,10 +28,10 @@ export async function POST(request: Request) {
   for (const job of waitingJobs) {
     try {
       await processIntegrationJob(job);
-      await job.moveToCompleted(undefined, undefined, undefined);
+      await job.moveToCompleted();
       processed++;
     } catch (error) {
-      await job.moveToFailed(error instanceof Error ? error : new Error(String(error)));
+      await job.moveToFailed(error instanceof Error ? error : new Error(String(error)), undefined);
     }
   }
 

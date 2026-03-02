@@ -58,7 +58,7 @@ export async function getOpsStats(): Promise<OpsStats> {
   if (queue) {
     try {
       const counts = await queue.getJobCounts();
-      queueDepth = counts.waiting + counts.active;
+      queueDepth = (counts.waiting ?? 0) + (counts.active ?? 0);
 
       // Per-provider queue depth from waiting jobs (sample up to 500)
       const waiting = await queue.getWaiting(0, 500);

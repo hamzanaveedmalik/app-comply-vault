@@ -1,4 +1,4 @@
-import type { Workspace } from "@prisma/client";
+import type { Workspace } from "../../../generated/prisma";
 import { db } from "~/server/db";
 import { getEntitlements, isPaywallBypassed, isTrialExpired } from "./entitlements";
 

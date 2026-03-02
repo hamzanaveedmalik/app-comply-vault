@@ -73,6 +73,8 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Deploy to Vercel (Staging)
         uses: amondnet/vercel-action@v25
         with:
@@ -91,6 +93,8 @@ jobs:
       url: ${{ steps.deploy.outputs.preview-url }}
     
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Deploy to Vercel (Production)
         id: deploy
         uses: amondnet/vercel-action@v25

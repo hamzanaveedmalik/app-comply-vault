@@ -31,7 +31,12 @@ export function Sidebar({ userEmail, userName, userRole }: SidebarProps) {
     { href: "/interaction-log", label: "Interaction Log" },
     { href: "/review", label: "Review Queue" },
     { href: "/upload", label: "Upload" },
-    ...(userRole === "OWNER_CCO" ? [{ href: "/audit-logs", label: "Audit Logs" }] : []),
+    ...(userRole === "OWNER_CCO"
+      ? [
+          { href: "/integrations", label: "Integrations" },
+          { href: "/audit-logs", label: "Audit Logs" },
+        ]
+      : []),
   ];
 
   const SidebarContent = () => (

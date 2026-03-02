@@ -1,0 +1,59 @@
+/**
+ * POST /api/workspaces/[workspaceId]/integrations/[credentialId]/disconnect
+ * Epic 6 Story 6.6: Disconnect & Delete — purge tokens, config, cancel jobs
+ */
+
+import { requireAppAccess } from "~/server/auth/guards";
+import { db } from "~/server/db";
+import { sendIntegrationDisconnectEmail } from "~/server/email";
+
+export async function POST(
+  _request: Request,
+  { params }: { params: Promise<{ workspaceId: string; credentialId: string }> }
+) {
+  const access = await requireAppAccess();
+  if (!access.ok) {
+    return new Response(access.error, { status: access.status });
+  }
+
+  const { workspaceId, credentialId } = await params;
+  if (workspaceId !== access.workspaceId) {
+    return new Response("Forbidden", { status: 403 });
+  }
+
+  if (access.session.user.role !== "OWNER_CCO") {
+    return new Response("Forbidden: Only workspace owners can disconnect integrations", {
+      status: 403,
+    });
+  }
+
+  const credential = await db.integrationCredential.findFirst({
+    where: { id: credentialId, workspaceId },
+    include: { workspace: { select: { name: true } } },
+  });
+
+  if (!credential) {
+    return new Response("Integration not found", { status: 404 });
+  }
+
+  await db.$transaction(async (tx) => {
+    await tx.integrationCredential.delete({ where: { id: credentialId } });
+    await tx.integrationConfig.deleteMany({
+      where: { workspaceId, provider: credential.provider },
+    });
+  });
+
+  const owner = await db.userWorkspace.findFirst({
+    where: { workspaceId, role: "OWNER_CCO" },
+    include: { user: { select: { email: true } } },
+  });
+  if (owner?.user?.email) {
+    await sendIntegrationDisconnectEmail({
+      email: owner.user.email,
+      workspaceName: credential.workspace.name,
+      provider: credential.provider,
+    });
+  }
+
+  return Response.json({ success: true });
+}

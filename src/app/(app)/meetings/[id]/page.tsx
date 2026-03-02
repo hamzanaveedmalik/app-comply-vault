@@ -17,6 +17,7 @@ import FinalizeButton from "./finalize-button";
 import { MeetingStatusPoller } from "./meeting-status-poller";
 import RetryButton from "./retry-button";
 import FlagsPanel from "./flags-panel";
+import { IntegrationSyncPanel } from "./integration-sync-panel";
 import { validateEvidenceCoverage } from "~/server/extraction/evidence";
 
 export default async function MeetingDetailPage({
@@ -46,22 +47,42 @@ export default async function MeetingDetailPage({
   // Parse extraction data if available
   const extraction = meeting.extraction as ExtractionData | null | undefined;
 
-  const flags = await db.flag.findMany({
-    where: {
-      meetingId: meeting.id,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      resolutionRecord: {
-        include: {
-          tasks: true,
-          evidence: true,
-          verifications: true,
+  const [flags, syncLogs, configs] = await Promise.all([
+    db.flag.findMany({
+      where: { meetingId: meeting.id },
+      orderBy: { createdAt: "desc" },
+      include: {
+        resolutionRecord: {
+          include: {
+            tasks: true,
+            evidence: true,
+            verifications: true,
+          },
         },
       },
-    },
+    }),
+    db.integrationSyncLog.findMany({
+      where: { meetingId: meeting.id },
+      orderBy: { createdAt: "desc" },
+    }),
+    db.integrationConfig.findMany({
+      where: { workspaceId: session.user.workspaceId },
+      select: { provider: true },
+    }),
+  ]);
+
+  const syncStatuses = configs.flatMap((c) => {
+    const logs = syncLogs.filter((l) => l.provider === c.provider);
+    if (logs.length === 0) {
+      return [{ provider: c.provider, action: "sync", status: "Pending" as const, lastSyncAt: null, errorMessage: null }];
+    }
+    return logs.map((l) => ({
+      provider: c.provider,
+      action: l.action,
+      status: (l.status === "success" ? "Synced" : l.status === "failed" ? "Failed" : "Pending") as "Synced" | "Pending" | "Failed",
+      lastSyncAt: l.completedAt,
+      errorMessage: l.errorMessage,
+    }));
   });
 
   const isFlagOpen = (status: string) =>
@@ -410,6 +431,14 @@ export default async function MeetingDetailPage({
               <VersionHistory meetingId={meeting.id} />
             </CardContent>
           </Card>
+        )}
+
+        {/* Integration Sync Status */}
+        {syncStatuses.length > 0 && (
+          <IntegrationSyncPanel
+            meetingId={meeting.id}
+            syncStatuses={syncStatuses}
+          />
         )}
 
       </div>

@@ -274,3 +274,97 @@ export async function sendDraftReadyEmail({
   }
 }
 
+/**
+ * Send email when integration token refresh fails — Epic 6 Story 6.2
+ */
+export async function sendIntegrationReconnectEmail({
+  email,
+  workspaceName,
+  provider,
+}: {
+  email: string;
+  workspaceName: string;
+  provider: string;
+}) {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const integrationsUrl = `${baseUrl}/integrations`;
+
+  const providerLabel = provider.replace(/_/g, " ");
+
+  const emailContent = {
+    from: process.env.EMAIL_FROM || "noreply@ria-compliance.com",
+    to: email,
+    subject: `ComplyVault: Reconnect required — ${providerLabel}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2>Integration Reconnect Required</h2>
+        <p>Your <strong>${providerLabel}</strong> connection for <strong>${workspaceName}</strong> has expired or failed to refresh.</p>
+        <p>Please reconnect the integration to restore automatic syncing.</p>
+        <a href="${integrationsUrl}" style="display: inline-block; padding: 12px 24px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0;">
+          Reconnect Integration
+        </a>
+        <p style="color: #999; font-size: 12px; margin-top: 30px;">This is an automated notification from ComplyVault.</p>
+      </div>
+    `,
+    text: `Your ${providerLabel} connection for ${workspaceName} has expired. Please reconnect at ${integrationsUrl}`,
+  };
+
+  if (!resend) {
+    console.log("📧 [DEV MODE] Integration reconnect email would be sent:", { to: email, provider });
+    return { success: true, id: "dev-mode" };
+  }
+
+  try {
+    const result = await resend.emails.send(emailContent);
+    if (result.error) throw new Error(result.error.message);
+    return { success: true, id: result.data?.id || "sent" };
+  } catch (error) {
+    console.error("Error sending integration reconnect email:", error);
+    return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+  }
+}
+
+/**
+ * Send confirmation when integration is disconnected — Epic 6 Story 6.6
+ */
+export async function sendIntegrationDisconnectEmail({
+  email,
+  workspaceName,
+  provider,
+}: {
+  email: string;
+  workspaceName: string;
+  provider: string;
+}) {
+  const providerLabel = provider.replace(/_/g, " ");
+
+  const emailContent = {
+    from: process.env.EMAIL_FROM || "noreply@ria-compliance.com",
+    to: email,
+    subject: `ComplyVault: ${providerLabel} disconnected`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2>Integration Disconnected</h2>
+        <p>Your <strong>${providerLabel}</strong> connection for <strong>${workspaceName}</strong> has been successfully disconnected.</p>
+        <p>All integration credentials and configuration have been removed. Audit packs are unchanged.</p>
+        <p style="color: #999; font-size: 12px; margin-top: 30px;">This is an automated confirmation from ComplyVault.</p>
+      </div>
+    `,
+    text: `Your ${providerLabel} connection for ${workspaceName} has been disconnected. Audit packs are unchanged.`,
+  };
+
+  if (!resend) {
+    console.log("📧 [DEV MODE] Integration disconnect email would be sent:", { to: email, provider });
+    return { success: true, id: "dev-mode" };
+  }
+
+  try {
+    const result = await resend.emails.send(emailContent);
+    if (result.error) throw new Error(result.error.message);
+    return { success: true, id: result.data?.id || "sent" };
+  } catch (error) {
+    console.error("Error sending integration disconnect email:", error);
+    return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+  }
+}
+

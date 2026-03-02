@@ -56,6 +56,11 @@ export const env = createEnv({
     // Metrics and monitoring
     METRICS_USERNAME: z.string().optional(),
     METRICS_PASSWORD: z.string().optional(),
+    // IntegrationHub (Epic 6)
+    REDIS_URL: z.string().url().optional(),
+    INTEGRATION_ENCRYPTION_KEY: z.string().optional(),
+    CRON_SECRET: z.string().optional(),
+    OPS_ALLOWED_EMAILS: z.string().optional(),
   },
 
   /**
@@ -114,6 +119,10 @@ export const env = createEnv({
     VERTEX_MODEL_ID: process.env.VERTEX_MODEL_ID,
     METRICS_USERNAME: process.env.METRICS_USERNAME,
     METRICS_PASSWORD: process.env.METRICS_PASSWORD,
+    REDIS_URL: process.env.REDIS_URL,
+    INTEGRATION_ENCRYPTION_KEY: process.env.INTEGRATION_ENCRYPTION_KEY,
+    CRON_SECRET: process.env.CRON_SECRET,
+    OPS_ALLOWED_EMAILS: process.env.OPS_ALLOWED_EMAILS,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

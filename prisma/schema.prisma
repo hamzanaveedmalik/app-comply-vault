@@ -45,6 +45,8 @@ model Workspace {
   invitations Invitation[]
   flags       Flag[]
   resolutionRecords ResolutionRecord[]
+  integrationCredentials IntegrationCredential[]
+  integrationConfigs    IntegrationConfig[]
 
   @@index([createdAt])
 }
@@ -140,6 +142,7 @@ model Meeting {
   auditEvents AuditEvent[]
   flags       Flag[]
   resolutionRecords ResolutionRecord[]
+  integrationSyncLogs IntegrationSyncLog[]
 
   @@index([workspaceId])
   @@index([workspaceId, status])
@@ -444,6 +447,91 @@ model Invitation {
   @@index([token])
   @@index([workspaceId])
   @@index([email])
+}
+
+// ============================================
+// Integration Models (Epic 6 — IntegrationHub)
+// ============================================
+
+enum IntegrationProvider {
+  ZOOM
+  TEAMS
+  SHAREPOINT
+  GOOGLE_DRIVE
+  SMARTVAULT
+  REDTAIL
+  WEALTHBOX
+  SALESFORCE
+  DOCUSIGN
+  RIA_IN_A_BOX
+  COMPLYSCI
+  SLACK
+  TEAMS_BOT
+}
+
+enum IntegrationStatus {
+  CONNECTED
+  WARNING_RETRYING
+  ERROR_ACTION_REQUIRED
+  NOT_CONNECTED
+}
+
+model IntegrationCredential {
+  id                   String   @id @default(cuid())
+  workspaceId          String
+  provider            IntegrationProvider
+  accessTokenEncrypted String   @db.Text
+  refreshTokenEncrypted String? @db.Text
+  expiresAt           DateTime?
+  scopes              String?  @db.Text // Comma-separated OAuth scopes
+  status              IntegrationStatus @default(CONNECTED)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, provider])
+  @@index([workspaceId])
+  @@index([provider, status])
+}
+
+model IntegrationConfig {
+  id              String   @id @default(cuid())
+  workspaceId     String
+  provider        IntegrationProvider
+  config          Json     // folder paths, channel IDs, CRM settings, etc.
+  lastSyncAt      DateTime?
+  lastErrorAt     DateTime?
+  lastErrorMessage String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  syncLogs  IntegrationSyncLog[]
+
+  @@unique([workspaceId, provider])
+  @@index([workspaceId])
+}
+
+model IntegrationSyncLog {
+  id                 String   @id @default(cuid())
+  integrationConfigId String?
+  meetingId          String?
+  provider           IntegrationProvider
+  action             String   // note, upload, envelope, etc.
+  status             String   // pending, success, failed
+  attempts           Int      @default(0)
+  errorMessage       String?  @db.Text
+  createdAt          DateTime @default(now())
+  completedAt       DateTime?
+
+  integrationConfig IntegrationConfig? @relation(fields: [integrationConfigId], references: [id], onDelete: SetNull)
+  meeting           Meeting? @relation(fields: [meetingId], references: [id], onDelete: SetNull)
+
+  @@index([integrationConfigId])
+  @@index([meetingId])
+  @@index([provider, status])
+  @@index([createdAt])
 }
 
 // ============================================

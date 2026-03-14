@@ -128,6 +128,25 @@ export const authConfig = {
         secure: process.env.NODE_ENV === "production", // HTTPS-only in production
       },
     },
+    // Explicit pkceCodeVerifier config fixes InvalidCheck on Vercel/serverless and
+    // browser-specific issues (e.g. Brave on macOS). Domain with leading dot
+    // enables cookie sharing across subdomains (app.complyvault.co, complyvault.co).
+    pkceCodeVerifier: {
+      name:
+        process.env.NODE_ENV === "production"
+          ? "__Secure-authjs.pkce.code_verifier"
+          : "authjs.pkce.code_verifier",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        ...(process.env.NODE_ENV === "production" &&
+        (process.env.AUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "").includes("complyvault.co")
+          ? { domain: ".complyvault.co" }
+          : {}),
+      },
+    },
   },
   callbacks: {
     signIn: async ({ user, account }) => {

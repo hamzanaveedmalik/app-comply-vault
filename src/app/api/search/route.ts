@@ -168,7 +168,7 @@ export const GET = withPerformance("Search operation",
           };
 
           const allFields = [
-            ...(extraction.topics?.map(topicToString) || []),
+            ...(extraction.topics?.map((t) => topicToString(t as import("~/lib/topics").TopicEntry)) ?? []),
             ...(extraction.recommendations?.map((r) => r.text || "") || []),
             ...(extraction.disclosures?.map((d) => d.text || "") || []),
             ...(extraction.decisions?.map((d) => d.text || "") || []),

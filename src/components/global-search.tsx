@@ -157,7 +157,7 @@ export function GlobalSearch({ className }: GlobalSearchProps) {
           value={query}
           onValueChange={setQuery}
         />
-        <CommandList shouldFilter={false}>
+        <CommandList>
           {isLoading && (
             <div className="flex items-center justify-center py-6">
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />

@@ -50,7 +50,7 @@ providers.push(
 
       // Find user by email
       const user = await db.user.findUnique({
-        where: { email: credentials.email },
+        where: { email: credentials.email as string },
       });
 
       if (!user) {
@@ -71,7 +71,7 @@ providers.push(
 
       // Verify password (password hash is stored in access_token field)
       const isValid = await bcrypt.compare(
-        credentials.password,
+        credentials.password as string,
         account.access_token,
       );
 

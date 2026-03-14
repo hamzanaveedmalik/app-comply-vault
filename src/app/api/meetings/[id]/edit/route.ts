@@ -2,6 +2,7 @@ import { requireAppAccess } from "~/server/auth/guards";
 import { db } from "~/server/db";
 import { z } from "zod";
 import type { ExtractionData } from "~/server/extraction/types";
+import type { Transcript } from "~/server/transcription/types";
 import { generateSearchableText } from "~/server/search/index";
 
 // Force Node.js runtime for this route
@@ -144,10 +145,12 @@ export async function POST(
           (e) => e.field === evidenceField && e.startTime === item.startTime
         );
         if (evidenceIndex >= 0) {
+          const existing = evidenceMap[evidenceIndex]!;
           evidenceMap[evidenceIndex] = {
-            ...evidenceMap[evidenceIndex],
+            ...existing,
+            field: existing.field,
             edited: true,
-            claim: item.text || evidenceMap[evidenceIndex]!.claim,
+            claim: item.text || existing.claim,
           };
           updatedExtraction.evidenceMap = evidenceMap;
         }
@@ -159,10 +162,10 @@ export async function POST(
 
     // Regenerate searchable text for indexing (Story 7.4)
     const transcript = meeting.transcript as { segments?: Array<{ text?: string }> } | null;
-    const searchableText = generateSearchableText(
-      transcript ? { segments: transcript.segments || [] } : null,
-      updatedExtraction
-    );
+    const transcriptForSearch: Transcript | null = transcript?.segments
+      ? { segments: transcript.segments as Transcript["segments"] }
+      : null;
+    const searchableText = generateSearchableText(transcriptForSearch, updatedExtraction);
 
     // Update meeting in database
     await db.meeting.update({

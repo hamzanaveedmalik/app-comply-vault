@@ -81,6 +81,7 @@ export async function POST(request: Request) {
     }
 
     // Update meeting status to PROCESSING and publish QStash job
+    let qstashJobPublished = false;
     if (!env.QSTASH_TOKEN) {
       console.warn("⚠️ QSTASH_TOKEN not configured - jobs will not be published automatically");
       console.warn("   Meeting will stay in UPLOADING status. Configure QStash or manually trigger jobs.");
@@ -105,6 +106,7 @@ export async function POST(request: Request) {
           data: { status: "PROCESSING" },
         });
 
+        qstashJobPublished = true;
         console.log(`✅ Meeting ${meeting.id} status updated to PROCESSING. QStash message ID: ${messageId}`);
       } catch (error) {
         console.error("❌ Error publishing QStash job:", error);
@@ -134,7 +136,7 @@ export async function POST(request: Request) {
         meetingId: meeting.id,
         metadata: {
           action: "upload_completed",
-          qstashJobPublished: !!env.QSTASH_TOKEN && meeting.status === "PROCESSING",
+          qstashJobPublished,
           sha256: sourceFileSha256 ?? undefined,
         },
       },

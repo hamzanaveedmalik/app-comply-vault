@@ -163,15 +163,18 @@ export async function POST(request: Request) {
               billingCurrency: (data.currency ??
                 session.currency?.toUpperCase() ??
                 workspace.billingCurrency) as "USD" | "GBP",
-              currentPeriodStart: subscription
-                ? new Date(subscription.current_period_start * 1000)
-                : undefined,
-              currentPeriodEnd: subscription
-                ? new Date(subscription.current_period_end * 1000)
-                : undefined,
-              subscriptionStartDate: subscription
-                ? new Date(subscription.start_date * 1000)
-                : undefined,
+              currentPeriodStart:
+                subscription && typeof subscription === "object"
+                  ? new Date(subscription.current_period_start * 1000)
+                  : undefined,
+              currentPeriodEnd:
+                subscription && typeof subscription === "object"
+                  ? new Date(subscription.current_period_end * 1000)
+                  : undefined,
+              subscriptionStartDate:
+                subscription && typeof subscription === "object"
+                  ? new Date(subscription.start_date * 1000)
+                  : undefined,
               onboardingType,
               onboardingPaidAt: onboardingType ? new Date() : undefined,
             },

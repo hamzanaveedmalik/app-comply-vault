@@ -11,7 +11,7 @@ function getStripe(): Stripe {
       throw new Error("STRIPE_SECRET_KEY is required. Please set it in your environment variables.");
     }
     stripeInstance = new Stripe(env.STRIPE_SECRET_KEY, {
-      apiVersion: "2024-10-28.acacia",
+      apiVersion: "2024-06-20",
     });
   }
   return stripeInstance;

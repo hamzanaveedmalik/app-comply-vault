@@ -1,5 +1,4 @@
-import { ExtractionProvider } from './types';
-import { type MeetingData } from './types';
+import type { ExtractionProvider, ExtractionResult, MeetingData } from "./types";
 
 interface VertexAIConfig {
   apiEndpoint: string;
@@ -20,6 +19,42 @@ export class VertexAIExtractionProvider implements ExtractionProvider {
     this.projectId = config.projectId;
     this.location = config.location;
     this.modelId = config.modelId;
+  }
+
+  async extract(
+    transcriptText: string,
+    transcriptSegments: Array<{ startTime: number; endTime: number; text: string }>
+  ): Promise<ExtractionResult> {
+    const meetingData = await this.extractEvidenceFromTranscript(transcriptText);
+    return this.meetingDataToExtractionResult(meetingData, transcriptSegments);
+  }
+
+  private meetingDataToExtractionResult(
+    data: MeetingData,
+    segments: Array<{ startTime: number; endTime: number; text: string }>
+  ): ExtractionResult {
+    const topics = (data.topics ?? []).map((t) =>
+      typeof t === "string" ? t : { title: t, description: t }
+    );
+    const recommendations = (data.recommendations ?? []).map((text, i) => {
+      const seg = segments[i] ?? segments[0];
+      return {
+        text,
+        startTime: seg?.startTime ?? 0,
+        endTime: seg?.endTime ?? 0,
+        snippet: seg?.text ?? "",
+        confidence: 0.8,
+      };
+    });
+    return {
+      topics,
+      recommendations,
+      disclosures: [],
+      decisions: [],
+      followUps: [],
+      provider: "vertex",
+      processingTime: 0,
+    };
   }
 
   async extractEvidenceFromTranscript(

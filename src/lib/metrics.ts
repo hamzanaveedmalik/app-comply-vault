@@ -68,14 +68,14 @@ class MetricsRegistry {
       this.createHistogram(name, [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10], labels);
     }
     
-    const histogram = this.histograms[key];
+    const histogram = this.histograms[key]!;
     histogram.count += 1;
     histogram.sum += value;
     
     // Increment all buckets that this value falls into
     for (const bucket of histogram.buckets) {
       if (value <= bucket) {
-        histogram.values[bucket] += 1;
+        histogram.values[bucket] = (histogram.values[bucket] ?? 0) + 1;
       }
     }
   }
@@ -103,14 +103,14 @@ class MetricsRegistry {
     
     // Add simple metrics
     for (const key in this.metrics) {
-      const metric = this.metrics[key];
+      const metric = this.metrics[key]!;
       lines.push(`# TYPE ${metric.name} gauge`);
       lines.push(`${metric.name}${this.formatLabels(metric.labels)} ${metric.value}`);
     }
     
     // Add histograms
     for (const key in this.histograms) {
-      const histogram = this.histograms[key];
+      const histogram = this.histograms[key]!;
       lines.push(`# TYPE ${histogram.name} histogram`);
       
       // Add bucket entries
@@ -127,7 +127,7 @@ class MetricsRegistry {
     
     // Add counters
     for (const key in this.counters) {
-      const counter = this.counters[key];
+      const counter = this.counters[key]!;
       lines.push(`# TYPE ${counter.name} counter`);
       lines.push(`${counter.name}${this.formatLabels(counter.labels)} ${counter.value}`);
     }

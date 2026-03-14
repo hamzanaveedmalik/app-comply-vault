@@ -1,3 +1,4 @@
+import { Prisma } from "../../../../../../generated/prisma";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { publishProcessMeetingJob } from "~/server/qstash";
@@ -66,8 +67,8 @@ export async function POST(
         data: {
           status: "UPLOADING",
           // Clear any error metadata
-          transcript: null,
-          extraction: null,
+          transcript: Prisma.JsonNull,
+          extraction: Prisma.JsonNull,
         },
       });
 
@@ -138,12 +139,14 @@ export async function POST(
           data: {
             status: "PROCESSING",
             // Clear any previous error metadata
-            transcript: meeting.transcript && typeof meeting.transcript === "object" && "error" in meeting.transcript
-              ? null
-              : meeting.transcript,
-            extraction: meeting.extraction && typeof meeting.extraction === "object" && "error" in meeting.extraction
-              ? null
-              : meeting.extraction,
+            transcript:
+              meeting.transcript && typeof meeting.transcript === "object" && "error" in meeting.transcript
+                ? Prisma.JsonNull
+                : (meeting.transcript as Prisma.InputJsonValue),
+            extraction:
+              meeting.extraction && typeof meeting.extraction === "object" && "error" in meeting.extraction
+                ? Prisma.JsonNull
+                : (meeting.extraction as Prisma.InputJsonValue),
           },
         });
 

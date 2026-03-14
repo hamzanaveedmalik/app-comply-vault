@@ -85,9 +85,10 @@ export async function POST(request: Request) {
 
     const missingDisclosureFlags = detectMissingDisclosureFlags(extractionData);
     if (missingDisclosureFlags.length > 0) {
+      const workspaceId = session.user.workspaceId!;
       await db.flag.createMany({
         data: missingDisclosureFlags.map((flag) => ({
-          workspaceId: session.user.workspaceId,
+          workspaceId,
           meetingId: meeting.id,
           type: flag.type,
           severity: flag.severity,

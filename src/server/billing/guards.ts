@@ -45,7 +45,7 @@ export async function assertCanUpload(workspaceId: string) {
     };
   }
 
-  if (!ACTIVE_STATUSES.includes(workspace.billingStatus)) {
+  if (!(ACTIVE_STATUSES as readonly string[]).includes(workspace.billingStatus)) {
     return {
       ok: false as const,
       status: 402,
@@ -100,7 +100,7 @@ export async function assertCanInvite(workspaceId: string) {
     };
   }
 
-  if (!ACTIVE_STATUSES.includes(workspace.billingStatus)) {
+  if (!(ACTIVE_STATUSES as readonly string[]).includes(workspace.billingStatus)) {
     return {
       ok: false as const,
       status: 402,

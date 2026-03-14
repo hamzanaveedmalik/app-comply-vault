@@ -12,12 +12,12 @@ const METRICS_AUTH = {
 export async function GET(request: Request) {
   try {
     // Check for basic auth
-    const auth = request.headers.get("authorization");
+    const authHeader = request.headers.get("authorization");
     
     // Only require auth in production
     if (env.NODE_ENV === "production") {
       // If no auth header, require session
-      if (!auth) {
+      if (!authHeader) {
         const session = await auth();
         if (!session?.user) {
           return new Response("Unauthorized", {
@@ -29,10 +29,11 @@ export async function GET(request: Request) {
         }
       } else {
         // Basic auth validation
-        const [, credentials] = auth.split(" ");
-        const [username, password] = atob(credentials).split(":");
+        const [, credentials] = authHeader.split(" ");
+        const decoded = credentials ? atob(credentials) : "";
+        const [username, password] = decoded.split(":");
         
-        if (username !== METRICS_AUTH.username || password !== METRICS_AUTH.password) {
+        if (!username || !password || username !== METRICS_AUTH.username || password !== METRICS_AUTH.password) {
           return new Response("Unauthorized", {
             status: 401,
             headers: {

@@ -111,7 +111,7 @@ export async function POST(
     // Log FINALIZE audit event
     await db.auditEvent.create({
       data: {
-        workspaceId: session.user.workspaceId,
+        workspaceId,
         userId: session.user.id,
         action: "FINALIZE",
         resourceType: "meeting",
@@ -120,9 +120,9 @@ export async function POST(
         metadata: {
           finalizedAt: now.toISOString(),
           previousStatus: meeting.status,
-          timeToFinalize: timeToFinalize ? `${timeToFinalize}s` : null,
+          timeToFinalize: timeToFinalize != null ? `${timeToFinalize}s` : undefined,
           finalizeReason,
-          finalizeNote: finalizeNote?.trim() || null,
+          finalizeNote: finalizeNote?.trim() ?? undefined,
           flagsOverridden: openCriticalFlags.length > 0,
         },
       },

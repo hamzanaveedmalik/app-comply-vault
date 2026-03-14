@@ -22,7 +22,7 @@ export interface MissingDisclosureFlagEvidence {
     startTime: number;
     endTime: number;
     snippet: string;
-    confidence?: number;
+    confidence: number | undefined;
   };
   matchedDisclosure?: {
     text: string;
@@ -89,41 +89,39 @@ export function detectMissingDisclosureFlags(
     return [];
   }
 
-  return recommendations
-    .filter((rec) => rec.text && typeof rec.startTime === "number" && typeof rec.endTime === "number")
-    .map((rec) => {
-      const matchedDisclosure = findRelevantDisclosure(rec, disclosures, timeWindowSeconds);
-      const disclosureIsValid = matchedDisclosure ? matchesDisclosurePatterns(matchedDisclosure) : false;
+  const flags: MissingDisclosureFlag[] = [];
+  for (const rec of recommendations) {
+    if (!rec.text || typeof rec.startTime !== "number" || typeof rec.endTime !== "number") continue;
+    const matchedDisclosure = findRelevantDisclosure(rec, disclosures, timeWindowSeconds);
+    const disclosureIsValid = matchedDisclosure ? matchesDisclosurePatterns(matchedDisclosure) : false;
 
-      if (matchedDisclosure && disclosureIsValid) {
-        return null;
-      }
+    if (matchedDisclosure && disclosureIsValid) continue;
 
-      return {
-        type: "MISSING_DISCLOSURE",
-        severity: "CRITICAL",
-        evidence: {
-          recommendation: {
-            text: rec.text,
-            startTime: rec.startTime,
-            endTime: rec.endTime,
-            snippet: rec.snippet ?? "",
-            confidence: rec.confidence,
-          },
-          matchedDisclosure: matchedDisclosure
-            ? {
-                text: matchedDisclosure.text ?? "",
-                startTime: matchedDisclosure.startTime ?? 0,
-                endTime: matchedDisclosure.endTime ?? 0,
-                snippet: matchedDisclosure.snippet ?? "",
-              }
-            : undefined,
-          rule: {
-            timeWindowSeconds,
-            disclosurePatterns: DISCLOSURE_PATTERNS.map((pattern) => pattern.source),
-          },
+    flags.push({
+      type: "MISSING_DISCLOSURE",
+      severity: "CRITICAL",
+      evidence: {
+        recommendation: {
+          text: rec.text,
+          startTime: rec.startTime,
+          endTime: rec.endTime,
+          snippet: rec.snippet ?? "",
+          confidence: rec.confidence,
         },
-      } satisfies MissingDisclosureFlag;
-    })
-    .filter((flag): flag is MissingDisclosureFlag => flag !== null);
+        matchedDisclosure: matchedDisclosure
+          ? {
+              text: matchedDisclosure.text ?? "",
+              startTime: matchedDisclosure.startTime ?? 0,
+              endTime: matchedDisclosure.endTime ?? 0,
+              snippet: matchedDisclosure.snippet ?? "",
+            }
+          : undefined,
+        rule: {
+          timeWindowSeconds,
+          disclosurePatterns: DISCLOSURE_PATTERNS.map((pattern) => pattern.source),
+        },
+      },
+    });
+  }
+  return flags;
 }

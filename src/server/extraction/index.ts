@@ -2,15 +2,8 @@ import { env } from "~/env";
 import { OpenAIExtractionProvider } from "./openai";
 import { AnthropicExtractionProvider } from "./anthropic";
 import { VertexAIExtractionProvider } from "./vertex";
-import type { ExtractionResult } from "./types";
+import type { ExtractionResult, ExtractionProvider } from "./types";
 import type { Transcript } from "../transcription/types";
-
-/**
- * Extraction provider interface
- */
-interface ExtractionProvider {
-  extract(transcriptText: string, transcriptSegments: Array<{ startTime: number; endTime: number; text: string }>): Promise<ExtractionResult>;
-}
 
 /**
  * Get the configured extraction provider

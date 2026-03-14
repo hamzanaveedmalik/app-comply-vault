@@ -2,6 +2,24 @@
  * Types for LLM-based field extraction from transcripts
  */
 
+/** Extraction provider interface for pluggable LLM backends */
+export interface ExtractionProvider {
+  extract(
+    transcriptText: string,
+    transcriptSegments: Array<{ startTime: number; endTime: number; text: string }>
+  ): Promise<ExtractionResult>;
+}
+
+/** Meeting data format from Vertex AI (different from ExtractionResult) */
+export interface MeetingData {
+  attendees?: string[];
+  topics?: string[];
+  keyPoints?: string[];
+  recommendations?: string[];
+  actionItems?: string[];
+  complianceFlags?: string[];
+}
+
 /**
  * Evidence item linking a claim to a transcript timestamp
  */

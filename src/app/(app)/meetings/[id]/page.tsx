@@ -317,7 +317,7 @@ export default async function MeetingDetailPage({
                   <EditableFields
                     meetingId={meeting.id}
                     extraction={extraction}
-                    isReadOnly={meeting.status === "FINALIZED"}
+                    isReadOnly={false}
                     transcript={transcript}
                     flags={flags.map((flag) => ({
                       id: flag.id,

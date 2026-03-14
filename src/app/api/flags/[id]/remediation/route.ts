@@ -1,3 +1,4 @@
+import { Prisma } from "../../../../../../generated/prisma";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { z } from "zod";
@@ -230,7 +231,7 @@ export async function POST(
             flagId: flag.id,
             resolutionType: payload.resolutionType,
             rationale: payload.rationale.trim(),
-            metadata,
+            metadata: metadata as Prisma.InputJsonValue,
             createdByUserId: session.user.id,
             tasks: {
               create: tasks,
@@ -240,7 +241,7 @@ export async function POST(
                 type: item.type,
                 label: item.label?.trim() || null,
                 url: item.url,
-                metadata: item.metadata ?? null,
+                metadata: (item.metadata ?? Prisma.JsonNull) as Prisma.InputJsonValue,
                 createdByUserId: session.user.id,
               })),
             },
@@ -298,18 +299,19 @@ export async function POST(
     }
 
     if (payload.action === "ADD_EVIDENCE") {
-      if (!flag.resolutionRecord) {
+      const resolutionRecord = flag.resolutionRecord;
+      if (!resolutionRecord) {
         return Response.json({ error: "Remediation has not started" }, { status: 400 });
       }
 
       const createdEvidence = await db.$transaction(async (tx) => {
         const evidenceRecord = await tx.evidenceLink.create({
           data: {
-            resolutionId: flag.resolutionRecord.id,
+            resolutionId: resolutionRecord.id,
             type: payload.evidence.type,
             label: payload.evidence.label?.trim() || null,
             url: payload.evidence.url,
-            metadata: payload.evidence.metadata ?? null,
+            metadata: (payload.evidence.metadata ?? Prisma.JsonNull) as Prisma.InputJsonValue,
             createdByUserId: session.user.id,
           },
         });
@@ -337,11 +339,12 @@ export async function POST(
     }
 
     if (payload.action === "COMPLETE_TASK") {
-      if (!flag.resolutionRecord) {
+      const resolutionRecord = flag.resolutionRecord;
+      if (!resolutionRecord) {
         return Response.json({ error: "Remediation has not started" }, { status: 400 });
       }
 
-      const task = flag.resolutionRecord.tasks.find((item) => item.id === payload.taskId);
+      const task = resolutionRecord.tasks.find((item) => item.id === payload.taskId);
       if (!task) {
         return Response.json({ error: "Task not found" }, { status: 404 });
       }
@@ -591,8 +594,8 @@ export async function POST(
       }
 
       const updatedFlag = await db.$transaction(async (tx) => {
-        let resolutionRecord = flag.resolutionRecord;
-        if (!resolutionRecord) {
+        let resolutionRecord: { id: string };
+        if (!flag.resolutionRecord) {
           resolutionRecord = await tx.resolutionRecord.create({
             data: {
               workspaceId: flag.workspaceId,
@@ -600,13 +603,12 @@ export async function POST(
               flagId: flag.id,
               resolutionType: "OVERRIDE_APPROVED",
               rationale: payload.reason.trim(),
-              metadata: {
-                overrideCategory: payload.category.trim(),
-              },
+              metadata: { overrideCategory: payload.category.trim() } as Prisma.InputJsonValue,
               createdByUserId: session.user.id,
             },
           });
         } else {
+          resolutionRecord = flag.resolutionRecord;
           await tx.resolutionRecord.update({
             where: { id: resolutionRecord.id },
             data: {

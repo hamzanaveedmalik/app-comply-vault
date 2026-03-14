@@ -321,6 +321,44 @@ exports.Prisma.InvitationScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.IntegrationCredentialScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  provider: 'provider',
+  accessTokenEncrypted: 'accessTokenEncrypted',
+  refreshTokenEncrypted: 'refreshTokenEncrypted',
+  expiresAt: 'expiresAt',
+  scopes: 'scopes',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.IntegrationConfigScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  provider: 'provider',
+  config: 'config',
+  lastSyncAt: 'lastSyncAt',
+  lastErrorAt: 'lastErrorAt',
+  lastErrorMessage: 'lastErrorMessage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.IntegrationSyncLogScalarFieldEnum = {
+  id: 'id',
+  integrationConfigId: 'integrationConfigId',
+  meetingId: 'meetingId',
+  provider: 'provider',
+  action: 'action',
+  status: 'status',
+  attempts: 'attempts',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt',
+  completedAt: 'completedAt'
+};
+
 exports.Prisma.LeadScalarFieldEnum = {
   id: 'id',
   email: 'email',
@@ -338,6 +376,10 @@ exports.Prisma.SortOrder = {
 
 exports.Prisma.NullableJsonNullValueInput = {
   DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.JsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
 
@@ -467,6 +509,29 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   MEMBER_REMOVED: 'MEMBER_REMOVED'
 };
 
+exports.IntegrationProvider = exports.$Enums.IntegrationProvider = {
+  ZOOM: 'ZOOM',
+  TEAMS: 'TEAMS',
+  SHAREPOINT: 'SHAREPOINT',
+  GOOGLE_DRIVE: 'GOOGLE_DRIVE',
+  SMARTVAULT: 'SMARTVAULT',
+  REDTAIL: 'REDTAIL',
+  WEALTHBOX: 'WEALTHBOX',
+  SALESFORCE: 'SALESFORCE',
+  DOCUSIGN: 'DOCUSIGN',
+  RIA_IN_A_BOX: 'RIA_IN_A_BOX',
+  COMPLYSCI: 'COMPLYSCI',
+  SLACK: 'SLACK',
+  TEAMS_BOT: 'TEAMS_BOT'
+};
+
+exports.IntegrationStatus = exports.$Enums.IntegrationStatus = {
+  CONNECTED: 'CONNECTED',
+  WARNING_RETRYING: 'WARNING_RETRYING',
+  ERROR_ACTION_REQUIRED: 'ERROR_ACTION_REQUIRED',
+  NOT_CONNECTED: 'NOT_CONNECTED'
+};
+
 exports.Prisma.ModelName = {
   Workspace: 'Workspace',
   UserWorkspace: 'UserWorkspace',
@@ -483,6 +548,9 @@ exports.Prisma.ModelName = {
   User: 'User',
   VerificationToken: 'VerificationToken',
   Invitation: 'Invitation',
+  IntegrationCredential: 'IntegrationCredential',
+  IntegrationConfig: 'IntegrationConfig',
+  IntegrationSyncLog: 'IntegrationSyncLog',
   Lead: 'Lead'
 };
 

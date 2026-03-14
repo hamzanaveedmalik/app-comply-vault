@@ -1,3 +1,4 @@
+import type { Session } from "next-auth";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { getEntitlements, isPaywallBypassed, isTrialExpired, type Entitlements } from "~/server/billing/entitlements";
@@ -20,7 +21,7 @@ export type WorkspaceAccessFields = {
 export type AppAccessResult =
   | {
       ok: true;
-      session: Awaited<ReturnType<typeof auth>>;
+      session: Session;
       workspaceId: string;
       workspace: WorkspaceAccessFields;
       entitlements: Entitlements;
@@ -178,7 +179,7 @@ export async function requireAppAccess(): Promise<AppAccessResult> {
  * @returns AppAccessResult with session if access granted, or error details
  */
 export async function requireAuthAndEmailVerified(): Promise<
-  | { ok: true; session: Awaited<ReturnType<typeof auth>> }
+  | { ok: true; session: Session }
   | { ok: false; status: 401 | 403; error: string }
 > {
   const session = await auth();

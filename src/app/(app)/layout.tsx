@@ -1,8 +1,9 @@
-import { requireAuthAndEmailVerified } from "~/server/auth/guards";
-import { db } from "~/server/db";
-import { redirect } from "next/navigation";
-import { Sidebar } from "~/components/sidebar";
-import { TopBar } from "~/components/top-bar";
+import type { Session } from 'next-auth';
+import { requireAuthAndEmailVerified } from '~/server/auth/guards';
+import { db } from '~/server/db';
+import { redirect } from 'next/navigation';
+import { Sidebar } from '~/components/sidebar';
+import { TopBar } from '~/components/top-bar';
 
 export default async function AppLayout({
   children,
@@ -12,20 +13,21 @@ export default async function AppLayout({
   // Require authentication and email verification for all app routes
   // Individual pages will enforce workspace membership and entitlements
   const authCheck = await requireAuthAndEmailVerified();
-  
+
   if (!authCheck.ok) {
     if (authCheck.status === 401) {
-      redirect("/auth/signin");
+      redirect('/auth/signin');
     }
     redirect(`/auth/signin?error=${encodeURIComponent(authCheck.error)}`);
   }
 
-  const { session } = authCheck;
+  // CAST: NextAuth v5 auth() return type conflates with AppRouteHandlerFn; guards return Session
+  const session = authCheck.session as Session;
 
   // If user has a workspace, fetch it for the UI
   // If not, they'll be on the workspace creation page
   const workspace =
-    session.user.workspaceId && session.user.workspaceId !== ""
+    session.user.workspaceId && session.user.workspaceId !== ''
       ? await db.workspace.findUnique({
           where: { id: session.user.workspaceId },
           select: { billingStatus: true },
@@ -50,10 +52,7 @@ export default async function AppLayout({
         />
       </div>
       {/* Main content with left padding for desktop sidebar and top padding for mobile */}
-      <main className="lg:pl-64 pt-14">
-        {children}
-      </main>
+      <main className="lg:pl-64 pt-14">{children}</main>
     </div>
   );
 }
-

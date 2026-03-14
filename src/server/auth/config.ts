@@ -119,13 +119,22 @@ export const authConfig = {
     updateAge: 24 * 60 * 60, // 24 hours
   },
   cookies: {
+    // Use Auth.js v5 default names; add domain for complyvault.co so session cookie
+    // is shared across subdomains and readable in Edge middleware (fixes redirect loop).
     sessionToken: {
-      name: "next-auth.session-token",
+      name:
+        process.env.NODE_ENV === "production"
+          ? "__Secure-authjs.session-token"
+          : "authjs.session-token",
       options: {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        secure: process.env.NODE_ENV === "production", // HTTPS-only in production
+        secure: process.env.NODE_ENV === "production",
+        ...(process.env.NODE_ENV === "production" &&
+        (process.env.AUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "").includes("complyvault.co")
+          ? { domain: ".complyvault.co" }
+          : {}),
       },
     },
     // Explicit pkceCodeVerifier config fixes InvalidCheck on Vercel/serverless and

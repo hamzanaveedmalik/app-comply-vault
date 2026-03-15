@@ -147,4 +147,102 @@ export async function publishProcessMeetingJob({
   }
 }
 
+/** Zoom recording.completed webhook payload for ingestion (Story 1.2a) */
+export type ZoomIngestionPayload = {
+  zoomMeetingId: string;
+  zoomMeetingNumericId?: string;
+  hostEmail: string;
+  topic?: string;
+  startTime?: string;
+  duration?: number;
+  downloadToken: string;
+  recordingFiles: Array<{
+    id?: string;
+    fileType?: string;
+    fileExtension?: string;
+    downloadUrl?: string;
+    downloadToken?: string;
+    status?: string;
+  }>;
+};
 
+/**
+ * Publish Zoom ingestion job — Story 1.2a
+ * Downloads recording from Zoom, uploads to S3, triggers process-meeting pipeline
+ */
+export async function publishZoomIngestionJob(payload: ZoomIngestionPayload): Promise<string | null> {
+  if (!env.QSTASH_TOKEN) {
+    console.warn("QSTASH_TOKEN not configured — Zoom ingestion job skipped");
+    return null;
+  }
+
+  const baseUrl = env.NEXT_PUBLIC_APP_URL;
+  if (!baseUrl || baseUrl.includes("localhost") || baseUrl.includes("127.0.0.1")) {
+    console.warn("NEXT_PUBLIC_APP_URL must be a public URL for Zoom ingestion");
+    return null;
+  }
+
+  const webhookUrl = `${baseUrl}/api/jobs/zoom-ingest`;
+
+  try {
+    const qstash = getQStashClient();
+    const messageId = await qstash.publishJSON({
+      url: webhookUrl,
+      body: payload,
+      retries: 3,
+      delay: 5,
+      headers: { "X-QStash-Debug": "true" },
+    });
+
+    console.log(`✅ Zoom ingestion job published: ${payload.zoomMeetingId}`, { messageId });
+    return messageId;
+  } catch (error) {
+    console.error("❌ Zoom ingestion job publish failed:", error);
+    throw error;
+  }
+}
+
+/** Teams transcript notification payload for ingestion (Story 1.5) */
+export type TeamsIngestionPayload = {
+  organizerId: string;
+  meetingId: string;
+  transcriptId: string;
+  organiserEmail?: string;
+};
+
+/**
+ * Publish Teams ingestion job — Story 1.5
+ */
+export async function publishTeamsIngestionJob(
+  payload: TeamsIngestionPayload
+): Promise<string | null> {
+  if (!env.QSTASH_TOKEN) {
+    console.warn("QSTASH_TOKEN not configured — Teams ingestion job skipped");
+    return null;
+  }
+
+  const baseUrl = env.NEXT_PUBLIC_APP_URL;
+  if (!baseUrl || baseUrl.includes("localhost") || baseUrl.includes("127.0.0.1")) {
+    console.warn("NEXT_PUBLIC_APP_URL must be a public URL for Teams ingestion");
+    return null;
+  }
+
+  const webhookUrl = `${baseUrl}/api/jobs/teams-ingest`;
+
+  try {
+    const qstash = getQStashClient();
+    const messageId = await qstash.publishJSON({
+      url: webhookUrl,
+      body: payload,
+      retries: 3,
+      delay: 5,
+      headers: { "X-QStash-Debug": "true" },
+    });
+
+    console.log(`✅ Teams ingestion job published: ${payload.meetingId}`, { messageId });
+    return messageId;
+  } catch (error) {
+    console.error("❌ Teams ingestion job publish failed:", error);
+    throw error;
+  }
+}

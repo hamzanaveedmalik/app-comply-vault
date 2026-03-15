@@ -7,6 +7,7 @@ import { requireAppAccess } from "~/server/auth/guards";
 import { db } from "~/server/db";
 import { sendIntegrationDisconnectEmail } from "~/server/email";
 import { zoomAdapter } from "~/server/integrations/adapters/zoom";
+import { teamsAdapter } from "~/server/integrations/adapters/teams";
 
 export async function POST(
   _request: Request,
@@ -39,6 +40,8 @@ export async function POST(
 
   if (credential.provider === "ZOOM") {
     await zoomAdapter.disconnect({ workspaceId });
+  } else if (credential.provider === "TEAMS") {
+    await teamsAdapter.disconnect({ workspaceId });
   } else {
     await db.integrationCredential.delete({ where: { id: credentialId } });
     await db.integrationConfig.deleteMany({

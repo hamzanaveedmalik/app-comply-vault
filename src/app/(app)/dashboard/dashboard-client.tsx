@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
@@ -14,7 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { useMeetingStatus } from "~/hooks/use-meeting-status";
 import { toast } from "sonner";
 
 interface Meeting {
@@ -100,19 +100,22 @@ export function DashboardClient({ initialMeetings }: DashboardClientProps) {
   const getStatusLabel = (status: string) => {
     switch (status) {
       case "UPLOADING":
-        return "Uploading";
+        return "Queued";
       case "PROCESSING":
         return "Processing";
       case "DRAFT_READY":
-        return "Draft Ready";
+        return "Ready for review";
       case "DRAFT":
-        return "Draft";
+        return "In review";
       case "FINALIZED":
         return "Finalized";
       default:
         return status;
     }
   };
+
+  const isProcessing = (status: string) =>
+    status === "PROCESSING" || status === "UPLOADING";
 
   return (
     <Card>
@@ -145,7 +148,13 @@ export function DashboardClient({ initialMeetings }: DashboardClientProps) {
                   {new Date(meeting.meetingDate).toLocaleDateString()}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={getStatusVariant(meeting.status)}>
+                  <Badge
+                    variant={getStatusVariant(meeting.status)}
+                    className={isProcessing(meeting.status) ? "gap-1.5" : ""}
+                  >
+                    {isProcessing(meeting.status) && (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    )}
                     {getStatusLabel(meeting.status)}
                   </Badge>
                 </TableCell>

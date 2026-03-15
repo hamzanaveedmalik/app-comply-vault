@@ -56,7 +56,7 @@ export default async function IntegrationsPage({
 
   const integrations = credentials.map((cred) => {
     const config = configByProvider[cred.provider];
-    const cfg = config?.config as { accountEmail?: string } | null;
+    const cfg = config?.config as { accountEmail?: string; recordingScope?: string } | null;
     return {
       id: cred.id,
       provider: cred.provider,
@@ -67,6 +67,7 @@ export default async function IntegrationsPage({
       lastErrorMessage: config?.lastErrorMessage ?? null,
       connectedAt: cred.createdAt.toISOString(),
       accountEmail: cfg?.accountEmail ?? null,
+      recordingScope: cfg?.recordingScope ?? "all",
     };
   });
 
@@ -75,6 +76,13 @@ export default async function IntegrationsPage({
   const zoomError = typeof params.zoom_error === "string" ? params.zoom_error : null;
   const zoomErrorDescription = typeof params.zoom_error_description === "string"
     ? decodeURIComponent(params.zoom_error_description)
+    : null;
+
+  const teamsConnected = params.teams_connected === "1";
+  const teamsEmail = typeof params.teams_email === "string" ? decodeURIComponent(params.teams_email) : null;
+  const teamsError = typeof params.teams_error === "string" ? params.teams_error : null;
+  const teamsErrorDescription = typeof params.teams_error_description === "string"
+    ? decodeURIComponent(params.teams_error_description)
     : null;
 
   return (
@@ -87,6 +95,10 @@ export default async function IntegrationsPage({
         zoomEmail={zoomEmail}
         zoomError={zoomError}
         zoomErrorDescription={zoomErrorDescription}
+        teamsConnected={teamsConnected}
+        teamsEmail={teamsEmail}
+        teamsError={teamsError}
+        teamsErrorDescription={teamsErrorDescription}
       />
     </div>
   );

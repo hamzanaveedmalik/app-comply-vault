@@ -119,11 +119,13 @@ export function buildExportPayload(
   const medCount = flags.filter((f) => f.severity === "WARN").length;
   const infoCount = flags.filter((f) => f.severity === "INFO").length;
 
-  // Transcript upload (no recording file) vs Virtual/Zoom recording
+  // Transcript upload (no recording file) vs Virtual/Zoom vs Teams
   const format =
     !meeting.fileUrl && meeting.sourceFileMime === "text/plain"
       ? "Transcript Upload"
-      : "Virtual / Zoom";
+      : meeting.sourceFileMime === "text/vtt"
+        ? "Teams"
+        : "Virtual / Zoom";
   const duration = formatDuration(segments);
   const exportingUser = options?.exportingUserName ?? "System";
 
@@ -184,7 +186,9 @@ export function buildExportPayload(
     format:
       !meeting.fileUrl && meeting.sourceFileMime === "text/plain"
         ? "Transcript Upload"
-        : "Virtual / Zoom",
+        : meeting.sourceFileMime === "text/vtt"
+          ? "Teams"
+          : "Virtual / Zoom",
     generated_at: (extraction.extractedAt as string | undefined) ?? new Date().toISOString(),
     review_status: meeting.status ?? "N/A",
     pack_version: versions.length || 1,

@@ -4,6 +4,13 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
 import { CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 
 const PROVIDER_LABELS: Record<string, string> = {
   ZOOM: "Zoom",
@@ -45,6 +52,7 @@ type Integration = {
   lastErrorMessage: string | null;
   connectedAt: string;
   accountEmail?: string | null;
+  recordingScope?: string;
 };
 
 type Failure = {
@@ -63,6 +71,10 @@ export function IntegrationsClient({
   zoomEmail,
   zoomError,
   zoomErrorDescription,
+  teamsConnected,
+  teamsEmail,
+  teamsError,
+  teamsErrorDescription,
 }: {
   workspaceId: string;
   initialIntegrations: Integration[];
@@ -70,6 +82,10 @@ export function IntegrationsClient({
   zoomEmail?: string | null;
   zoomError?: string | null;
   zoomErrorDescription?: string | null;
+  teamsConnected?: boolean;
+  teamsEmail?: string | null;
+  teamsError?: string | null;
+  teamsErrorDescription?: string | null;
 }) {
   const [integrations, setIntegrations] = useState(initialIntegrations);
   const [expandedFailures, setExpandedFailures] = useState<string | null>(null);
@@ -79,16 +95,25 @@ export function IntegrationsClient({
   const router = useRouter();
 
   const hasZoom = integrations.some((i) => i.provider === "ZOOM");
+  const hasTeams = integrations.some((i) => i.provider === "TEAMS");
 
   useEffect(() => {
-    if (zoomConnected && zoomEmail && integrations.some((i) => i.provider === "ZOOM")) {
+    if (
+      (zoomConnected && zoomEmail && integrations.some((i) => i.provider === "ZOOM")) ||
+      (teamsConnected && teamsEmail && integrations.some((i) => i.provider === "TEAMS"))
+    ) {
       window.history.replaceState({}, "", "/integrations");
     }
-  }, [zoomConnected, zoomEmail, integrations]);
+  }, [zoomConnected, zoomEmail, teamsConnected, teamsEmail, integrations]);
 
   function handleConnectZoom() {
     setConnectLoading(true);
     window.location.href = "/api/integrations/zoom/connect";
+  }
+
+  function handleConnectTeams() {
+    setConnectLoading(true);
+    window.location.href = "/api/integrations/teams/connect";
   }
 
   async function handleDisconnect(credentialId: string) {
@@ -141,6 +166,30 @@ export function IntegrationsClient({
         </div>
       )}
 
+      {teamsConnected && teamsEmail && (
+        <div className="rounded-lg border border-green-200 bg-green-50 p-4 flex items-start gap-3">
+          <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium text-green-800">Microsoft Teams connected successfully</p>
+            <p className="text-sm text-green-700 mt-1">
+              Your Teams account ({teamsEmail}) is now connected. Meeting recordings will automatically sync to ComplyVault.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {teamsError && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 flex items-start gap-3">
+          <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium text-red-800">Teams connection failed</p>
+            <p className="text-sm text-red-700 mt-1">
+              {teamsErrorDescription ?? "Please try again."}
+            </p>
+          </div>
+        </div>
+      )}
+
       {zoomError && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 flex items-start gap-3">
           <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
@@ -163,9 +212,14 @@ export function IntegrationsClient({
           <p className="text-sm text-muted-foreground mt-2 mb-6">
             Integration connections (Zoom, Teams, SharePoint, etc.) will appear here once configured.
           </p>
-          <Button onClick={handleConnectZoom} disabled={connectLoading} size="lg">
-            {connectLoading ? "Redirecting to Zoom…" : "Connect Zoom"}
-          </Button>
+          <div className="flex flex-wrap gap-3 justify-center">
+            <Button onClick={handleConnectZoom} disabled={connectLoading} size="lg">
+              {connectLoading ? "Redirecting…" : "Connect Zoom"}
+            </Button>
+            <Button onClick={handleConnectTeams} disabled={connectLoading} variant="outline" size="lg">
+              Connect Teams
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="space-y-3">
@@ -179,6 +233,19 @@ export function IntegrationsClient({
               </div>
               <Button onClick={handleConnectZoom} disabled={connectLoading}>
                 {connectLoading ? "Redirecting…" : "Connect"}
+              </Button>
+            </div>
+          )}
+          {!hasTeams && (
+            <div className="rounded-lg border p-4 flex items-center justify-between">
+              <div>
+                <p className="font-medium">Microsoft Teams</p>
+                <p className="text-sm text-muted-foreground">
+                  Auto-sync Teams meeting recordings to ComplyVault
+                </p>
+              </div>
+              <Button onClick={handleConnectTeams} disabled={connectLoading} variant="outline">
+                Connect
               </Button>
             </div>
           )}
@@ -217,6 +284,35 @@ export function IntegrationsClient({
                   </Button>
                 </div>
               </div>
+              {int.provider === "ZOOM" && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Recording scope:</span>
+                  <Select
+                    value={int.recordingScope ?? "all"}
+                    onValueChange={async (v) => {
+                      const res = await fetch(
+                        `/api/workspaces/${workspaceId}/integrations/zoom/scope`,
+                        {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ recordingScope: v }),
+                        }
+                      );
+                      if (res.ok) router.refresh();
+                    }}
+                  >
+                    <SelectTrigger className="w-[220px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All meetings</SelectItem>
+                      <SelectItem value="external_only">
+                        External participants only
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               <div>
                 <button
                   type="button"

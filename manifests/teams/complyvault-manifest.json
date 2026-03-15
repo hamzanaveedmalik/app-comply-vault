@@ -1,0 +1,44 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.16/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.16",
+  "version": "1.0.0",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "packageName": "com.complyvault.app",
+  "developer": {
+    "name": "ComplyVault",
+    "websiteUrl": "https://complyvault.co",
+    "privacyUrl": "https://complyvault.co/privacy",
+    "termsOfUseUrl": "https://complyvault.co/terms"
+  },
+  "name": {
+    "short": "ComplyVault",
+    "full": "ComplyVault Compliance"
+  },
+  "description": {
+    "short": "Generate audit packs from Teams meetings",
+    "full": "ComplyVault automatically generates exam-ready client interaction records from your Teams meeting recordings. Generate Audit Pack, View Last Audit Pack, Check Status."
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "accentColor": "#000000",
+  "configurableTabs": [
+    {
+      "configurationUrl": "https://app.complyvault.co/teams/config",
+      "scopes": ["team", "groupchat"],
+      "context": ["meetingSidePanel", "meetingDetails"],
+      "meetingSurfaces": [
+        {
+          "surface": "meetingSidePanel",
+          "contentUrl": "https://app.complyvault.co/teams/sidepanel"
+        }
+      ]
+    }
+  ],
+  "bots": [],
+  "connectors": [],
+  "composeExtensions": [],
+  "permissions": ["identity", "messageTeamMembers"],
+  "validDomains": ["app.complyvault.co", "complyvault.co"]
+}

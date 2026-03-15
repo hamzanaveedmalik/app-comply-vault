@@ -130,6 +130,49 @@ async function refreshZoomToken(refreshToken: string): Promise<{
   };
 }
 
+async function refreshTeamsToken(refreshToken: string): Promise<{
+  accessToken: string;
+  refreshToken?: string;
+  expiresAt?: Date;
+} | null> {
+  const clientId = process.env.TEAMS_CLIENT_ID;
+  const clientSecret = process.env.TEAMS_CLIENT_SECRET;
+  const tenantId = process.env.TEAMS_TENANT_ID ?? "common";
+  if (!clientId || !clientSecret) return null;
+
+  const body = new URLSearchParams({
+    client_id: clientId,
+    client_secret: clientSecret,
+    refresh_token: refreshToken,
+    grant_type: "refresh_token",
+  }).toString();
+
+  const res = await fetch(
+    `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body,
+    }
+  );
+
+  if (!res.ok) return null;
+
+  const data = (await res.json()) as {
+    access_token: string;
+    refresh_token?: string;
+    expires_in?: number;
+  };
+
+  return {
+    accessToken: data.access_token,
+    refreshToken: data.refresh_token,
+    expiresAt: data.expires_in
+      ? new Date(Date.now() + data.expires_in * 1000)
+      : undefined,
+  };
+}
+
 async function refreshTokenForProvider(
   provider: IntegrationProvider,
   refreshTokenEncrypted: string | null,
@@ -143,6 +186,7 @@ async function refreshTokenForProvider(
     case "ZOOM":
       return refreshZoomToken(refreshToken);
     case "TEAMS":
+      return refreshTeamsToken(refreshToken);
     case "SHAREPOINT":
     case "GOOGLE_DRIVE":
     case "DOCUSIGN":

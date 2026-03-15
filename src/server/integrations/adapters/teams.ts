@@ -1,76 +1,74 @@
 /**
- * Zoom integration adapter — Epic 1 Story 1.1
- * OAuth connection, webhook handling, recording.completed subscription
+ * Microsoft Teams integration adapter — Epic 1 Story 1.4
+ * Azure AD OAuth, Graph API, callRecord subscription
  */
 
-import { createHmac } from "node:crypto";
 import { db } from "~/server/db";
 import { encryptToken } from "../crypto";
 import { BaseIntegrationAdapter } from "../base-adapter";
 import type { ConnectResult, OAuthTokens } from "../types";
 import { IntegrationProvider } from "../../../../generated/prisma";
 
-const ZOOM_AUTH_URL = "https://zoom.us/oauth/authorize";
-const ZOOM_TOKEN_URL = "https://zoom.us/oauth/token";
-const ZOOM_API_BASE = "https://api.zoom.us/v2";
-const ZOOM_WEBHOOK_URL = "https://api.zoom.us/v2/webhooks";
+const AZURE_AUTH_BASE = "https://login.microsoftonline.com";
+const GRAPH_BASE = "https://graph.microsoft.com/v1.0";
+const SCOPES = [
+  "OnlineMeetings.Read",
+  "OnlineMeetingTranscript.Read.All",
+  "User.Read",
+  "offline_access",
+].join(" ");
 
-// Scopes valid for Zoom user-managed OAuth apps. user:read:user enables /users/me for account email.
-const SCOPES = ["cloud_recording:read:recording", "user:read:user", "user:read:email"].join(" ");
-
-function getZoomConfig() {
-  const clientId = process.env.ZOOM_CLIENT_ID;
-  const clientSecret = process.env.ZOOM_CLIENT_SECRET;
-  const webhookSecret = process.env.ZOOM_WEBHOOK_SECRET;
+function getTeamsConfig() {
+  const clientId = process.env.TEAMS_CLIENT_ID;
+  const clientSecret = process.env.TEAMS_CLIENT_SECRET;
+  const tenantId = process.env.TEAMS_TENANT_ID ?? "common";
   if (!clientId || !clientSecret) {
-    throw new Error("ZOOM_CLIENT_ID and ZOOM_CLIENT_SECRET must be set");
+    throw new Error("TEAMS_CLIENT_ID and TEAMS_CLIENT_SECRET must be set");
   }
-  return { clientId, clientSecret, webhookSecret };
+  return { clientId, clientSecret, tenantId };
 }
 
 function getAppBaseUrl(): string {
   const url = process.env.NEXT_PUBLIC_APP_URL ?? process.env.AUTH_URL;
   if (!url) {
-    throw new Error("NEXT_PUBLIC_APP_URL or AUTH_URL must be set for Zoom OAuth redirect");
+    throw new Error("NEXT_PUBLIC_APP_URL or AUTH_URL must be set for Teams OAuth redirect");
   }
   return url.replace(/\/$/, "");
 }
 
-export function getZoomAuthorizeUrl(state: string): string {
-  const { clientId } = getZoomConfig();
-  const redirectUri = `${getAppBaseUrl()}/api/integrations/zoom/callback`;
+export function getTeamsAuthorizeUrl(state: string): string {
+  const { clientId, tenantId } = getTeamsConfig();
+  const redirectUri = `${getAppBaseUrl()}/api/integrations/teams/callback`;
   const params = new URLSearchParams({
-    response_type: "code",
     client_id: clientId,
+    response_type: "code",
     redirect_uri: redirectUri,
     scope: SCOPES,
     state,
+    response_mode: "query",
   });
-  return `${ZOOM_AUTH_URL}?${params.toString()}`;
+  return `${AZURE_AUTH_BASE}/${tenantId}/oauth2/v2.0/authorize?${params.toString()}`;
 }
 
 async function exchangeCodeForTokens(code: string, redirectUri: string): Promise<OAuthTokens> {
-  const { clientId, clientSecret } = getZoomConfig();
-  const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
-
+  const { clientId, clientSecret, tenantId } = getTeamsConfig();
   const body = new URLSearchParams({
-    grant_type: "authorization_code",
+    client_id: clientId,
+    client_secret: clientSecret,
     code,
     redirect_uri: redirectUri,
+    grant_type: "authorization_code",
   }).toString();
 
-  const res = await fetch(ZOOM_TOKEN_URL, {
+  const res = await fetch(`${AZURE_AUTH_BASE}/${tenantId}/oauth2/v2.0/token`, {
     method: "POST",
-    headers: {
-      Authorization: `Basic ${credentials}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body,
   });
 
   if (!res.ok) {
     const err = await res.text();
-    throw new Error(`Zoom token exchange failed: ${res.status} ${err}`);
+    throw new Error(`Teams token exchange failed: ${res.status} ${err}`);
   }
 
   const data = (await res.json()) as {
@@ -91,41 +89,55 @@ async function exchangeCodeForTokens(code: string, redirectUri: string): Promise
   };
 }
 
-async function getZoomUserEmail(accessToken: string): Promise<string> {
+async function getTeamsUserEmail(accessToken: string): Promise<string> {
   try {
-    const res = await fetch(`${ZOOM_API_BASE}/users/me`, {
+    const res = await fetch(`${GRAPH_BASE}/me`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-
-    if (!res.ok) {
-      return "Zoom account";
-    }
-
-    const data = (await res.json()) as { email?: string; id?: string };
-    return data.email ?? `Zoom user ${data.id ?? "connected"}`;
+    if (!res.ok) return "Teams account";
+    const data = (await res.json()) as { mail?: string; userPrincipalName?: string };
+    return data.mail ?? data.userPrincipalName ?? "Teams account";
   } catch {
-    return "Zoom account";
+    return "Teams account";
   }
 }
 
-async function subscribeRecordingWebhook(accessToken: string): Promise<string | null> {
-  const webhookUrl = `${getAppBaseUrl()}/api/webhooks/v1/zoom/recording-completed`;
+async function getOrganizerId(accessToken: string): Promise<string | null> {
+  try {
+    const res = await fetch(`${GRAPH_BASE}/me`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { id?: string };
+    return data.id ?? null;
+  } catch {
+    return null;
+  }
+}
 
-  const res = await fetch(ZOOM_WEBHOOK_URL, {
+async function subscribeTranscriptNotification(
+  accessToken: string,
+  organizerId: string
+): Promise<string | null> {
+  const webhookUrl = `${getAppBaseUrl()}/api/webhooks/v1/teams/transcript`;
+  const res = await fetch(`${GRAPH_BASE}/subscriptions`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      event_types: ["recording.completed"],
-      webhook_url: webhookUrl,
+      changeType: "created",
+      notificationUrl: webhookUrl,
+      resource: `users/${organizerId}/onlineMeetings/getAllTranscripts`,
+      expirationDateTime: new Date(Date.now() + 4230 * 60 * 1000).toISOString(),
+      clientState: process.env.TEAMS_WEBHOOK_CLIENT_STATE ?? "complyvault",
     }),
   });
 
   if (!res.ok) {
     const err = await res.text();
-    console.error("Zoom webhook subscription failed:", res.status, err);
+    console.error("Teams transcript subscription failed:", res.status, err);
     return null;
   }
 
@@ -133,8 +145,8 @@ async function subscribeRecordingWebhook(accessToken: string): Promise<string | 
   return data.id ?? null;
 }
 
-export const zoomAdapter = new (class extends BaseIntegrationAdapter {
-  readonly provider: IntegrationProvider = "ZOOM";
+export const teamsAdapter = new (class extends BaseIntegrationAdapter {
+  readonly provider: IntegrationProvider = "TEAMS";
 
   async connect(params: {
     workspaceId: string;
@@ -145,25 +157,28 @@ export const zoomAdapter = new (class extends BaseIntegrationAdapter {
     if (!params.authCode || !params.redirectUri) {
       return {
         success: false,
-        error: "authCode and redirectUri required to complete Zoom OAuth",
+        error: "authCode and redirectUri required to complete Teams OAuth",
       };
     }
 
     const tokens = await exchangeCodeForTokens(params.authCode, params.redirectUri);
-    const accountEmail = await getZoomUserEmail(tokens.accessToken);
-
-    const webhookId = await subscribeRecordingWebhook(tokens.accessToken);
+    const accountEmail = await getTeamsUserEmail(tokens.accessToken);
+    const organizerId = await getOrganizerId(tokens.accessToken);
+    const subscriptionId =
+      organizerId
+        ? await subscribeTranscriptNotification(tokens.accessToken, organizerId)
+        : null;
 
     const credential = await db.integrationCredential.upsert({
       where: {
         workspaceId_provider: {
           workspaceId: params.workspaceId,
-          provider: "ZOOM",
+          provider: "TEAMS",
         },
       },
       create: {
         workspaceId: params.workspaceId,
-        provider: "ZOOM",
+        provider: "TEAMS",
         accessTokenEncrypted: encryptToken(tokens.accessToken),
         refreshTokenEncrypted: tokens.refreshToken
           ? encryptToken(tokens.refreshToken)
@@ -187,34 +202,35 @@ export const zoomAdapter = new (class extends BaseIntegrationAdapter {
       where: {
         workspaceId_provider: {
           workspaceId: params.workspaceId,
-          provider: "ZOOM",
+          provider: "TEAMS",
         },
       },
       select: { config: true },
     });
-
     const existingConfig = (existing?.config as Record<string, unknown>) ?? {};
+
     await db.integrationConfig.upsert({
       where: {
         workspaceId_provider: {
           workspaceId: params.workspaceId,
-          provider: "ZOOM",
+          provider: "TEAMS",
         },
       },
       create: {
         workspaceId: params.workspaceId,
-        provider: "ZOOM",
+        provider: "TEAMS",
         config: {
           accountEmail,
-          webhookId: webhookId ?? undefined,
-          recordingScope: "all",
+          organizerId: organizerId ?? undefined,
+          subscriptionId: subscriptionId ?? undefined,
         },
       },
       update: {
         config: {
           ...existingConfig,
           accountEmail,
-          webhookId: webhookId ?? undefined,
+          organizerId: organizerId ?? undefined,
+          subscriptionId: subscriptionId ?? undefined,
         },
         lastErrorAt: null,
         lastErrorMessage: null,
@@ -229,35 +245,35 @@ export const zoomAdapter = new (class extends BaseIntegrationAdapter {
   }
 
   async sync(): Promise<never> {
-    throw new Error("Zoom adapter does not support sync — ingestion is webhook-triggered");
+    throw new Error("Teams adapter does not support sync — ingestion is webhook-triggered");
   }
 
   async disconnect(params: { workspaceId: string }): Promise<{ success: boolean; error?: string }> {
     const credential = await db.integrationCredential.findUnique({
       where: {
-        workspaceId_provider: { workspaceId: params.workspaceId, provider: "ZOOM" },
+        workspaceId_provider: { workspaceId: params.workspaceId, provider: "TEAMS" },
       },
     });
     if (!credential) return { success: true };
 
     const config = await db.integrationConfig.findUnique({
       where: {
-        workspaceId_provider: { workspaceId: params.workspaceId, provider: "ZOOM" },
+        workspaceId_provider: { workspaceId: params.workspaceId, provider: "TEAMS" },
       },
     });
 
-    if (config?.config && typeof config.config === "object" && "webhookId" in config.config) {
-      const webhookId = (config.config as { webhookId?: string }).webhookId;
-      if (webhookId) {
+    if (config?.config && typeof config.config === "object" && "subscriptionId" in config.config) {
+      const subId = (config.config as { subscriptionId?: string }).subscriptionId;
+      if (subId) {
         try {
           const { decryptToken } = await import("../crypto");
           const accessToken = decryptToken(credential.accessTokenEncrypted);
-          await fetch(`${ZOOM_WEBHOOK_URL}/${webhookId}`, {
+          await fetch(`${GRAPH_BASE}/subscriptions/${subId}`, {
             method: "DELETE",
             headers: { Authorization: `Bearer ${accessToken}` },
           });
         } catch {
-          // Best effort — credential will be deleted anyway
+          // Best effort
         }
       }
     }
@@ -266,41 +282,14 @@ export const zoomAdapter = new (class extends BaseIntegrationAdapter {
       where: { id: credential.id },
     });
     await db.integrationConfig.deleteMany({
-      where: { workspaceId: params.workspaceId, provider: "ZOOM" },
+      where: { workspaceId: params.workspaceId, provider: "TEAMS" },
     });
 
     return { success: true };
   }
 
-  async handleWebhook(params: {
-    rawBody: string;
-    headers: Record<string, string>;
-  }): Promise<Record<string, unknown> | null> {
-    const { webhookSecret } = getZoomConfig();
-    if (!webhookSecret) return null;
-
-    const signature = params.headers["x-zm-signature"] ?? params.headers["x-zoom-signature"];
-    if (!signature) return null;
-
-    const [version, hash] = signature.split(",").reduce(
-      (acc, part) => {
-        const [k, v] = part.split("=");
-        if (k === "v0") acc[1] = v;
-        else if (k === "signature") acc[0] = v;
-        return acc;
-      },
-      ["", ""] as [string, string]
-    );
-
-    const message = `v0:${params.headers["x-zm-request-timestamp"] ?? ""}:${params.rawBody}`;
-    const expected = createHmac("sha256", webhookSecret).update(message).digest("hex");
-
-    if (expected !== hash) return null;
-
-    try {
-      return JSON.parse(params.rawBody) as Record<string, unknown>;
-    } catch {
-      return null;
-    }
+  async handleWebhook(): Promise<Record<string, unknown> | null> {
+    // Story 1.5: Validate and parse callRecord notification
+    return null;
   }
 })();

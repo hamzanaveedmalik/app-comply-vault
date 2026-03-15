@@ -65,6 +65,11 @@ export const env = createEnv({
     ZOOM_CLIENT_ID: z.string().optional(),
     ZOOM_CLIENT_SECRET: z.string().optional(),
     ZOOM_WEBHOOK_SECRET: z.string().optional(),
+    // Microsoft Teams OAuth (Epic 1 Story 1.4)
+    TEAMS_CLIENT_ID: z.string().optional(),
+    TEAMS_CLIENT_SECRET: z.string().optional(),
+    TEAMS_TENANT_ID: z.string().optional(),
+    TEAMS_WEBHOOK_CLIENT_STATE: z.string().optional(),
   },
 
   /**
@@ -130,6 +135,10 @@ export const env = createEnv({
     ZOOM_CLIENT_ID: process.env.ZOOM_CLIENT_ID,
     ZOOM_CLIENT_SECRET: process.env.ZOOM_CLIENT_SECRET,
     ZOOM_WEBHOOK_SECRET: process.env.ZOOM_WEBHOOK_SECRET,
+    TEAMS_CLIENT_ID: process.env.TEAMS_CLIENT_ID,
+    TEAMS_CLIENT_SECRET: process.env.TEAMS_CLIENT_SECRET,
+    TEAMS_TENANT_ID: process.env.TEAMS_TENANT_ID,
+    TEAMS_WEBHOOK_CLIENT_STATE: process.env.TEAMS_WEBHOOK_CLIENT_STATE,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

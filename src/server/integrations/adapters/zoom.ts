@@ -15,8 +15,8 @@ const ZOOM_TOKEN_URL = "https://zoom.us/oauth/token";
 const ZOOM_API_BASE = "https://api.zoom.us/v2";
 const ZOOM_WEBHOOK_URL = "https://api.zoom.us/v2/webhooks";
 
-// Scopes valid for Zoom user-managed OAuth apps. webhook:write does not exist; webhook URL is configured in Zoom app Access settings.
-const SCOPES = ["cloud_recording:read:recording", "user:read:email"].join(" ");
+// Scopes valid for Zoom user-managed OAuth apps. user:read:user enables /users/me for account email.
+const SCOPES = ["cloud_recording:read:recording", "user:read:user", "user:read:email"].join(" ");
 
 function getZoomConfig() {
   const clientId = process.env.ZOOM_CLIENT_ID;
@@ -92,16 +92,20 @@ async function exchangeCodeForTokens(code: string, redirectUri: string): Promise
 }
 
 async function getZoomUserEmail(accessToken: string): Promise<string> {
-  const res = await fetch(`${ZOOM_API_BASE}/users/me`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
+  try {
+    const res = await fetch(`${ZOOM_API_BASE}/users/me`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
 
-  if (!res.ok) {
-    throw new Error(`Zoom user fetch failed: ${res.status}`);
+    if (!res.ok) {
+      return "Zoom account";
+    }
+
+    const data = (await res.json()) as { email?: string; id?: string };
+    return data.email ?? `Zoom user ${data.id ?? "connected"}`;
+  } catch {
+    return "Zoom account";
   }
-
-  const data = (await res.json()) as { email?: string; id?: string };
-  return data.email ?? `Zoom user ${data.id ?? "connected"}`;
 }
 
 async function subscribeRecordingWebhook(accessToken: string): Promise<string | null> {

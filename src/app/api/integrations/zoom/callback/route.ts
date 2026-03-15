@@ -9,43 +9,58 @@ import { NextRequest, NextResponse } from "next/server";
 
 const STATE_COOKIE = "zoom_oauth_state";
 
-export async function GET(request: NextRequest) {
-  const access = await requireAppAccess();
-  if (!access.ok) {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin;
-    return NextResponse.redirect(new URL("/auth/signin", baseUrl));
+function redirectToIntegrations(baseUrl: string, params?: Record<string, string>) {
+  const url = new URL("/integrations", baseUrl);
+  if (params) {
+    for (const [k, v] of Object.entries(params)) {
+      url.searchParams.set(k, v);
+    }
   }
-
-  if (access.session.user.role !== "OWNER_CCO") {
-    return new NextResponse("Only workspace owners can connect integrations", { status: 403 });
-  }
-
-  const { searchParams } = request.nextUrl;
-  const code = searchParams.get("code");
-  const state = searchParams.get("state");
-  const error = searchParams.get("error");
-
-  const storedState = request.cookies.get(STATE_COOKIE)?.value;
-
-  const response = NextResponse.redirect(
-    new URL("/integrations", process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin)
-  );
+  const response = NextResponse.redirect(url);
   response.cookies.delete(STATE_COOKIE);
+  return response;
+}
 
-  if (error) {
-    response.nextUrl.searchParams.set("zoom_error", error);
-    response.nextUrl.searchParams.set("zoom_error_description", searchParams.get("error_description") ?? "");
-    return response;
-  }
-
-  if (!code || !state || state !== storedState) {
-    response.nextUrl.searchParams.set("zoom_error", "invalid_callback");
-    return response;
-  }
-
-  const redirectUri = `${(process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin).replace(/\/$/, "")}/api/integrations/zoom/callback`;
+export async function GET(request: NextRequest) {
+  const requestUrl = request.nextUrl ?? new URL(request.url);
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL ?? requestUrl.origin).replace(/\/$/, "");
 
   try {
+    const access = await requireAppAccess();
+    if (!access.ok) {
+      return NextResponse.redirect(new URL("/auth/signin", baseUrl));
+    }
+
+    if (access.session.user.role !== "OWNER_CCO") {
+      return redirectToIntegrations(baseUrl, {
+        zoom_error: "forbidden",
+        zoom_error_description: "Only workspace owners can connect integrations.",
+      });
+    }
+
+    const { searchParams } = requestUrl;
+    const code = searchParams.get("code");
+    const state = searchParams.get("state");
+    const error = searchParams.get("error");
+
+    const storedState = request.cookies.get(STATE_COOKIE)?.value;
+
+    if (error) {
+      return redirectToIntegrations(baseUrl, {
+        zoom_error: error,
+        zoom_error_description: searchParams.get("error_description") ?? "",
+      });
+    }
+
+    if (!code || !state || state !== storedState) {
+      return redirectToIntegrations(baseUrl, {
+        zoom_error: "invalid_callback",
+        zoom_error_description: "Invalid or expired connection request. Please try again.",
+      });
+    }
+
+    const redirectUri = `${baseUrl}/api/integrations/zoom/callback`;
+
     const result = await zoomAdapter.connect({
       workspaceId: access.workspaceId,
       userId: access.session.user.id,
@@ -54,19 +69,22 @@ export async function GET(request: NextRequest) {
     });
 
     if (!result.success) {
-      response.nextUrl.searchParams.set("zoom_error", result.error ?? "connection_failed");
-      return response;
+      return redirectToIntegrations(baseUrl, {
+        zoom_error: result.error ?? "connection_failed",
+      });
     }
 
-    response.nextUrl.searchParams.set("zoom_connected", "1");
+    const params: Record<string, string> = { zoom_connected: "1" };
     if (result.accountDisplayName) {
-      response.nextUrl.searchParams.set("zoom_email", encodeURIComponent(result.accountDisplayName));
+      params.zoom_email = result.accountDisplayName;
     }
+    return redirectToIntegrations(baseUrl, params);
   } catch (err) {
+    console.error("[Zoom callback] Error:", err);
     const message = err instanceof Error ? err.message : "Unknown error";
-    response.nextUrl.searchParams.set("zoom_error", "connection_failed");
-    response.nextUrl.searchParams.set("zoom_error_description", encodeURIComponent(message));
+    return redirectToIntegrations(baseUrl, {
+      zoom_error: "connection_failed",
+      zoom_error_description: message.slice(0, 200),
+    });
   }
-
-  return response;
 }

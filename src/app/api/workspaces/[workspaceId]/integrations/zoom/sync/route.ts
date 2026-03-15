@@ -171,7 +171,7 @@ export async function POST(
       topic: detail.topic ?? meeting.topic,
       startTime: detail.start_time ?? meeting.start_time,
       duration: detail.duration ?? meeting.duration,
-      downloadToken: String(downloadToken || files[0]?.download_token ?? ""),
+      downloadToken: String((downloadToken || files[0]?.download_token) ?? ""),
       recordingFiles: files.map((f) => ({
         id: f.id,
         fileType: f.file_type ?? f.file_extension,

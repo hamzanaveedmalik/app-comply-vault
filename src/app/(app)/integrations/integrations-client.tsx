@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 
 const PROVIDER_LABELS: Record<string, string> = {
   ZOOM: "Zoom",
@@ -43,6 +44,7 @@ type Integration = {
   lastErrorAt: string | null;
   lastErrorMessage: string | null;
   connectedAt: string;
+  accountEmail?: string | null;
 };
 
 type Failure = {
@@ -57,15 +59,37 @@ type Failure = {
 export function IntegrationsClient({
   workspaceId,
   initialIntegrations,
+  zoomConnected,
+  zoomEmail,
+  zoomError,
+  zoomErrorDescription,
 }: {
   workspaceId: string;
   initialIntegrations: Integration[];
+  zoomConnected?: boolean;
+  zoomEmail?: string | null;
+  zoomError?: string | null;
+  zoomErrorDescription?: string | null;
 }) {
   const [integrations, setIntegrations] = useState(initialIntegrations);
   const [expandedFailures, setExpandedFailures] = useState<string | null>(null);
   const [failures, setFailures] = useState<Record<string, Failure[]>>({});
   const [loading, setLoading] = useState<string | null>(null);
+  const [connectLoading, setConnectLoading] = useState(false);
   const router = useRouter();
+
+  const hasZoom = integrations.some((i) => i.provider === "ZOOM");
+
+  useEffect(() => {
+    if (zoomConnected && zoomEmail && integrations.some((i) => i.provider === "ZOOM")) {
+      window.history.replaceState({}, "", "/integrations");
+    }
+  }, [zoomConnected, zoomEmail, integrations]);
+
+  function handleConnectZoom() {
+    setConnectLoading(true);
+    window.location.href = "/api/integrations/zoom/connect";
+  }
 
   async function handleDisconnect(credentialId: string) {
     if (!confirm("Disconnect this integration? Credentials and config will be removed. Audit packs are unchanged.")) return;
@@ -105,15 +129,59 @@ export function IntegrationsClient({
         Connect your tools to automatically sync audit packs, send notifications, and more.
       </p>
 
+      {zoomConnected && zoomEmail && (
+        <div className="rounded-lg border border-green-200 bg-green-50 p-4 flex items-start gap-3">
+          <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium text-green-800">Zoom connected successfully</p>
+            <p className="text-sm text-green-700 mt-1">
+              Your Zoom account ({zoomEmail}) is now connected. Meeting recordings will automatically sync to ComplyVault.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {zoomError && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 flex items-start gap-3">
+          <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium text-red-800">Zoom connection failed</p>
+            <p className="text-sm text-red-700 mt-1">
+              {zoomErrorDescription || zoomError === "access_denied"
+                ? "You denied access or cancelled the connection."
+                : zoomError === "invalid_callback"
+                  ? "Invalid or expired connection request. Please try again."
+                  : zoomErrorDescription ?? "Please try again."}
+            </p>
+          </div>
+        </div>
+      )}
+
       {integrations.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
-          <p>No integrations connected yet.</p>
-          <p className="text-sm mt-2">
+        <div className="rounded-lg border border-dashed p-8 text-center">
+          <p className="text-muted-foreground">No integrations connected yet.</p>
+          <p className="text-sm text-muted-foreground mt-2 mb-6">
             Integration connections (Zoom, Teams, SharePoint, etc.) will appear here once configured.
           </p>
+          <Button onClick={handleConnectZoom} disabled={connectLoading} size="lg">
+            {connectLoading ? "Redirecting to Zoom…" : "Connect Zoom"}
+          </Button>
         </div>
       ) : (
         <div className="space-y-3">
+          {!hasZoom && (
+            <div className="rounded-lg border p-4 flex items-center justify-between">
+              <div>
+                <p className="font-medium">Zoom</p>
+                <p className="text-sm text-muted-foreground">
+                  Auto-sync meeting recordings to ComplyVault
+                </p>
+              </div>
+              <Button onClick={handleConnectZoom} disabled={connectLoading}>
+                {connectLoading ? "Redirecting…" : "Connect"}
+              </Button>
+            </div>
+          )}
           {integrations.map((int) => (
             <div key={int.id} className="rounded-lg border p-4 space-y-3">
               <div className="flex items-center justify-between">
@@ -122,6 +190,7 @@ export function IntegrationsClient({
                     {PROVIDER_LABELS[int.provider] ?? int.provider}
                   </p>
                   <p className="text-sm text-muted-foreground">
+                    {int.accountEmail ? `${int.accountEmail} • ` : ""}
                     Connected {new Date(int.connectedAt).toLocaleDateString()}
                     {int.lastSyncAt &&
                       ` • Last sync: ${new Date(int.lastSyncAt).toLocaleString()}`}

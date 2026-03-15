@@ -61,6 +61,10 @@ export const env = createEnv({
     INTEGRATION_ENCRYPTION_KEY: z.string().optional(),
     CRON_SECRET: z.string().optional(),
     OPS_ALLOWED_EMAILS: z.string().optional(),
+    // Zoom OAuth (Epic 1 Story 1.1)
+    ZOOM_CLIENT_ID: z.string().optional(),
+    ZOOM_CLIENT_SECRET: z.string().optional(),
+    ZOOM_WEBHOOK_SECRET: z.string().optional(),
   },
 
   /**
@@ -123,6 +127,9 @@ export const env = createEnv({
     INTEGRATION_ENCRYPTION_KEY: process.env.INTEGRATION_ENCRYPTION_KEY,
     CRON_SECRET: process.env.CRON_SECRET,
     OPS_ALLOWED_EMAILS: process.env.OPS_ALLOWED_EMAILS,
+    ZOOM_CLIENT_ID: process.env.ZOOM_CLIENT_ID,
+    ZOOM_CLIENT_SECRET: process.env.ZOOM_CLIENT_SECRET,
+    ZOOM_WEBHOOK_SECRET: process.env.ZOOM_WEBHOOK_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

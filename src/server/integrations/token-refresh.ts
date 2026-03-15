@@ -89,6 +89,47 @@ export async function refreshExpiringTokens(): Promise<{ refreshed: number; fail
   return { refreshed, failed };
 }
 
+async function refreshZoomToken(refreshToken: string): Promise<{
+  accessToken: string;
+  refreshToken?: string;
+  expiresAt?: Date;
+} | null> {
+  const clientId = process.env.ZOOM_CLIENT_ID;
+  const clientSecret = process.env.ZOOM_CLIENT_SECRET;
+  if (!clientId || !clientSecret) return null;
+
+  const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
+  const body = new URLSearchParams({
+    grant_type: "refresh_token",
+    refresh_token: refreshToken,
+  }).toString();
+
+  const res = await fetch("https://zoom.us/oauth/token", {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${credentials}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body,
+  });
+
+  if (!res.ok) return null;
+
+  const data = (await res.json()) as {
+    access_token: string;
+    refresh_token?: string;
+    expires_in?: number;
+  };
+
+  return {
+    accessToken: data.access_token,
+    refreshToken: data.refresh_token,
+    expiresAt: data.expires_in
+      ? new Date(Date.now() + data.expires_in * 1000)
+      : undefined,
+  };
+}
+
 async function refreshTokenForProvider(
   provider: IntegrationProvider,
   refreshTokenEncrypted: string | null,
@@ -100,6 +141,7 @@ async function refreshTokenForProvider(
 
   switch (provider) {
     case "ZOOM":
+      return refreshZoomToken(refreshToken);
     case "TEAMS":
     case "SHAREPOINT":
     case "GOOGLE_DRIVE":

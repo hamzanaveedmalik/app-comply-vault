@@ -6,6 +6,7 @@
 import { requireAppAccess } from "~/server/auth/guards";
 import { db } from "~/server/db";
 import { sendIntegrationDisconnectEmail } from "~/server/email";
+import { zoomAdapter } from "~/server/integrations/adapters/zoom";
 
 export async function POST(
   _request: Request,
@@ -36,12 +37,14 @@ export async function POST(
     return new Response("Integration not found", { status: 404 });
   }
 
-  await db.$transaction(async (tx) => {
-    await tx.integrationCredential.delete({ where: { id: credentialId } });
-    await tx.integrationConfig.deleteMany({
+  if (credential.provider === "ZOOM") {
+    await zoomAdapter.disconnect({ workspaceId });
+  } else {
+    await db.integrationCredential.delete({ where: { id: credentialId } });
+    await db.integrationConfig.deleteMany({
       where: { workspaceId, provider: credential.provider },
     });
-  });
+  }
 
   const owner = await db.userWorkspace.findFirst({
     where: { workspaceId, role: "OWNER_CCO" },

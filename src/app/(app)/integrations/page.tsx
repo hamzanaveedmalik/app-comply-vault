@@ -3,7 +3,12 @@ import { db } from "~/server/db";
 import { redirect } from "next/navigation";
 import { IntegrationsClient } from "./integrations-client";
 
-export default async function IntegrationsPage() {
+export default async function IntegrationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const params = await searchParams;
   const access = await requireAppAccess();
   if (!access.ok) {
     if (access.status === 401) redirect("/auth/signin");
@@ -37,6 +42,7 @@ export default async function IntegrationsPage() {
       where: { workspaceId: access.workspaceId },
       select: {
         provider: true,
+        config: true,
         lastSyncAt: true,
         lastErrorAt: true,
         lastErrorMessage: true,
@@ -50,6 +56,7 @@ export default async function IntegrationsPage() {
 
   const integrations = credentials.map((cred) => {
     const config = configByProvider[cred.provider];
+    const cfg = config?.config as { accountEmail?: string } | null;
     return {
       id: cred.id,
       provider: cred.provider,
@@ -59,8 +66,16 @@ export default async function IntegrationsPage() {
       lastErrorAt: config?.lastErrorAt?.toISOString() ?? null,
       lastErrorMessage: config?.lastErrorMessage ?? null,
       connectedAt: cred.createdAt.toISOString(),
+      accountEmail: cfg?.accountEmail ?? null,
     };
   });
+
+  const zoomConnected = params.zoom_connected === "1";
+  const zoomEmail = typeof params.zoom_email === "string" ? decodeURIComponent(params.zoom_email) : null;
+  const zoomError = typeof params.zoom_error === "string" ? params.zoom_error : null;
+  const zoomErrorDescription = typeof params.zoom_error_description === "string"
+    ? decodeURIComponent(params.zoom_error_description)
+    : null;
 
   return (
     <div className="p-6">
@@ -68,6 +83,10 @@ export default async function IntegrationsPage() {
       <IntegrationsClient
         workspaceId={access.workspaceId}
         initialIntegrations={integrations}
+        zoomConnected={zoomConnected}
+        zoomEmail={zoomEmail}
+        zoomError={zoomError}
+        zoomErrorDescription={zoomErrorDescription}
       />
     </div>
   );

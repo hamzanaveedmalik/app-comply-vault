@@ -6,6 +6,6 @@
 export * from "./types";
 export { BaseIntegrationAdapter } from "./base-adapter";
 
-// Adapters are registered here as they are implemented
-// import { zoomAdapter } from "./adapters/zoom";
-// export const adapters = { zoom: zoomAdapter } as const;
+import { zoomAdapter } from "./adapters/zoom";
+
+export const adapters = { zoom: zoomAdapter } as const;

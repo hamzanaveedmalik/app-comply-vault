@@ -15,8 +15,13 @@ const ZOOM_TOKEN_URL = "https://zoom.us/oauth/token";
 const ZOOM_API_BASE = "https://api.zoom.us/v2";
 const ZOOM_WEBHOOK_URL = "https://api.zoom.us/v2/webhooks";
 
-// Scopes valid for Zoom user-managed OAuth apps. user:read:user enables /users/me for account email.
-const SCOPES = ["cloud_recording:read:recording", "user:read:user", "user:read:email"].join(" ");
+// Scopes: recording:read for listing recordings (sync); cloud_recording:read:recording for webhooks.
+const SCOPES = [
+  "recording:read",
+  "cloud_recording:read:recording",
+  "user:read:user",
+  "user:read:email",
+].join(" ");
 
 function getZoomConfig() {
   const clientId = process.env.ZOOM_CLIENT_ID;

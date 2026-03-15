@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import {
@@ -274,6 +275,40 @@ export function IntegrationsClient({
                   >
                     {STATUS_LABELS[int.status] ?? int.status.replace(/_/g, " ")}
                   </span>
+                  {int.provider === "ZOOM" && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={async () => {
+                        setLoading(`sync-${int.id}`);
+                        try {
+                          const res = await fetch(
+                            `/api/workspaces/${workspaceId}/integrations/zoom/sync`,
+                            { method: "POST" }
+                          );
+                          const data = (await res.json()) as {
+                            success?: boolean;
+                            enqueued?: number;
+                            message?: string;
+                            error?: string;
+                          };
+                          if (res.ok && data.success) {
+                            toast.success(data.message ?? `${data.enqueued ?? 0} recording(s) queued.`);
+                            router.refresh();
+                          } else {
+                            toast.error(data.error ?? "Sync failed");
+                          }
+                        } catch {
+                          toast.error("Sync failed");
+                        } finally {
+                          setLoading(null);
+                        }
+                      }}
+                      disabled={loading !== null}
+                    >
+                      {loading === `sync-${int.id}` ? "Syncing…" : "Sync from Zoom"}
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
                     size="sm"

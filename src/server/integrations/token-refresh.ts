@@ -188,6 +188,8 @@ async function refreshTokenForProvider(
     case "TEAMS":
       return refreshTeamsToken(refreshToken);
     case "SHAREPOINT":
+      // Same Azure AD app + refresh contract as Microsoft Teams
+      return refreshTeamsToken(refreshToken);
     case "GOOGLE_DRIVE":
     case "DOCUSIGN":
     case "SLACK":
@@ -206,4 +208,54 @@ async function refreshTokenForProvider(
     default:
       return null;
   }
+}
+
+const FRESH_THRESHOLD_MS = 5 * 60 * 1000;
+
+/**
+ * Returns a usable access token, refreshing the credential row if near expiry.
+ */
+export async function getValidAccessTokenForProvider(
+  workspaceId: string,
+  provider: IntegrationProvider
+): Promise<string | null> {
+  if (!process.env.INTEGRATION_ENCRYPTION_KEY) {
+    return null;
+  }
+
+  const cred = await db.integrationCredential.findUnique({
+    where: { workspaceId_provider: { workspaceId, provider } },
+  });
+  if (!cred || cred.status !== "CONNECTED") {
+    return null;
+  }
+
+  const threshold = new Date(Date.now() + FRESH_THRESHOLD_MS);
+  if (cred.expiresAt && cred.expiresAt > threshold) {
+    return decryptToken(cred.accessTokenEncrypted);
+  }
+  if (!cred.refreshTokenEncrypted) {
+    return decryptToken(cred.accessTokenEncrypted);
+  }
+
+  const refreshed = await refreshTokenForProvider(
+    provider,
+    cred.refreshTokenEncrypted,
+    workspaceId
+  );
+  if (refreshed) {
+    await db.integrationCredential.update({
+      where: { id: cred.id },
+      data: {
+        accessTokenEncrypted: encryptToken(refreshed.accessToken),
+        refreshTokenEncrypted: refreshed.refreshToken
+          ? encryptToken(refreshed.refreshToken)
+          : undefined,
+        expiresAt: refreshed.expiresAt,
+        status: "CONNECTED",
+      },
+    });
+    return refreshed.accessToken;
+  }
+  return null;
 }

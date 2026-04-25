@@ -175,6 +175,8 @@ exports.Prisma.MeetingScalarFieldEnum = {
   draftReadyAt: 'draftReadyAt',
   timeToFinalize: 'timeToFinalize',
   readyForCCO: 'readyForCCO',
+  sharepointItemWebUrl: 'sharepointItemWebUrl',
+  sharepointDepositedAt: 'sharepointDepositedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

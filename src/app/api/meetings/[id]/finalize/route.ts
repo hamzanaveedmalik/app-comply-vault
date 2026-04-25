@@ -128,7 +128,7 @@ export async function POST(
       },
     });
 
-    return Response.json({
+    const responseBody = {
       success: true,
       meeting: {
         id: finalizedMeeting.id,
@@ -139,7 +139,21 @@ export async function POST(
         finalizeReason: finalizedMeeting.finalizeReason,
         finalizeNote: finalizedMeeting.finalizeNote,
       },
+    };
+
+    const spCred = await db.integrationCredential.findUnique({
+      where: {
+        workspaceId_provider: { workspaceId, provider: "SHAREPOINT" },
+      },
     });
+    if (spCred?.status === "CONNECTED") {
+      const { publishSharePointDepositJob } = await import("~/server/qstash");
+      void publishSharePointDepositJob({ meetingId: id, workspaceId }).catch((e) => {
+        console.error("SharePoint deposit enqueue failed:", e);
+      });
+    }
+
+    return Response.json(responseBody);
   } catch (error) {
     console.error("Error finalizing meeting:", error);
     if (error instanceof z.ZodError) {

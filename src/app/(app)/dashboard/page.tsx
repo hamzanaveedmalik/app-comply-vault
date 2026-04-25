@@ -82,6 +82,29 @@ export default async function DashboardPage() {
     return `${minutes.toFixed(1)} min`;
   };
 
+  const [pendingCco, openFlags] = await Promise.all([
+    db.meeting.count({
+      where: {
+        workspaceId: session.user.workspaceId,
+        readyForCCO: true,
+        status: { in: ["DRAFT_READY", "DRAFT"] },
+      },
+    }),
+    db.flag.count({
+      where: {
+        meeting: { workspaceId: session.user.workspaceId },
+        status: { in: ["OPEN", "IN_REMEDIATION", "PENDING_VERIFICATION"] },
+      },
+    }),
+  ]);
+
+  const finalizeRatePct = totalMeetings > 0 ? (finalizedCount / totalMeetings) * 100 : 100;
+  const flagPenalty = Math.min(40, openFlags * 4);
+  const complianceHealth = Math.max(
+    0,
+    Math.min(100, Math.round(finalizeRatePct * 0.6 + (40 - flagPenalty)))
+  );
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8 flex items-center justify-between">
@@ -153,6 +176,40 @@ export default async function DashboardPage() {
                 ? `Target: ≤ 15 min (${p90TimeToFinalize! <= 900 ? "✓" : "✗"})`
                 : "No finalized meetings yet"}
             </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Compliance health (0–100)
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Weighted from finalize rate and open flags (Epic 7)
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{complianceHealth}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Pending CCO</CardTitle>
+            <CardDescription className="text-xs">Ready for your review</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{pendingCco}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Open flags</CardTitle>
+            <CardDescription className="text-xs">All meetings</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{openFlags}</div>
           </CardContent>
         </Card>
       </div>

@@ -56,7 +56,11 @@ export default async function IntegrationsPage({
 
   const integrations = credentials.map((cred) => {
     const config = configByProvider[cred.provider];
-    const cfg = config?.config as { accountEmail?: string; recordingScope?: string } | null;
+    const cfg = config?.config as {
+      accountEmail?: string;
+      recordingScope?: string;
+      rootFolder?: string;
+    } | null;
     return {
       id: cred.id,
       provider: cred.provider,
@@ -68,6 +72,7 @@ export default async function IntegrationsPage({
       connectedAt: cred.createdAt.toISOString(),
       accountEmail: cfg?.accountEmail ?? null,
       recordingScope: cfg?.recordingScope ?? "all",
+      rootFolder: cred.provider === "SHAREPOINT" ? (cfg?.rootFolder ?? "ComplyVault") : undefined,
     };
   });
 
@@ -85,6 +90,15 @@ export default async function IntegrationsPage({
     ? decodeURIComponent(params.teams_error_description)
     : null;
 
+  const sharepointConnected = params.sharepoint_connected === "1";
+  const sharepointEmail =
+    typeof params.sharepoint_email === "string" ? decodeURIComponent(params.sharepoint_email) : null;
+  const sharepointError = typeof params.sharepoint_error === "string" ? params.sharepoint_error : null;
+  const sharepointErrorDescription =
+    typeof params.sharepoint_error_description === "string"
+      ? decodeURIComponent(params.sharepoint_error_description)
+      : null;
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-semibold mb-6">Integrations</h1>
@@ -99,6 +113,10 @@ export default async function IntegrationsPage({
         teamsEmail={teamsEmail}
         teamsError={teamsError}
         teamsErrorDescription={teamsErrorDescription}
+        sharepointConnected={sharepointConnected}
+        sharepointEmail={sharepointEmail}
+        sharepointError={sharepointError}
+        sharepointErrorDescription={sharepointErrorDescription}
       />
     </div>
   );

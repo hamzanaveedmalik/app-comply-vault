@@ -210,6 +210,49 @@ export type TeamsIngestionPayload = {
   organiserEmail?: string;
 };
 
+/** Teams call record payload — Story 1.5 (call-record webhook path) */
+export type TeamsCallRecordPayload = {
+  callRecordId: string;
+};
+
+/**
+ * Publish Teams call-record ingestion job — Story 1.5
+ * Fetches call record, resolves organizer, finds matching transcript, triggers teams-ingest
+ */
+export async function publishTeamsCallRecordJob(
+  payload: TeamsCallRecordPayload
+): Promise<string | null> {
+  if (!env.QSTASH_TOKEN) {
+    console.warn("QSTASH_TOKEN not configured — Teams call-record job skipped");
+    return null;
+  }
+
+  const baseUrl = env.NEXT_PUBLIC_APP_URL;
+  if (!baseUrl || baseUrl.includes("localhost") || baseUrl.includes("127.0.0.1")) {
+    console.warn("NEXT_PUBLIC_APP_URL must be a public URL for Teams call-record ingestion");
+    return null;
+  }
+
+  const webhookUrl = `${baseUrl}/api/jobs/teams-ingest-call-record`;
+
+  try {
+    const qstash = getQStashClient();
+    const messageId = await qstash.publishJSON({
+      url: webhookUrl,
+      body: payload,
+      retries: 3,
+      delay: 5,
+      headers: { "X-QStash-Debug": "true" },
+    });
+
+    console.log(`✅ Teams call-record job published: ${payload.callRecordId}`, { messageId });
+    return messageId;
+  } catch (error) {
+    console.error("❌ Teams call-record job publish failed:", error);
+    throw error;
+  }
+}
+
 /**
  * Publish Teams ingestion job — Story 1.5
  */
@@ -243,6 +286,44 @@ export async function publishTeamsIngestionJob(
     return messageId;
   } catch (error) {
     console.error("❌ Teams ingestion job publish failed:", error);
+    throw error;
+  }
+}
+
+/** Epic 2 — deposit finalized audit pack to SharePoint / OneDrive */
+export type SharePointDepositPayload = {
+  meetingId: string;
+  workspaceId: string;
+};
+
+export async function publishSharePointDepositJob(
+  payload: SharePointDepositPayload
+): Promise<string | null> {
+  if (!env.QSTASH_TOKEN) {
+    console.warn("QSTASH_TOKEN not configured — SharePoint deposit skipped");
+    return null;
+  }
+
+  const baseUrl = env.NEXT_PUBLIC_APP_URL;
+  if (!baseUrl || baseUrl.includes("localhost") || baseUrl.includes("127.0.0.1")) {
+    console.warn("NEXT_PUBLIC_APP_URL must be a public URL for SharePoint deposit");
+    return null;
+  }
+
+  const webhookUrl = `${baseUrl}/api/jobs/sharepoint-deposit`;
+  try {
+    const qstash = getQStashClient();
+    const messageId = await qstash.publishJSON({
+      url: webhookUrl,
+      body: payload,
+      retries: 3,
+      delay: 5,
+      headers: { "X-QStash-Debug": "true" },
+    });
+    console.log("✅ SharePoint deposit job published", { messageId, meetingId: payload.meetingId });
+    return messageId;
+  } catch (error) {
+    console.error("❌ SharePoint deposit job publish failed:", error);
     throw error;
   }
 }

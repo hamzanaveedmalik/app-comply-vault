@@ -133,6 +133,9 @@ model Meeting {
   draftReadyAt DateTime? // timestamp when status changed to DRAFT_READY (for KPI tracking)
   timeToFinalize Int? // Time-to-Finalize in seconds (draftReadyAt → finalizedAt) for KPI tracking
   readyForCCO  Boolean  @default(false) // flag indicating meeting is ready for CCO review
+  /// Microsoft Graph / SharePoint (Epic 2) — item web URL after auto-deposit
+  sharepointItemWebUrl  String?   @db.Text
+  sharepointDepositedAt DateTime?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 

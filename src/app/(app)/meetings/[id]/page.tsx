@@ -374,6 +374,29 @@ export default async function MeetingDetailPage({
           </Card>
         )}
 
+        {meeting.status === "FINALIZED" && meeting.sharepointItemWebUrl && (
+          <Card>
+            <CardContent className="pt-6">
+              <p className="text-sm text-muted-foreground">
+                Audit pack was filed to your connected Microsoft 365 storage.{" "}
+                <a
+                  href={meeting.sharepointItemWebUrl}
+                  className="text-primary underline"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Open in browser
+                </a>
+                {meeting.sharepointDepositedAt && (
+                  <span className="block mt-2 text-xs">
+                    Deposited {meeting.sharepointDepositedAt.toLocaleString()}
+                  </span>
+                )}
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Export button for DRAFT_READY meetings */}
         {meeting.status === "DRAFT_READY" && (
           <Card>

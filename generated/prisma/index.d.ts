@@ -5647,6 +5647,8 @@ export namespace Prisma {
     draftReadyAt: Date | null
     timeToFinalize: number | null
     readyForCCO: boolean | null
+    sharepointItemWebUrl: string | null
+    sharepointDepositedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5675,6 +5677,8 @@ export namespace Prisma {
     draftReadyAt: Date | null
     timeToFinalize: number | null
     readyForCCO: boolean | null
+    sharepointItemWebUrl: string | null
+    sharepointDepositedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5705,6 +5709,8 @@ export namespace Prisma {
     draftReadyAt: number
     timeToFinalize: number
     readyForCCO: number
+    sharepointItemWebUrl: number
+    sharepointDepositedAt: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -5747,6 +5753,8 @@ export namespace Prisma {
     draftReadyAt?: true
     timeToFinalize?: true
     readyForCCO?: true
+    sharepointItemWebUrl?: true
+    sharepointDepositedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5775,6 +5783,8 @@ export namespace Prisma {
     draftReadyAt?: true
     timeToFinalize?: true
     readyForCCO?: true
+    sharepointItemWebUrl?: true
+    sharepointDepositedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5805,6 +5815,8 @@ export namespace Prisma {
     draftReadyAt?: true
     timeToFinalize?: true
     readyForCCO?: true
+    sharepointItemWebUrl?: true
+    sharepointDepositedAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -5922,6 +5934,8 @@ export namespace Prisma {
     draftReadyAt: Date | null
     timeToFinalize: number | null
     readyForCCO: boolean
+    sharepointItemWebUrl: string | null
+    sharepointDepositedAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: MeetingCountAggregateOutputType | null
@@ -5971,6 +5985,8 @@ export namespace Prisma {
     draftReadyAt?: boolean
     timeToFinalize?: boolean
     readyForCCO?: boolean
+    sharepointItemWebUrl?: boolean
+    sharepointDepositedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
@@ -6008,6 +6024,8 @@ export namespace Prisma {
     draftReadyAt?: boolean
     timeToFinalize?: boolean
     readyForCCO?: boolean
+    sharepointItemWebUrl?: boolean
+    sharepointDepositedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
@@ -6039,6 +6057,8 @@ export namespace Prisma {
     draftReadyAt?: boolean
     timeToFinalize?: boolean
     readyForCCO?: boolean
+    sharepointItemWebUrl?: boolean
+    sharepointDepositedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
@@ -6070,11 +6090,13 @@ export namespace Prisma {
     draftReadyAt?: boolean
     timeToFinalize?: boolean
     readyForCCO?: boolean
+    sharepointItemWebUrl?: boolean
+    sharepointDepositedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientName" | "meetingType" | "meetingDate" | "status" | "fileUrl" | "sourceFileSha256" | "sourceFileName" | "sourceFileSize" | "sourceFileMime" | "sourceUploadedAt" | "transcript" | "extraction" | "searchableText" | "finalizedBy" | "finalizedAt" | "finalizeReason" | "finalizeNote" | "finalizedPolicyVersion" | "samplingBucket" | "samplingRuleId" | "draftReadyAt" | "timeToFinalize" | "readyForCCO" | "createdAt" | "updatedAt", ExtArgs["result"]["meeting"]>
+  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientName" | "meetingType" | "meetingDate" | "status" | "fileUrl" | "sourceFileSha256" | "sourceFileName" | "sourceFileSize" | "sourceFileMime" | "sourceUploadedAt" | "transcript" | "extraction" | "searchableText" | "finalizedBy" | "finalizedAt" | "finalizeReason" | "finalizeNote" | "finalizedPolicyVersion" | "samplingBucket" | "samplingRuleId" | "draftReadyAt" | "timeToFinalize" | "readyForCCO" | "sharepointItemWebUrl" | "sharepointDepositedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["meeting"]>
   export type MeetingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     versions?: boolean | Meeting$versionsArgs<ExtArgs>
@@ -6127,6 +6149,11 @@ export namespace Prisma {
       draftReadyAt: Date | null
       timeToFinalize: number | null
       readyForCCO: boolean
+      /**
+       * Microsoft Graph / SharePoint (Epic 2) — item web URL after auto-deposit
+       */
+      sharepointItemWebUrl: string | null
+      sharepointDepositedAt: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["meeting"]>
@@ -6583,6 +6610,8 @@ export namespace Prisma {
     readonly draftReadyAt: FieldRef<"Meeting", 'DateTime'>
     readonly timeToFinalize: FieldRef<"Meeting", 'Int'>
     readonly readyForCCO: FieldRef<"Meeting", 'Boolean'>
+    readonly sharepointItemWebUrl: FieldRef<"Meeting", 'String'>
+    readonly sharepointDepositedAt: FieldRef<"Meeting", 'DateTime'>
     readonly createdAt: FieldRef<"Meeting", 'DateTime'>
     readonly updatedAt: FieldRef<"Meeting", 'DateTime'>
   }
@@ -25248,6 +25277,8 @@ export namespace Prisma {
     draftReadyAt: 'draftReadyAt',
     timeToFinalize: 'timeToFinalize',
     readyForCCO: 'readyForCCO',
+    sharepointItemWebUrl: 'sharepointItemWebUrl',
+    sharepointDepositedAt: 'sharepointDepositedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -26090,6 +26121,8 @@ export namespace Prisma {
     draftReadyAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     timeToFinalize?: IntNullableFilter<"Meeting"> | number | null
     readyForCCO?: BoolFilter<"Meeting"> | boolean
+    sharepointItemWebUrl?: StringNullableFilter<"Meeting"> | string | null
+    sharepointDepositedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
@@ -26126,6 +26159,8 @@ export namespace Prisma {
     draftReadyAt?: SortOrderInput | SortOrder
     timeToFinalize?: SortOrderInput | SortOrder
     readyForCCO?: SortOrder
+    sharepointItemWebUrl?: SortOrderInput | SortOrder
+    sharepointDepositedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     workspace?: WorkspaceOrderByWithRelationInput
@@ -26165,6 +26200,8 @@ export namespace Prisma {
     draftReadyAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     timeToFinalize?: IntNullableFilter<"Meeting"> | number | null
     readyForCCO?: BoolFilter<"Meeting"> | boolean
+    sharepointItemWebUrl?: StringNullableFilter<"Meeting"> | string | null
+    sharepointDepositedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
@@ -26201,6 +26238,8 @@ export namespace Prisma {
     draftReadyAt?: SortOrderInput | SortOrder
     timeToFinalize?: SortOrderInput | SortOrder
     readyForCCO?: SortOrder
+    sharepointItemWebUrl?: SortOrderInput | SortOrder
+    sharepointDepositedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: MeetingCountOrderByAggregateInput
@@ -26239,6 +26278,8 @@ export namespace Prisma {
     draftReadyAt?: DateTimeNullableWithAggregatesFilter<"Meeting"> | Date | string | null
     timeToFinalize?: IntNullableWithAggregatesFilter<"Meeting"> | number | null
     readyForCCO?: BoolWithAggregatesFilter<"Meeting"> | boolean
+    sharepointItemWebUrl?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
+    sharepointDepositedAt?: DateTimeNullableWithAggregatesFilter<"Meeting"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Meeting"> | Date | string
   }
@@ -27731,6 +27772,8 @@ export namespace Prisma {
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -27767,6 +27810,8 @@ export namespace Prisma {
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -27801,6 +27846,8 @@ export namespace Prisma {
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -27837,6 +27884,8 @@ export namespace Prisma {
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -27872,6 +27921,8 @@ export namespace Prisma {
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -27901,6 +27952,8 @@ export namespace Prisma {
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -27931,6 +27984,8 @@ export namespace Prisma {
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -29792,6 +29847,8 @@ export namespace Prisma {
     draftReadyAt?: SortOrder
     timeToFinalize?: SortOrder
     readyForCCO?: SortOrder
+    sharepointItemWebUrl?: SortOrder
+    sharepointDepositedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -29826,6 +29883,8 @@ export namespace Prisma {
     draftReadyAt?: SortOrder
     timeToFinalize?: SortOrder
     readyForCCO?: SortOrder
+    sharepointItemWebUrl?: SortOrder
+    sharepointDepositedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -29854,6 +29913,8 @@ export namespace Prisma {
     draftReadyAt?: SortOrder
     timeToFinalize?: SortOrder
     readyForCCO?: SortOrder
+    sharepointItemWebUrl?: SortOrder
+    sharepointDepositedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -32811,6 +32872,8 @@ export namespace Prisma {
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionCreateNestedManyWithoutMeetingInput
@@ -32845,6 +32908,8 @@ export namespace Prisma {
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -33162,6 +33227,8 @@ export namespace Prisma {
     draftReadyAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     timeToFinalize?: IntNullableFilter<"Meeting"> | number | null
     readyForCCO?: BoolFilter<"Meeting"> | boolean
+    sharepointItemWebUrl?: StringNullableFilter<"Meeting"> | string | null
+    sharepointDepositedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
   }
@@ -34009,6 +34076,8 @@ export namespace Prisma {
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -34044,6 +34113,8 @@ export namespace Prisma {
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutMeetingInput
@@ -34093,6 +34164,8 @@ export namespace Prisma {
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -34128,6 +34201,8 @@ export namespace Prisma {
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
@@ -34161,6 +34236,8 @@ export namespace Prisma {
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -34196,6 +34273,8 @@ export namespace Prisma {
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -34353,6 +34432,8 @@ export namespace Prisma {
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -34388,6 +34469,8 @@ export namespace Prisma {
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -34582,6 +34665,8 @@ export namespace Prisma {
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -34617,6 +34702,8 @@ export namespace Prisma {
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -34872,6 +34959,8 @@ export namespace Prisma {
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -34907,6 +34996,8 @@ export namespace Prisma {
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -35572,6 +35663,8 @@ export namespace Prisma {
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -35607,6 +35700,8 @@ export namespace Prisma {
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -35725,6 +35820,8 @@ export namespace Prisma {
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -35760,6 +35857,8 @@ export namespace Prisma {
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -36539,6 +36638,8 @@ export namespace Prisma {
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -36574,6 +36675,8 @@ export namespace Prisma {
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -36658,6 +36761,8 @@ export namespace Prisma {
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -36693,6 +36798,8 @@ export namespace Prisma {
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -36731,6 +36838,8 @@ export namespace Prisma {
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -36854,6 +36963,8 @@ export namespace Prisma {
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUpdateManyWithoutMeetingNestedInput
@@ -36888,6 +36999,8 @@ export namespace Prisma {
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -36922,6 +37035,8 @@ export namespace Prisma {
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

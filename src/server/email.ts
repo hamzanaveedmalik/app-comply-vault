@@ -368,3 +368,78 @@ export async function sendIntegrationDisconnectEmail({
   }
 }
 
+/**
+ * Weekly activity digest (Epic 5 Story 5.1) — no client names in body (metadata only)
+ */
+export async function sendWeeklyActivityDigest({
+  email,
+  workspaceName,
+  stats,
+  periodLabel,
+}: {
+  email: string;
+  workspaceName: string;
+  periodLabel: string;
+  stats: {
+    newMeetings: number;
+    finalized: number;
+    draftReady: number;
+    openFlags: number;
+  };
+}): Promise<{ success: boolean; id?: string; error?: string }> {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const dashboardUrl = `${baseUrl}/dashboard`;
+
+  const emailContent = {
+    from: process.env.EMAIL_FROM || "noreply@ria-compliance.com",
+    to: email,
+    subject: `ComplyVault weekly summary — ${workspaceName} (${periodLabel})`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
+        <h2>Weekly activity</h2>
+        <p>Workspace: <strong>${escapeHtml(workspaceName)}</strong></p>
+        <p>Period: <strong>${escapeHtml(periodLabel)}</strong></p>
+        <ul>
+          <li>New meetings created: <strong>${stats.newMeetings}</strong></li>
+          <li>Records finalized: <strong>${stats.finalized}</strong></li>
+          <li>Draft ready for review: <strong>${stats.draftReady}</strong></li>
+          <li>Open flags (all meetings): <strong>${stats.openFlags}</strong></li>
+        </ul>
+        <p><a href="${dashboardUrl}">Open dashboard</a></p>
+        <p style="color: #999; font-size: 12px; margin-top: 30px;">ComplyVault — compliance documentation for RIAs</p>
+      </div>
+    `,
+    text: `Weekly activity for ${workspaceName} (${periodLabel}):
+New meetings: ${stats.newMeetings}
+Finalized: ${stats.finalized}
+Draft ready: ${stats.draftReady}
+Open flags: ${stats.openFlags}
+Dashboard: ${dashboardUrl}
+`,
+  };
+
+  if (!resend) {
+    console.log("📧 [DEV MODE] Weekly digest would be sent:", { to: email, workspaceName, stats });
+    return { success: true, id: "dev-mode" };
+  }
+
+  try {
+    const result = await resend.emails.send(emailContent);
+    if (result.error) {
+      throw new Error(result.error.message);
+    }
+    return { success: true, id: result.data?.id || "sent" };
+  } catch (error) {
+    console.error("Error sending weekly digest:", error);
+    return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+  }
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+

@@ -8,6 +8,7 @@ import { db } from "~/server/db";
 import { sendIntegrationDisconnectEmail } from "~/server/email";
 import { zoomAdapter } from "~/server/integrations/adapters/zoom";
 import { teamsAdapter } from "~/server/integrations/adapters/teams";
+import { sharepointAdapter } from "~/server/integrations/adapters/sharepoint";
 
 export async function POST(
   _request: Request,
@@ -42,6 +43,8 @@ export async function POST(
     await zoomAdapter.disconnect({ workspaceId });
   } else if (credential.provider === "TEAMS") {
     await teamsAdapter.disconnect({ workspaceId });
+  } else if (credential.provider === "SHAREPOINT") {
+    await sharepointAdapter.disconnect({ workspaceId });
   } else {
     await db.integrationCredential.delete({ where: { id: credentialId } });
     await db.integrationConfig.deleteMany({

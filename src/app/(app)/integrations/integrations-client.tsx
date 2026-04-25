@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import {
   Select,
@@ -54,6 +55,7 @@ type Integration = {
   connectedAt: string;
   accountEmail?: string | null;
   recordingScope?: string;
+  rootFolder?: string;
 };
 
 type Failure = {
@@ -76,6 +78,10 @@ export function IntegrationsClient({
   teamsEmail,
   teamsError,
   teamsErrorDescription,
+  sharepointConnected,
+  sharepointEmail,
+  sharepointError,
+  sharepointErrorDescription,
 }: {
   workspaceId: string;
   initialIntegrations: Integration[];
@@ -87,6 +93,10 @@ export function IntegrationsClient({
   teamsEmail?: string | null;
   teamsError?: string | null;
   teamsErrorDescription?: string | null;
+  sharepointConnected?: boolean;
+  sharepointEmail?: string | null;
+  sharepointError?: string | null;
+  sharepointErrorDescription?: string | null;
 }) {
   const [integrations, setIntegrations] = useState(initialIntegrations);
   const [expandedFailures, setExpandedFailures] = useState<string | null>(null);
@@ -97,15 +107,25 @@ export function IntegrationsClient({
 
   const hasZoom = integrations.some((i) => i.provider === "ZOOM");
   const hasTeams = integrations.some((i) => i.provider === "TEAMS");
+  const hasSharePoint = integrations.some((i) => i.provider === "SHAREPOINT");
 
   useEffect(() => {
     if (
       (zoomConnected && zoomEmail && integrations.some((i) => i.provider === "ZOOM")) ||
-      (teamsConnected && teamsEmail && integrations.some((i) => i.provider === "TEAMS"))
+      (teamsConnected && teamsEmail && integrations.some((i) => i.provider === "TEAMS")) ||
+      (sharepointConnected && sharepointEmail && integrations.some((i) => i.provider === "SHAREPOINT"))
     ) {
       window.history.replaceState({}, "", "/integrations");
     }
-  }, [zoomConnected, zoomEmail, teamsConnected, teamsEmail, integrations]);
+  }, [
+    zoomConnected,
+    zoomEmail,
+    teamsConnected,
+    teamsEmail,
+    sharepointConnected,
+    sharepointEmail,
+    integrations,
+  ]);
 
   function handleConnectZoom() {
     setConnectLoading(true);
@@ -115,6 +135,11 @@ export function IntegrationsClient({
   function handleConnectTeams() {
     setConnectLoading(true);
     window.location.href = "/api/integrations/teams/connect";
+  }
+
+  function handleConnectSharePoint() {
+    setConnectLoading(true);
+    window.location.href = "/api/integrations/sharepoint/connect";
   }
 
   async function handleDisconnect(credentialId: string) {
@@ -207,6 +232,31 @@ export function IntegrationsClient({
         </div>
       )}
 
+      {sharepointConnected && sharepointEmail && (
+        <div className="rounded-lg border border-green-200 bg-green-50 p-4 flex items-start gap-3">
+          <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium text-green-800">SharePoint / OneDrive connected</p>
+            <p className="text-sm text-green-700 mt-1">
+              {sharepointEmail} — finalized audit packs can be filed automatically under your root folder
+              (see below).
+            </p>
+          </div>
+        </div>
+      )}
+
+      {sharepointError && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 flex items-start gap-3">
+          <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium text-red-800">SharePoint connection failed</p>
+            <p className="text-sm text-red-700 mt-1">
+              {sharepointErrorDescription ?? "Please try again. Ensure the Azure app has Files.ReadWrite.All and Sites.ReadWrite.All (delegated) with admin consent."}
+            </p>
+          </div>
+        </div>
+      )}
+
       {integrations.length === 0 ? (
         <div className="rounded-lg border border-dashed p-8 text-center">
           <p className="text-muted-foreground">No integrations connected yet.</p>
@@ -219,6 +269,9 @@ export function IntegrationsClient({
             </Button>
             <Button onClick={handleConnectTeams} disabled={connectLoading} variant="outline" size="lg">
               Connect Teams
+            </Button>
+            <Button onClick={handleConnectSharePoint} disabled={connectLoading} variant="outline" size="lg">
+              Connect SharePoint
             </Button>
           </div>
         </div>
@@ -250,12 +303,33 @@ export function IntegrationsClient({
               </Button>
             </div>
           )}
+          {!hasSharePoint && (
+            <div className="rounded-lg border p-4 flex items-center justify-between">
+              <div>
+                <p className="font-medium">SharePoint / OneDrive</p>
+                <p className="text-sm text-muted-foreground">
+                  File finalized audit packs under ComplyVault/AuditPacks/Year/Month on your default drive
+                </p>
+              </div>
+              <Button onClick={handleConnectSharePoint} disabled={connectLoading} variant="outline">
+                Connect
+              </Button>
+            </div>
+          )}
           {integrations.map((int) => (
             <div key={int.id} className="rounded-lg border p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">
+                  <p className="font-medium flex items-center gap-2">
                     {PROVIDER_LABELS[int.provider] ?? int.provider}
+                    {int.provider === "TEAMS" && (
+                      <a
+                        href="/integrations/teams/manifest"
+                        className="text-xs text-primary hover:underline"
+                      >
+                        Teams App manifest
+                      </a>
+                    )}
                   </p>
                   <p className="text-sm text-muted-foreground">
                     {int.accountEmail ? `${int.accountEmail} • ` : ""}
@@ -319,6 +393,38 @@ export function IntegrationsClient({
                   </Button>
                 </div>
               </div>
+              {int.provider === "SHAREPOINT" && (
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+                  <span className="text-sm text-muted-foreground">Root folder (under your default drive):</span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Input
+                      className="w-56 max-w-full"
+                      defaultValue={int.rootFolder ?? "ComplyVault"}
+                      onBlur={async (e) => {
+                        const v = e.target.value.trim() || "ComplyVault";
+                        const res = await fetch(
+                          `/api/workspaces/${workspaceId}/integrations/sharepoint/config`,
+                          {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ rootFolder: v }),
+                          }
+                        );
+                        if (res.ok) {
+                          toast.success("SharePoint path updated");
+                          router.refresh();
+                        } else {
+                          const err = (await res.json()) as { error?: string };
+                          toast.error(err.error ?? "Update failed");
+                        }
+                      }}
+                    />
+                    <span className="text-xs text-muted-foreground">
+                      → {`{root}/AuditPacks/YYYY/MM/`}
+                    </span>
+                  </div>
+                </div>
+              )}
               {int.provider === "ZOOM" && (
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">Recording scope:</span>

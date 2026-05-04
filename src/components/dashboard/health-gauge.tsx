@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Shield } from "lucide-react";
 
 type HealthGaugeProps = {
   score: number;
@@ -71,11 +72,18 @@ export function HealthGauge({
 
   return (
     <div
-      className="flex h-full flex-col items-center rounded-[14px] border border-surface-border bg-surface-card p-4 shadow-[0_1px_4px_rgba(0,0,0,0.04)]"
+      className="flex h-full flex-col rounded-[14px] border border-surface-border bg-surface-card p-4 shadow-[0_1px_4px_rgba(0,0,0,0.04)]"
       role="img"
       aria-label={label}
     >
-      <svg width={200} height={118} viewBox="0 0 200 120" className="shrink-0">
+      <div className="mb-3 flex w-full items-center gap-2">
+        <Shield className="h-[18px] w-[18px] shrink-0 text-text-primary" strokeWidth={2} aria-hidden />
+        <span className="text-[11px] font-semibold uppercase tracking-[0.05em] text-text-secondary">
+          Compliance Health
+        </span>
+      </div>
+      <div className="flex flex-1 flex-col items-center">
+        <svg width={200} height={118} viewBox="0 0 200 120" className="shrink-0">
         <path
           d={`M ${100 - R} 100 A ${R} ${R} 0 0 1 ${100 + R} 100`}
           fill="none"
@@ -113,16 +121,17 @@ export function HealthGauge({
         >
           / 100
         </text>
-      </svg>
-      <div
-        className="mt-1 rounded-full px-3 py-1 text-[10.5px] font-semibold"
-        style={{ backgroundColor: t.badge, color: badgeText }}
-      >
-        {t.label}
+        </svg>
+        <div
+          className="mt-1 rounded-full px-3 py-1 text-[10.5px] font-semibold"
+          style={{ backgroundColor: t.badge, color: badgeText }}
+        >
+          {t.label}
+        </div>
+        <p className="mt-2 text-center text-[11px] font-medium text-text-muted">
+          {openFlags} flags · {unfinalizedCount} unfinalized
+        </p>
       </div>
-      <p className="mt-2 text-center text-[11px] font-medium text-text-muted">
-        {openFlags} flags · {unfinalizedCount} unfinalized
-      </p>
     </div>
   );
 }

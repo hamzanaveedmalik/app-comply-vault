@@ -2,6 +2,7 @@
 
 import { GlobalSearch } from "~/components/global-search";
 import { UserMenu } from "~/components/user-menu";
+import { NotificationBellButton } from "~/components/notification-bell-button";
 
 interface TopBarProps {
   userEmail?: string | null;
@@ -19,14 +20,13 @@ export function TopBar({
   billingStatus,
 }: TopBarProps) {
   return (
-    <div className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-14 items-center gap-4 px-4 sm:px-6 lg:px-8">
-        {/* Mobile: Add left padding for menu button */}
-        <div className="lg:pl-0 pl-14 flex-1 max-w-2xl mx-auto">
+    <div className="sticky top-0 z-40 h-14 w-full border-b border-surface-border bg-surface-card/95 backdrop-blur supports-[backdrop-filter]:bg-surface-card/80">
+      <div className="flex h-14 items-center gap-3 px-4 sm:px-6 lg:px-6">
+        <div className="min-w-0 flex-1 pl-14 lg:pl-0">
           <GlobalSearch />
         </div>
-        {/* User Menu - Top Right */}
-        <div className="flex-shrink-0">
+        <NotificationBellButton />
+        <div className="flex shrink-0">
           <UserMenu
             userEmail={userEmail}
             userName={userName}

@@ -4,8 +4,41 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  /* ComplyVault dashboard design system */
+  --color-brand: #117a4b;
+  --color-brand-light: #e8f5ee;
+  --color-brand-mid: #1a9b5f;
+  --color-brand-dark: #0d5c38;
+  --color-brand-glow: rgba(17, 122, 75, 0.15);
+
+  --color-sidebar-bg: #082f1c;
+  --color-sidebar-surface: #0d3d24;
+  --color-sidebar-border: #134a2e;
+  --color-sidebar-active-border: #1a5c3a;
+  --color-sidebar-muted: #5a9b78;
+  --color-sidebar-text: #8bbfa3;
+  --color-sidebar-text-light: #c8e6d5;
+  --color-sidebar-text-bright: #e8f5ee;
+
+  --color-semantic-critical: #dc2626;
+  --color-semantic-danger: #ef4444;
+  --color-semantic-warning: #d97706;
+  --color-semantic-orange: #f97316;
+  --color-semantic-success: #22c55e;
+
+  --color-surface-page: #f7f9f8;
+  --color-surface-card: #ffffff;
+  --color-surface-hover: #f8faf9;
+  --color-surface-border: #e2e8f0;
+  --color-surface-divider: #f1f5f9;
+  --color-surface-muted: #f8fafc;
+
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-text-muted: #94a3b8;
 }
 
 @theme inline {
@@ -123,6 +156,6 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background font-sans text-foreground antialiased;
   }
 }

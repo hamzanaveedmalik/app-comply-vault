@@ -5,6 +5,22 @@ import { sendWelcomeEmail } from "~/server/email";
 import { cookies } from "next/headers";
 import { stripe } from "~/server/stripe";
 import { getOnboardingTypeFromLineItems, getPlanFromLineItems } from "~/server/billing/stripe-utils";
+import { listWorkspacesForUser } from "~/server/workspace/list-workspaces-for-user";
+
+export async function GET() {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const payload = await listWorkspacesForUser(session.user.id);
+    return Response.json(payload);
+  } catch (e) {
+    console.error("GET /api/workspaces:", e);
+    return Response.json({ error: "Failed to list workspaces" }, { status: 500 });
+  }
+}
 
 const createWorkspaceSchema = z.object({
   name: z.string().min(1, "Workspace name is required").max(100),

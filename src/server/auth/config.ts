@@ -4,6 +4,8 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
+import { cookies } from "next/headers";
+import { ACTIVE_WORKSPACE_COOKIE } from "~/lib/workspace-constants";
 import { db } from "~/server/db";
 
 /**
@@ -157,6 +159,12 @@ export const authConfig = {
       },
     },
   },
+  events: {
+    signOut: async () => {
+      const store = await cookies();
+      store.delete(ACTIVE_WORKSPACE_COOKIE);
+    },
+  },
   callbacks: {
     signIn: async ({ user, account }) => {
       // For OAuth providers (Google, etc.), automatically verify email
@@ -193,20 +201,30 @@ export const authConfig = {
         return session;
       }
 
-      // Fetch user's primary workspace and role
-      // Priority: 1) First OWNER_CCO workspace, 2) First workspace alphabetically
-      const userWorkspace = await db.userWorkspace.findFirst({
-        where: {
-          userId: userId,
-        },
-        orderBy: [
-          { role: "asc" }, // OWNER_CCO comes before MEMBER alphabetically
-          { workspace: { name: "asc" } }, // Then by workspace name
-        ],
-        include: {
-          workspace: true,
-        },
-      });
+      const cookieStore = await cookies();
+      const preferredWorkspaceId = cookieStore.get(ACTIVE_WORKSPACE_COOKIE)?.value ?? null;
+
+      let userWorkspace =
+        preferredWorkspaceId !== null && preferredWorkspaceId.length > 0
+          ? await db.userWorkspace.findFirst({
+              where: {
+                userId,
+                workspaceId: preferredWorkspaceId,
+              },
+              include: { workspace: true },
+            })
+          : null;
+
+      if (!userWorkspace) {
+        userWorkspace = await db.userWorkspace.findFirst({
+          where: { userId },
+          orderBy: [
+            { role: "asc" },
+            { workspace: { name: "asc" } },
+          ],
+          include: { workspace: true },
+        });
+      }
 
       // If user has no workspace, return session with null workspaceId/role
       // This allows them to create a workspace

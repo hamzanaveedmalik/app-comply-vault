@@ -4,6 +4,8 @@ import { db } from "~/server/db";
 import { redirect } from "next/navigation";
 import { AppSidebar } from "~/components/app-sidebar";
 import { TopBar } from "~/components/top-bar";
+import { listWorkspacesForUser } from "~/server/workspace/list-workspaces-for-user";
+import type { WorkspaceListItemDto } from "~/lib/workspace-types";
 
 export default async function AppLayout({
   children,
@@ -22,18 +24,16 @@ export default async function AppLayout({
   const session = authCheck.session as Session;
 
   let reviewQueueCount = 0;
-  let workspaceName: string | null = null;
-  let workspaceMemberCount = 0;
   let billingStatus: string | null = null;
+  let workspaces: WorkspaceListItemDto[] = [];
+  let clientCount = 0;
 
   if (session.user.workspaceId && session.user.workspaceId !== "") {
-    const [workspace, reviewCount] = await Promise.all([
+    const [workspace, reviewCount, wsList] = await Promise.all([
       db.workspace.findUnique({
         where: { id: session.user.workspaceId },
         select: {
-          name: true,
           billingStatus: true,
-          _count: { select: { users: true } },
         },
       }),
       db.meeting.count({
@@ -42,11 +42,12 @@ export default async function AppLayout({
           status: { in: ["DRAFT_READY", "DRAFT"] },
         },
       }),
+      listWorkspacesForUser(session.user.id),
     ]);
-    workspaceName = workspace?.name ?? null;
-    workspaceMemberCount = workspace?._count.users ?? 0;
     billingStatus = workspace?.billingStatus ?? null;
     reviewQueueCount = reviewCount;
+    workspaces = wsList;
+    clientCount = wsList.find((w) => w.id === session.user.workspaceId)?.clientCount ?? 0;
   }
 
   return (
@@ -55,8 +56,9 @@ export default async function AppLayout({
         userEmail={session.user.email}
         userName={session.user.name}
         userRole={session.user.role}
-        workspaceName={workspaceName}
-        workspaceMemberCount={workspaceMemberCount}
+        activeWorkspaceId={session.user.workspaceId ?? ""}
+        workspaces={workspaces}
+        clientCount={clientCount}
         reviewQueueCount={reviewQueueCount}
       />
       <div className="lg:pl-[244px]">

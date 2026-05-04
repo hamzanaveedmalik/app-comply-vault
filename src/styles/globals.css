@@ -22,8 +22,13 @@
   --color-sidebar-text: #8bbfa3;
   --color-sidebar-text-light: #c8e6d5;
   --color-sidebar-text-bright: #e8f5ee;
+  /** Subtle dividers on dark sidebar (hairlines, edges) */
+  --color-sidebar-hairline: rgba(232, 245, 238, 0.12);
+  --color-sidebar-open-border: #2dd881;
 
-  --color-semantic-critical: #dc2626;
+  --color-status-online: #2dd881;
+  --color-status-away: #f59e0b;
+  --color-status-offline: #94a3b8;
   --color-semantic-danger: #ef4444;
   --color-semantic-warning: #d97706;
   --color-semantic-orange: #f97316;
@@ -152,10 +157,31 @@
 }
 
 @layer base {
+  @keyframes workspace-dropdown-slide {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background font-sans text-foreground antialiased;
+  }
+}
+
+.workspace-dropdown-panel {
+  animation: workspace-dropdown-slide 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workspace-dropdown-panel {
+    animation: none !important;
   }
 }

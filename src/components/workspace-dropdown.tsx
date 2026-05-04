@@ -119,15 +119,19 @@ export function WorkspaceDropdown({
         onClick={() => setOpen((v) => !v)}
       >
         <div
-          className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-md text-[10px] font-semibold text-sidebar-muted"
-          style={{ backgroundColor: "var(--color-sidebar-border)" }}
+          className={cn(
+            "flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-[6px] text-[10px] font-bold leading-none text-sidebar-muted",
+            open ? "bg-black/25" : "bg-sidebar-border",
+          )}
         >
           {triggerInitials.slice(0, 2)}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-[12px] font-semibold text-sidebar-text-light">{triggerName}</div>
-          <div className="text-[10px] text-sidebar-muted">
-            {clientCount} client{clientCount !== 1 ? "s" : ""}
+          <div className="truncate text-[12px] font-semibold leading-tight text-sidebar-text-bright">
+            {triggerName}
+          </div>
+          <div className="mt-0.5 text-[10px] font-normal leading-tight text-sidebar-muted">
+            {clientCount === 1 ? "1 RIA client" : `${clientCount} RIA clients`}
           </div>
         </div>
         <ChevronDown
@@ -153,7 +157,7 @@ export function WorkspaceDropdown({
               Workspaces
             </div>
             <div
-              className="flex flex-col gap-0.5"
+              className="flex flex-col gap-2"
               role="listbox"
               aria-labelledby={`${listboxId}-ws-label`}
             >
@@ -166,7 +170,7 @@ export function WorkspaceDropdown({
                     role="option"
                     aria-selected={isCurrent}
                     className={cn(
-                      "flex w-full items-center gap-2 rounded-md px-2 py-[7px] text-left transition-[background] duration-100",
+                      "flex w-full items-center gap-2 rounded-[6px] px-2 py-[7px] text-left transition-[background] duration-100",
                       isCurrent
                         ? "bg-[rgba(17,122,75,0.2)]"
                         : "bg-transparent hover:bg-[rgba(255,255,255,0.05)]",
@@ -175,16 +179,11 @@ export function WorkspaceDropdown({
                   >
                     <div
                       className={cn(
-                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] text-[9px] font-semibold",
+                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] text-[9px] font-bold leading-none",
                         isCurrent
                           ? "bg-brand text-white"
-                          : "text-sidebar-muted",
+                          : "bg-black/25 text-sidebar-muted",
                       )}
-                      style={
-                        isCurrent
-                          ? undefined
-                          : { backgroundColor: "var(--color-sidebar-border)" }
-                      }
                     >
                       {ws.initials.slice(0, 2)}
                     </div>
@@ -199,8 +198,15 @@ export function WorkspaceDropdown({
                       >
                         {ws.name}
                       </div>
-                      <div className="text-[9.5px] text-sidebar-muted">
-                        {ws.clientCount} clients · {ws.roleLabel}
+                      <div
+                        className={cn(
+                          "text-[9.5px] leading-tight",
+                          isCurrent ? "text-sidebar-text-light" : "text-sidebar-muted",
+                        )}
+                      >
+                        {ws.clientCount === 1
+                          ? `1 client · ${ws.roleLabel}`
+                          : `${ws.clientCount} clients · ${ws.roleLabel}`}
                       </div>
                     </div>
                     {isCurrent ? (
@@ -214,11 +220,7 @@ export function WorkspaceDropdown({
             </div>
           </div>
 
-          <div
-            className="mx-2.5 h-px shrink-0 bg-sidebar-active-border"
-            style={{ marginTop: 2, marginBottom: 2 }}
-            aria-hidden
-          />
+          <div className="mx-2.5 my-0.5 h-px shrink-0 bg-sidebar-hairline" aria-hidden />
 
           <div className="px-2.5 pb-2 pt-1">
             <div className="flex items-center justify-between px-1 pb-1.5">
@@ -265,7 +267,9 @@ export function WorkspaceDropdown({
                       />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="text-[11.5px] font-medium text-sidebar-text-light">{member.name}</div>
+                      <div className="text-[11.5px] font-medium text-sidebar-text-bright">
+                        {member.name}
+                      </div>
                       <div className="text-[9.5px] text-sidebar-muted">{member.role}</div>
                     </div>
                     <span className="text-right text-[9px] capitalize text-sidebar-muted">{member.status}</span>
@@ -275,7 +279,7 @@ export function WorkspaceDropdown({
             </ul>
           </div>
 
-          <div className="mx-2.5 h-px shrink-0 bg-sidebar-active-border" aria-hidden />
+          <div className="mx-2.5 my-0.5 h-px shrink-0 bg-sidebar-hairline" aria-hidden />
 
           <div className="flex flex-col px-2.5 py-1.5">
             <button

@@ -66,7 +66,7 @@ export async function publishProcessMeetingJob({
       hasSigningKeys: !!(process.env.QSTASH_CURRENT_SIGNING_KEY || process.env.QSTASH_NEXT_SIGNING_KEY),
     });
     
-    const messageId = await qstash.publishJSON({
+    const published = await qstash.publishJSON({
       url: webhookUrl,
       body: payload,
       // Retry configuration
@@ -78,6 +78,7 @@ export async function publishProcessMeetingJob({
         "X-QStash-Debug": "true",
       },
     });
+    const messageId = published.messageId;
 
     console.log(`✅ QStash job published successfully!`, {
       messageId,
@@ -186,13 +187,14 @@ export async function publishZoomIngestionJob(payload: ZoomIngestionPayload): Pr
 
   try {
     const qstash = getQStashClient();
-    const messageId = await qstash.publishJSON({
+    const published = await qstash.publishJSON({
       url: webhookUrl,
       body: payload,
       retries: 3,
       delay: 5,
       headers: { "X-QStash-Debug": "true" },
     });
+    const messageId = published.messageId;
 
     console.log(`✅ Zoom ingestion job published: ${payload.zoomMeetingId}`, { messageId });
     return messageId;
@@ -237,13 +239,14 @@ export async function publishTeamsCallRecordJob(
 
   try {
     const qstash = getQStashClient();
-    const messageId = await qstash.publishJSON({
+    const published = await qstash.publishJSON({
       url: webhookUrl,
       body: payload,
       retries: 3,
       delay: 5,
       headers: { "X-QStash-Debug": "true" },
     });
+    const messageId = published.messageId;
 
     console.log(`✅ Teams call-record job published: ${payload.callRecordId}`, { messageId });
     return messageId;
@@ -274,13 +277,14 @@ export async function publishTeamsIngestionJob(
 
   try {
     const qstash = getQStashClient();
-    const messageId = await qstash.publishJSON({
+    const published = await qstash.publishJSON({
       url: webhookUrl,
       body: payload,
       retries: 3,
       delay: 5,
       headers: { "X-QStash-Debug": "true" },
     });
+    const messageId = published.messageId;
 
     console.log(`✅ Teams ingestion job published: ${payload.meetingId}`, { messageId });
     return messageId;
@@ -313,17 +317,53 @@ export async function publishSharePointDepositJob(
   const webhookUrl = `${baseUrl}/api/jobs/sharepoint-deposit`;
   try {
     const qstash = getQStashClient();
-    const messageId = await qstash.publishJSON({
+    const published = await qstash.publishJSON({
       url: webhookUrl,
       body: payload,
       retries: 3,
       delay: 5,
       headers: { "X-QStash-Debug": "true" },
     });
+    const messageId = published.messageId;
     console.log("✅ SharePoint deposit job published", { messageId, meetingId: payload.meetingId });
     return messageId;
   } catch (error) {
     console.error("❌ SharePoint deposit job publish failed:", error);
+    throw error;
+  }
+}
+
+/** Epic 3.0a — Zoho CRM note on Contact */
+export type ZohoCrmNotePayload = {
+  meetingId: string;
+  workspaceId: string;
+};
+
+export async function publishZohoCrmNoteJob(
+  payload: ZohoCrmNotePayload
+): Promise<string | null> {
+  if (!env.QSTASH_TOKEN) {
+    console.warn("QSTASH_TOKEN not configured — Zoho CRM note skipped");
+    return null;
+  }
+  const baseUrl = env.NEXT_PUBLIC_APP_URL;
+  if (!baseUrl || baseUrl.includes("localhost") || baseUrl.includes("127.0.0.1")) {
+    console.warn("NEXT_PUBLIC_APP_URL must be a public URL for Zoho CRM note job");
+    return null;
+  }
+  const webhookUrl = `${baseUrl}/api/jobs/zoho-crm-note`;
+  try {
+    const qstash = getQStashClient();
+    const published = await qstash.publishJSON({
+      url: webhookUrl,
+      body: payload,
+      retries: 3,
+      delay: 5,
+      headers: { "X-QStash-Debug": "true" },
+    });
+    return published.messageId;
+  } catch (error) {
+    console.error("Zoho CRM note job publish failed:", error);
     throw error;
   }
 }

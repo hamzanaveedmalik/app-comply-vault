@@ -275,6 +275,15 @@ async function handler(request: Request) {
         // Don't fail the job if email fails
       }
 
+      try {
+        const { enqueueZohoCrmNoteIfConnected } = await import(
+          "~/server/integrations/zoho/enqueue-note"
+        );
+        void enqueueZohoCrmNoteIfConnected(workspaceId, meetingId);
+      } catch (zohoErr) {
+        console.error("Zoho CRM enqueue after draft ready failed:", zohoErr);
+      }
+
       console.log(`✅ Processing complete for meeting ${meetingId} (transcription + extraction)`);
 
       return Response.json({

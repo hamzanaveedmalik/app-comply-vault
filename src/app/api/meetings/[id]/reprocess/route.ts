@@ -116,6 +116,7 @@ export async function POST(
           searchableText, // Regenerate indexed text
           status: "DRAFT_READY",
           draftReadyAt: new Date(),
+          zohoCrmNotePostedAt: null,
         },
       });
 
@@ -164,6 +165,15 @@ export async function POST(
           },
         },
       });
+
+      try {
+        const { enqueueZohoCrmNoteIfConnected } = await import(
+          "~/server/integrations/zoho/enqueue-note"
+        );
+        void enqueueZohoCrmNoteIfConnected(session.user.workspaceId!, meeting.id);
+      } catch {
+        // non-blocking
+      }
 
       return Response.json({
         success: true,

@@ -177,6 +177,8 @@ exports.Prisma.MeetingScalarFieldEnum = {
   readyForCCO: 'readyForCCO',
   sharepointItemWebUrl: 'sharepointItemWebUrl',
   sharepointDepositedAt: 'sharepointDepositedAt',
+  zohoCrmContactId: 'zohoCrmContactId',
+  zohoCrmNotePostedAt: 'zohoCrmNotePostedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -524,7 +526,8 @@ exports.IntegrationProvider = exports.$Enums.IntegrationProvider = {
   RIA_IN_A_BOX: 'RIA_IN_A_BOX',
   COMPLYSCI: 'COMPLYSCI',
   SLACK: 'SLACK',
-  TEAMS_BOT: 'TEAMS_BOT'
+  TEAMS_BOT: 'TEAMS_BOT',
+  ZOHO_CRM: 'ZOHO_CRM'
 };
 
 exports.IntegrationStatus = exports.$Enums.IntegrationStatus = {

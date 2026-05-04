@@ -290,8 +290,9 @@ export const zoomAdapter = new (class extends BaseIntegrationAdapter {
     const [version, hash] = signature.split(",").reduce(
       (acc, part) => {
         const [k, v] = part.split("=");
-        if (k === "v0") acc[1] = v;
-        else if (k === "signature") acc[0] = v;
+        const value = v ?? "";
+        if (k === "v0") acc[1] = value;
+        else if (k === "signature") acc[0] = value;
         return acc;
       },
       ["", ""] as [string, string]

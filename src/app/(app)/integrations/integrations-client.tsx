@@ -28,6 +28,7 @@ const PROVIDER_LABELS: Record<string, string> = {
   COMPLYSCI: "ComplySci",
   SLACK: "Slack",
   TEAMS_BOT: "Teams Bot",
+  ZOHO_CRM: "Zoho CRM",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -82,6 +83,10 @@ export function IntegrationsClient({
   sharepointEmail,
   sharepointError,
   sharepointErrorDescription,
+  zohoCrmConnected,
+  zohoCrmAccount,
+  zohoCrmError,
+  zohoCrmErrorDescription,
 }: {
   workspaceId: string;
   initialIntegrations: Integration[];
@@ -97,6 +102,10 @@ export function IntegrationsClient({
   sharepointEmail?: string | null;
   sharepointError?: string | null;
   sharepointErrorDescription?: string | null;
+  zohoCrmConnected?: boolean;
+  zohoCrmAccount?: string | null;
+  zohoCrmError?: string | null;
+  zohoCrmErrorDescription?: string | null;
 }) {
   const [integrations, setIntegrations] = useState(initialIntegrations);
   const [expandedFailures, setExpandedFailures] = useState<string | null>(null);
@@ -108,12 +117,14 @@ export function IntegrationsClient({
   const hasZoom = integrations.some((i) => i.provider === "ZOOM");
   const hasTeams = integrations.some((i) => i.provider === "TEAMS");
   const hasSharePoint = integrations.some((i) => i.provider === "SHAREPOINT");
+  const hasZohoCrm = integrations.some((i) => i.provider === "ZOHO_CRM");
 
   useEffect(() => {
     if (
       (zoomConnected && zoomEmail && integrations.some((i) => i.provider === "ZOOM")) ||
       (teamsConnected && teamsEmail && integrations.some((i) => i.provider === "TEAMS")) ||
-      (sharepointConnected && sharepointEmail && integrations.some((i) => i.provider === "SHAREPOINT"))
+      (sharepointConnected && sharepointEmail && integrations.some((i) => i.provider === "SHAREPOINT")) ||
+      (zohoCrmConnected && zohoCrmAccount && integrations.some((i) => i.provider === "ZOHO_CRM"))
     ) {
       window.history.replaceState({}, "", "/integrations");
     }
@@ -124,6 +135,8 @@ export function IntegrationsClient({
     teamsEmail,
     sharepointConnected,
     sharepointEmail,
+    zohoCrmConnected,
+    zohoCrmAccount,
     integrations,
   ]);
 
@@ -140,6 +153,11 @@ export function IntegrationsClient({
   function handleConnectSharePoint() {
     setConnectLoading(true);
     window.location.href = "/api/integrations/sharepoint/connect";
+  }
+
+  function handleConnectZohoCrm() {
+    setConnectLoading(true);
+    window.location.href = "/api/integrations/zoho-crm/connect";
   }
 
   async function handleDisconnect(credentialId: string) {
@@ -257,6 +275,32 @@ export function IntegrationsClient({
         </div>
       )}
 
+      {zohoCrmConnected && zohoCrmAccount && (
+        <div className="rounded-lg border border-green-200 bg-green-50 p-4 flex items-start gap-3">
+          <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium text-green-800">Zoho CRM connected</p>
+            <p className="text-sm text-green-700 mt-1">
+              {zohoCrmAccount} — notes sync when a meeting reaches draft-ready (match Contact by client name
+              or set Contact ID on the meeting).
+            </p>
+          </div>
+        </div>
+      )}
+
+      {zohoCrmError && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 flex items-start gap-3">
+          <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium text-red-800">Zoho CRM connection failed</p>
+            <p className="text-sm text-red-700 mt-1">
+              {zohoCrmErrorDescription ??
+                "Check Zoho API Console redirect URI, client id/secret, and CRM scopes (Contacts read, Notes create)."}
+            </p>
+          </div>
+        </div>
+      )}
+
       {integrations.length === 0 ? (
         <div className="rounded-lg border border-dashed p-8 text-center">
           <p className="text-muted-foreground">No integrations connected yet.</p>
@@ -272,6 +316,9 @@ export function IntegrationsClient({
             </Button>
             <Button onClick={handleConnectSharePoint} disabled={connectLoading} variant="outline" size="lg">
               Connect SharePoint
+            </Button>
+            <Button onClick={handleConnectZohoCrm} disabled={connectLoading} variant="outline" size="lg">
+              Connect Zoho CRM
             </Button>
           </div>
         </div>
@@ -312,6 +359,19 @@ export function IntegrationsClient({
                 </p>
               </div>
               <Button onClick={handleConnectSharePoint} disabled={connectLoading} variant="outline">
+                Connect
+              </Button>
+            </div>
+          )}
+          {!hasZohoCrm && (
+            <div className="rounded-lg border p-4 flex items-center justify-between">
+              <div>
+                <p className="font-medium">Zoho CRM</p>
+                <p className="text-sm text-muted-foreground">
+                  Add a note to the matched Contact when an audit pack is ready for review
+                </p>
+              </div>
+              <Button onClick={handleConnectZohoCrm} disabled={connectLoading} variant="outline">
                 Connect
               </Button>
             </div>

@@ -9,10 +9,11 @@
 | Field | Value |
 |-------|-------|
 | Product | ComplyVault |
-| Version | 1.0 |
+| Version | 1.1 |
 | Status | Draft |
 | Target Release | Q3 2026 (Phased) |
 | Primary Users | CCOs, RIA Principals |
+| Changelog | v1.1 — Added Zoho One CRM (P0, Phase 1); Tiered Sign-Off Workflow (Epic 4); Configurable Disclosure Profiles (Epic 8); based on CCO discovery feedback |
 
 ---
 
@@ -43,9 +44,9 @@
 | 1 | Meeting & Recording Capture | 1 | P0 |
 | 7 | Dashboard & Reporting | 1 | P0 |
 | 2 | Document Storage | 1–2 | P0 |
-| 4 | Compliance Platforms (DocuSign, RIAB) | 1 | P0 |
+| 4 | Compliance Platforms & Sign-Off Workflow | 1 | P0 |
 | 5 | Notifications (Email, Slack) | 1–2 | P0 |
-| 3 | CRM (Redtail, Wealthbox) | 2 | P0 |
+| 3 | CRM (Zoho One, Redtail, Wealthbox) | 1–2 | P0 |
 | 8 | CCO Intelligence & Differentiation | 2 | P1 |
 
 ---
@@ -84,27 +85,34 @@
 
 **Goal:** Link audit packs to client records in CRM.
 
-| Story | Description |
-|-------|-------------|
-| 3.1 | Redtail API key connection |
-| 3.2 | Redtail auto-note on matched Contact |
-| 3.3 | Wealthbox OAuth, Activity records |
-| 3.4 | Salesforce FSC (Phase 3) |
+| Story | Description | Phase | Priority |
+|-------|-------------|-------|----------|
+| **3.0** | **Zoho One / Zoho CRM OAuth connection** | **1** | **P0** |
+| **3.0a** | **Zoho CRM auto-note: push structured compliance summary, flags, and action items to matched Contact record on audit pack generation** | **1** | **P0** |
+| **3.0b** | **Zoho CRM task sync: create Zoho Tasks from audit pack action items with owner, due date, and priority** | **1** | **P1** |
+| **3.0c** | **Zoho CRM link-back: attach deep link to full audit pack in ComplyVault from the Contact record** | **1** | **P1** |
+| 3.1 | Redtail API key connection | 2 | P0 |
+| 3.2 | Redtail auto-note on matched Contact | 2 | P0 |
+| 3.3 | Wealthbox OAuth, Activity records | 2 | P0 |
+| 3.4 | Salesforce FSC (Phase 3) | 3 | P1 |
 
 ---
 
-## Epic 4: Compliance Platforms
+## Epic 4: Compliance Platforms & Sign-Off Workflow
 
-**Goal:** Feed output into compliance platforms for SEC exam prep.
+**Goal:** Feed output into compliance platforms for SEC exam prep. Support tiered approval so CCO liability is scoped appropriately.
 
-| Story | Description |
-|-------|-------------|
-| 4.1 | DocuSign OAuth |
-| 4.2a | DocuSign envelope on Pending CCO Review |
-| 4.2b | DocuSign webhook → status Signed |
-| 4.2c | 24hr signature reminder |
-| 4.3 | RIA in a Box compliance events |
-| 4.4 | ComplySci incidents (Phase 3) |
+| Story | Description | Phase | Priority |
+|-------|-------------|-------|----------|
+| **4.0** | **Tiered sign-off workflow: Advisor certifies meeting accuracy (Layer 1), then Compliance Manager reviews flags, resolves/escalates each, and approves the compliance layer (Layer 2). CCO sign-off only covers the compliance review, not the advisor's conduct.** | **1** | **P0** |
+| **4.0a** | **Flag resolution UI: Compliance Manager can mark each flag as Resolved, Escalated, Accepted Risk, or Not Applicable before sign-off** | **1** | **P0** |
+| **4.0b** | **Approval audit trail: timestamped log of both sign-off layers with reviewer identity and flag resolution decisions** | **1** | **P0** |
+| 4.1 | DocuSign OAuth | 1 | P0 |
+| 4.2a | DocuSign envelope on Pending CCO Review | 1 | P0 |
+| 4.2b | DocuSign webhook → status Signed | 1 | P0 |
+| 4.2c | 24hr signature reminder | 1 | P1 |
+| 4.3 | RIA in a Box compliance events | 1 | P0 |
+| 4.4 | ComplySci incidents (Phase 3) | 3 | P1 |
 
 ---
 
@@ -158,16 +166,19 @@
 
 ---
 
-## Epic 8: CCO Intelligence (Phase 2)
+## Epic 8: CCO Intelligence & Differentiation (Phase 2)
 
-**Goal:** Competitive differentiation vs Jump.ai.
+**Goal:** Competitive differentiation vs Jump.ai. Configurable compliance logic so the system adapts to each firm's existing framework.
 
-| Story | Description |
-|-------|-------------|
-| 8.1 | Pre-meeting compliance briefing |
-| 8.2 | Adviser supervisory insights (flag rates) |
-| 8.3 | Suitability review tracker |
-| 8.4 | Adviser-facing pack review tier |
+| Story | Description | Priority |
+|-------|-------------|----------|
+| **8.0** | **Configurable disclosure profiles: firm-level settings to mark disclosure categories as "covered elsewhere" (e.g. marketing pack, ADV brochure, client agreement). System skips flagging these as missing from meeting records.** | **P0** |
+| **8.0a** | **Configurable action item scoping: CCO defines which action item categories appear in the audit pack vs. operational notes that stay outside the compliance record** | **P0** |
+| **8.0b** | **AI flag transparency: documentation and in-app explainer showing how flags are identified, confidence thresholds, and the human review layer before finalisation** | **P1** |
+| 8.1 | Pre-meeting compliance briefing | P1 |
+| 8.2 | Adviser supervisory insights (flag rates) | P1 |
+| 8.3 | Suitability review tracker | P1 |
+| 8.4 | Adviser-facing pack review tier | P1 |
 
 ---
 
@@ -175,8 +186,8 @@
 
 | Phase | Timeline | Integrations |
 |-------|----------|--------------|
-| Phase 1 | Q3 2026 (M1–3) | Zoom, Teams, SharePoint, DocuSign, RIAB, Email |
-| Phase 2 | Q3–Q4 2026 (M4–6) | Redtail, Wealthbox, Slack, Teams Bot, Drive, SmartVault |
+| Phase 1 | Q3 2026 (M1–3) | Zoom, Teams, SharePoint, DocuSign, RIAB, Email, **Zoho One CRM**, **Tiered Sign-Off** |
+| Phase 2 | Q3–Q4 2026 (M4–6) | Redtail, Wealthbox, Slack, Teams Bot, Drive, SmartVault, **Configurable Disclosure Profiles** |
 | Phase 3 | Q1 2027 | Salesforce, ComplySci, Orion, Calendar |
 
 ---

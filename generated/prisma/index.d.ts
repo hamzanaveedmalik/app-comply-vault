@@ -282,7 +282,8 @@ export const IntegrationProvider: {
   RIA_IN_A_BOX: 'RIA_IN_A_BOX',
   COMPLYSCI: 'COMPLYSCI',
   SLACK: 'SLACK',
-  TEAMS_BOT: 'TEAMS_BOT'
+  TEAMS_BOT: 'TEAMS_BOT',
+  ZOHO_CRM: 'ZOHO_CRM'
 };
 
 export type IntegrationProvider = (typeof IntegrationProvider)[keyof typeof IntegrationProvider]
@@ -5649,6 +5650,8 @@ export namespace Prisma {
     readyForCCO: boolean | null
     sharepointItemWebUrl: string | null
     sharepointDepositedAt: Date | null
+    zohoCrmContactId: string | null
+    zohoCrmNotePostedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5679,6 +5682,8 @@ export namespace Prisma {
     readyForCCO: boolean | null
     sharepointItemWebUrl: string | null
     sharepointDepositedAt: Date | null
+    zohoCrmContactId: string | null
+    zohoCrmNotePostedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5711,6 +5716,8 @@ export namespace Prisma {
     readyForCCO: number
     sharepointItemWebUrl: number
     sharepointDepositedAt: number
+    zohoCrmContactId: number
+    zohoCrmNotePostedAt: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -5755,6 +5762,8 @@ export namespace Prisma {
     readyForCCO?: true
     sharepointItemWebUrl?: true
     sharepointDepositedAt?: true
+    zohoCrmContactId?: true
+    zohoCrmNotePostedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5785,6 +5794,8 @@ export namespace Prisma {
     readyForCCO?: true
     sharepointItemWebUrl?: true
     sharepointDepositedAt?: true
+    zohoCrmContactId?: true
+    zohoCrmNotePostedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5817,6 +5828,8 @@ export namespace Prisma {
     readyForCCO?: true
     sharepointItemWebUrl?: true
     sharepointDepositedAt?: true
+    zohoCrmContactId?: true
+    zohoCrmNotePostedAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -5936,6 +5949,8 @@ export namespace Prisma {
     readyForCCO: boolean
     sharepointItemWebUrl: string | null
     sharepointDepositedAt: Date | null
+    zohoCrmContactId: string | null
+    zohoCrmNotePostedAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: MeetingCountAggregateOutputType | null
@@ -5987,6 +6002,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: boolean
     sharepointDepositedAt?: boolean
+    zohoCrmContactId?: boolean
+    zohoCrmNotePostedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
@@ -6026,6 +6043,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: boolean
     sharepointDepositedAt?: boolean
+    zohoCrmContactId?: boolean
+    zohoCrmNotePostedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
@@ -6059,6 +6078,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: boolean
     sharepointDepositedAt?: boolean
+    zohoCrmContactId?: boolean
+    zohoCrmNotePostedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
@@ -6092,11 +6113,13 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: boolean
     sharepointDepositedAt?: boolean
+    zohoCrmContactId?: boolean
+    zohoCrmNotePostedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientName" | "meetingType" | "meetingDate" | "status" | "fileUrl" | "sourceFileSha256" | "sourceFileName" | "sourceFileSize" | "sourceFileMime" | "sourceUploadedAt" | "transcript" | "extraction" | "searchableText" | "finalizedBy" | "finalizedAt" | "finalizeReason" | "finalizeNote" | "finalizedPolicyVersion" | "samplingBucket" | "samplingRuleId" | "draftReadyAt" | "timeToFinalize" | "readyForCCO" | "sharepointItemWebUrl" | "sharepointDepositedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["meeting"]>
+  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientName" | "meetingType" | "meetingDate" | "status" | "fileUrl" | "sourceFileSha256" | "sourceFileName" | "sourceFileSize" | "sourceFileMime" | "sourceUploadedAt" | "transcript" | "extraction" | "searchableText" | "finalizedBy" | "finalizedAt" | "finalizeReason" | "finalizeNote" | "finalizedPolicyVersion" | "samplingBucket" | "samplingRuleId" | "draftReadyAt" | "timeToFinalize" | "readyForCCO" | "sharepointItemWebUrl" | "sharepointDepositedAt" | "zohoCrmContactId" | "zohoCrmNotePostedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["meeting"]>
   export type MeetingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     versions?: boolean | Meeting$versionsArgs<ExtArgs>
@@ -6154,6 +6177,11 @@ export namespace Prisma {
        */
       sharepointItemWebUrl: string | null
       sharepointDepositedAt: Date | null
+      /**
+       * Epic 3 — Zoho CRM: explicit Contact record id; optional when name search is enough
+       */
+      zohoCrmContactId: string | null
+      zohoCrmNotePostedAt: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["meeting"]>
@@ -6612,6 +6640,8 @@ export namespace Prisma {
     readonly readyForCCO: FieldRef<"Meeting", 'Boolean'>
     readonly sharepointItemWebUrl: FieldRef<"Meeting", 'String'>
     readonly sharepointDepositedAt: FieldRef<"Meeting", 'DateTime'>
+    readonly zohoCrmContactId: FieldRef<"Meeting", 'String'>
+    readonly zohoCrmNotePostedAt: FieldRef<"Meeting", 'DateTime'>
     readonly createdAt: FieldRef<"Meeting", 'DateTime'>
     readonly updatedAt: FieldRef<"Meeting", 'DateTime'>
   }
@@ -25279,6 +25309,8 @@ export namespace Prisma {
     readyForCCO: 'readyForCCO',
     sharepointItemWebUrl: 'sharepointItemWebUrl',
     sharepointDepositedAt: 'sharepointDepositedAt',
+    zohoCrmContactId: 'zohoCrmContactId',
+    zohoCrmNotePostedAt: 'zohoCrmNotePostedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -26123,6 +26155,8 @@ export namespace Prisma {
     readyForCCO?: BoolFilter<"Meeting"> | boolean
     sharepointItemWebUrl?: StringNullableFilter<"Meeting"> | string | null
     sharepointDepositedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    zohoCrmContactId?: StringNullableFilter<"Meeting"> | string | null
+    zohoCrmNotePostedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
@@ -26161,6 +26195,8 @@ export namespace Prisma {
     readyForCCO?: SortOrder
     sharepointItemWebUrl?: SortOrderInput | SortOrder
     sharepointDepositedAt?: SortOrderInput | SortOrder
+    zohoCrmContactId?: SortOrderInput | SortOrder
+    zohoCrmNotePostedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     workspace?: WorkspaceOrderByWithRelationInput
@@ -26202,6 +26238,8 @@ export namespace Prisma {
     readyForCCO?: BoolFilter<"Meeting"> | boolean
     sharepointItemWebUrl?: StringNullableFilter<"Meeting"> | string | null
     sharepointDepositedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    zohoCrmContactId?: StringNullableFilter<"Meeting"> | string | null
+    zohoCrmNotePostedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
@@ -26240,6 +26278,8 @@ export namespace Prisma {
     readyForCCO?: SortOrder
     sharepointItemWebUrl?: SortOrderInput | SortOrder
     sharepointDepositedAt?: SortOrderInput | SortOrder
+    zohoCrmContactId?: SortOrderInput | SortOrder
+    zohoCrmNotePostedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: MeetingCountOrderByAggregateInput
@@ -26280,6 +26320,8 @@ export namespace Prisma {
     readyForCCO?: BoolWithAggregatesFilter<"Meeting"> | boolean
     sharepointItemWebUrl?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
     sharepointDepositedAt?: DateTimeNullableWithAggregatesFilter<"Meeting"> | Date | string | null
+    zohoCrmContactId?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
+    zohoCrmNotePostedAt?: DateTimeNullableWithAggregatesFilter<"Meeting"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Meeting"> | Date | string
   }
@@ -27774,6 +27816,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: string | null
     sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -27812,6 +27856,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: string | null
     sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -27848,6 +27894,8 @@ export namespace Prisma {
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -27886,6 +27934,8 @@ export namespace Prisma {
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -27923,6 +27973,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: string | null
     sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -27954,6 +28006,8 @@ export namespace Prisma {
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -27986,6 +28040,8 @@ export namespace Prisma {
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -29849,6 +29905,8 @@ export namespace Prisma {
     readyForCCO?: SortOrder
     sharepointItemWebUrl?: SortOrder
     sharepointDepositedAt?: SortOrder
+    zohoCrmContactId?: SortOrder
+    zohoCrmNotePostedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -29885,6 +29943,8 @@ export namespace Prisma {
     readyForCCO?: SortOrder
     sharepointItemWebUrl?: SortOrder
     sharepointDepositedAt?: SortOrder
+    zohoCrmContactId?: SortOrder
+    zohoCrmNotePostedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -29915,6 +29975,8 @@ export namespace Prisma {
     readyForCCO?: SortOrder
     sharepointItemWebUrl?: SortOrder
     sharepointDepositedAt?: SortOrder
+    zohoCrmContactId?: SortOrder
+    zohoCrmNotePostedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -32874,6 +32936,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: string | null
     sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionCreateNestedManyWithoutMeetingInput
@@ -32910,6 +32974,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: string | null
     sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -33229,6 +33295,8 @@ export namespace Prisma {
     readyForCCO?: BoolFilter<"Meeting"> | boolean
     sharepointItemWebUrl?: StringNullableFilter<"Meeting"> | string | null
     sharepointDepositedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    zohoCrmContactId?: StringNullableFilter<"Meeting"> | string | null
+    zohoCrmNotePostedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
   }
@@ -34078,6 +34146,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: string | null
     sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -34115,6 +34185,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: string | null
     sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutMeetingInput
@@ -34166,6 +34238,8 @@ export namespace Prisma {
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -34203,6 +34277,8 @@ export namespace Prisma {
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
@@ -34238,6 +34314,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: string | null
     sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -34275,6 +34353,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: string | null
     sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -34434,6 +34514,8 @@ export namespace Prisma {
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -34471,6 +34553,8 @@ export namespace Prisma {
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -34667,6 +34751,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: string | null
     sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -34704,6 +34790,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: string | null
     sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -34961,6 +35049,8 @@ export namespace Prisma {
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -34998,6 +35088,8 @@ export namespace Prisma {
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -35665,6 +35757,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: string | null
     sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -35702,6 +35796,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: string | null
     sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -35822,6 +35918,8 @@ export namespace Prisma {
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -35859,6 +35957,8 @@ export namespace Prisma {
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -36640,6 +36740,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: string | null
     sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -36677,6 +36779,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: string | null
     sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -36763,6 +36867,8 @@ export namespace Prisma {
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -36800,6 +36906,8 @@ export namespace Prisma {
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -36840,6 +36948,8 @@ export namespace Prisma {
     readyForCCO?: boolean
     sharepointItemWebUrl?: string | null
     sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -36965,6 +37075,8 @@ export namespace Prisma {
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUpdateManyWithoutMeetingNestedInput
@@ -37001,6 +37113,8 @@ export namespace Prisma {
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -37037,6 +37151,8 @@ export namespace Prisma {
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
     sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

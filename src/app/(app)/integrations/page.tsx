@@ -99,6 +99,15 @@ export default async function IntegrationsPage({
       ? decodeURIComponent(params.sharepoint_error_description)
       : null;
 
+  const zohoCrmConnected = params.zoho_crm_connected === "1";
+  const zohoCrmAccount =
+    typeof params.zoho_crm_account === "string" ? decodeURIComponent(params.zoho_crm_account) : null;
+  const zohoCrmError = typeof params.zoho_crm_error === "string" ? params.zoho_crm_error : null;
+  const zohoCrmErrorDescription =
+    typeof params.zoho_crm_error_description === "string"
+      ? decodeURIComponent(params.zoho_crm_error_description)
+      : null;
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-semibold mb-6">Integrations</h1>
@@ -117,6 +126,10 @@ export default async function IntegrationsPage({
         sharepointEmail={sharepointEmail}
         sharepointError={sharepointError}
         sharepointErrorDescription={sharepointErrorDescription}
+        zohoCrmConnected={zohoCrmConnected}
+        zohoCrmAccount={zohoCrmAccount}
+        zohoCrmError={zohoCrmError}
+        zohoCrmErrorDescription={zohoCrmErrorDescription}
       />
     </div>
   );

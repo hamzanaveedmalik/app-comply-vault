@@ -15,6 +15,7 @@ const PROVIDER_LABELS: Record<string, string> = {
   DOCUSIGN: "DocuSign",
   RIA_IN_A_BOX: "RIA in a Box",
   SLACK: "Slack",
+  ZOHO_CRM: "Zoho CRM",
 };
 
 type SyncStatus = {

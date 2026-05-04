@@ -7,6 +7,7 @@ import { db } from "~/server/db";
 import { decryptToken, encryptToken } from "./crypto";
 import { sendIntegrationReconnectEmail } from "~/server/email";
 import type { IntegrationProvider } from "../../../generated/prisma";
+import { exchangeZohoRefreshToken } from "./zoho/crm-token";
 
 const REFRESH_BUFFER_MS = 15 * 60 * 1000; // Refresh if expiring within 15 mins
 
@@ -190,6 +191,33 @@ async function refreshTokenForProvider(
     case "SHAREPOINT":
       // Same Azure AD app + refresh contract as Microsoft Teams
       return refreshTeamsToken(refreshToken);
+    case "ZOHO_CRM": {
+      const intConf = await db.integrationConfig.findUnique({
+        where: { workspaceId_provider: { workspaceId: _workspaceId, provider: "ZOHO_CRM" } },
+      });
+      if (!intConf) return null;
+      const c = (intConf.config as { accountsBase?: string; apiDomain?: string }) ?? {};
+      const accountsBase = c.accountsBase ?? "https://accounts.zoho.com";
+      const t = await exchangeZohoRefreshToken(refreshToken, accountsBase);
+      if (!t) return null;
+      if (t.apiDomain) {
+        await db.integrationConfig.update({
+          where: { id: intConf.id },
+          data: {
+            config: {
+              ...c,
+              apiDomain: t.apiDomain,
+              accountsBase: c.accountsBase ?? accountsBase,
+            },
+          },
+        });
+      }
+      return {
+        accessToken: t.accessToken,
+        refreshToken: t.refreshToken,
+        expiresAt: t.expiresAt,
+      };
+    }
     case "GOOGLE_DRIVE":
     case "DOCUSIGN":
     case "SLACK":

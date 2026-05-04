@@ -287,6 +287,15 @@ async function handler(request: Request) {
           // Ignore email errors
         }
 
+        try {
+          const { enqueueZohoCrmNoteIfConnected } = await import(
+            "~/server/integrations/zoho/enqueue-note"
+          );
+          void enqueueZohoCrmNoteIfConnected(workspaceId, meeting.id);
+        } catch {
+          // non-blocking
+        }
+
         return Response.json({
           success: true,
           meetingId: meeting.id,

@@ -117,6 +117,15 @@ export async function POST(request: Request) {
       },
     });
 
+    try {
+      const { enqueueZohoCrmNoteIfConnected } = await import(
+        "~/server/integrations/zoho/enqueue-note"
+      );
+      void enqueueZohoCrmNoteIfConnected(session.user.workspaceId!, meeting.id);
+    } catch {
+      // non-blocking
+    }
+
     return Response.json({
       meetingId: meeting.id,
       status: "DRAFT_READY",

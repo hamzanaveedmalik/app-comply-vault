@@ -136,6 +136,9 @@ model Meeting {
   /// Microsoft Graph / SharePoint (Epic 2) — item web URL after auto-deposit
   sharepointItemWebUrl  String?   @db.Text
   sharepointDepositedAt DateTime?
+  /// Epic 3 — Zoho CRM: explicit Contact record id; optional when name search is enough
+  zohoCrmContactId   String?   @db.Text
+  zohoCrmNotePostedAt DateTime?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 
@@ -470,6 +473,7 @@ enum IntegrationProvider {
   COMPLYSCI
   SLACK
   TEAMS_BOT
+  ZOHO_CRM
 }
 
 enum IntegrationStatus {

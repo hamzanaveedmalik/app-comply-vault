@@ -45,6 +45,7 @@ export async function POST(request: NextRequest) {
     if ((payload.event as string) === "recording.completed") {
       const obj = payload.payload as Record<string, unknown> | undefined;
       const recordingObj = (typeof obj === "object" && obj !== null ? obj : {}) as {
+        id?: string;
         uuid?: string;
         host_email?: string;
         topic?: string;

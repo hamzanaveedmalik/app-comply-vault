@@ -18,6 +18,7 @@ import { MeetingStatusPoller } from "./meeting-status-poller";
 import RetryButton from "./retry-button";
 import FlagsPanel from "./flags-panel";
 import { IntegrationSyncPanel } from "./integration-sync-panel";
+import { ZohoCrmContactField } from "./zoho-crm-contact-field";
 import { validateEvidenceCoverage } from "~/server/extraction/evidence";
 
 export default async function MeetingDetailPage({
@@ -47,7 +48,7 @@ export default async function MeetingDetailPage({
   // Parse extraction data if available
   const extraction = meeting.extraction as ExtractionData | null | undefined;
 
-  const [flags, syncLogs, configs] = await Promise.all([
+  const [flags, syncLogs, configs, zohoCrmCredential] = await Promise.all([
     db.flag.findMany({
       where: { meetingId: meeting.id },
       orderBy: { createdAt: "desc" },
@@ -68,6 +69,11 @@ export default async function MeetingDetailPage({
     db.integrationConfig.findMany({
       where: { workspaceId: session.user.workspaceId },
       select: { provider: true },
+    }),
+    db.integrationCredential.findUnique({
+      where: {
+        workspaceId_provider: { workspaceId: session.user.workspaceId, provider: "ZOHO_CRM" },
+      },
     }),
   ]);
 
@@ -282,6 +288,27 @@ export default async function MeetingDetailPage({
           userRole={session.user.role}
           currentUserId={session.user.id}
         />
+
+        {zohoCrmCredential?.status === "CONNECTED" &&
+          (meeting.status === "DRAFT_READY" || meeting.status === "DRAFT") && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Zoho CRM</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <ZohoCrmContactField
+                  meetingId={meeting.id}
+                  initialContactId={meeting.zohoCrmContactId}
+                  canEdit={session.user.role === "OWNER_CCO"}
+                />
+                {meeting.zohoCrmNotePostedAt && (
+                  <p className="text-xs text-muted-foreground">
+                    CRM note created {meeting.zohoCrmNotePostedAt.toLocaleString()}.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
         {/* Two-Column Layout: Transcript + Extracted Fields */}
         {meeting.status === "DRAFT_READY" || meeting.status === "DRAFT" || meeting.status === "FINALIZED" ? (

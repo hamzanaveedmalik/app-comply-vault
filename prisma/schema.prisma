@@ -7,8 +7,11 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  /// Unpooled/direct URL for migrations (required on Neon when DATABASE_URL uses `-pooler`).
+  /// Omit in .env only for local Postgres by setting DIRECT_URL to the same value as DATABASE_URL.
+  directUrl = env("DIRECT_URL")
 }
 
 // ============================================

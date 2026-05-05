@@ -26,7 +26,6 @@ export default async function AppLayout({
   let reviewQueueCount = 0;
   let billingStatus: string | null = null;
   let workspaces: WorkspaceListItemDto[] = [];
-  let clientCount = 0;
 
   if (session.user.workspaceId && session.user.workspaceId !== "") {
     const [workspace, reviewCount, wsList] = await Promise.all([
@@ -47,7 +46,6 @@ export default async function AppLayout({
     billingStatus = workspace?.billingStatus ?? null;
     reviewQueueCount = reviewCount;
     workspaces = wsList;
-    clientCount = wsList.find((w) => w.id === session.user.workspaceId)?.clientCount ?? 0;
   }
 
   return (
@@ -58,7 +56,6 @@ export default async function AppLayout({
         userRole={session.user.role}
         activeWorkspaceId={session.user.workspaceId ?? ""}
         workspaces={workspaces}
-        clientCount={clientCount}
         reviewQueueCount={reviewQueueCount}
       />
       <div className="lg:pl-[244px]">

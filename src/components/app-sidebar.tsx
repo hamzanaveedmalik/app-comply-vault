@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
 import {
@@ -15,8 +17,9 @@ import {
   Upload,
 } from "lucide-react";
 import { cn } from "~/lib/utils";
-import { useState } from "react";
-import { WorkspaceDropdown } from "~/components/workspace-dropdown";
+import { WorkspaceDropdown } from "~/components/layout/workspace-dropdown";
+import { fetchTeamMembers, workspaceDtoToWorkspace } from "~/lib/workspace-api";
+import type { TeamMember, Workspace } from "~/lib/types";
 import type { WorkspaceListItemDto } from "~/lib/workspace-types";
 
 export type AppSidebarProps = {
@@ -25,7 +28,6 @@ export type AppSidebarProps = {
   userRole?: string | null;
   activeWorkspaceId: string;
   workspaces: WorkspaceListItemDto[];
-  clientCount: number;
   reviewQueueCount?: number;
 };
 
@@ -49,11 +51,85 @@ export function AppSidebar({
   userRole,
   activeWorkspaceId,
   workspaces,
-  clientCount,
   reviewQueueCount = 0,
 }: AppSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [teamLoading, setTeamLoading] = useState(true);
+
+  const workspaceList = useMemo(
+    () => workspaces.map(workspaceDtoToWorkspace),
+    [workspaces],
+  );
+
+  const activeWorkspace = useMemo(() => {
+    const dto = workspaces.find((w) => w.id === activeWorkspaceId) ?? workspaces[0];
+    return dto ? workspaceDtoToWorkspace(dto) : null;
+  }, [workspaces, activeWorkspaceId]);
+
+  const loadTeam = useCallback(
+    async (opts?: { silent?: boolean }) => {
+      if (!activeWorkspaceId) {
+        return;
+      }
+      if (!opts?.silent) {
+        setTeamLoading(true);
+      }
+      try {
+        const data = await fetchTeamMembers(activeWorkspaceId);
+        setTeamMembers(data);
+      } catch {
+        setTeamMembers([]);
+      } finally {
+        if (!opts?.silent) {
+          setTeamLoading(false);
+        }
+      }
+    },
+    [activeWorkspaceId],
+  );
+
+  useEffect(() => {
+    void loadTeam();
+  }, [loadTeam]);
+
+  useEffect(() => {
+    const id = window.setInterval(() => void loadTeam({ silent: true }), 30_000);
+    return () => window.clearInterval(id);
+  }, [loadTeam]);
+
+  const onSelectWorkspace = useCallback(
+    async (ws: Workspace) => {
+      if (ws.id === activeWorkspaceId) {
+        return;
+      }
+      try {
+        const res = await fetch("/api/workspaces/switch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ workspaceId: ws.id }),
+        });
+        if (!res.ok) {
+          toast.error("Could not switch workspace");
+          return;
+        }
+        router.refresh();
+      } catch {
+        toast.error("Could not switch workspace");
+      }
+    },
+    [activeWorkspaceId, router],
+  );
+
+  const onInvite = useCallback(() => {
+    router.push(`/workspaces/${activeWorkspaceId}/invite`);
+  }, [activeWorkspaceId, router]);
+
+  const onSettings = useCallback(() => {
+    router.push("/settings/workspace");
+  }, [router]);
 
   const isActive = (path: string) => {
     if (path === "/dashboard") return pathname === "/dashboard";
@@ -110,11 +186,20 @@ export function AppSidebar({
 
       <div className="h-px w-full shrink-0 bg-sidebar-hairline" aria-hidden />
 
-      {activeWorkspaceId && workspaces.length > 0 ? (
+      {activeWorkspaceId && workspaces.length > 0 && activeWorkspace ? (
         <WorkspaceDropdown
-          activeWorkspaceId={activeWorkspaceId}
-          workspaces={workspaces}
-          clientCount={clientCount}
+          activeWorkspace={activeWorkspace}
+          workspaces={workspaceList}
+          teamMembers={teamMembers}
+          teamLoading={teamLoading}
+          onSelectWorkspace={onSelectWorkspace}
+          onInvite={onInvite}
+          onSettings={onSettings}
+          onOpenChange={(open) => {
+            if (open) {
+              void loadTeam({ silent: true });
+            }
+          }}
         />
       ) : (
         <div className="mx-3 mt-3 mb-1">

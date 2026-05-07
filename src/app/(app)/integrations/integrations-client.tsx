@@ -13,7 +13,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { zoomRecordingListScopesLikelyMissing } from "~/lib/zoom-scopes";
+import {
+  zoomHasBaseListUserRecordingsOnly,
+  zoomRecordingListScopesLikelyMissing,
+} from "~/lib/zoom-scopes";
 
 const PROVIDER_LABELS: Record<string, string> = {
   ZOOM: "Zoom",
@@ -405,20 +408,57 @@ export function IntegrationsClient({
                   {int.provider === "ZOOM" &&
                     zoomRecordingListScopesLikelyMissing(int.oauthScopes ?? null) && (
                       <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
-                        <p className="font-medium">Zoom recording scopes look incomplete</p>
+                        <p className="font-medium">
+                          {zoomHasBaseListUserRecordingsOnly(int.oauthScopes ?? null)
+                            ? "Zoom listing scope present — elevate tier for List recordings API"
+                            : "Zoom recording scopes look incomplete"}
+                        </p>
                         <p className="mt-1 text-amber-900/90">
-                          Sync may fail with error 4711 until Zoom puts{" "}
-                          <code className="rounded bg-amber-100/80 px-1">
-                            list_user_recordings:admin
-                          </code>{" "}
-                          or{" "}
-                          <code className="rounded bg-amber-100/80 px-1">
-                            list_user_recordings:master
-                          </code>{" "}
-                          (or classic{" "}
-                          <code className="rounded bg-amber-100/80 px-1">recording:read</code>) on the access token.
-                          Match Development vs Production in the Marketplace with your Vercel{" "}
-                          <code className="rounded bg-amber-100/80 px-1">ZOOM_CLIENT_ID</code>, then Disconnect → Connect Zoom.
+                          {zoomHasBaseListUserRecordingsOnly(int.oauthScopes ?? null) ? (
+                            <>
+                              Zoom issued{" "}
+                              <code className="rounded bg-amber-100/80 px-1">
+                                cloud_recording:read:list_user_recordings
+                              </code>{" "}
+                              and related recording scopes, but{" "}
+                              <code className="rounded bg-amber-100/80 px-1">
+                                GET /users/…/recordings
+                              </code>{" "}
+                              often returns error 4711 until the token also includes{" "}
+                              <code className="rounded bg-amber-100/80 px-1">
+                                cloud_recording:read:list_user_recordings:admin
+                              </code>
+                              ,{" "}
+                              <code className="rounded bg-amber-100/80 px-1">
+                                cloud_recording:read:list_user_recordings:master
+                              </code>
+                              , or classic{" "}
+                              <code className="rounded bg-amber-100/80 px-1">recording:read</code>{" "}
+                              (when Zoom exposes it). Search those IDs under Add Scopes; if{" "}
+                              <code className="rounded bg-amber-100/80 px-1">:admin</code> never
+                              appears, switch this General app to{" "}
+                              <strong>Admin-managed</strong> (Basic Information) or contact Zoom
+                              support — user-managed apps sometimes cannot obtain{" "}
+                              <code className="rounded bg-amber-100/80 px-1">:admin</code>.
+                            </>
+                          ) : (
+                            <>
+                              Sync may fail with error 4711 until Zoom puts{" "}
+                              <code className="rounded bg-amber-100/80 px-1">
+                                list_user_recordings:admin
+                              </code>{" "}
+                              or{" "}
+                              <code className="rounded bg-amber-100/80 px-1">
+                                list_user_recordings:master
+                              </code>{" "}
+                              (or classic{" "}
+                              <code className="rounded bg-amber-100/80 px-1">recording:read</code>)
+                              on the access token. Match Development vs Production in the Marketplace
+                              with your Vercel{" "}
+                              <code className="rounded bg-amber-100/80 px-1">ZOOM_CLIENT_ID</code>,
+                              then Disconnect → Connect Zoom.
+                            </>
+                          )}
                         </p>
                         {int.oauthScopes != null && int.oauthScopes.length > 0 ? (
                           <p className="mt-2 break-all font-mono text-xs text-amber-900/80">
@@ -426,7 +466,8 @@ export function IntegrationsClient({
                           </p>
                         ) : (
                           <p className="mt-2 text-xs text-amber-900/80">
-                            No scope string stored yet — reconnect Zoom after deploying the latest app version.
+                            No scope string stored yet — reconnect Zoom after deploying the latest app
+                            version.
                           </p>
                         )}
                       </div>

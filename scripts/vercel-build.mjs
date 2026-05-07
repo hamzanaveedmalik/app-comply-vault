@@ -1,6 +1,7 @@
 /**
  * Vercel runs one build per deployment; `prisma migrate deploy` uses an advisory lock.
- * Neon pooler + concurrent preview/prod deploys often hit P1002 lock timeouts.
+ * Neon pooler + concurrent preview/prod deploys often hit P1002 (pg_advisory_lock).
+ * Prisma’s advisory lock timeout is fixed at 10s and is not configurable; see Prisma docs.
  *
  * - Production (VERCEL_ENV=production): always run migrations.
  * - Other Vercel targets: skip by default (schema already applied from prod deploys, or use Neon branch + VERCEL_FORCE_MIGRATE=1).
@@ -11,13 +12,14 @@ import { spawnSync } from "node:child_process";
 /**
  * @param {string} cmd
  * @param {string[]} args
+ * @param {Record<string, string | undefined>} [envPatch]
  * @returns {void}
  */
-function run(cmd, args) {
+function run(cmd, args, envPatch = {}) {
   const result = spawnSync(cmd, args, {
     stdio: "inherit",
     shell: false,
-    env: process.env,
+    env: { ...process.env, ...envPatch },
   });
   const code = result.status ?? 1;
   if (code !== 0) process.exit(code);
@@ -31,11 +33,14 @@ const shouldMigrate =
   !onVercel || vercelEnv === "production" || forceMigrate;
 
 if (shouldMigrate) {
-  // Neon pooler + concurrent deploys often exceed Prisma’s default 10s advisory lock wait.
-  if (!process.env.PRISMA_MIGRATE_ADVISORY_LOCK_TIMEOUT) {
-    process.env.PRISMA_MIGRATE_ADVISORY_LOCK_TIMEOUT = "60000";
-  }
-  run("npx", ["prisma", "migrate", "deploy"]);
+  // On Vercel, default-disable migrate advisory locking (official escape hatch for stuck locks /
+  // pooler quirks). Set PRISMA_SCHEMA_DISABLE_ADVISORY_LOCK=0 in Vercel env to keep locking.
+  // https://www.prisma.io/docs/orm/reference/environment-variables-reference#prisma_schema_disable_advisory_lock
+  const migrateEnv =
+    onVercel && process.env.PRISMA_SCHEMA_DISABLE_ADVISORY_LOCK === undefined
+      ? { PRISMA_SCHEMA_DISABLE_ADVISORY_LOCK: "1" }
+      : {};
+  run("npx", ["prisma", "migrate", "deploy"], migrateEnv);
 } else {
   console.log(
     "[vercel-build] Skipping prisma migrate deploy (Vercel preview/dev). Set VERCEL_FORCE_MIGRATE=1 if this deployment must run migrations.",

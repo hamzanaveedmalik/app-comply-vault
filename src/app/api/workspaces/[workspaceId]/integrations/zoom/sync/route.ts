@@ -247,7 +247,7 @@ export async function POST(
     const parsed = zoomBody ? parseZoomListError(zoomBody) : {};
     const zoom4711Hint =
       parsed.zoomCode === 4711
-        ? "Enable Recording scopes in your Zoom app (including list_user_recordings + list_user_recordings:admin and recording:read), publish changes, then disconnect and reconnect Zoom in ComplyVault so Zoom issues a new token."
+        ? "Add cloud_recording:read:list_user_recordings + cloud_recording:read:list_user_recordings:admin (and recording:read if Zoom shows it) on your Zoom app, save, deploy latest ComplyVault, then Disconnect → Connect Zoom. If :admin is not in Add Scopes, change the app to Admin-managed or search that scope ID."
         : undefined;
     return NextResponse.json(
       {

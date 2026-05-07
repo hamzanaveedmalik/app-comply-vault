@@ -15,13 +15,12 @@ const ZOOM_TOKEN_URL = "https://zoom.us/oauth/token";
 const ZOOM_API_BASE = "https://api.zoom.us/v2";
 const ZOOM_WEBHOOK_URL = "https://api.zoom.us/v2/webhooks";
 
-// Zoom returns granted scopes in the token JSON (`scope`); List recordings expects granular list scopes on the token (4711 if missing).
-// Include classic `recording:read` where Zoom still maps it for user OAuth; add granular variants Zoom documents for this API.
+// Match Zoom List recordings API expectations (4711 if absent). Token `scope` comes from Zoom’s OAuth response — reconnect after changing Marketplace scopes.
+// If `:admin` never appears in Add Scopes, switch the General app to Admin-managed or search the scope ID in the picker.
 const SCOPES = [
   "recording:read",
   "cloud_recording:read:list_user_recordings",
   "cloud_recording:read:list_user_recordings:admin",
-  "cloud_recording:read:list_user_recordings:master",
   "cloud_recording:read:list_recording_files",
   "cloud_recording:read:recording",
   "cloud_recording:read:content",

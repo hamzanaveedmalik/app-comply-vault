@@ -433,8 +433,11 @@ export function IntegrationsClient({
                             toast.success(data.message ?? `${data.enqueued ?? 0} recording(s) queued.`);
                             router.refresh();
                           } else {
+                            const is4711 = data.zoomCode === 4711;
                             const detail =
-                              data.zoomMessage != null && data.zoomMessage.length > 0
+                              data.zoomMessage != null &&
+                              data.zoomMessage.length > 0 &&
+                              !(is4711 && data.zoomHint)
                                 ? `: ${data.zoomMessage}`
                                 : "";
                             const hint =

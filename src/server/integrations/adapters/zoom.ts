@@ -20,6 +20,7 @@ const ZOOM_WEBHOOK_URL = "https://api.zoom.us/v2/webhooks";
 const SCOPES = [
   "recording:read",
   "cloud_recording:read:list_user_recordings",
+  "cloud_recording:read:list_user_recordings:master",
   "cloud_recording:read:list_user_recordings:admin",
   "cloud_recording:read:list_recording_files",
   "cloud_recording:read:recording",

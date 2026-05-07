@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { zoomRecordingListScopesLikelyMissing } from "~/lib/zoom-scopes";
 
 const PROVIDER_LABELS: Record<string, string> = {
   ZOOM: "Zoom",
@@ -57,6 +58,7 @@ type Integration = {
   accountEmail?: string | null;
   recordingScope?: string;
   rootFolder?: string;
+  oauthScopes?: string | null;
 };
 
 type Failure = {
@@ -400,6 +402,35 @@ export function IntegrationsClient({
                   {int.lastErrorMessage && (
                     <p className="text-sm text-red-600 mt-1">{int.lastErrorMessage}</p>
                   )}
+                  {int.provider === "ZOOM" &&
+                    zoomRecordingListScopesLikelyMissing(int.oauthScopes ?? null) && (
+                      <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
+                        <p className="font-medium">Zoom recording scopes look incomplete</p>
+                        <p className="mt-1 text-amber-900/90">
+                          Sync may fail with error 4711 until Zoom puts{" "}
+                          <code className="rounded bg-amber-100/80 px-1">
+                            list_user_recordings:admin
+                          </code>{" "}
+                          or{" "}
+                          <code className="rounded bg-amber-100/80 px-1">
+                            list_user_recordings:master
+                          </code>{" "}
+                          (or classic{" "}
+                          <code className="rounded bg-amber-100/80 px-1">recording:read</code>) on the access token.
+                          Match Development vs Production in the Marketplace with your Vercel{" "}
+                          <code className="rounded bg-amber-100/80 px-1">ZOOM_CLIENT_ID</code>, then Disconnect → Connect Zoom.
+                        </p>
+                        {int.oauthScopes != null && int.oauthScopes.length > 0 ? (
+                          <p className="mt-2 break-all font-mono text-xs text-amber-900/80">
+                            Granted scopes on token: {int.oauthScopes}
+                          </p>
+                        ) : (
+                          <p className="mt-2 text-xs text-amber-900/80">
+                            No scope string stored yet — reconnect Zoom after deploying the latest app version.
+                          </p>
+                        )}
+                      </div>
+                    )}
                 </div>
                 <div className="flex items-center gap-2">
                   <span

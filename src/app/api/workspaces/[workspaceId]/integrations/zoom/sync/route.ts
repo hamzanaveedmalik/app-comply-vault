@@ -10,6 +10,7 @@ import { publishZoomIngestionJob } from "~/server/qstash";
 import { env } from "~/env";
 import { NextResponse } from "next/server";
 import { decryptToken } from "~/server/integrations/crypto";
+import { ZOOM_SCOPE_4711_USER_HINT } from "~/lib/zoom-scopes";
 
 const ZOOM_API_BASE = "https://api.zoom.us/v2";
 
@@ -245,10 +246,7 @@ export async function POST(
     }
     const status = zoomStatus >= 400 && zoomStatus < 500 ? zoomStatus : 502;
     const parsed = zoomBody ? parseZoomListError(zoomBody) : {};
-    const zoom4711Hint =
-      parsed.zoomCode === 4711
-        ? "Add cloud_recording:read:list_user_recordings + cloud_recording:read:list_user_recordings:admin (and recording:read if Zoom shows it) on your Zoom app, save, deploy latest ComplyVault, then Disconnect → Connect Zoom. If :admin is not in Add Scopes, change the app to Admin-managed or search that scope ID."
-        : undefined;
+    const zoom4711Hint = parsed.zoomCode === 4711 ? ZOOM_SCOPE_4711_USER_HINT : undefined;
     return NextResponse.json(
       {
         error: `Zoom API error: ${zoomStatus}`,

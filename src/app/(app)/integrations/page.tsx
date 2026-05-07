@@ -36,6 +36,7 @@ export default async function IntegrationsPage({
         status: true,
         expiresAt: true,
         createdAt: true,
+        scopes: true,
       },
     }),
     db.integrationConfig.findMany({
@@ -73,6 +74,7 @@ export default async function IntegrationsPage({
       accountEmail: cfg?.accountEmail ?? null,
       recordingScope: cfg?.recordingScope ?? "all",
       rootFolder: cred.provider === "SHAREPOINT" ? (cfg?.rootFolder ?? "ComplyVault") : undefined,
+      oauthScopes: cred.provider === "ZOOM" ? cred.scopes : null,
     };
   });
 

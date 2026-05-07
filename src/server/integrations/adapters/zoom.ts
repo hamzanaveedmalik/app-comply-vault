@@ -15,9 +15,10 @@ const ZOOM_TOKEN_URL = "https://zoom.us/oauth/token";
 const ZOOM_API_BASE = "https://api.zoom.us/v2";
 const ZOOM_WEBHOOK_URL = "https://api.zoom.us/v2/webhooks";
 
-// Granular Cloud Recording scopes (Zoom Marketplace); aligns with list/detail/download/transcript APIs.
+// Granular Cloud Recording scopes. Zoom List recordings requires both list_user_recordings and :admin (error 4711 if missing).
 const SCOPES = [
   "cloud_recording:read:list_user_recordings",
+  "cloud_recording:read:list_user_recordings:admin",
   "cloud_recording:read:list_recording_files",
   "cloud_recording:read:recording",
   "cloud_recording:read:content",

@@ -245,11 +245,16 @@ export async function POST(
     }
     const status = zoomStatus >= 400 && zoomStatus < 500 ? zoomStatus : 502;
     const parsed = zoomBody ? parseZoomListError(zoomBody) : {};
+    const zoom4711Hint =
+      parsed.zoomCode === 4711
+        ? "Enable Recording scopes in your Zoom app (including list_user_recordings + list_user_recordings:admin and recording:read), publish changes, then disconnect and reconnect Zoom in ComplyVault so Zoom issues a new token."
+        : undefined;
     return NextResponse.json(
       {
         error: `Zoom API error: ${zoomStatus}`,
         ...(parsed.zoomCode !== undefined ? { zoomCode: parsed.zoomCode } : {}),
         ...(parsed.zoomMessage ? { zoomMessage: parsed.zoomMessage } : {}),
+        ...(zoom4711Hint ? { zoomHint: zoom4711Hint } : {}),
         ...(zoomBody && !parsed.zoomMessage
           ? { detail: zoomBody.slice(0, 500) }
           : {}),

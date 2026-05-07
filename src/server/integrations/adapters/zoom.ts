@@ -15,10 +15,13 @@ const ZOOM_TOKEN_URL = "https://zoom.us/oauth/token";
 const ZOOM_API_BASE = "https://api.zoom.us/v2";
 const ZOOM_WEBHOOK_URL = "https://api.zoom.us/v2/webhooks";
 
-// Granular Cloud Recording scopes. Zoom List recordings requires both list_user_recordings and :admin (error 4711 if missing).
+// Zoom returns granted scopes in the token JSON (`scope`); List recordings expects granular list scopes on the token (4711 if missing).
+// Include classic `recording:read` where Zoom still maps it for user OAuth; add granular variants Zoom documents for this API.
 const SCOPES = [
+  "recording:read",
   "cloud_recording:read:list_user_recordings",
   "cloud_recording:read:list_user_recordings:admin",
+  "cloud_recording:read:list_user_recordings:master",
   "cloud_recording:read:list_recording_files",
   "cloud_recording:read:recording",
   "cloud_recording:read:content",
@@ -86,6 +89,7 @@ async function exchangeCodeForTokens(code: string, redirectUri: string): Promise
     access_token: string;
     refresh_token?: string;
     expires_in?: number;
+    scope?: string;
   };
 
   const expiresAt = data.expires_in
@@ -96,7 +100,7 @@ async function exchangeCodeForTokens(code: string, redirectUri: string): Promise
     accessToken: data.access_token,
     refreshToken: data.refresh_token,
     expiresAt,
-    scopes: SCOPES,
+    scopes: data.scope,
   };
 }
 

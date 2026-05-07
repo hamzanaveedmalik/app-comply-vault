@@ -426,17 +426,22 @@ export function IntegrationsClient({
                             message?: string;
                             error?: string;
                             zoomMessage?: string;
+                            zoomHint?: string;
                             zoomCode?: number;
                           };
                           if (res.ok && data.success) {
                             toast.success(data.message ?? `${data.enqueued ?? 0} recording(s) queued.`);
                             router.refresh();
                           } else {
-                            const suffix =
+                            const detail =
                               data.zoomMessage != null && data.zoomMessage.length > 0
                                 ? `: ${data.zoomMessage}`
                                 : "";
-                            toast.error((data.error ?? "Sync failed") + suffix);
+                            const hint =
+                              data.zoomHint != null && data.zoomHint.length > 0
+                                ? ` ${data.zoomHint}`
+                                : "";
+                            toast.error((data.error ?? "Sync failed") + detail + hint);
                           }
                         } catch {
                           toast.error("Sync failed");

@@ -53,6 +53,9 @@ export async function refreshExpiringTokens(): Promise<{ refreshed: number; fail
               : undefined,
             expiresAt: refreshedTokens.expiresAt,
             status: "CONNECTED",
+            ...(refreshedTokens.scopes !== undefined
+              ? { scopes: refreshedTokens.scopes }
+              : {}),
           },
         });
         refreshed++;
@@ -94,6 +97,7 @@ async function refreshZoomToken(refreshToken: string): Promise<{
   accessToken: string;
   refreshToken?: string;
   expiresAt?: Date;
+  scopes?: string;
 } | null> {
   const clientId = process.env.ZOOM_CLIENT_ID;
   const clientSecret = process.env.ZOOM_CLIENT_SECRET;
@@ -120,6 +124,7 @@ async function refreshZoomToken(refreshToken: string): Promise<{
     access_token: string;
     refresh_token?: string;
     expires_in?: number;
+    scope?: string;
   };
 
   return {
@@ -128,6 +133,7 @@ async function refreshZoomToken(refreshToken: string): Promise<{
     expiresAt: data.expires_in
       ? new Date(Date.now() + data.expires_in * 1000)
       : undefined,
+    scopes: data.scope,
   };
 }
 
@@ -178,7 +184,12 @@ async function refreshTokenForProvider(
   provider: IntegrationProvider,
   refreshTokenEncrypted: string | null,
   _workspaceId: string
-): Promise<{ accessToken: string; refreshToken?: string; expiresAt?: Date } | null> {
+): Promise<{
+  accessToken: string;
+  refreshToken?: string;
+  expiresAt?: Date;
+  scopes?: string;
+} | null> {
   if (!refreshTokenEncrypted) return null;
 
   const refreshToken = decryptToken(refreshTokenEncrypted);
@@ -281,6 +292,7 @@ export async function getValidAccessTokenForProvider(
           : undefined,
         expiresAt: refreshed.expiresAt,
         status: "CONNECTED",
+        ...(refreshed.scopes !== undefined ? { scopes: refreshed.scopes } : {}),
       },
     });
     return refreshed.accessToken;

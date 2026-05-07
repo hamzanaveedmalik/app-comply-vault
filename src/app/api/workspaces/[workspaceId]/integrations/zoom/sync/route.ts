@@ -34,6 +34,7 @@ type ZoomMeetingRecordings = {
   recording_files?: ZoomRecordingFile[];
 };
 
+
 type ZoomMeetingSummary = NonNullable<
   {
     meetings?: Array<{

@@ -15,10 +15,13 @@ const ZOOM_TOKEN_URL = "https://zoom.us/oauth/token";
 const ZOOM_API_BASE = "https://api.zoom.us/v2";
 const ZOOM_WEBHOOK_URL = "https://api.zoom.us/v2/webhooks";
 
-// Scopes: recording:read for listing recordings (sync); cloud_recording:read:recording for webhooks.
+// Granular Cloud Recording scopes (Zoom Marketplace); aligns with list/detail/download/transcript APIs.
 const SCOPES = [
-  "recording:read",
+  "cloud_recording:read:list_user_recordings",
+  "cloud_recording:read:list_recording_files",
   "cloud_recording:read:recording",
+  "cloud_recording:read:content",
+  "cloud_recording:read:meeting_transcript",
   "user:read:user",
   "user:read:email",
 ].join(" ");

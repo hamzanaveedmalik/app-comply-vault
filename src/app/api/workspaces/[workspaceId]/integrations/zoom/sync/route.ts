@@ -34,6 +34,87 @@ type ZoomMeetingRecordings = {
   recording_files?: ZoomRecordingFile[];
 };
 
+type ZoomMeetingSummary = NonNullable<
+  {
+    meetings?: Array<{
+      uuid?: string;
+      id?: number;
+      host_id?: string;
+      topic?: string;
+      start_time?: string;
+      duration?: number;
+    }>;
+  }["meetings"]
+>[number];
+
+/** Zoom allows at most one calendar month per List recordings call — wider ranges return 400. */
+function splitUtcIntoMonthChunks(fromYmd: string, toYmd: string): Array<{ from: string; to: string }> {
+  const from = new Date(`${fromYmd}T00:00:00.000Z`);
+  const to = new Date(`${toYmd}T23:59:59.999Z`);
+  const ranges: Array<{ from: string; to: string }> = [];
+  let cursor = new Date(from);
+  while (cursor <= to) {
+    const y = cursor.getUTCFullYear();
+    const m = cursor.getUTCMonth();
+    const lastOfMonthUtc = new Date(Date.UTC(y, m + 1, 0));
+    const chunkEnd = lastOfMonthUtc < to ? lastOfMonthUtc : to;
+    ranges.push({
+      from: cursor.toISOString().slice(0, 10),
+      to: chunkEnd.toISOString().slice(0, 10),
+    });
+    cursor = new Date(Date.UTC(y, m + 1, 1));
+  }
+  return ranges;
+}
+
+async function listZoomMeetingsForRange(
+  accessToken: string,
+  fromYmd: string,
+  toYmd: string
+): Promise<{ meetings: ZoomMeetingSummary[]; zoomStatus?: number; zoomBody?: string }> {
+  const byKey = new Map<string, ZoomMeetingSummary>();
+  const chunks = splitUtcIntoMonthChunks(fromYmd, toYmd);
+
+  for (const { from: chunkFrom, to: chunkTo } of chunks) {
+    let nextPageToken = "";
+    do {
+      const params = new URLSearchParams({
+        from: chunkFrom,
+        to: chunkTo,
+        page_size: "300",
+      });
+      if (nextPageToken) {
+        params.set("next_page_token", nextPageToken);
+      }
+      const listUrl = `${ZOOM_API_BASE}/users/me/recordings?${params.toString()}`;
+      const listRes = await fetch(listUrl, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      if (!listRes.ok) {
+        const errText = await listRes.text();
+        console.error("[Zoom sync] List recordings failed:", listRes.status, errText);
+        return { meetings: [], zoomStatus: listRes.status, zoomBody: errText };
+      }
+
+      const listData = (await listRes.json()) as {
+        meetings?: ZoomMeetingSummary[];
+        next_page_token?: string;
+      };
+
+      for (const m of listData.meetings ?? []) {
+        const key = m.uuid ?? String(m.id ?? "");
+        if (key) {
+          byKey.set(key, m);
+        }
+      }
+      nextPageToken = listData.next_page_token ?? "";
+    } while (nextPageToken);
+  }
+
+  return { meetings: [...byKey.values()] };
+}
+
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ workspaceId: string }> }
@@ -76,53 +157,46 @@ export async function POST(
     );
   }
 
-  const from = new Date();
-  from.setDate(from.getDate() - 30);
   const to = new Date();
+  const from = new Date(to);
+  from.setUTCDate(from.getUTCDate() - 30);
   const fromStr = from.toISOString().slice(0, 10);
   const toStr = to.toISOString().slice(0, 10);
 
-  const listUrl = `${ZOOM_API_BASE}/users/me/recordings?from=${fromStr}&to=${toStr}&page_size=30`;
-  const listRes = await fetch(listUrl, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
+  const { meetings, zoomStatus, zoomBody } = await listZoomMeetingsForRange(
+    accessToken,
+    fromStr,
+    toStr
+  );
 
-  if (!listRes.ok) {
-    const errText = await listRes.text();
-    console.error("[Zoom sync] List recordings failed:", listRes.status, errText);
-    if (listRes.status === 401) {
+  if (zoomStatus !== undefined) {
+    if (zoomStatus === 401) {
       return NextResponse.json(
         { error: "Zoom token expired. Please reconnect Zoom." },
         { status: 401 }
       );
     }
-    if (listRes.status === 403) {
+    if (zoomStatus === 403) {
       return NextResponse.json(
         {
           error:
-            "Zoom account lacks recording:read scope. Reconnect Zoom to grant access to list recordings.",
+            "Zoom account lacks cloud recording scopes. Reconnect Zoom and grant recording access.",
         },
         { status: 403 }
       );
     }
+    const status = zoomStatus >= 400 && zoomStatus < 500 ? zoomStatus : 502;
     return NextResponse.json(
-      { error: `Zoom API error: ${listRes.status}` },
-      { status: 502 }
+      {
+        error: `Zoom API error: ${zoomStatus}`,
+        ...(process.env.NODE_ENV === "development" && zoomBody
+          ? { detail: zoomBody.slice(0, 500) }
+          : {}),
+      },
+      { status }
     );
   }
 
-  const listData = (await listRes.json()) as {
-    meetings?: Array<{
-      uuid?: string;
-      id?: number;
-      host_id?: string;
-      topic?: string;
-      start_time?: string;
-      duration?: number;
-    }>;
-  };
-
-  const meetings = listData.meetings ?? [];
   if (meetings.length === 0) {
     return NextResponse.json({
       success: true,

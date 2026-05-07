@@ -31,6 +31,10 @@ const shouldMigrate =
   !onVercel || vercelEnv === "production" || forceMigrate;
 
 if (shouldMigrate) {
+  // Neon pooler + concurrent deploys often exceed Prisma’s default 10s advisory lock wait.
+  if (!process.env.PRISMA_MIGRATE_ADVISORY_LOCK_TIMEOUT) {
+    process.env.PRISMA_MIGRATE_ADVISORY_LOCK_TIMEOUT = "60000";
+  }
   run("npx", ["prisma", "migrate", "deploy"]);
 } else {
   console.log(

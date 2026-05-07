@@ -425,12 +425,18 @@ export function IntegrationsClient({
                             enqueued?: number;
                             message?: string;
                             error?: string;
+                            zoomMessage?: string;
+                            zoomCode?: number;
                           };
                           if (res.ok && data.success) {
                             toast.success(data.message ?? `${data.enqueued ?? 0} recording(s) queued.`);
                             router.refresh();
                           } else {
-                            toast.error(data.error ?? "Sync failed");
+                            const suffix =
+                              data.zoomMessage != null && data.zoomMessage.length > 0
+                                ? `: ${data.zoomMessage}`
+                                : "";
+                            toast.error((data.error ?? "Sync failed") + suffix);
                           }
                         } catch {
                           toast.error("Sync failed");

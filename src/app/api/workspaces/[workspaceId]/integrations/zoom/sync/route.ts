@@ -47,6 +47,22 @@ type ZoomMeetingSummary = NonNullable<
   }["meetings"]
 >[number];
 
+function parseZoomListError(body: string): { zoomCode?: number; zoomMessage?: string } {
+  try {
+    const j = JSON.parse(body) as { code?: number; message?: string };
+    if (typeof j.message === "string") {
+      return { zoomCode: typeof j.code === "number" ? j.code : undefined, zoomMessage: j.message };
+    }
+  } catch {
+    /* plain-text body */
+  }
+  const trimmed = body.trim();
+  if (trimmed.length > 0) {
+    return { zoomMessage: trimmed.slice(0, 400) };
+  }
+  return {};
+}
+
 /** Zoom allows at most one calendar month per List recordings call — wider ranges return 400. */
 function splitUtcIntoMonthChunks(fromYmd: string, toYmd: string): Array<{ from: string; to: string }> {
   const from = new Date(`${fromYmd}T00:00:00.000Z`);
@@ -67,13 +83,54 @@ function splitUtcIntoMonthChunks(fromYmd: string, toYmd: string): Array<{ from: 
   return ranges;
 }
 
+function recordingsListPath(userKey: string): string {
+  return userKey === "me" ? "me" : encodeURIComponent(userKey);
+}
+
 async function listZoomMeetingsForRange(
   accessToken: string,
+  accountEmail: string,
+  fromYmd: string,
+  toYmd: string
+): Promise<{ meetings: ZoomMeetingSummary[]; zoomStatus?: number; zoomBody?: string }> {
+  const userCandidates = ["me", accountEmail.trim()].filter(
+    (v, i, a) => v.length > 0 && a.indexOf(v) === i
+  );
+
+  let lastFail: { zoomStatus: number; zoomBody: string } | undefined;
+
+  for (const userKey of userCandidates) {
+    const result = await listZoomMeetingsForUser(accessToken, userKey, fromYmd, toYmd);
+    if (result.zoomStatus === undefined) {
+      return result;
+    }
+    lastFail = { zoomStatus: result.zoomStatus, zoomBody: result.zoomBody ?? "" };
+    console.error(
+      `[Zoom sync] List recordings failed for userId=${userKey === "me" ? "me" : "(email)"}:`,
+      result.zoomStatus,
+      result.zoomBody
+    );
+    if (result.zoomStatus !== 400 && result.zoomStatus !== 404) {
+      break;
+    }
+  }
+
+  return {
+    meetings: [],
+    zoomStatus: lastFail?.zoomStatus,
+    zoomBody: lastFail?.zoomBody,
+  };
+}
+
+async function listZoomMeetingsForUser(
+  accessToken: string,
+  userKey: string,
   fromYmd: string,
   toYmd: string
 ): Promise<{ meetings: ZoomMeetingSummary[]; zoomStatus?: number; zoomBody?: string }> {
   const byKey = new Map<string, ZoomMeetingSummary>();
   const chunks = splitUtcIntoMonthChunks(fromYmd, toYmd);
+  const pathSegment = recordingsListPath(userKey);
 
   for (const { from: chunkFrom, to: chunkTo } of chunks) {
     let nextPageToken = "";
@@ -81,19 +138,18 @@ async function listZoomMeetingsForRange(
       const params = new URLSearchParams({
         from: chunkFrom,
         to: chunkTo,
-        page_size: "300",
+        page_size: "30",
       });
       if (nextPageToken) {
         params.set("next_page_token", nextPageToken);
       }
-      const listUrl = `${ZOOM_API_BASE}/users/me/recordings?${params.toString()}`;
+      const listUrl = `${ZOOM_API_BASE}/users/${pathSegment}/recordings?${params.toString()}`;
       const listRes = await fetch(listUrl, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
       if (!listRes.ok) {
         const errText = await listRes.text();
-        console.error("[Zoom sync] List recordings failed:", listRes.status, errText);
         return { meetings: [], zoomStatus: listRes.status, zoomBody: errText };
       }
 
@@ -165,6 +221,7 @@ export async function POST(
 
   const { meetings, zoomStatus, zoomBody } = await listZoomMeetingsForRange(
     accessToken,
+    accountEmail,
     fromStr,
     toStr
   );
@@ -186,10 +243,13 @@ export async function POST(
       );
     }
     const status = zoomStatus >= 400 && zoomStatus < 500 ? zoomStatus : 502;
+    const parsed = zoomBody ? parseZoomListError(zoomBody) : {};
     return NextResponse.json(
       {
         error: `Zoom API error: ${zoomStatus}`,
-        ...(process.env.NODE_ENV === "development" && zoomBody
+        ...(parsed.zoomCode !== undefined ? { zoomCode: parsed.zoomCode } : {}),
+        ...(parsed.zoomMessage ? { zoomMessage: parsed.zoomMessage } : {}),
+        ...(zoomBody && !parsed.zoomMessage
           ? { detail: zoomBody.slice(0, 500) }
           : {}),
       },

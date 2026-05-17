@@ -179,6 +179,13 @@ exports.Prisma.MeetingScalarFieldEnum = {
   sharepointDepositedAt: 'sharepointDepositedAt',
   zohoCrmContactId: 'zohoCrmContactId',
   zohoCrmNotePostedAt: 'zohoCrmNotePostedAt',
+  advisorCertifiedAt: 'advisorCertifiedAt',
+  advisorCertifiedByUserId: 'advisorCertifiedByUserId',
+  cmReviewedAt: 'cmReviewedAt',
+  cmReviewedByUserId: 'cmReviewedByUserId',
+  ccoSignedOffAt: 'ccoSignedOffAt',
+  ccoSignedOffByUserId: 'ccoSignedOffByUserId',
+  cmReviewSummary: 'cmReviewSummary',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -207,6 +214,11 @@ exports.Prisma.FlagScalarFieldEnum = {
   resolvedAt: 'resolvedAt',
   resolutionType: 'resolutionType',
   resolutionNote: 'resolutionNote',
+  cmDisposition: 'cmDisposition',
+  escalationReason: 'escalationReason',
+  cmTriageNote: 'cmTriageNote',
+  cmTriagedAt: 'cmTriagedAt',
+  cmTriagedByUserId: 'cmTriagedByUserId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -423,7 +435,8 @@ exports.BillingCurrency = exports.$Enums.BillingCurrency = {
 
 exports.WorkspaceRole = exports.$Enums.WorkspaceRole = {
   OWNER_CCO: 'OWNER_CCO',
-  MEMBER: 'MEMBER'
+  MEMBER: 'MEMBER',
+  ADVISOR: 'ADVISOR'
 };
 
 exports.MeetingStatus = exports.$Enums.MeetingStatus = {
@@ -431,6 +444,9 @@ exports.MeetingStatus = exports.$Enums.MeetingStatus = {
   PROCESSING: 'PROCESSING',
   DRAFT_READY: 'DRAFT_READY',
   DRAFT: 'DRAFT',
+  ADVISOR_CERTIFIED: 'ADVISOR_CERTIFIED',
+  CM_REVIEWED: 'CM_REVIEWED',
+  CCO_SIGNED_OFF: 'CCO_SIGNED_OFF',
   FINALIZED: 'FINALIZED'
 };
 
@@ -474,6 +490,13 @@ exports.FlagResolutionType = exports.$Enums.FlagResolutionType = {
   OVERRIDE_APPROVED: 'OVERRIDE_APPROVED'
 };
 
+exports.CmFlagDisposition = exports.$Enums.CmFlagDisposition = {
+  NONE: 'NONE',
+  RESOLVED: 'RESOLVED',
+  NOTED: 'NOTED',
+  ESCALATED: 'ESCALATED'
+};
+
 exports.RemediationTaskStatus = exports.$Enums.RemediationTaskStatus = {
   OPEN: 'OPEN',
   IN_PROGRESS: 'IN_PROGRESS',
@@ -510,7 +533,11 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   INVITE_SENT: 'INVITE_SENT',
   INVITE_RESENT: 'INVITE_RESENT',
   INVITE_ACCEPTED: 'INVITE_ACCEPTED',
-  MEMBER_REMOVED: 'MEMBER_REMOVED'
+  MEMBER_REMOVED: 'MEMBER_REMOVED',
+  ADVISOR_CERTIFIED: 'ADVISOR_CERTIFIED',
+  CM_REVIEW_COMPLETED: 'CM_REVIEW_COMPLETED',
+  CCO_SIGNED_OFF: 'CCO_SIGNED_OFF',
+  WORKFLOW_REVERTED: 'WORKFLOW_REVERTED'
 };
 
 exports.IntegrationProvider = exports.$Enums.IntegrationProvider = {

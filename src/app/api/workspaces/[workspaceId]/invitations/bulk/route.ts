@@ -9,7 +9,7 @@ const bulkInviteSchema = z.object({
   invitations: z.array(
     z.object({
       email: z.string().email("Invalid email address"),
-      role: z.enum(["OWNER_CCO", "MEMBER"]),
+      role: z.enum(["OWNER_CCO", "MEMBER", "ADVISOR"]),
     })
   ).min(1, "At least one invitation is required").max(50, "Maximum 50 invitations at once"),
 });

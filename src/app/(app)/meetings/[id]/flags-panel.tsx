@@ -119,10 +119,12 @@ export default function FlagsPanel({
   flags,
   userRole,
   currentUserId,
+  readOnlyCompliance,
 }: {
   flags: FlagItem[];
   userRole: string | null | undefined;
   currentUserId: string | null | undefined;
+  readOnlyCompliance?: boolean;
 }) {
   const router = useRouter();
   const [activeFlag, setActiveFlag] = useState<FlagItem | null>(null);
@@ -161,6 +163,38 @@ export default function FlagsPanel({
     window.addEventListener("setTimestamp", handleTimestamp);
     return () => window.removeEventListener("setTimestamp", handleTimestamp);
   }, []);
+
+  if (readOnlyCompliance) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Compliance flags</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-sm text-muted-foreground rounded-md bg-muted/50 p-3">
+            Compliance flags — pending review by the compliance team. You can review context here; only
+            compliance staff can resolve or escalate.
+          </p>
+          {flags.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No flags for this meeting.</p>
+          ) : (
+            flags.map((flag) => (
+              <div key={flag.id} className="rounded-md border p-3 space-y-1 opacity-90">
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant={getSeverityVariant(flag.severity)}>{flag.severity}</Badge>
+                  <Badge variant="outline">{flag.type.replace(/_/g, " ")}</Badge>
+                  <Badge variant={getStatusVariant(flag.status)}>{formatStatusLabel(flag.status)}</Badge>
+                </div>
+                {flag.evidence?.recommendation?.text ? (
+                  <div className="text-sm text-muted-foreground">{flag.evidence.recommendation.text}</div>
+                ) : null}
+              </div>
+            ))
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (!flags.length) {
     return null;

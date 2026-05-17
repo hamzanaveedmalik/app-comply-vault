@@ -47,10 +47,12 @@ export async function POST(
       return Response.json({ error: "Meeting not found" }, { status: 404 });
     }
 
-    // Only allow finalization if meeting is in DRAFT_READY or DRAFT status
-    if (meeting.status !== "DRAFT_READY" && meeting.status !== "DRAFT") {
+    // Three-layer workflow: finalize only after CCO_SIGNED_OFF
+    if (meeting.status !== "CCO_SIGNED_OFF") {
       return Response.json(
-        { error: `Meeting must be in DRAFT_READY or DRAFT status to finalize. Current status: ${meeting.status}` },
+        {
+          error: `Meeting must be CCO_SIGNED_OFF to finalize. Current status: ${meeting.status}`,
+        },
         { status: 400 }
       );
     }
@@ -65,10 +67,14 @@ export async function POST(
     const openCriticalFlags = await db.flag.findMany({
       where: {
         meetingId: meeting.id,
-        status: {
-          in: ["OPEN", "IN_REMEDIATION", "PENDING_VERIFICATION"],
-        },
         severity: "CRITICAL",
+        OR: [
+          { status: "PENDING_VERIFICATION" },
+          {
+            status: { in: ["OPEN", "IN_REMEDIATION"] },
+            NOT: { cmDisposition: "NOTED" },
+          },
+        ],
       },
     });
 

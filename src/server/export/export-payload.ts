@@ -69,7 +69,12 @@ function formatDuration(segments: TranscriptSegment[]): string {
  * Build export payload for PDF generation
  */
 export function buildExportPayload(
-  meeting: Meeting & { finalizedBy?: User | null },
+  meeting: Meeting & {
+    finalizedBy?: User | null;
+    advisorCertifiedByUser?: User | null;
+    cmReviewedByUser?: User | null;
+    ccoSignedOffByUser?: User | null;
+  },
   extraction: ExtractionData,
   transcript: { segments: TranscriptSegment[] } | null,
   versions: Version[],
@@ -160,6 +165,45 @@ export function buildExportPayload(
       user: "System (AI)",
       detail: `${flags.length} flags: ${highCount} HIGH, ${medCount} MEDIUM, ${infoCount} INFO`,
     },
+    ...(meeting.advisorCertifiedAt
+      ? [
+          {
+            timestamp: new Date(meeting.advisorCertifiedAt).toLocaleString(),
+            event: "Advisor certified transcript",
+            user:
+              meeting.advisorCertifiedByUser?.name ??
+              meeting.advisorCertifiedByUser?.email ??
+              "Advisor",
+            detail: "Meeting record accuracy attestation",
+          },
+        ]
+      : []),
+    ...(meeting.cmReviewedAt
+      ? [
+          {
+            timestamp: new Date(meeting.cmReviewedAt).toLocaleString(),
+            event: "CM review completed",
+            user:
+              meeting.cmReviewedByUser?.name ??
+              meeting.cmReviewedByUser?.email ??
+              "Compliance Manager",
+            detail: "All flags triaged",
+          },
+        ]
+      : []),
+    ...(meeting.ccoSignedOffAt
+      ? [
+          {
+            timestamp: new Date(meeting.ccoSignedOffAt).toLocaleString(),
+            event: "CCO compliance sign-off",
+            user:
+              meeting.ccoSignedOffByUser?.name ??
+              meeting.ccoSignedOffByUser?.email ??
+              "CCO",
+            detail: "Regulatory review complete (separate from advisor attestation)",
+          },
+        ]
+      : []),
     {
       timestamp: new Date().toLocaleString(),
       event: "Pack exported",

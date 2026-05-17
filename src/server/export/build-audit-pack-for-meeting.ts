@@ -16,6 +16,15 @@ export type BuildAuditPackResult =
 /**
  * Produces the same audit pack ZIP as POST /api/meetings/:id/export (without audit log / HTTP).
  */
+const EXPORTABLE_MEETING_STATUSES = new Set([
+  "FINALIZED",
+  "CCO_SIGNED_OFF",
+  "CM_REVIEWED",
+  "ADVISOR_CERTIFIED",
+  "DRAFT_READY",
+  "DRAFT",
+]);
+
 export async function buildAuditPackZipForMeeting(args: {
   meetingId: string;
   workspaceId: string;
@@ -31,8 +40,8 @@ export async function buildAuditPackZipForMeeting(args: {
     return { success: false, error: "Meeting not found" };
   }
 
-  if (meeting.status !== "FINALIZED" && meeting.status !== "DRAFT_READY") {
-    return { success: false, error: "Meeting must be finalized or draft ready" };
+  if (!EXPORTABLE_MEETING_STATUSES.has(meeting.status)) {
+    return { success: false, error: "Meeting must be in an exportable status" };
   }
 
   const extraction = meeting.extraction as ExtractionData | null;
@@ -70,6 +79,18 @@ export async function buildAuditPackZipForMeeting(args: {
     finalizedByUser = await db.user.findUnique({ where: { id: meeting.finalizedBy } });
   }
 
+  const [advisorCertifiedByUser, cmReviewedByUser, ccoSignedOffByUser] = await Promise.all([
+    meeting.advisorCertifiedByUserId
+      ? db.user.findUnique({ where: { id: meeting.advisorCertifiedByUserId } })
+      : null,
+    meeting.cmReviewedByUserId
+      ? db.user.findUnique({ where: { id: meeting.cmReviewedByUserId } })
+      : null,
+    meeting.ccoSignedOffByUserId
+      ? db.user.findUnique({ where: { id: meeting.ccoSignedOffByUserId } })
+      : null,
+  ]);
+
   const flagsRaw = await db.flag.findMany({ where: { meetingId: meeting.id } });
   const flags = flagsRaw.map((f) => ({
     type: f.type,
@@ -96,6 +117,9 @@ export async function buildAuditPackZipForMeeting(args: {
   const meetingForExport = {
     ...meetingRest,
     finalizedBy: finalizedByUser,
+    advisorCertifiedByUser: advisorCertifiedByUser ?? undefined,
+    cmReviewedByUser: cmReviewedByUser ?? undefined,
+    ccoSignedOffByUser: ccoSignedOffByUser ?? undefined,
   } as Meeting & { finalizedBy?: User | null };
 
   const buffer = await generateAuditPack({

@@ -46,10 +46,31 @@ export async function POST(
       });
     }
 
-    // Check if meeting is finalized (or allow export for DRAFT_READY meetings)
-    if (meeting.status !== "FINALIZED" && meeting.status !== "DRAFT_READY") {
+    const [advisorCertifiedByUser, cmReviewedByUser, ccoSignedOffByUser] = await Promise.all([
+      meeting.advisorCertifiedByUserId
+        ? db.user.findUnique({ where: { id: meeting.advisorCertifiedByUserId } })
+        : null,
+      meeting.cmReviewedByUserId
+        ? db.user.findUnique({ where: { id: meeting.cmReviewedByUserId } })
+        : null,
+      meeting.ccoSignedOffByUserId
+        ? db.user.findUnique({ where: { id: meeting.ccoSignedOffByUserId } })
+        : null,
+    ]);
+
+const EXPORTABLE_MEETING_STATUSES = new Set([
+  "FINALIZED",
+  "CCO_SIGNED_OFF",
+  "CM_REVIEWED",
+  "ADVISOR_CERTIFIED",
+  "DRAFT_READY",
+  "DRAFT",
+]);
+
+    // Check if meeting is in an exportable state
+    if (!EXPORTABLE_MEETING_STATUSES.has(meeting.status)) {
       return Response.json(
-        { error: "Meeting must be finalized or draft ready to export" },
+        { error: "Meeting is not in an exportable status yet" },
         { status: 400 }
       );
     }
@@ -158,6 +179,9 @@ export async function POST(
     const meetingForExport = {
       ...meetingWithoutFinalizedBy,
       finalizedBy: finalizedByUser,
+      advisorCertifiedByUser: advisorCertifiedByUser ?? undefined,
+      cmReviewedByUser: cmReviewedByUser ?? undefined,
+      ccoSignedOffByUser: ccoSignedOffByUser ?? undefined,
     } as Meeting & { finalizedBy?: User | null };
 
     const sessionUser = session?.user;

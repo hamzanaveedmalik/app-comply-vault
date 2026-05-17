@@ -57,6 +57,35 @@ export async function POST(
       );
     }
 
+    if (meeting.status === "CCO_SIGNED_OFF") {
+      return Response.json(
+        { error: "Meeting is awaiting finalization; extracted fields are locked" },
+        { status: 403 }
+      );
+    }
+
+    if (session.user.role === "ADVISOR") {
+      return Response.json(
+        {
+          error: "Advisors cannot edit extracted fields here. Update the transcript instead.",
+        },
+        { status: 403 }
+      );
+    }
+
+    const extractionEditableStatuses = new Set([
+      "DRAFT_READY",
+      "DRAFT",
+      "ADVISOR_CERTIFIED",
+      "CM_REVIEWED",
+    ]);
+    if (!extractionEditableStatuses.has(meeting.status)) {
+      return Response.json(
+        { error: `Extracted fields cannot be edited while status is ${meeting.status}` },
+        { status: 403 }
+      );
+    }
+
     // Parse current extraction data
     const extraction = (meeting.extraction as ExtractionData | null) || {
       topics: [],

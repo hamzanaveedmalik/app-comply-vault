@@ -143,7 +143,8 @@ export type BillingCurrency = (typeof BillingCurrency)[keyof typeof BillingCurre
 
 export const WorkspaceRole: {
   OWNER_CCO: 'OWNER_CCO',
-  MEMBER: 'MEMBER'
+  MEMBER: 'MEMBER',
+  ADVISOR: 'ADVISOR'
 };
 
 export type WorkspaceRole = (typeof WorkspaceRole)[keyof typeof WorkspaceRole]
@@ -154,6 +155,9 @@ export const MeetingStatus: {
   PROCESSING: 'PROCESSING',
   DRAFT_READY: 'DRAFT_READY',
   DRAFT: 'DRAFT',
+  ADVISOR_CERTIFIED: 'ADVISOR_CERTIFIED',
+  CM_REVIEWED: 'CM_REVIEWED',
+  CCO_SIGNED_OFF: 'CCO_SIGNED_OFF',
   FINALIZED: 'FINALIZED'
 };
 
@@ -187,7 +191,11 @@ export const AuditAction: {
   INVITE_SENT: 'INVITE_SENT',
   INVITE_RESENT: 'INVITE_RESENT',
   INVITE_ACCEPTED: 'INVITE_ACCEPTED',
-  MEMBER_REMOVED: 'MEMBER_REMOVED'
+  MEMBER_REMOVED: 'MEMBER_REMOVED',
+  ADVISOR_CERTIFIED: 'ADVISOR_CERTIFIED',
+  CM_REVIEW_COMPLETED: 'CM_REVIEW_COMPLETED',
+  CCO_SIGNED_OFF: 'CCO_SIGNED_OFF',
+  WORKFLOW_REVERTED: 'WORKFLOW_REVERTED'
 };
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction]
@@ -267,6 +275,16 @@ export const FlagCreatedByType: {
 };
 
 export type FlagCreatedByType = (typeof FlagCreatedByType)[keyof typeof FlagCreatedByType]
+
+
+export const CmFlagDisposition: {
+  NONE: 'NONE',
+  RESOLVED: 'RESOLVED',
+  NOTED: 'NOTED',
+  ESCALATED: 'ESCALATED'
+};
+
+export type CmFlagDisposition = (typeof CmFlagDisposition)[keyof typeof CmFlagDisposition]
 
 
 export const IntegrationProvider: {
@@ -359,6 +377,10 @@ export const VerificationDecision: typeof $Enums.VerificationDecision
 export type FlagCreatedByType = $Enums.FlagCreatedByType
 
 export const FlagCreatedByType: typeof $Enums.FlagCreatedByType
+
+export type CmFlagDisposition = $Enums.CmFlagDisposition
+
+export const CmFlagDisposition: typeof $Enums.CmFlagDisposition
 
 export type IntegrationProvider = $Enums.IntegrationProvider
 
@@ -3002,12 +3024,20 @@ export namespace Prisma {
     accounts: number
     sessions: number
     workspaces: number
+    meetingsAdvisorCertified: number
+    meetingsCmReviewed: number
+    meetingsCcoSignedOff: number
+    flagsCmTriaged: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     workspaces?: boolean | UserCountOutputTypeCountWorkspacesArgs
+    meetingsAdvisorCertified?: boolean | UserCountOutputTypeCountMeetingsAdvisorCertifiedArgs
+    meetingsCmReviewed?: boolean | UserCountOutputTypeCountMeetingsCmReviewedArgs
+    meetingsCcoSignedOff?: boolean | UserCountOutputTypeCountMeetingsCcoSignedOffArgs
+    flagsCmTriaged?: boolean | UserCountOutputTypeCountFlagsCmTriagedArgs
   }
 
   // Custom InputTypes
@@ -3040,6 +3070,34 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountWorkspacesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UserWorkspaceWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountMeetingsAdvisorCertifiedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MeetingWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountMeetingsCmReviewedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MeetingWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountMeetingsCcoSignedOffArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MeetingWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountFlagsCmTriagedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FlagWhereInput
   }
 
 
@@ -5652,6 +5710,12 @@ export namespace Prisma {
     sharepointDepositedAt: Date | null
     zohoCrmContactId: string | null
     zohoCrmNotePostedAt: Date | null
+    advisorCertifiedAt: Date | null
+    advisorCertifiedByUserId: string | null
+    cmReviewedAt: Date | null
+    cmReviewedByUserId: string | null
+    ccoSignedOffAt: Date | null
+    ccoSignedOffByUserId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5684,6 +5748,12 @@ export namespace Prisma {
     sharepointDepositedAt: Date | null
     zohoCrmContactId: string | null
     zohoCrmNotePostedAt: Date | null
+    advisorCertifiedAt: Date | null
+    advisorCertifiedByUserId: string | null
+    cmReviewedAt: Date | null
+    cmReviewedByUserId: string | null
+    ccoSignedOffAt: Date | null
+    ccoSignedOffByUserId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5718,6 +5788,13 @@ export namespace Prisma {
     sharepointDepositedAt: number
     zohoCrmContactId: number
     zohoCrmNotePostedAt: number
+    advisorCertifiedAt: number
+    advisorCertifiedByUserId: number
+    cmReviewedAt: number
+    cmReviewedByUserId: number
+    ccoSignedOffAt: number
+    ccoSignedOffByUserId: number
+    cmReviewSummary: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -5764,6 +5841,12 @@ export namespace Prisma {
     sharepointDepositedAt?: true
     zohoCrmContactId?: true
     zohoCrmNotePostedAt?: true
+    advisorCertifiedAt?: true
+    advisorCertifiedByUserId?: true
+    cmReviewedAt?: true
+    cmReviewedByUserId?: true
+    ccoSignedOffAt?: true
+    ccoSignedOffByUserId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5796,6 +5879,12 @@ export namespace Prisma {
     sharepointDepositedAt?: true
     zohoCrmContactId?: true
     zohoCrmNotePostedAt?: true
+    advisorCertifiedAt?: true
+    advisorCertifiedByUserId?: true
+    cmReviewedAt?: true
+    cmReviewedByUserId?: true
+    ccoSignedOffAt?: true
+    ccoSignedOffByUserId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5830,6 +5919,13 @@ export namespace Prisma {
     sharepointDepositedAt?: true
     zohoCrmContactId?: true
     zohoCrmNotePostedAt?: true
+    advisorCertifiedAt?: true
+    advisorCertifiedByUserId?: true
+    cmReviewedAt?: true
+    cmReviewedByUserId?: true
+    ccoSignedOffAt?: true
+    ccoSignedOffByUserId?: true
+    cmReviewSummary?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -5951,6 +6047,13 @@ export namespace Prisma {
     sharepointDepositedAt: Date | null
     zohoCrmContactId: string | null
     zohoCrmNotePostedAt: Date | null
+    advisorCertifiedAt: Date | null
+    advisorCertifiedByUserId: string | null
+    cmReviewedAt: Date | null
+    cmReviewedByUserId: string | null
+    ccoSignedOffAt: Date | null
+    ccoSignedOffByUserId: string | null
+    cmReviewSummary: JsonValue | null
     createdAt: Date
     updatedAt: Date
     _count: MeetingCountAggregateOutputType | null
@@ -6004,6 +6107,13 @@ export namespace Prisma {
     sharepointDepositedAt?: boolean
     zohoCrmContactId?: boolean
     zohoCrmNotePostedAt?: boolean
+    advisorCertifiedAt?: boolean
+    advisorCertifiedByUserId?: boolean
+    cmReviewedAt?: boolean
+    cmReviewedByUserId?: boolean
+    ccoSignedOffAt?: boolean
+    ccoSignedOffByUserId?: boolean
+    cmReviewSummary?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
@@ -6012,6 +6122,9 @@ export namespace Prisma {
     flags?: boolean | Meeting$flagsArgs<ExtArgs>
     resolutionRecords?: boolean | Meeting$resolutionRecordsArgs<ExtArgs>
     integrationSyncLogs?: boolean | Meeting$integrationSyncLogsArgs<ExtArgs>
+    advisorCertifiedByUser?: boolean | Meeting$advisorCertifiedByUserArgs<ExtArgs>
+    cmReviewedByUser?: boolean | Meeting$cmReviewedByUserArgs<ExtArgs>
+    ccoSignedOffByUser?: boolean | Meeting$ccoSignedOffByUserArgs<ExtArgs>
     _count?: boolean | MeetingCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["meeting"]>
 
@@ -6045,9 +6158,19 @@ export namespace Prisma {
     sharepointDepositedAt?: boolean
     zohoCrmContactId?: boolean
     zohoCrmNotePostedAt?: boolean
+    advisorCertifiedAt?: boolean
+    advisorCertifiedByUserId?: boolean
+    cmReviewedAt?: boolean
+    cmReviewedByUserId?: boolean
+    ccoSignedOffAt?: boolean
+    ccoSignedOffByUserId?: boolean
+    cmReviewSummary?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    advisorCertifiedByUser?: boolean | Meeting$advisorCertifiedByUserArgs<ExtArgs>
+    cmReviewedByUser?: boolean | Meeting$cmReviewedByUserArgs<ExtArgs>
+    ccoSignedOffByUser?: boolean | Meeting$ccoSignedOffByUserArgs<ExtArgs>
   }, ExtArgs["result"]["meeting"]>
 
   export type MeetingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6080,9 +6203,19 @@ export namespace Prisma {
     sharepointDepositedAt?: boolean
     zohoCrmContactId?: boolean
     zohoCrmNotePostedAt?: boolean
+    advisorCertifiedAt?: boolean
+    advisorCertifiedByUserId?: boolean
+    cmReviewedAt?: boolean
+    cmReviewedByUserId?: boolean
+    ccoSignedOffAt?: boolean
+    ccoSignedOffByUserId?: boolean
+    cmReviewSummary?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    advisorCertifiedByUser?: boolean | Meeting$advisorCertifiedByUserArgs<ExtArgs>
+    cmReviewedByUser?: boolean | Meeting$cmReviewedByUserArgs<ExtArgs>
+    ccoSignedOffByUser?: boolean | Meeting$ccoSignedOffByUserArgs<ExtArgs>
   }, ExtArgs["result"]["meeting"]>
 
   export type MeetingSelectScalar = {
@@ -6115,11 +6248,18 @@ export namespace Prisma {
     sharepointDepositedAt?: boolean
     zohoCrmContactId?: boolean
     zohoCrmNotePostedAt?: boolean
+    advisorCertifiedAt?: boolean
+    advisorCertifiedByUserId?: boolean
+    cmReviewedAt?: boolean
+    cmReviewedByUserId?: boolean
+    ccoSignedOffAt?: boolean
+    ccoSignedOffByUserId?: boolean
+    cmReviewSummary?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientName" | "meetingType" | "meetingDate" | "status" | "fileUrl" | "sourceFileSha256" | "sourceFileName" | "sourceFileSize" | "sourceFileMime" | "sourceUploadedAt" | "transcript" | "extraction" | "searchableText" | "finalizedBy" | "finalizedAt" | "finalizeReason" | "finalizeNote" | "finalizedPolicyVersion" | "samplingBucket" | "samplingRuleId" | "draftReadyAt" | "timeToFinalize" | "readyForCCO" | "sharepointItemWebUrl" | "sharepointDepositedAt" | "zohoCrmContactId" | "zohoCrmNotePostedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["meeting"]>
+  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientName" | "meetingType" | "meetingDate" | "status" | "fileUrl" | "sourceFileSha256" | "sourceFileName" | "sourceFileSize" | "sourceFileMime" | "sourceUploadedAt" | "transcript" | "extraction" | "searchableText" | "finalizedBy" | "finalizedAt" | "finalizeReason" | "finalizeNote" | "finalizedPolicyVersion" | "samplingBucket" | "samplingRuleId" | "draftReadyAt" | "timeToFinalize" | "readyForCCO" | "sharepointItemWebUrl" | "sharepointDepositedAt" | "zohoCrmContactId" | "zohoCrmNotePostedAt" | "advisorCertifiedAt" | "advisorCertifiedByUserId" | "cmReviewedAt" | "cmReviewedByUserId" | "ccoSignedOffAt" | "ccoSignedOffByUserId" | "cmReviewSummary" | "createdAt" | "updatedAt", ExtArgs["result"]["meeting"]>
   export type MeetingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     versions?: boolean | Meeting$versionsArgs<ExtArgs>
@@ -6127,13 +6267,22 @@ export namespace Prisma {
     flags?: boolean | Meeting$flagsArgs<ExtArgs>
     resolutionRecords?: boolean | Meeting$resolutionRecordsArgs<ExtArgs>
     integrationSyncLogs?: boolean | Meeting$integrationSyncLogsArgs<ExtArgs>
+    advisorCertifiedByUser?: boolean | Meeting$advisorCertifiedByUserArgs<ExtArgs>
+    cmReviewedByUser?: boolean | Meeting$cmReviewedByUserArgs<ExtArgs>
+    ccoSignedOffByUser?: boolean | Meeting$ccoSignedOffByUserArgs<ExtArgs>
     _count?: boolean | MeetingCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type MeetingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    advisorCertifiedByUser?: boolean | Meeting$advisorCertifiedByUserArgs<ExtArgs>
+    cmReviewedByUser?: boolean | Meeting$cmReviewedByUserArgs<ExtArgs>
+    ccoSignedOffByUser?: boolean | Meeting$ccoSignedOffByUserArgs<ExtArgs>
   }
   export type MeetingIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    advisorCertifiedByUser?: boolean | Meeting$advisorCertifiedByUserArgs<ExtArgs>
+    cmReviewedByUser?: boolean | Meeting$cmReviewedByUserArgs<ExtArgs>
+    ccoSignedOffByUser?: boolean | Meeting$ccoSignedOffByUserArgs<ExtArgs>
   }
 
   export type $MeetingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6145,6 +6294,9 @@ export namespace Prisma {
       flags: Prisma.$FlagPayload<ExtArgs>[]
       resolutionRecords: Prisma.$ResolutionRecordPayload<ExtArgs>[]
       integrationSyncLogs: Prisma.$IntegrationSyncLogPayload<ExtArgs>[]
+      advisorCertifiedByUser: Prisma.$UserPayload<ExtArgs> | null
+      cmReviewedByUser: Prisma.$UserPayload<ExtArgs> | null
+      ccoSignedOffByUser: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6182,6 +6334,16 @@ export namespace Prisma {
        */
       zohoCrmContactId: string | null
       zohoCrmNotePostedAt: Date | null
+      advisorCertifiedAt: Date | null
+      advisorCertifiedByUserId: string | null
+      cmReviewedAt: Date | null
+      cmReviewedByUserId: string | null
+      ccoSignedOffAt: Date | null
+      ccoSignedOffByUserId: string | null
+      /**
+       * Summary counts when CM completes review: { resolved, noted, escalated }
+       */
+      cmReviewSummary: Prisma.JsonValue | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["meeting"]>
@@ -6584,6 +6746,9 @@ export namespace Prisma {
     flags<T extends Meeting$flagsArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$flagsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FlagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     resolutionRecords<T extends Meeting$resolutionRecordsArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$resolutionRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     integrationSyncLogs<T extends Meeting$integrationSyncLogsArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$integrationSyncLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IntegrationSyncLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    advisorCertifiedByUser<T extends Meeting$advisorCertifiedByUserArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$advisorCertifiedByUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    cmReviewedByUser<T extends Meeting$cmReviewedByUserArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$cmReviewedByUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    ccoSignedOffByUser<T extends Meeting$ccoSignedOffByUserArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$ccoSignedOffByUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6642,6 +6807,13 @@ export namespace Prisma {
     readonly sharepointDepositedAt: FieldRef<"Meeting", 'DateTime'>
     readonly zohoCrmContactId: FieldRef<"Meeting", 'String'>
     readonly zohoCrmNotePostedAt: FieldRef<"Meeting", 'DateTime'>
+    readonly advisorCertifiedAt: FieldRef<"Meeting", 'DateTime'>
+    readonly advisorCertifiedByUserId: FieldRef<"Meeting", 'String'>
+    readonly cmReviewedAt: FieldRef<"Meeting", 'DateTime'>
+    readonly cmReviewedByUserId: FieldRef<"Meeting", 'String'>
+    readonly ccoSignedOffAt: FieldRef<"Meeting", 'DateTime'>
+    readonly ccoSignedOffByUserId: FieldRef<"Meeting", 'String'>
+    readonly cmReviewSummary: FieldRef<"Meeting", 'Json'>
     readonly createdAt: FieldRef<"Meeting", 'DateTime'>
     readonly updatedAt: FieldRef<"Meeting", 'DateTime'>
   }
@@ -7157,6 +7329,63 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: IntegrationSyncLogScalarFieldEnum | IntegrationSyncLogScalarFieldEnum[]
+  }
+
+  /**
+   * Meeting.advisorCertifiedByUser
+   */
+  export type Meeting$advisorCertifiedByUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Meeting.cmReviewedByUser
+   */
+  export type Meeting$cmReviewedByUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Meeting.ccoSignedOffByUser
+   */
+  export type Meeting$ccoSignedOffByUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
   }
 
   /**
@@ -8319,6 +8548,11 @@ export namespace Prisma {
     resolvedAt: Date | null
     resolutionType: $Enums.FlagResolutionType | null
     resolutionNote: string | null
+    cmDisposition: $Enums.CmFlagDisposition | null
+    escalationReason: string | null
+    cmTriageNote: string | null
+    cmTriagedAt: Date | null
+    cmTriagedByUserId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -8336,6 +8570,11 @@ export namespace Prisma {
     resolvedAt: Date | null
     resolutionType: $Enums.FlagResolutionType | null
     resolutionNote: string | null
+    cmDisposition: $Enums.CmFlagDisposition | null
+    escalationReason: string | null
+    cmTriageNote: string | null
+    cmTriagedAt: Date | null
+    cmTriagedByUserId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -8354,6 +8593,11 @@ export namespace Prisma {
     resolvedAt: number
     resolutionType: number
     resolutionNote: number
+    cmDisposition: number
+    escalationReason: number
+    cmTriageNote: number
+    cmTriagedAt: number
+    cmTriagedByUserId: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -8373,6 +8617,11 @@ export namespace Prisma {
     resolvedAt?: true
     resolutionType?: true
     resolutionNote?: true
+    cmDisposition?: true
+    escalationReason?: true
+    cmTriageNote?: true
+    cmTriagedAt?: true
+    cmTriagedByUserId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -8390,6 +8639,11 @@ export namespace Prisma {
     resolvedAt?: true
     resolutionType?: true
     resolutionNote?: true
+    cmDisposition?: true
+    escalationReason?: true
+    cmTriageNote?: true
+    cmTriagedAt?: true
+    cmTriagedByUserId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -8408,6 +8662,11 @@ export namespace Prisma {
     resolvedAt?: true
     resolutionType?: true
     resolutionNote?: true
+    cmDisposition?: true
+    escalationReason?: true
+    cmTriageNote?: true
+    cmTriagedAt?: true
+    cmTriagedByUserId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -8499,6 +8758,11 @@ export namespace Prisma {
     resolvedAt: Date | null
     resolutionType: $Enums.FlagResolutionType | null
     resolutionNote: string | null
+    cmDisposition: $Enums.CmFlagDisposition
+    escalationReason: string | null
+    cmTriageNote: string | null
+    cmTriagedAt: Date | null
+    cmTriagedByUserId: string | null
     createdAt: Date
     updatedAt: Date
     _count: FlagCountAggregateOutputType | null
@@ -8534,11 +8798,17 @@ export namespace Prisma {
     resolvedAt?: boolean
     resolutionType?: boolean
     resolutionNote?: boolean
+    cmDisposition?: boolean
+    escalationReason?: boolean
+    cmTriageNote?: boolean
+    cmTriagedAt?: boolean
+    cmTriagedByUserId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     meeting?: boolean | MeetingDefaultArgs<ExtArgs>
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     resolutionRecord?: boolean | Flag$resolutionRecordArgs<ExtArgs>
+    cmTriagedByUser?: boolean | Flag$cmTriagedByUserArgs<ExtArgs>
   }, ExtArgs["result"]["flag"]>
 
   export type FlagSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8555,10 +8825,16 @@ export namespace Prisma {
     resolvedAt?: boolean
     resolutionType?: boolean
     resolutionNote?: boolean
+    cmDisposition?: boolean
+    escalationReason?: boolean
+    cmTriageNote?: boolean
+    cmTriagedAt?: boolean
+    cmTriagedByUserId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     meeting?: boolean | MeetingDefaultArgs<ExtArgs>
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    cmTriagedByUser?: boolean | Flag$cmTriagedByUserArgs<ExtArgs>
   }, ExtArgs["result"]["flag"]>
 
   export type FlagSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8575,10 +8851,16 @@ export namespace Prisma {
     resolvedAt?: boolean
     resolutionType?: boolean
     resolutionNote?: boolean
+    cmDisposition?: boolean
+    escalationReason?: boolean
+    cmTriageNote?: boolean
+    cmTriagedAt?: boolean
+    cmTriagedByUserId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     meeting?: boolean | MeetingDefaultArgs<ExtArgs>
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    cmTriagedByUser?: boolean | Flag$cmTriagedByUserArgs<ExtArgs>
   }, ExtArgs["result"]["flag"]>
 
   export type FlagSelectScalar = {
@@ -8595,23 +8877,31 @@ export namespace Prisma {
     resolvedAt?: boolean
     resolutionType?: boolean
     resolutionNote?: boolean
+    cmDisposition?: boolean
+    escalationReason?: boolean
+    cmTriageNote?: boolean
+    cmTriagedAt?: boolean
+    cmTriagedByUserId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type FlagOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "meetingId" | "type" | "severity" | "status" | "evidence" | "createdByType" | "createdByUserId" | "resolvedByUserId" | "resolvedAt" | "resolutionType" | "resolutionNote" | "createdAt" | "updatedAt", ExtArgs["result"]["flag"]>
+  export type FlagOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "meetingId" | "type" | "severity" | "status" | "evidence" | "createdByType" | "createdByUserId" | "resolvedByUserId" | "resolvedAt" | "resolutionType" | "resolutionNote" | "cmDisposition" | "escalationReason" | "cmTriageNote" | "cmTriagedAt" | "cmTriagedByUserId" | "createdAt" | "updatedAt", ExtArgs["result"]["flag"]>
   export type FlagInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     meeting?: boolean | MeetingDefaultArgs<ExtArgs>
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     resolutionRecord?: boolean | Flag$resolutionRecordArgs<ExtArgs>
+    cmTriagedByUser?: boolean | Flag$cmTriagedByUserArgs<ExtArgs>
   }
   export type FlagIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     meeting?: boolean | MeetingDefaultArgs<ExtArgs>
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    cmTriagedByUser?: boolean | Flag$cmTriagedByUserArgs<ExtArgs>
   }
   export type FlagIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     meeting?: boolean | MeetingDefaultArgs<ExtArgs>
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    cmTriagedByUser?: boolean | Flag$cmTriagedByUserArgs<ExtArgs>
   }
 
   export type $FlagPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8620,6 +8910,7 @@ export namespace Prisma {
       meeting: Prisma.$MeetingPayload<ExtArgs>
       workspace: Prisma.$WorkspacePayload<ExtArgs>
       resolutionRecord: Prisma.$ResolutionRecordPayload<ExtArgs> | null
+      cmTriagedByUser: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -8635,6 +8926,14 @@ export namespace Prisma {
       resolvedAt: Date | null
       resolutionType: $Enums.FlagResolutionType | null
       resolutionNote: string | null
+      /**
+       * CM triage (resolve / note / escalate) for three-layer workflow.
+       */
+      cmDisposition: $Enums.CmFlagDisposition
+      escalationReason: string | null
+      cmTriageNote: string | null
+      cmTriagedAt: Date | null
+      cmTriagedByUserId: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["flag"]>
@@ -9034,6 +9333,7 @@ export namespace Prisma {
     meeting<T extends MeetingDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MeetingDefaultArgs<ExtArgs>>): Prisma__MeetingClient<$Result.GetResult<Prisma.$MeetingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     resolutionRecord<T extends Flag$resolutionRecordArgs<ExtArgs> = {}>(args?: Subset<T, Flag$resolutionRecordArgs<ExtArgs>>): Prisma__ResolutionRecordClient<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    cmTriagedByUser<T extends Flag$cmTriagedByUserArgs<ExtArgs> = {}>(args?: Subset<T, Flag$cmTriagedByUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9076,6 +9376,11 @@ export namespace Prisma {
     readonly resolvedAt: FieldRef<"Flag", 'DateTime'>
     readonly resolutionType: FieldRef<"Flag", 'FlagResolutionType'>
     readonly resolutionNote: FieldRef<"Flag", 'String'>
+    readonly cmDisposition: FieldRef<"Flag", 'CmFlagDisposition'>
+    readonly escalationReason: FieldRef<"Flag", 'String'>
+    readonly cmTriageNote: FieldRef<"Flag", 'String'>
+    readonly cmTriagedAt: FieldRef<"Flag", 'DateTime'>
+    readonly cmTriagedByUserId: FieldRef<"Flag", 'String'>
     readonly createdAt: FieldRef<"Flag", 'DateTime'>
     readonly updatedAt: FieldRef<"Flag", 'DateTime'>
   }
@@ -9490,6 +9795,25 @@ export namespace Prisma {
      */
     include?: ResolutionRecordInclude<ExtArgs> | null
     where?: ResolutionRecordWhereInput
+  }
+
+  /**
+   * Flag.cmTriagedByUser
+   */
+  export type Flag$cmTriagedByUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
   }
 
   /**
@@ -17712,6 +18036,10 @@ export namespace Prisma {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     workspaces?: boolean | User$workspacesArgs<ExtArgs>
+    meetingsAdvisorCertified?: boolean | User$meetingsAdvisorCertifiedArgs<ExtArgs>
+    meetingsCmReviewed?: boolean | User$meetingsCmReviewedArgs<ExtArgs>
+    meetingsCcoSignedOff?: boolean | User$meetingsCcoSignedOffArgs<ExtArgs>
+    flagsCmTriaged?: boolean | User$flagsCmTriagedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -17744,6 +18072,10 @@ export namespace Prisma {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     workspaces?: boolean | User$workspacesArgs<ExtArgs>
+    meetingsAdvisorCertified?: boolean | User$meetingsAdvisorCertifiedArgs<ExtArgs>
+    meetingsCmReviewed?: boolean | User$meetingsCmReviewedArgs<ExtArgs>
+    meetingsCcoSignedOff?: boolean | User$meetingsCcoSignedOffArgs<ExtArgs>
+    flagsCmTriaged?: boolean | User$flagsCmTriagedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -17755,6 +18087,10 @@ export namespace Prisma {
       accounts: Prisma.$AccountPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       workspaces: Prisma.$UserWorkspacePayload<ExtArgs>[]
+      meetingsAdvisorCertified: Prisma.$MeetingPayload<ExtArgs>[]
+      meetingsCmReviewed: Prisma.$MeetingPayload<ExtArgs>[]
+      meetingsCcoSignedOff: Prisma.$MeetingPayload<ExtArgs>[]
+      flagsCmTriaged: Prisma.$FlagPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -18159,6 +18495,10 @@ export namespace Prisma {
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     workspaces<T extends User$workspacesArgs<ExtArgs> = {}>(args?: Subset<T, User$workspacesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserWorkspacePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    meetingsAdvisorCertified<T extends User$meetingsAdvisorCertifiedArgs<ExtArgs> = {}>(args?: Subset<T, User$meetingsAdvisorCertifiedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MeetingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    meetingsCmReviewed<T extends User$meetingsCmReviewedArgs<ExtArgs> = {}>(args?: Subset<T, User$meetingsCmReviewedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MeetingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    meetingsCcoSignedOff<T extends User$meetingsCcoSignedOffArgs<ExtArgs> = {}>(args?: Subset<T, User$meetingsCcoSignedOffArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MeetingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    flagsCmTriaged<T extends User$flagsCmTriagedArgs<ExtArgs> = {}>(args?: Subset<T, User$flagsCmTriagedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FlagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -18650,6 +18990,102 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: UserWorkspaceScalarFieldEnum | UserWorkspaceScalarFieldEnum[]
+  }
+
+  /**
+   * User.meetingsAdvisorCertified
+   */
+  export type User$meetingsAdvisorCertifiedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Meeting
+     */
+    select?: MeetingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Meeting
+     */
+    omit?: MeetingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MeetingInclude<ExtArgs> | null
+    where?: MeetingWhereInput
+    orderBy?: MeetingOrderByWithRelationInput | MeetingOrderByWithRelationInput[]
+    cursor?: MeetingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MeetingScalarFieldEnum | MeetingScalarFieldEnum[]
+  }
+
+  /**
+   * User.meetingsCmReviewed
+   */
+  export type User$meetingsCmReviewedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Meeting
+     */
+    select?: MeetingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Meeting
+     */
+    omit?: MeetingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MeetingInclude<ExtArgs> | null
+    where?: MeetingWhereInput
+    orderBy?: MeetingOrderByWithRelationInput | MeetingOrderByWithRelationInput[]
+    cursor?: MeetingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MeetingScalarFieldEnum | MeetingScalarFieldEnum[]
+  }
+
+  /**
+   * User.meetingsCcoSignedOff
+   */
+  export type User$meetingsCcoSignedOffArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Meeting
+     */
+    select?: MeetingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Meeting
+     */
+    omit?: MeetingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MeetingInclude<ExtArgs> | null
+    where?: MeetingWhereInput
+    orderBy?: MeetingOrderByWithRelationInput | MeetingOrderByWithRelationInput[]
+    cursor?: MeetingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MeetingScalarFieldEnum | MeetingScalarFieldEnum[]
+  }
+
+  /**
+   * User.flagsCmTriaged
+   */
+  export type User$flagsCmTriagedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Flag
+     */
+    select?: FlagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Flag
+     */
+    omit?: FlagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FlagInclude<ExtArgs> | null
+    where?: FlagWhereInput
+    orderBy?: FlagOrderByWithRelationInput | FlagOrderByWithRelationInput[]
+    cursor?: FlagWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FlagScalarFieldEnum | FlagScalarFieldEnum[]
   }
 
   /**
@@ -25311,6 +25747,13 @@ export namespace Prisma {
     sharepointDepositedAt: 'sharepointDepositedAt',
     zohoCrmContactId: 'zohoCrmContactId',
     zohoCrmNotePostedAt: 'zohoCrmNotePostedAt',
+    advisorCertifiedAt: 'advisorCertifiedAt',
+    advisorCertifiedByUserId: 'advisorCertifiedByUserId',
+    cmReviewedAt: 'cmReviewedAt',
+    cmReviewedByUserId: 'cmReviewedByUserId',
+    ccoSignedOffAt: 'ccoSignedOffAt',
+    ccoSignedOffByUserId: 'ccoSignedOffByUserId',
+    cmReviewSummary: 'cmReviewSummary',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -25345,6 +25788,11 @@ export namespace Prisma {
     resolvedAt: 'resolvedAt',
     resolutionType: 'resolutionType',
     resolutionNote: 'resolutionNote',
+    cmDisposition: 'cmDisposition',
+    escalationReason: 'escalationReason',
+    cmTriageNote: 'cmTriageNote',
+    cmTriagedAt: 'cmTriagedAt',
+    cmTriagedByUserId: 'cmTriagedByUserId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -25827,6 +26275,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'CmFlagDisposition'
+   */
+  export type EnumCmFlagDispositionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CmFlagDisposition'>
+    
+
+
+  /**
+   * Reference to a field of type 'CmFlagDisposition[]'
+   */
+  export type ListEnumCmFlagDispositionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CmFlagDisposition[]'>
+    
+
+
+  /**
    * Reference to a field of type 'RemediationTaskStatus'
    */
   export type EnumRemediationTaskStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RemediationTaskStatus'>
@@ -26157,6 +26619,13 @@ export namespace Prisma {
     sharepointDepositedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     zohoCrmContactId?: StringNullableFilter<"Meeting"> | string | null
     zohoCrmNotePostedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    advisorCertifiedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    advisorCertifiedByUserId?: StringNullableFilter<"Meeting"> | string | null
+    cmReviewedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    cmReviewedByUserId?: StringNullableFilter<"Meeting"> | string | null
+    ccoSignedOffAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    ccoSignedOffByUserId?: StringNullableFilter<"Meeting"> | string | null
+    cmReviewSummary?: JsonNullableFilter<"Meeting">
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
@@ -26165,6 +26634,9 @@ export namespace Prisma {
     flags?: FlagListRelationFilter
     resolutionRecords?: ResolutionRecordListRelationFilter
     integrationSyncLogs?: IntegrationSyncLogListRelationFilter
+    advisorCertifiedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    cmReviewedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    ccoSignedOffByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type MeetingOrderByWithRelationInput = {
@@ -26197,6 +26669,13 @@ export namespace Prisma {
     sharepointDepositedAt?: SortOrderInput | SortOrder
     zohoCrmContactId?: SortOrderInput | SortOrder
     zohoCrmNotePostedAt?: SortOrderInput | SortOrder
+    advisorCertifiedAt?: SortOrderInput | SortOrder
+    advisorCertifiedByUserId?: SortOrderInput | SortOrder
+    cmReviewedAt?: SortOrderInput | SortOrder
+    cmReviewedByUserId?: SortOrderInput | SortOrder
+    ccoSignedOffAt?: SortOrderInput | SortOrder
+    ccoSignedOffByUserId?: SortOrderInput | SortOrder
+    cmReviewSummary?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     workspace?: WorkspaceOrderByWithRelationInput
@@ -26205,6 +26684,9 @@ export namespace Prisma {
     flags?: FlagOrderByRelationAggregateInput
     resolutionRecords?: ResolutionRecordOrderByRelationAggregateInput
     integrationSyncLogs?: IntegrationSyncLogOrderByRelationAggregateInput
+    advisorCertifiedByUser?: UserOrderByWithRelationInput
+    cmReviewedByUser?: UserOrderByWithRelationInput
+    ccoSignedOffByUser?: UserOrderByWithRelationInput
   }
 
   export type MeetingWhereUniqueInput = Prisma.AtLeast<{
@@ -26240,6 +26722,13 @@ export namespace Prisma {
     sharepointDepositedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     zohoCrmContactId?: StringNullableFilter<"Meeting"> | string | null
     zohoCrmNotePostedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    advisorCertifiedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    advisorCertifiedByUserId?: StringNullableFilter<"Meeting"> | string | null
+    cmReviewedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    cmReviewedByUserId?: StringNullableFilter<"Meeting"> | string | null
+    ccoSignedOffAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    ccoSignedOffByUserId?: StringNullableFilter<"Meeting"> | string | null
+    cmReviewSummary?: JsonNullableFilter<"Meeting">
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
@@ -26248,6 +26737,9 @@ export namespace Prisma {
     flags?: FlagListRelationFilter
     resolutionRecords?: ResolutionRecordListRelationFilter
     integrationSyncLogs?: IntegrationSyncLogListRelationFilter
+    advisorCertifiedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    cmReviewedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    ccoSignedOffByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type MeetingOrderByWithAggregationInput = {
@@ -26280,6 +26772,13 @@ export namespace Prisma {
     sharepointDepositedAt?: SortOrderInput | SortOrder
     zohoCrmContactId?: SortOrderInput | SortOrder
     zohoCrmNotePostedAt?: SortOrderInput | SortOrder
+    advisorCertifiedAt?: SortOrderInput | SortOrder
+    advisorCertifiedByUserId?: SortOrderInput | SortOrder
+    cmReviewedAt?: SortOrderInput | SortOrder
+    cmReviewedByUserId?: SortOrderInput | SortOrder
+    ccoSignedOffAt?: SortOrderInput | SortOrder
+    ccoSignedOffByUserId?: SortOrderInput | SortOrder
+    cmReviewSummary?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: MeetingCountOrderByAggregateInput
@@ -26322,6 +26821,13 @@ export namespace Prisma {
     sharepointDepositedAt?: DateTimeNullableWithAggregatesFilter<"Meeting"> | Date | string | null
     zohoCrmContactId?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
     zohoCrmNotePostedAt?: DateTimeNullableWithAggregatesFilter<"Meeting"> | Date | string | null
+    advisorCertifiedAt?: DateTimeNullableWithAggregatesFilter<"Meeting"> | Date | string | null
+    advisorCertifiedByUserId?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
+    cmReviewedAt?: DateTimeNullableWithAggregatesFilter<"Meeting"> | Date | string | null
+    cmReviewedByUserId?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
+    ccoSignedOffAt?: DateTimeNullableWithAggregatesFilter<"Meeting"> | Date | string | null
+    ccoSignedOffByUserId?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
+    cmReviewSummary?: JsonNullableWithAggregatesFilter<"Meeting">
     createdAt?: DateTimeWithAggregatesFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Meeting"> | Date | string
   }
@@ -26410,11 +26916,17 @@ export namespace Prisma {
     resolvedAt?: DateTimeNullableFilter<"Flag"> | Date | string | null
     resolutionType?: EnumFlagResolutionTypeNullableFilter<"Flag"> | $Enums.FlagResolutionType | null
     resolutionNote?: StringNullableFilter<"Flag"> | string | null
+    cmDisposition?: EnumCmFlagDispositionFilter<"Flag"> | $Enums.CmFlagDisposition
+    escalationReason?: StringNullableFilter<"Flag"> | string | null
+    cmTriageNote?: StringNullableFilter<"Flag"> | string | null
+    cmTriagedAt?: DateTimeNullableFilter<"Flag"> | Date | string | null
+    cmTriagedByUserId?: StringNullableFilter<"Flag"> | string | null
     createdAt?: DateTimeFilter<"Flag"> | Date | string
     updatedAt?: DateTimeFilter<"Flag"> | Date | string
     meeting?: XOR<MeetingScalarRelationFilter, MeetingWhereInput>
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
     resolutionRecord?: XOR<ResolutionRecordNullableScalarRelationFilter, ResolutionRecordWhereInput> | null
+    cmTriagedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type FlagOrderByWithRelationInput = {
@@ -26431,11 +26943,17 @@ export namespace Prisma {
     resolvedAt?: SortOrderInput | SortOrder
     resolutionType?: SortOrderInput | SortOrder
     resolutionNote?: SortOrderInput | SortOrder
+    cmDisposition?: SortOrder
+    escalationReason?: SortOrderInput | SortOrder
+    cmTriageNote?: SortOrderInput | SortOrder
+    cmTriagedAt?: SortOrderInput | SortOrder
+    cmTriagedByUserId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     meeting?: MeetingOrderByWithRelationInput
     workspace?: WorkspaceOrderByWithRelationInput
     resolutionRecord?: ResolutionRecordOrderByWithRelationInput
+    cmTriagedByUser?: UserOrderByWithRelationInput
   }
 
   export type FlagWhereUniqueInput = Prisma.AtLeast<{
@@ -26455,11 +26973,17 @@ export namespace Prisma {
     resolvedAt?: DateTimeNullableFilter<"Flag"> | Date | string | null
     resolutionType?: EnumFlagResolutionTypeNullableFilter<"Flag"> | $Enums.FlagResolutionType | null
     resolutionNote?: StringNullableFilter<"Flag"> | string | null
+    cmDisposition?: EnumCmFlagDispositionFilter<"Flag"> | $Enums.CmFlagDisposition
+    escalationReason?: StringNullableFilter<"Flag"> | string | null
+    cmTriageNote?: StringNullableFilter<"Flag"> | string | null
+    cmTriagedAt?: DateTimeNullableFilter<"Flag"> | Date | string | null
+    cmTriagedByUserId?: StringNullableFilter<"Flag"> | string | null
     createdAt?: DateTimeFilter<"Flag"> | Date | string
     updatedAt?: DateTimeFilter<"Flag"> | Date | string
     meeting?: XOR<MeetingScalarRelationFilter, MeetingWhereInput>
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
     resolutionRecord?: XOR<ResolutionRecordNullableScalarRelationFilter, ResolutionRecordWhereInput> | null
+    cmTriagedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type FlagOrderByWithAggregationInput = {
@@ -26476,6 +27000,11 @@ export namespace Prisma {
     resolvedAt?: SortOrderInput | SortOrder
     resolutionType?: SortOrderInput | SortOrder
     resolutionNote?: SortOrderInput | SortOrder
+    cmDisposition?: SortOrder
+    escalationReason?: SortOrderInput | SortOrder
+    cmTriageNote?: SortOrderInput | SortOrder
+    cmTriagedAt?: SortOrderInput | SortOrder
+    cmTriagedByUserId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: FlagCountOrderByAggregateInput
@@ -26500,6 +27029,11 @@ export namespace Prisma {
     resolvedAt?: DateTimeNullableWithAggregatesFilter<"Flag"> | Date | string | null
     resolutionType?: EnumFlagResolutionTypeNullableWithAggregatesFilter<"Flag"> | $Enums.FlagResolutionType | null
     resolutionNote?: StringNullableWithAggregatesFilter<"Flag"> | string | null
+    cmDisposition?: EnumCmFlagDispositionWithAggregatesFilter<"Flag"> | $Enums.CmFlagDisposition
+    escalationReason?: StringNullableWithAggregatesFilter<"Flag"> | string | null
+    cmTriageNote?: StringNullableWithAggregatesFilter<"Flag"> | string | null
+    cmTriagedAt?: DateTimeNullableWithAggregatesFilter<"Flag"> | Date | string | null
+    cmTriagedByUserId?: StringNullableWithAggregatesFilter<"Flag"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Flag"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Flag"> | Date | string
   }
@@ -27088,6 +27622,10 @@ export namespace Prisma {
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     workspaces?: UserWorkspaceListRelationFilter
+    meetingsAdvisorCertified?: MeetingListRelationFilter
+    meetingsCmReviewed?: MeetingListRelationFilter
+    meetingsCcoSignedOff?: MeetingListRelationFilter
+    flagsCmTriaged?: FlagListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -27099,6 +27637,10 @@ export namespace Prisma {
     accounts?: AccountOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
     workspaces?: UserWorkspaceOrderByRelationAggregateInput
+    meetingsAdvisorCertified?: MeetingOrderByRelationAggregateInput
+    meetingsCmReviewed?: MeetingOrderByRelationAggregateInput
+    meetingsCcoSignedOff?: MeetingOrderByRelationAggregateInput
+    flagsCmTriaged?: FlagOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -27113,6 +27655,10 @@ export namespace Prisma {
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     workspaces?: UserWorkspaceListRelationFilter
+    meetingsAdvisorCertified?: MeetingListRelationFilter
+    meetingsCmReviewed?: MeetingListRelationFilter
+    meetingsCcoSignedOff?: MeetingListRelationFilter
+    flagsCmTriaged?: FlagListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -27818,6 +28364,10 @@ export namespace Prisma {
     sharepointDepositedAt?: Date | string | null
     zohoCrmContactId?: string | null
     zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    cmReviewedAt?: Date | string | null
+    ccoSignedOffAt?: Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -27826,6 +28376,9 @@ export namespace Prisma {
     flags?: FlagCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
+    cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
+    ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
   }
 
   export type MeetingUncheckedCreateInput = {
@@ -27858,6 +28411,13 @@ export namespace Prisma {
     sharepointDepositedAt?: Date | string | null
     zohoCrmContactId?: string | null
     zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    advisorCertifiedByUserId?: string | null
+    cmReviewedAt?: Date | string | null
+    cmReviewedByUserId?: string | null
+    ccoSignedOffAt?: Date | string | null
+    ccoSignedOffByUserId?: string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -27896,6 +28456,10 @@ export namespace Prisma {
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
     zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -27904,6 +28468,9 @@ export namespace Prisma {
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
+    cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
+    ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
   }
 
   export type MeetingUncheckedUpdateInput = {
@@ -27936,6 +28503,13 @@ export namespace Prisma {
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
     zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -27975,6 +28549,13 @@ export namespace Prisma {
     sharepointDepositedAt?: Date | string | null
     zohoCrmContactId?: string | null
     zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    advisorCertifiedByUserId?: string | null
+    cmReviewedAt?: Date | string | null
+    cmReviewedByUserId?: string | null
+    ccoSignedOffAt?: Date | string | null
+    ccoSignedOffByUserId?: string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -28008,6 +28589,10 @@ export namespace Prisma {
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
     zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -28042,6 +28627,13 @@ export namespace Prisma {
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
     zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -28127,11 +28719,16 @@ export namespace Prisma {
     resolvedAt?: Date | string | null
     resolutionType?: $Enums.FlagResolutionType | null
     resolutionNote?: string | null
+    cmDisposition?: $Enums.CmFlagDisposition
+    escalationReason?: string | null
+    cmTriageNote?: string | null
+    cmTriagedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     meeting: MeetingCreateNestedOneWithoutFlagsInput
     workspace: WorkspaceCreateNestedOneWithoutFlagsInput
     resolutionRecord?: ResolutionRecordCreateNestedOneWithoutFlagInput
+    cmTriagedByUser?: UserCreateNestedOneWithoutFlagsCmTriagedInput
   }
 
   export type FlagUncheckedCreateInput = {
@@ -28148,6 +28745,11 @@ export namespace Prisma {
     resolvedAt?: Date | string | null
     resolutionType?: $Enums.FlagResolutionType | null
     resolutionNote?: string | null
+    cmDisposition?: $Enums.CmFlagDisposition
+    escalationReason?: string | null
+    cmTriageNote?: string | null
+    cmTriagedAt?: Date | string | null
+    cmTriagedByUserId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     resolutionRecord?: ResolutionRecordUncheckedCreateNestedOneWithoutFlagInput
@@ -28165,11 +28767,16 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meeting?: MeetingUpdateOneRequiredWithoutFlagsNestedInput
     workspace?: WorkspaceUpdateOneRequiredWithoutFlagsNestedInput
     resolutionRecord?: ResolutionRecordUpdateOneWithoutFlagNestedInput
+    cmTriagedByUser?: UserUpdateOneWithoutFlagsCmTriagedNestedInput
   }
 
   export type FlagUncheckedUpdateInput = {
@@ -28186,6 +28793,11 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resolutionRecord?: ResolutionRecordUncheckedUpdateOneWithoutFlagNestedInput
@@ -28205,6 +28817,11 @@ export namespace Prisma {
     resolvedAt?: Date | string | null
     resolutionType?: $Enums.FlagResolutionType | null
     resolutionNote?: string | null
+    cmDisposition?: $Enums.CmFlagDisposition
+    escalationReason?: string | null
+    cmTriageNote?: string | null
+    cmTriagedAt?: Date | string | null
+    cmTriagedByUserId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -28221,6 +28838,10 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -28239,6 +28860,11 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -28873,6 +29499,10 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     workspaces?: UserWorkspaceCreateNestedManyWithoutUserInput
+    meetingsAdvisorCertified?: MeetingCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -28884,6 +29514,10 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     workspaces?: UserWorkspaceUncheckedCreateNestedManyWithoutUserInput
+    meetingsAdvisorCertified?: MeetingUncheckedCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
   }
 
   export type UserUpdateInput = {
@@ -28895,6 +29529,10 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     workspaces?: UserWorkspaceUpdateManyWithoutUserNestedInput
+    meetingsAdvisorCertified?: MeetingUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -28906,6 +29544,10 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     workspaces?: UserWorkspaceUncheckedUpdateManyWithoutUserNestedInput
+    meetingsAdvisorCertified?: MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -29869,6 +30511,11 @@ export namespace Prisma {
     none?: IntegrationSyncLogWhereInput
   }
 
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
   export type VersionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -29907,6 +30554,13 @@ export namespace Prisma {
     sharepointDepositedAt?: SortOrder
     zohoCrmContactId?: SortOrder
     zohoCrmNotePostedAt?: SortOrder
+    advisorCertifiedAt?: SortOrder
+    advisorCertifiedByUserId?: SortOrder
+    cmReviewedAt?: SortOrder
+    cmReviewedByUserId?: SortOrder
+    ccoSignedOffAt?: SortOrder
+    ccoSignedOffByUserId?: SortOrder
+    cmReviewSummary?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -29945,6 +30599,12 @@ export namespace Prisma {
     sharepointDepositedAt?: SortOrder
     zohoCrmContactId?: SortOrder
     zohoCrmNotePostedAt?: SortOrder
+    advisorCertifiedAt?: SortOrder
+    advisorCertifiedByUserId?: SortOrder
+    cmReviewedAt?: SortOrder
+    cmReviewedByUserId?: SortOrder
+    ccoSignedOffAt?: SortOrder
+    ccoSignedOffByUserId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -29977,6 +30637,12 @@ export namespace Prisma {
     sharepointDepositedAt?: SortOrder
     zohoCrmContactId?: SortOrder
     zohoCrmNotePostedAt?: SortOrder
+    advisorCertifiedAt?: SortOrder
+    advisorCertifiedByUserId?: SortOrder
+    cmReviewedAt?: SortOrder
+    cmReviewedByUserId?: SortOrder
+    ccoSignedOffAt?: SortOrder
+    ccoSignedOffByUserId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -30127,6 +30793,13 @@ export namespace Prisma {
     not?: NestedEnumFlagResolutionTypeNullableFilter<$PrismaModel> | $Enums.FlagResolutionType | null
   }
 
+  export type EnumCmFlagDispositionFilter<$PrismaModel = never> = {
+    equals?: $Enums.CmFlagDisposition | EnumCmFlagDispositionFieldRefInput<$PrismaModel>
+    in?: $Enums.CmFlagDisposition[] | ListEnumCmFlagDispositionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CmFlagDisposition[] | ListEnumCmFlagDispositionFieldRefInput<$PrismaModel>
+    not?: NestedEnumCmFlagDispositionFilter<$PrismaModel> | $Enums.CmFlagDisposition
+  }
+
   export type ResolutionRecordNullableScalarRelationFilter = {
     is?: ResolutionRecordWhereInput | null
     isNot?: ResolutionRecordWhereInput | null
@@ -30146,6 +30819,11 @@ export namespace Prisma {
     resolvedAt?: SortOrder
     resolutionType?: SortOrder
     resolutionNote?: SortOrder
+    cmDisposition?: SortOrder
+    escalationReason?: SortOrder
+    cmTriageNote?: SortOrder
+    cmTriagedAt?: SortOrder
+    cmTriagedByUserId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -30163,6 +30841,11 @@ export namespace Prisma {
     resolvedAt?: SortOrder
     resolutionType?: SortOrder
     resolutionNote?: SortOrder
+    cmDisposition?: SortOrder
+    escalationReason?: SortOrder
+    cmTriageNote?: SortOrder
+    cmTriagedAt?: SortOrder
+    cmTriagedByUserId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -30180,6 +30863,11 @@ export namespace Prisma {
     resolvedAt?: SortOrder
     resolutionType?: SortOrder
     resolutionNote?: SortOrder
+    cmDisposition?: SortOrder
+    escalationReason?: SortOrder
+    cmTriageNote?: SortOrder
+    cmTriagedAt?: SortOrder
+    cmTriagedByUserId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -30232,6 +30920,16 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumFlagResolutionTypeNullableFilter<$PrismaModel>
     _max?: NestedEnumFlagResolutionTypeNullableFilter<$PrismaModel>
+  }
+
+  export type EnumCmFlagDispositionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CmFlagDisposition | EnumCmFlagDispositionFieldRefInput<$PrismaModel>
+    in?: $Enums.CmFlagDisposition[] | ListEnumCmFlagDispositionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CmFlagDisposition[] | ListEnumCmFlagDispositionFieldRefInput<$PrismaModel>
+    not?: NestedEnumCmFlagDispositionWithAggregatesFilter<$PrismaModel> | $Enums.CmFlagDisposition
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCmFlagDispositionFilter<$PrismaModel>
+    _max?: NestedEnumCmFlagDispositionFilter<$PrismaModel>
   }
 
   export type EnumFlagResolutionTypeFilter<$PrismaModel = never> = {
@@ -31447,6 +32145,24 @@ export namespace Prisma {
     connect?: IntegrationSyncLogWhereUniqueInput | IntegrationSyncLogWhereUniqueInput[]
   }
 
+  export type UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput = {
+    create?: XOR<UserCreateWithoutMeetingsAdvisorCertifiedInput, UserUncheckedCreateWithoutMeetingsAdvisorCertifiedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMeetingsAdvisorCertifiedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutMeetingsCmReviewedInput = {
+    create?: XOR<UserCreateWithoutMeetingsCmReviewedInput, UserUncheckedCreateWithoutMeetingsCmReviewedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMeetingsCmReviewedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutMeetingsCcoSignedOffInput = {
+    create?: XOR<UserCreateWithoutMeetingsCcoSignedOffInput, UserUncheckedCreateWithoutMeetingsCcoSignedOffInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMeetingsCcoSignedOffInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type VersionUncheckedCreateNestedManyWithoutMeetingInput = {
     create?: XOR<VersionCreateWithoutMeetingInput, VersionUncheckedCreateWithoutMeetingInput> | VersionCreateWithoutMeetingInput[] | VersionUncheckedCreateWithoutMeetingInput[]
     connectOrCreate?: VersionCreateOrConnectWithoutMeetingInput | VersionCreateOrConnectWithoutMeetingInput[]
@@ -31576,6 +32292,36 @@ export namespace Prisma {
     deleteMany?: IntegrationSyncLogScalarWhereInput | IntegrationSyncLogScalarWhereInput[]
   }
 
+  export type UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput = {
+    create?: XOR<UserCreateWithoutMeetingsAdvisorCertifiedInput, UserUncheckedCreateWithoutMeetingsAdvisorCertifiedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMeetingsAdvisorCertifiedInput
+    upsert?: UserUpsertWithoutMeetingsAdvisorCertifiedInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMeetingsAdvisorCertifiedInput, UserUpdateWithoutMeetingsAdvisorCertifiedInput>, UserUncheckedUpdateWithoutMeetingsAdvisorCertifiedInput>
+  }
+
+  export type UserUpdateOneWithoutMeetingsCmReviewedNestedInput = {
+    create?: XOR<UserCreateWithoutMeetingsCmReviewedInput, UserUncheckedCreateWithoutMeetingsCmReviewedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMeetingsCmReviewedInput
+    upsert?: UserUpsertWithoutMeetingsCmReviewedInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMeetingsCmReviewedInput, UserUpdateWithoutMeetingsCmReviewedInput>, UserUncheckedUpdateWithoutMeetingsCmReviewedInput>
+  }
+
+  export type UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput = {
+    create?: XOR<UserCreateWithoutMeetingsCcoSignedOffInput, UserUncheckedCreateWithoutMeetingsCcoSignedOffInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMeetingsCcoSignedOffInput
+    upsert?: UserUpsertWithoutMeetingsCcoSignedOffInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMeetingsCcoSignedOffInput, UserUpdateWithoutMeetingsCcoSignedOffInput>, UserUncheckedUpdateWithoutMeetingsCcoSignedOffInput>
+  }
+
   export type VersionUncheckedUpdateManyWithoutMeetingNestedInput = {
     create?: XOR<VersionCreateWithoutMeetingInput, VersionUncheckedCreateWithoutMeetingInput> | VersionCreateWithoutMeetingInput[] | VersionUncheckedCreateWithoutMeetingInput[]
     connectOrCreate?: VersionCreateOrConnectWithoutMeetingInput | VersionCreateOrConnectWithoutMeetingInput[]
@@ -31678,6 +32424,12 @@ export namespace Prisma {
     connect?: ResolutionRecordWhereUniqueInput
   }
 
+  export type UserCreateNestedOneWithoutFlagsCmTriagedInput = {
+    create?: XOR<UserCreateWithoutFlagsCmTriagedInput, UserUncheckedCreateWithoutFlagsCmTriagedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFlagsCmTriagedInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type ResolutionRecordUncheckedCreateNestedOneWithoutFlagInput = {
     create?: XOR<ResolutionRecordCreateWithoutFlagInput, ResolutionRecordUncheckedCreateWithoutFlagInput>
     connectOrCreate?: ResolutionRecordCreateOrConnectWithoutFlagInput
@@ -31704,6 +32456,10 @@ export namespace Prisma {
     set?: $Enums.FlagResolutionType | null
   }
 
+  export type EnumCmFlagDispositionFieldUpdateOperationsInput = {
+    set?: $Enums.CmFlagDisposition
+  }
+
   export type MeetingUpdateOneRequiredWithoutFlagsNestedInput = {
     create?: XOR<MeetingCreateWithoutFlagsInput, MeetingUncheckedCreateWithoutFlagsInput>
     connectOrCreate?: MeetingCreateOrConnectWithoutFlagsInput
@@ -31728,6 +32484,16 @@ export namespace Prisma {
     delete?: ResolutionRecordWhereInput | boolean
     connect?: ResolutionRecordWhereUniqueInput
     update?: XOR<XOR<ResolutionRecordUpdateToOneWithWhereWithoutFlagInput, ResolutionRecordUpdateWithoutFlagInput>, ResolutionRecordUncheckedUpdateWithoutFlagInput>
+  }
+
+  export type UserUpdateOneWithoutFlagsCmTriagedNestedInput = {
+    create?: XOR<UserCreateWithoutFlagsCmTriagedInput, UserUncheckedCreateWithoutFlagsCmTriagedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFlagsCmTriagedInput
+    upsert?: UserUpsertWithoutFlagsCmTriagedInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFlagsCmTriagedInput, UserUpdateWithoutFlagsCmTriagedInput>, UserUncheckedUpdateWithoutFlagsCmTriagedInput>
   }
 
   export type ResolutionRecordUncheckedUpdateOneWithoutFlagNestedInput = {
@@ -32107,6 +32873,34 @@ export namespace Prisma {
     connect?: UserWorkspaceWhereUniqueInput | UserWorkspaceWhereUniqueInput[]
   }
 
+  export type MeetingCreateNestedManyWithoutAdvisorCertifiedByUserInput = {
+    create?: XOR<MeetingCreateWithoutAdvisorCertifiedByUserInput, MeetingUncheckedCreateWithoutAdvisorCertifiedByUserInput> | MeetingCreateWithoutAdvisorCertifiedByUserInput[] | MeetingUncheckedCreateWithoutAdvisorCertifiedByUserInput[]
+    connectOrCreate?: MeetingCreateOrConnectWithoutAdvisorCertifiedByUserInput | MeetingCreateOrConnectWithoutAdvisorCertifiedByUserInput[]
+    createMany?: MeetingCreateManyAdvisorCertifiedByUserInputEnvelope
+    connect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+  }
+
+  export type MeetingCreateNestedManyWithoutCmReviewedByUserInput = {
+    create?: XOR<MeetingCreateWithoutCmReviewedByUserInput, MeetingUncheckedCreateWithoutCmReviewedByUserInput> | MeetingCreateWithoutCmReviewedByUserInput[] | MeetingUncheckedCreateWithoutCmReviewedByUserInput[]
+    connectOrCreate?: MeetingCreateOrConnectWithoutCmReviewedByUserInput | MeetingCreateOrConnectWithoutCmReviewedByUserInput[]
+    createMany?: MeetingCreateManyCmReviewedByUserInputEnvelope
+    connect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+  }
+
+  export type MeetingCreateNestedManyWithoutCcoSignedOffByUserInput = {
+    create?: XOR<MeetingCreateWithoutCcoSignedOffByUserInput, MeetingUncheckedCreateWithoutCcoSignedOffByUserInput> | MeetingCreateWithoutCcoSignedOffByUserInput[] | MeetingUncheckedCreateWithoutCcoSignedOffByUserInput[]
+    connectOrCreate?: MeetingCreateOrConnectWithoutCcoSignedOffByUserInput | MeetingCreateOrConnectWithoutCcoSignedOffByUserInput[]
+    createMany?: MeetingCreateManyCcoSignedOffByUserInputEnvelope
+    connect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+  }
+
+  export type FlagCreateNestedManyWithoutCmTriagedByUserInput = {
+    create?: XOR<FlagCreateWithoutCmTriagedByUserInput, FlagUncheckedCreateWithoutCmTriagedByUserInput> | FlagCreateWithoutCmTriagedByUserInput[] | FlagUncheckedCreateWithoutCmTriagedByUserInput[]
+    connectOrCreate?: FlagCreateOrConnectWithoutCmTriagedByUserInput | FlagCreateOrConnectWithoutCmTriagedByUserInput[]
+    createMany?: FlagCreateManyCmTriagedByUserInputEnvelope
+    connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+  }
+
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -32126,6 +32920,34 @@ export namespace Prisma {
     connectOrCreate?: UserWorkspaceCreateOrConnectWithoutUserInput | UserWorkspaceCreateOrConnectWithoutUserInput[]
     createMany?: UserWorkspaceCreateManyUserInputEnvelope
     connect?: UserWorkspaceWhereUniqueInput | UserWorkspaceWhereUniqueInput[]
+  }
+
+  export type MeetingUncheckedCreateNestedManyWithoutAdvisorCertifiedByUserInput = {
+    create?: XOR<MeetingCreateWithoutAdvisorCertifiedByUserInput, MeetingUncheckedCreateWithoutAdvisorCertifiedByUserInput> | MeetingCreateWithoutAdvisorCertifiedByUserInput[] | MeetingUncheckedCreateWithoutAdvisorCertifiedByUserInput[]
+    connectOrCreate?: MeetingCreateOrConnectWithoutAdvisorCertifiedByUserInput | MeetingCreateOrConnectWithoutAdvisorCertifiedByUserInput[]
+    createMany?: MeetingCreateManyAdvisorCertifiedByUserInputEnvelope
+    connect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+  }
+
+  export type MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput = {
+    create?: XOR<MeetingCreateWithoutCmReviewedByUserInput, MeetingUncheckedCreateWithoutCmReviewedByUserInput> | MeetingCreateWithoutCmReviewedByUserInput[] | MeetingUncheckedCreateWithoutCmReviewedByUserInput[]
+    connectOrCreate?: MeetingCreateOrConnectWithoutCmReviewedByUserInput | MeetingCreateOrConnectWithoutCmReviewedByUserInput[]
+    createMany?: MeetingCreateManyCmReviewedByUserInputEnvelope
+    connect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+  }
+
+  export type MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput = {
+    create?: XOR<MeetingCreateWithoutCcoSignedOffByUserInput, MeetingUncheckedCreateWithoutCcoSignedOffByUserInput> | MeetingCreateWithoutCcoSignedOffByUserInput[] | MeetingUncheckedCreateWithoutCcoSignedOffByUserInput[]
+    connectOrCreate?: MeetingCreateOrConnectWithoutCcoSignedOffByUserInput | MeetingCreateOrConnectWithoutCcoSignedOffByUserInput[]
+    createMany?: MeetingCreateManyCcoSignedOffByUserInputEnvelope
+    connect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+  }
+
+  export type FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput = {
+    create?: XOR<FlagCreateWithoutCmTriagedByUserInput, FlagUncheckedCreateWithoutCmTriagedByUserInput> | FlagCreateWithoutCmTriagedByUserInput[] | FlagUncheckedCreateWithoutCmTriagedByUserInput[]
+    connectOrCreate?: FlagCreateOrConnectWithoutCmTriagedByUserInput | FlagCreateOrConnectWithoutCmTriagedByUserInput[]
+    createMany?: FlagCreateManyCmTriagedByUserInputEnvelope
+    connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
   }
 
   export type AccountUpdateManyWithoutUserNestedInput = {
@@ -32170,6 +32992,62 @@ export namespace Prisma {
     deleteMany?: UserWorkspaceScalarWhereInput | UserWorkspaceScalarWhereInput[]
   }
 
+  export type MeetingUpdateManyWithoutAdvisorCertifiedByUserNestedInput = {
+    create?: XOR<MeetingCreateWithoutAdvisorCertifiedByUserInput, MeetingUncheckedCreateWithoutAdvisorCertifiedByUserInput> | MeetingCreateWithoutAdvisorCertifiedByUserInput[] | MeetingUncheckedCreateWithoutAdvisorCertifiedByUserInput[]
+    connectOrCreate?: MeetingCreateOrConnectWithoutAdvisorCertifiedByUserInput | MeetingCreateOrConnectWithoutAdvisorCertifiedByUserInput[]
+    upsert?: MeetingUpsertWithWhereUniqueWithoutAdvisorCertifiedByUserInput | MeetingUpsertWithWhereUniqueWithoutAdvisorCertifiedByUserInput[]
+    createMany?: MeetingCreateManyAdvisorCertifiedByUserInputEnvelope
+    set?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    disconnect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    delete?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    connect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    update?: MeetingUpdateWithWhereUniqueWithoutAdvisorCertifiedByUserInput | MeetingUpdateWithWhereUniqueWithoutAdvisorCertifiedByUserInput[]
+    updateMany?: MeetingUpdateManyWithWhereWithoutAdvisorCertifiedByUserInput | MeetingUpdateManyWithWhereWithoutAdvisorCertifiedByUserInput[]
+    deleteMany?: MeetingScalarWhereInput | MeetingScalarWhereInput[]
+  }
+
+  export type MeetingUpdateManyWithoutCmReviewedByUserNestedInput = {
+    create?: XOR<MeetingCreateWithoutCmReviewedByUserInput, MeetingUncheckedCreateWithoutCmReviewedByUserInput> | MeetingCreateWithoutCmReviewedByUserInput[] | MeetingUncheckedCreateWithoutCmReviewedByUserInput[]
+    connectOrCreate?: MeetingCreateOrConnectWithoutCmReviewedByUserInput | MeetingCreateOrConnectWithoutCmReviewedByUserInput[]
+    upsert?: MeetingUpsertWithWhereUniqueWithoutCmReviewedByUserInput | MeetingUpsertWithWhereUniqueWithoutCmReviewedByUserInput[]
+    createMany?: MeetingCreateManyCmReviewedByUserInputEnvelope
+    set?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    disconnect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    delete?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    connect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    update?: MeetingUpdateWithWhereUniqueWithoutCmReviewedByUserInput | MeetingUpdateWithWhereUniqueWithoutCmReviewedByUserInput[]
+    updateMany?: MeetingUpdateManyWithWhereWithoutCmReviewedByUserInput | MeetingUpdateManyWithWhereWithoutCmReviewedByUserInput[]
+    deleteMany?: MeetingScalarWhereInput | MeetingScalarWhereInput[]
+  }
+
+  export type MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput = {
+    create?: XOR<MeetingCreateWithoutCcoSignedOffByUserInput, MeetingUncheckedCreateWithoutCcoSignedOffByUserInput> | MeetingCreateWithoutCcoSignedOffByUserInput[] | MeetingUncheckedCreateWithoutCcoSignedOffByUserInput[]
+    connectOrCreate?: MeetingCreateOrConnectWithoutCcoSignedOffByUserInput | MeetingCreateOrConnectWithoutCcoSignedOffByUserInput[]
+    upsert?: MeetingUpsertWithWhereUniqueWithoutCcoSignedOffByUserInput | MeetingUpsertWithWhereUniqueWithoutCcoSignedOffByUserInput[]
+    createMany?: MeetingCreateManyCcoSignedOffByUserInputEnvelope
+    set?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    disconnect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    delete?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    connect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    update?: MeetingUpdateWithWhereUniqueWithoutCcoSignedOffByUserInput | MeetingUpdateWithWhereUniqueWithoutCcoSignedOffByUserInput[]
+    updateMany?: MeetingUpdateManyWithWhereWithoutCcoSignedOffByUserInput | MeetingUpdateManyWithWhereWithoutCcoSignedOffByUserInput[]
+    deleteMany?: MeetingScalarWhereInput | MeetingScalarWhereInput[]
+  }
+
+  export type FlagUpdateManyWithoutCmTriagedByUserNestedInput = {
+    create?: XOR<FlagCreateWithoutCmTriagedByUserInput, FlagUncheckedCreateWithoutCmTriagedByUserInput> | FlagCreateWithoutCmTriagedByUserInput[] | FlagUncheckedCreateWithoutCmTriagedByUserInput[]
+    connectOrCreate?: FlagCreateOrConnectWithoutCmTriagedByUserInput | FlagCreateOrConnectWithoutCmTriagedByUserInput[]
+    upsert?: FlagUpsertWithWhereUniqueWithoutCmTriagedByUserInput | FlagUpsertWithWhereUniqueWithoutCmTriagedByUserInput[]
+    createMany?: FlagCreateManyCmTriagedByUserInputEnvelope
+    set?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+    disconnect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+    delete?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+    connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+    update?: FlagUpdateWithWhereUniqueWithoutCmTriagedByUserInput | FlagUpdateWithWhereUniqueWithoutCmTriagedByUserInput[]
+    updateMany?: FlagUpdateManyWithWhereWithoutCmTriagedByUserInput | FlagUpdateManyWithWhereWithoutCmTriagedByUserInput[]
+    deleteMany?: FlagScalarWhereInput | FlagScalarWhereInput[]
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -32210,6 +33088,62 @@ export namespace Prisma {
     update?: UserWorkspaceUpdateWithWhereUniqueWithoutUserInput | UserWorkspaceUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: UserWorkspaceUpdateManyWithWhereWithoutUserInput | UserWorkspaceUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: UserWorkspaceScalarWhereInput | UserWorkspaceScalarWhereInput[]
+  }
+
+  export type MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserNestedInput = {
+    create?: XOR<MeetingCreateWithoutAdvisorCertifiedByUserInput, MeetingUncheckedCreateWithoutAdvisorCertifiedByUserInput> | MeetingCreateWithoutAdvisorCertifiedByUserInput[] | MeetingUncheckedCreateWithoutAdvisorCertifiedByUserInput[]
+    connectOrCreate?: MeetingCreateOrConnectWithoutAdvisorCertifiedByUserInput | MeetingCreateOrConnectWithoutAdvisorCertifiedByUserInput[]
+    upsert?: MeetingUpsertWithWhereUniqueWithoutAdvisorCertifiedByUserInput | MeetingUpsertWithWhereUniqueWithoutAdvisorCertifiedByUserInput[]
+    createMany?: MeetingCreateManyAdvisorCertifiedByUserInputEnvelope
+    set?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    disconnect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    delete?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    connect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    update?: MeetingUpdateWithWhereUniqueWithoutAdvisorCertifiedByUserInput | MeetingUpdateWithWhereUniqueWithoutAdvisorCertifiedByUserInput[]
+    updateMany?: MeetingUpdateManyWithWhereWithoutAdvisorCertifiedByUserInput | MeetingUpdateManyWithWhereWithoutAdvisorCertifiedByUserInput[]
+    deleteMany?: MeetingScalarWhereInput | MeetingScalarWhereInput[]
+  }
+
+  export type MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput = {
+    create?: XOR<MeetingCreateWithoutCmReviewedByUserInput, MeetingUncheckedCreateWithoutCmReviewedByUserInput> | MeetingCreateWithoutCmReviewedByUserInput[] | MeetingUncheckedCreateWithoutCmReviewedByUserInput[]
+    connectOrCreate?: MeetingCreateOrConnectWithoutCmReviewedByUserInput | MeetingCreateOrConnectWithoutCmReviewedByUserInput[]
+    upsert?: MeetingUpsertWithWhereUniqueWithoutCmReviewedByUserInput | MeetingUpsertWithWhereUniqueWithoutCmReviewedByUserInput[]
+    createMany?: MeetingCreateManyCmReviewedByUserInputEnvelope
+    set?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    disconnect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    delete?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    connect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    update?: MeetingUpdateWithWhereUniqueWithoutCmReviewedByUserInput | MeetingUpdateWithWhereUniqueWithoutCmReviewedByUserInput[]
+    updateMany?: MeetingUpdateManyWithWhereWithoutCmReviewedByUserInput | MeetingUpdateManyWithWhereWithoutCmReviewedByUserInput[]
+    deleteMany?: MeetingScalarWhereInput | MeetingScalarWhereInput[]
+  }
+
+  export type MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput = {
+    create?: XOR<MeetingCreateWithoutCcoSignedOffByUserInput, MeetingUncheckedCreateWithoutCcoSignedOffByUserInput> | MeetingCreateWithoutCcoSignedOffByUserInput[] | MeetingUncheckedCreateWithoutCcoSignedOffByUserInput[]
+    connectOrCreate?: MeetingCreateOrConnectWithoutCcoSignedOffByUserInput | MeetingCreateOrConnectWithoutCcoSignedOffByUserInput[]
+    upsert?: MeetingUpsertWithWhereUniqueWithoutCcoSignedOffByUserInput | MeetingUpsertWithWhereUniqueWithoutCcoSignedOffByUserInput[]
+    createMany?: MeetingCreateManyCcoSignedOffByUserInputEnvelope
+    set?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    disconnect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    delete?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    connect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    update?: MeetingUpdateWithWhereUniqueWithoutCcoSignedOffByUserInput | MeetingUpdateWithWhereUniqueWithoutCcoSignedOffByUserInput[]
+    updateMany?: MeetingUpdateManyWithWhereWithoutCcoSignedOffByUserInput | MeetingUpdateManyWithWhereWithoutCcoSignedOffByUserInput[]
+    deleteMany?: MeetingScalarWhereInput | MeetingScalarWhereInput[]
+  }
+
+  export type FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput = {
+    create?: XOR<FlagCreateWithoutCmTriagedByUserInput, FlagUncheckedCreateWithoutCmTriagedByUserInput> | FlagCreateWithoutCmTriagedByUserInput[] | FlagUncheckedCreateWithoutCmTriagedByUserInput[]
+    connectOrCreate?: FlagCreateOrConnectWithoutCmTriagedByUserInput | FlagCreateOrConnectWithoutCmTriagedByUserInput[]
+    upsert?: FlagUpsertWithWhereUniqueWithoutCmTriagedByUserInput | FlagUpsertWithWhereUniqueWithoutCmTriagedByUserInput[]
+    createMany?: FlagCreateManyCmTriagedByUserInputEnvelope
+    set?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+    disconnect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+    delete?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+    connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+    update?: FlagUpdateWithWhereUniqueWithoutCmTriagedByUserInput | FlagUpdateWithWhereUniqueWithoutCmTriagedByUserInput[]
+    updateMany?: FlagUpdateManyWithWhereWithoutCmTriagedByUserInput | FlagUpdateManyWithWhereWithoutCmTriagedByUserInput[]
+    deleteMany?: FlagScalarWhereInput | FlagScalarWhereInput[]
   }
 
   export type WorkspaceCreateNestedOneWithoutInvitationsInput = {
@@ -32697,6 +33631,13 @@ export namespace Prisma {
     not?: NestedEnumFlagResolutionTypeNullableFilter<$PrismaModel> | $Enums.FlagResolutionType | null
   }
 
+  export type NestedEnumCmFlagDispositionFilter<$PrismaModel = never> = {
+    equals?: $Enums.CmFlagDisposition | EnumCmFlagDispositionFieldRefInput<$PrismaModel>
+    in?: $Enums.CmFlagDisposition[] | ListEnumCmFlagDispositionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CmFlagDisposition[] | ListEnumCmFlagDispositionFieldRefInput<$PrismaModel>
+    not?: NestedEnumCmFlagDispositionFilter<$PrismaModel> | $Enums.CmFlagDisposition
+  }
+
   export type NestedEnumFlagTypeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.FlagType | EnumFlagTypeFieldRefInput<$PrismaModel>
     in?: $Enums.FlagType[] | ListEnumFlagTypeFieldRefInput<$PrismaModel>
@@ -32745,6 +33686,16 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumFlagResolutionTypeNullableFilter<$PrismaModel>
     _max?: NestedEnumFlagResolutionTypeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumCmFlagDispositionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CmFlagDisposition | EnumCmFlagDispositionFieldRefInput<$PrismaModel>
+    in?: $Enums.CmFlagDisposition[] | ListEnumCmFlagDispositionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CmFlagDisposition[] | ListEnumCmFlagDispositionFieldRefInput<$PrismaModel>
+    not?: NestedEnumCmFlagDispositionWithAggregatesFilter<$PrismaModel> | $Enums.CmFlagDisposition
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCmFlagDispositionFilter<$PrismaModel>
+    _max?: NestedEnumCmFlagDispositionFilter<$PrismaModel>
   }
 
   export type NestedEnumFlagResolutionTypeFilter<$PrismaModel = never> = {
@@ -32938,6 +33889,10 @@ export namespace Prisma {
     sharepointDepositedAt?: Date | string | null
     zohoCrmContactId?: string | null
     zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    cmReviewedAt?: Date | string | null
+    ccoSignedOffAt?: Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionCreateNestedManyWithoutMeetingInput
@@ -32945,6 +33900,9 @@ export namespace Prisma {
     flags?: FlagCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
+    cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
+    ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
   }
 
   export type MeetingUncheckedCreateWithoutWorkspaceInput = {
@@ -32976,6 +33934,13 @@ export namespace Prisma {
     sharepointDepositedAt?: Date | string | null
     zohoCrmContactId?: string | null
     zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    advisorCertifiedByUserId?: string | null
+    cmReviewedAt?: Date | string | null
+    cmReviewedByUserId?: string | null
+    ccoSignedOffAt?: Date | string | null
+    ccoSignedOffByUserId?: string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -33071,10 +34036,15 @@ export namespace Prisma {
     resolvedAt?: Date | string | null
     resolutionType?: $Enums.FlagResolutionType | null
     resolutionNote?: string | null
+    cmDisposition?: $Enums.CmFlagDisposition
+    escalationReason?: string | null
+    cmTriageNote?: string | null
+    cmTriagedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     meeting: MeetingCreateNestedOneWithoutFlagsInput
     resolutionRecord?: ResolutionRecordCreateNestedOneWithoutFlagInput
+    cmTriagedByUser?: UserCreateNestedOneWithoutFlagsCmTriagedInput
   }
 
   export type FlagUncheckedCreateWithoutWorkspaceInput = {
@@ -33090,6 +34060,11 @@ export namespace Prisma {
     resolvedAt?: Date | string | null
     resolutionType?: $Enums.FlagResolutionType | null
     resolutionNote?: string | null
+    cmDisposition?: $Enums.CmFlagDisposition
+    escalationReason?: string | null
+    cmTriageNote?: string | null
+    cmTriagedAt?: Date | string | null
+    cmTriagedByUserId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     resolutionRecord?: ResolutionRecordUncheckedCreateNestedOneWithoutFlagInput
@@ -33297,6 +34272,13 @@ export namespace Prisma {
     sharepointDepositedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     zohoCrmContactId?: StringNullableFilter<"Meeting"> | string | null
     zohoCrmNotePostedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    advisorCertifiedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    advisorCertifiedByUserId?: StringNullableFilter<"Meeting"> | string | null
+    cmReviewedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    cmReviewedByUserId?: StringNullableFilter<"Meeting"> | string | null
+    ccoSignedOffAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    ccoSignedOffByUserId?: StringNullableFilter<"Meeting"> | string | null
+    cmReviewSummary?: JsonNullableFilter<"Meeting">
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
   }
@@ -33396,6 +34378,11 @@ export namespace Prisma {
     resolvedAt?: DateTimeNullableFilter<"Flag"> | Date | string | null
     resolutionType?: EnumFlagResolutionTypeNullableFilter<"Flag"> | $Enums.FlagResolutionType | null
     resolutionNote?: StringNullableFilter<"Flag"> | string | null
+    cmDisposition?: EnumCmFlagDispositionFilter<"Flag"> | $Enums.CmFlagDisposition
+    escalationReason?: StringNullableFilter<"Flag"> | string | null
+    cmTriageNote?: StringNullableFilter<"Flag"> | string | null
+    cmTriagedAt?: DateTimeNullableFilter<"Flag"> | Date | string | null
+    cmTriagedByUserId?: StringNullableFilter<"Flag"> | string | null
     createdAt?: DateTimeFilter<"Flag"> | Date | string
     updatedAt?: DateTimeFilter<"Flag"> | Date | string
   }
@@ -33508,6 +34495,10 @@ export namespace Prisma {
     image?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    meetingsAdvisorCertified?: MeetingCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
   }
 
   export type UserUncheckedCreateWithoutWorkspacesInput = {
@@ -33518,6 +34509,10 @@ export namespace Prisma {
     image?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    meetingsAdvisorCertified?: MeetingUncheckedCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
   }
 
   export type UserCreateOrConnectWithoutWorkspacesInput = {
@@ -33607,6 +34602,10 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    meetingsAdvisorCertified?: MeetingUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWorkspacesInput = {
@@ -33617,6 +34616,10 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    meetingsAdvisorCertified?: MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
   }
 
   export type WorkspaceUpsertWithoutUsersInput = {
@@ -33823,10 +34826,15 @@ export namespace Prisma {
     resolvedAt?: Date | string | null
     resolutionType?: $Enums.FlagResolutionType | null
     resolutionNote?: string | null
+    cmDisposition?: $Enums.CmFlagDisposition
+    escalationReason?: string | null
+    cmTriageNote?: string | null
+    cmTriagedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutFlagsInput
     resolutionRecord?: ResolutionRecordCreateNestedOneWithoutFlagInput
+    cmTriagedByUser?: UserCreateNestedOneWithoutFlagsCmTriagedInput
   }
 
   export type FlagUncheckedCreateWithoutMeetingInput = {
@@ -33842,6 +34850,11 @@ export namespace Prisma {
     resolvedAt?: Date | string | null
     resolutionType?: $Enums.FlagResolutionType | null
     resolutionNote?: string | null
+    cmDisposition?: $Enums.CmFlagDisposition
+    escalationReason?: string | null
+    cmTriageNote?: string | null
+    cmTriagedAt?: Date | string | null
+    cmTriagedByUserId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     resolutionRecord?: ResolutionRecordUncheckedCreateNestedOneWithoutFlagInput
@@ -33939,6 +34952,105 @@ export namespace Prisma {
   export type IntegrationSyncLogCreateManyMeetingInputEnvelope = {
     data: IntegrationSyncLogCreateManyMeetingInput | IntegrationSyncLogCreateManyMeetingInput[]
     skipDuplicates?: boolean
+  }
+
+  export type UserCreateWithoutMeetingsAdvisorCertifiedInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    workspaces?: UserWorkspaceCreateNestedManyWithoutUserInput
+    meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+  }
+
+  export type UserUncheckedCreateWithoutMeetingsAdvisorCertifiedInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    workspaces?: UserWorkspaceUncheckedCreateNestedManyWithoutUserInput
+    meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+  }
+
+  export type UserCreateOrConnectWithoutMeetingsAdvisorCertifiedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutMeetingsAdvisorCertifiedInput, UserUncheckedCreateWithoutMeetingsAdvisorCertifiedInput>
+  }
+
+  export type UserCreateWithoutMeetingsCmReviewedInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    workspaces?: UserWorkspaceCreateNestedManyWithoutUserInput
+    meetingsAdvisorCertified?: MeetingCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+  }
+
+  export type UserUncheckedCreateWithoutMeetingsCmReviewedInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    workspaces?: UserWorkspaceUncheckedCreateNestedManyWithoutUserInput
+    meetingsAdvisorCertified?: MeetingUncheckedCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+  }
+
+  export type UserCreateOrConnectWithoutMeetingsCmReviewedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutMeetingsCmReviewedInput, UserUncheckedCreateWithoutMeetingsCmReviewedInput>
+  }
+
+  export type UserCreateWithoutMeetingsCcoSignedOffInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    workspaces?: UserWorkspaceCreateNestedManyWithoutUserInput
+    meetingsAdvisorCertified?: MeetingCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
+    flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+  }
+
+  export type UserUncheckedCreateWithoutMeetingsCcoSignedOffInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    workspaces?: UserWorkspaceUncheckedCreateNestedManyWithoutUserInput
+    meetingsAdvisorCertified?: MeetingUncheckedCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
+    flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+  }
+
+  export type UserCreateOrConnectWithoutMeetingsCcoSignedOffInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutMeetingsCcoSignedOffInput, UserUncheckedCreateWithoutMeetingsCcoSignedOffInput>
   }
 
   export type WorkspaceUpsertWithoutMeetingsInput = {
@@ -34119,6 +35231,123 @@ export namespace Prisma {
     completedAt?: DateTimeNullableFilter<"IntegrationSyncLog"> | Date | string | null
   }
 
+  export type UserUpsertWithoutMeetingsAdvisorCertifiedInput = {
+    update: XOR<UserUpdateWithoutMeetingsAdvisorCertifiedInput, UserUncheckedUpdateWithoutMeetingsAdvisorCertifiedInput>
+    create: XOR<UserCreateWithoutMeetingsAdvisorCertifiedInput, UserUncheckedCreateWithoutMeetingsAdvisorCertifiedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutMeetingsAdvisorCertifiedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutMeetingsAdvisorCertifiedInput, UserUncheckedUpdateWithoutMeetingsAdvisorCertifiedInput>
+  }
+
+  export type UserUpdateWithoutMeetingsAdvisorCertifiedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    workspaces?: UserWorkspaceUpdateManyWithoutUserNestedInput
+    meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutMeetingsAdvisorCertifiedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    workspaces?: UserWorkspaceUncheckedUpdateManyWithoutUserNestedInput
+    meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+  }
+
+  export type UserUpsertWithoutMeetingsCmReviewedInput = {
+    update: XOR<UserUpdateWithoutMeetingsCmReviewedInput, UserUncheckedUpdateWithoutMeetingsCmReviewedInput>
+    create: XOR<UserCreateWithoutMeetingsCmReviewedInput, UserUncheckedCreateWithoutMeetingsCmReviewedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutMeetingsCmReviewedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutMeetingsCmReviewedInput, UserUncheckedUpdateWithoutMeetingsCmReviewedInput>
+  }
+
+  export type UserUpdateWithoutMeetingsCmReviewedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    workspaces?: UserWorkspaceUpdateManyWithoutUserNestedInput
+    meetingsAdvisorCertified?: MeetingUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutMeetingsCmReviewedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    workspaces?: UserWorkspaceUncheckedUpdateManyWithoutUserNestedInput
+    meetingsAdvisorCertified?: MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+  }
+
+  export type UserUpsertWithoutMeetingsCcoSignedOffInput = {
+    update: XOR<UserUpdateWithoutMeetingsCcoSignedOffInput, UserUncheckedUpdateWithoutMeetingsCcoSignedOffInput>
+    create: XOR<UserCreateWithoutMeetingsCcoSignedOffInput, UserUncheckedCreateWithoutMeetingsCcoSignedOffInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutMeetingsCcoSignedOffInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutMeetingsCcoSignedOffInput, UserUncheckedUpdateWithoutMeetingsCcoSignedOffInput>
+  }
+
+  export type UserUpdateWithoutMeetingsCcoSignedOffInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    workspaces?: UserWorkspaceUpdateManyWithoutUserNestedInput
+    meetingsAdvisorCertified?: MeetingUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
+    flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutMeetingsCcoSignedOffInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    workspaces?: UserWorkspaceUncheckedUpdateManyWithoutUserNestedInput
+    meetingsAdvisorCertified?: MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
+    flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+  }
+
   export type MeetingCreateWithoutVersionsInput = {
     id?: string
     clientName: string
@@ -34148,6 +35377,10 @@ export namespace Prisma {
     sharepointDepositedAt?: Date | string | null
     zohoCrmContactId?: string | null
     zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    cmReviewedAt?: Date | string | null
+    ccoSignedOffAt?: Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -34155,6 +35388,9 @@ export namespace Prisma {
     flags?: FlagCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
+    cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
+    ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
   }
 
   export type MeetingUncheckedCreateWithoutVersionsInput = {
@@ -34187,6 +35423,13 @@ export namespace Prisma {
     sharepointDepositedAt?: Date | string | null
     zohoCrmContactId?: string | null
     zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    advisorCertifiedByUserId?: string | null
+    cmReviewedAt?: Date | string | null
+    cmReviewedByUserId?: string | null
+    ccoSignedOffAt?: Date | string | null
+    ccoSignedOffByUserId?: string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutMeetingInput
@@ -34240,6 +35483,10 @@ export namespace Prisma {
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
     zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -34247,6 +35494,9 @@ export namespace Prisma {
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
+    cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
+    ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
   }
 
   export type MeetingUncheckedUpdateWithoutVersionsInput = {
@@ -34279,6 +35529,13 @@ export namespace Prisma {
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
     zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
@@ -34316,6 +35573,10 @@ export namespace Prisma {
     sharepointDepositedAt?: Date | string | null
     zohoCrmContactId?: string | null
     zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    cmReviewedAt?: Date | string | null
+    ccoSignedOffAt?: Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -34323,6 +35584,9 @@ export namespace Prisma {
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
+    cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
+    ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
   }
 
   export type MeetingUncheckedCreateWithoutFlagsInput = {
@@ -34355,6 +35619,13 @@ export namespace Prisma {
     sharepointDepositedAt?: Date | string | null
     zohoCrmContactId?: string | null
     zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    advisorCertifiedByUserId?: string | null
+    cmReviewedAt?: Date | string | null
+    cmReviewedByUserId?: string | null
+    ccoSignedOffAt?: Date | string | null
+    ccoSignedOffByUserId?: string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -34476,6 +35747,39 @@ export namespace Prisma {
     create: XOR<ResolutionRecordCreateWithoutFlagInput, ResolutionRecordUncheckedCreateWithoutFlagInput>
   }
 
+  export type UserCreateWithoutFlagsCmTriagedInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    workspaces?: UserWorkspaceCreateNestedManyWithoutUserInput
+    meetingsAdvisorCertified?: MeetingCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
+  }
+
+  export type UserUncheckedCreateWithoutFlagsCmTriagedInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    workspaces?: UserWorkspaceUncheckedCreateNestedManyWithoutUserInput
+    meetingsAdvisorCertified?: MeetingUncheckedCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
+  }
+
+  export type UserCreateOrConnectWithoutFlagsCmTriagedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutFlagsCmTriagedInput, UserUncheckedCreateWithoutFlagsCmTriagedInput>
+  }
+
   export type MeetingUpsertWithoutFlagsInput = {
     update: XOR<MeetingUpdateWithoutFlagsInput, MeetingUncheckedUpdateWithoutFlagsInput>
     create: XOR<MeetingCreateWithoutFlagsInput, MeetingUncheckedCreateWithoutFlagsInput>
@@ -34516,6 +35820,10 @@ export namespace Prisma {
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
     zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -34523,6 +35831,9 @@ export namespace Prisma {
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
+    cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
+    ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
   }
 
   export type MeetingUncheckedUpdateWithoutFlagsInput = {
@@ -34555,6 +35866,13 @@ export namespace Prisma {
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
     zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -34683,6 +36001,45 @@ export namespace Prisma {
     verifications?: VerificationUncheckedUpdateManyWithoutResolutionNestedInput
   }
 
+  export type UserUpsertWithoutFlagsCmTriagedInput = {
+    update: XOR<UserUpdateWithoutFlagsCmTriagedInput, UserUncheckedUpdateWithoutFlagsCmTriagedInput>
+    create: XOR<UserCreateWithoutFlagsCmTriagedInput, UserUncheckedCreateWithoutFlagsCmTriagedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutFlagsCmTriagedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutFlagsCmTriagedInput, UserUncheckedUpdateWithoutFlagsCmTriagedInput>
+  }
+
+  export type UserUpdateWithoutFlagsCmTriagedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    workspaces?: UserWorkspaceUpdateManyWithoutUserNestedInput
+    meetingsAdvisorCertified?: MeetingUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutFlagsCmTriagedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    workspaces?: UserWorkspaceUncheckedUpdateManyWithoutUserNestedInput
+    meetingsAdvisorCertified?: MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
+  }
+
   export type FlagCreateWithoutResolutionRecordInput = {
     id?: string
     type: $Enums.FlagType
@@ -34695,10 +36052,15 @@ export namespace Prisma {
     resolvedAt?: Date | string | null
     resolutionType?: $Enums.FlagResolutionType | null
     resolutionNote?: string | null
+    cmDisposition?: $Enums.CmFlagDisposition
+    escalationReason?: string | null
+    cmTriageNote?: string | null
+    cmTriagedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     meeting: MeetingCreateNestedOneWithoutFlagsInput
     workspace: WorkspaceCreateNestedOneWithoutFlagsInput
+    cmTriagedByUser?: UserCreateNestedOneWithoutFlagsCmTriagedInput
   }
 
   export type FlagUncheckedCreateWithoutResolutionRecordInput = {
@@ -34715,6 +36077,11 @@ export namespace Prisma {
     resolvedAt?: Date | string | null
     resolutionType?: $Enums.FlagResolutionType | null
     resolutionNote?: string | null
+    cmDisposition?: $Enums.CmFlagDisposition
+    escalationReason?: string | null
+    cmTriageNote?: string | null
+    cmTriagedAt?: Date | string | null
+    cmTriagedByUserId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -34753,6 +36120,10 @@ export namespace Prisma {
     sharepointDepositedAt?: Date | string | null
     zohoCrmContactId?: string | null
     zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    cmReviewedAt?: Date | string | null
+    ccoSignedOffAt?: Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -34760,6 +36131,9 @@ export namespace Prisma {
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     flags?: FlagCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
+    cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
+    ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
   }
 
   export type MeetingUncheckedCreateWithoutResolutionRecordsInput = {
@@ -34792,6 +36166,13 @@ export namespace Prisma {
     sharepointDepositedAt?: Date | string | null
     zohoCrmContactId?: string | null
     zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    advisorCertifiedByUserId?: string | null
+    cmReviewedAt?: Date | string | null
+    cmReviewedByUserId?: string | null
+    ccoSignedOffAt?: Date | string | null
+    ccoSignedOffByUserId?: string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -34987,10 +36368,15 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meeting?: MeetingUpdateOneRequiredWithoutFlagsNestedInput
     workspace?: WorkspaceUpdateOneRequiredWithoutFlagsNestedInput
+    cmTriagedByUser?: UserUpdateOneWithoutFlagsCmTriagedNestedInput
   }
 
   export type FlagUncheckedUpdateWithoutResolutionRecordInput = {
@@ -35007,6 +36393,11 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -35051,6 +36442,10 @@ export namespace Prisma {
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
     zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -35058,6 +36453,9 @@ export namespace Prisma {
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
+    cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
+    ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
   }
 
   export type MeetingUncheckedUpdateWithoutResolutionRecordsInput = {
@@ -35090,6 +36488,13 @@ export namespace Prisma {
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
     zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -35759,6 +37164,10 @@ export namespace Prisma {
     sharepointDepositedAt?: Date | string | null
     zohoCrmContactId?: string | null
     zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    cmReviewedAt?: Date | string | null
+    ccoSignedOffAt?: Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -35766,6 +37175,9 @@ export namespace Prisma {
     flags?: FlagCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
+    cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
+    ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
   }
 
   export type MeetingUncheckedCreateWithoutAuditEventsInput = {
@@ -35798,6 +37210,13 @@ export namespace Prisma {
     sharepointDepositedAt?: Date | string | null
     zohoCrmContactId?: string | null
     zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    advisorCertifiedByUserId?: string | null
+    cmReviewedAt?: Date | string | null
+    cmReviewedByUserId?: string | null
+    ccoSignedOffAt?: Date | string | null
+    ccoSignedOffByUserId?: string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -35920,6 +37339,10 @@ export namespace Prisma {
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
     zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -35927,6 +37350,9 @@ export namespace Prisma {
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
+    cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
+    ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
   }
 
   export type MeetingUncheckedUpdateWithoutAuditEventsInput = {
@@ -35959,6 +37385,13 @@ export namespace Prisma {
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
     zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -35975,6 +37408,10 @@ export namespace Prisma {
     image?: string | null
     sessions?: SessionCreateNestedManyWithoutUserInput
     workspaces?: UserWorkspaceCreateNestedManyWithoutUserInput
+    meetingsAdvisorCertified?: MeetingCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -35985,6 +37422,10 @@ export namespace Prisma {
     image?: string | null
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     workspaces?: UserWorkspaceUncheckedCreateNestedManyWithoutUserInput
+    meetingsAdvisorCertified?: MeetingUncheckedCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -36011,6 +37452,10 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     sessions?: SessionUpdateManyWithoutUserNestedInput
     workspaces?: UserWorkspaceUpdateManyWithoutUserNestedInput
+    meetingsAdvisorCertified?: MeetingUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -36021,6 +37466,10 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     workspaces?: UserWorkspaceUncheckedUpdateManyWithoutUserNestedInput
+    meetingsAdvisorCertified?: MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -36031,6 +37480,10 @@ export namespace Prisma {
     image?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     workspaces?: UserWorkspaceCreateNestedManyWithoutUserInput
+    meetingsAdvisorCertified?: MeetingCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -36041,6 +37494,10 @@ export namespace Prisma {
     image?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     workspaces?: UserWorkspaceUncheckedCreateNestedManyWithoutUserInput
+    meetingsAdvisorCertified?: MeetingUncheckedCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -36067,6 +37524,10 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     workspaces?: UserWorkspaceUpdateManyWithoutUserNestedInput
+    meetingsAdvisorCertified?: MeetingUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -36077,6 +37538,10 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     workspaces?: UserWorkspaceUncheckedUpdateManyWithoutUserNestedInput
+    meetingsAdvisorCertified?: MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -36161,6 +37626,362 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type MeetingCreateWithoutAdvisorCertifiedByUserInput = {
+    id?: string
+    clientName: string
+    meetingType: string
+    meetingDate: Date | string
+    status?: $Enums.MeetingStatus
+    fileUrl?: string | null
+    sourceFileSha256?: string | null
+    sourceFileName?: string | null
+    sourceFileSize?: number | null
+    sourceFileMime?: string | null
+    sourceUploadedAt?: Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
+    finalizedBy?: string | null
+    finalizedAt?: Date | string | null
+    finalizeReason?: $Enums.FinalizeReason | null
+    finalizeNote?: string | null
+    finalizedPolicyVersion?: number | null
+    samplingBucket?: string | null
+    samplingRuleId?: string | null
+    draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
+    readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    cmReviewedAt?: Date | string | null
+    ccoSignedOffAt?: Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
+    versions?: VersionCreateNestedManyWithoutMeetingInput
+    auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
+    flags?: FlagCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
+    integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
+    ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
+  }
+
+  export type MeetingUncheckedCreateWithoutAdvisorCertifiedByUserInput = {
+    id?: string
+    workspaceId: string
+    clientName: string
+    meetingType: string
+    meetingDate: Date | string
+    status?: $Enums.MeetingStatus
+    fileUrl?: string | null
+    sourceFileSha256?: string | null
+    sourceFileName?: string | null
+    sourceFileSize?: number | null
+    sourceFileMime?: string | null
+    sourceUploadedAt?: Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
+    finalizedBy?: string | null
+    finalizedAt?: Date | string | null
+    finalizeReason?: $Enums.FinalizeReason | null
+    finalizeNote?: string | null
+    finalizedPolicyVersion?: number | null
+    samplingBucket?: string | null
+    samplingRuleId?: string | null
+    draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
+    readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    cmReviewedAt?: Date | string | null
+    cmReviewedByUserId?: string | null
+    ccoSignedOffAt?: Date | string | null
+    ccoSignedOffByUserId?: string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutMeetingInput
+    flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
+    integrationSyncLogs?: IntegrationSyncLogUncheckedCreateNestedManyWithoutMeetingInput
+  }
+
+  export type MeetingCreateOrConnectWithoutAdvisorCertifiedByUserInput = {
+    where: MeetingWhereUniqueInput
+    create: XOR<MeetingCreateWithoutAdvisorCertifiedByUserInput, MeetingUncheckedCreateWithoutAdvisorCertifiedByUserInput>
+  }
+
+  export type MeetingCreateManyAdvisorCertifiedByUserInputEnvelope = {
+    data: MeetingCreateManyAdvisorCertifiedByUserInput | MeetingCreateManyAdvisorCertifiedByUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type MeetingCreateWithoutCmReviewedByUserInput = {
+    id?: string
+    clientName: string
+    meetingType: string
+    meetingDate: Date | string
+    status?: $Enums.MeetingStatus
+    fileUrl?: string | null
+    sourceFileSha256?: string | null
+    sourceFileName?: string | null
+    sourceFileSize?: number | null
+    sourceFileMime?: string | null
+    sourceUploadedAt?: Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
+    finalizedBy?: string | null
+    finalizedAt?: Date | string | null
+    finalizeReason?: $Enums.FinalizeReason | null
+    finalizeNote?: string | null
+    finalizedPolicyVersion?: number | null
+    samplingBucket?: string | null
+    samplingRuleId?: string | null
+    draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
+    readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    cmReviewedAt?: Date | string | null
+    ccoSignedOffAt?: Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
+    versions?: VersionCreateNestedManyWithoutMeetingInput
+    auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
+    flags?: FlagCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
+    integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
+    ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
+  }
+
+  export type MeetingUncheckedCreateWithoutCmReviewedByUserInput = {
+    id?: string
+    workspaceId: string
+    clientName: string
+    meetingType: string
+    meetingDate: Date | string
+    status?: $Enums.MeetingStatus
+    fileUrl?: string | null
+    sourceFileSha256?: string | null
+    sourceFileName?: string | null
+    sourceFileSize?: number | null
+    sourceFileMime?: string | null
+    sourceUploadedAt?: Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
+    finalizedBy?: string | null
+    finalizedAt?: Date | string | null
+    finalizeReason?: $Enums.FinalizeReason | null
+    finalizeNote?: string | null
+    finalizedPolicyVersion?: number | null
+    samplingBucket?: string | null
+    samplingRuleId?: string | null
+    draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
+    readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    advisorCertifiedByUserId?: string | null
+    cmReviewedAt?: Date | string | null
+    ccoSignedOffAt?: Date | string | null
+    ccoSignedOffByUserId?: string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutMeetingInput
+    flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
+    integrationSyncLogs?: IntegrationSyncLogUncheckedCreateNestedManyWithoutMeetingInput
+  }
+
+  export type MeetingCreateOrConnectWithoutCmReviewedByUserInput = {
+    where: MeetingWhereUniqueInput
+    create: XOR<MeetingCreateWithoutCmReviewedByUserInput, MeetingUncheckedCreateWithoutCmReviewedByUserInput>
+  }
+
+  export type MeetingCreateManyCmReviewedByUserInputEnvelope = {
+    data: MeetingCreateManyCmReviewedByUserInput | MeetingCreateManyCmReviewedByUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type MeetingCreateWithoutCcoSignedOffByUserInput = {
+    id?: string
+    clientName: string
+    meetingType: string
+    meetingDate: Date | string
+    status?: $Enums.MeetingStatus
+    fileUrl?: string | null
+    sourceFileSha256?: string | null
+    sourceFileName?: string | null
+    sourceFileSize?: number | null
+    sourceFileMime?: string | null
+    sourceUploadedAt?: Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
+    finalizedBy?: string | null
+    finalizedAt?: Date | string | null
+    finalizeReason?: $Enums.FinalizeReason | null
+    finalizeNote?: string | null
+    finalizedPolicyVersion?: number | null
+    samplingBucket?: string | null
+    samplingRuleId?: string | null
+    draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
+    readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    cmReviewedAt?: Date | string | null
+    ccoSignedOffAt?: Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
+    versions?: VersionCreateNestedManyWithoutMeetingInput
+    auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
+    flags?: FlagCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
+    integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
+    cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
+  }
+
+  export type MeetingUncheckedCreateWithoutCcoSignedOffByUserInput = {
+    id?: string
+    workspaceId: string
+    clientName: string
+    meetingType: string
+    meetingDate: Date | string
+    status?: $Enums.MeetingStatus
+    fileUrl?: string | null
+    sourceFileSha256?: string | null
+    sourceFileName?: string | null
+    sourceFileSize?: number | null
+    sourceFileMime?: string | null
+    sourceUploadedAt?: Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
+    finalizedBy?: string | null
+    finalizedAt?: Date | string | null
+    finalizeReason?: $Enums.FinalizeReason | null
+    finalizeNote?: string | null
+    finalizedPolicyVersion?: number | null
+    samplingBucket?: string | null
+    samplingRuleId?: string | null
+    draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
+    readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    advisorCertifiedByUserId?: string | null
+    cmReviewedAt?: Date | string | null
+    cmReviewedByUserId?: string | null
+    ccoSignedOffAt?: Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutMeetingInput
+    flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
+    integrationSyncLogs?: IntegrationSyncLogUncheckedCreateNestedManyWithoutMeetingInput
+  }
+
+  export type MeetingCreateOrConnectWithoutCcoSignedOffByUserInput = {
+    where: MeetingWhereUniqueInput
+    create: XOR<MeetingCreateWithoutCcoSignedOffByUserInput, MeetingUncheckedCreateWithoutCcoSignedOffByUserInput>
+  }
+
+  export type MeetingCreateManyCcoSignedOffByUserInputEnvelope = {
+    data: MeetingCreateManyCcoSignedOffByUserInput | MeetingCreateManyCcoSignedOffByUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type FlagCreateWithoutCmTriagedByUserInput = {
+    id?: string
+    type: $Enums.FlagType
+    severity?: $Enums.FlagSeverity
+    status?: $Enums.FlagStatus
+    evidence?: NullableJsonNullValueInput | InputJsonValue
+    createdByType?: $Enums.FlagCreatedByType
+    createdByUserId?: string | null
+    resolvedByUserId?: string | null
+    resolvedAt?: Date | string | null
+    resolutionType?: $Enums.FlagResolutionType | null
+    resolutionNote?: string | null
+    cmDisposition?: $Enums.CmFlagDisposition
+    escalationReason?: string | null
+    cmTriageNote?: string | null
+    cmTriagedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    meeting: MeetingCreateNestedOneWithoutFlagsInput
+    workspace: WorkspaceCreateNestedOneWithoutFlagsInput
+    resolutionRecord?: ResolutionRecordCreateNestedOneWithoutFlagInput
+  }
+
+  export type FlagUncheckedCreateWithoutCmTriagedByUserInput = {
+    id?: string
+    workspaceId: string
+    meetingId: string
+    type: $Enums.FlagType
+    severity?: $Enums.FlagSeverity
+    status?: $Enums.FlagStatus
+    evidence?: NullableJsonNullValueInput | InputJsonValue
+    createdByType?: $Enums.FlagCreatedByType
+    createdByUserId?: string | null
+    resolvedByUserId?: string | null
+    resolvedAt?: Date | string | null
+    resolutionType?: $Enums.FlagResolutionType | null
+    resolutionNote?: string | null
+    cmDisposition?: $Enums.CmFlagDisposition
+    escalationReason?: string | null
+    cmTriageNote?: string | null
+    cmTriagedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    resolutionRecord?: ResolutionRecordUncheckedCreateNestedOneWithoutFlagInput
+  }
+
+  export type FlagCreateOrConnectWithoutCmTriagedByUserInput = {
+    where: FlagWhereUniqueInput
+    create: XOR<FlagCreateWithoutCmTriagedByUserInput, FlagUncheckedCreateWithoutCmTriagedByUserInput>
+  }
+
+  export type FlagCreateManyCmTriagedByUserInputEnvelope = {
+    data: FlagCreateManyCmTriagedByUserInput | FlagCreateManyCmTriagedByUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
     where: AccountWhereUniqueInput
     update: XOR<AccountUpdateWithoutUserInput, AccountUncheckedUpdateWithoutUserInput>
@@ -36236,6 +38057,70 @@ export namespace Prisma {
   export type UserWorkspaceUpdateManyWithWhereWithoutUserInput = {
     where: UserWorkspaceScalarWhereInput
     data: XOR<UserWorkspaceUpdateManyMutationInput, UserWorkspaceUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type MeetingUpsertWithWhereUniqueWithoutAdvisorCertifiedByUserInput = {
+    where: MeetingWhereUniqueInput
+    update: XOR<MeetingUpdateWithoutAdvisorCertifiedByUserInput, MeetingUncheckedUpdateWithoutAdvisorCertifiedByUserInput>
+    create: XOR<MeetingCreateWithoutAdvisorCertifiedByUserInput, MeetingUncheckedCreateWithoutAdvisorCertifiedByUserInput>
+  }
+
+  export type MeetingUpdateWithWhereUniqueWithoutAdvisorCertifiedByUserInput = {
+    where: MeetingWhereUniqueInput
+    data: XOR<MeetingUpdateWithoutAdvisorCertifiedByUserInput, MeetingUncheckedUpdateWithoutAdvisorCertifiedByUserInput>
+  }
+
+  export type MeetingUpdateManyWithWhereWithoutAdvisorCertifiedByUserInput = {
+    where: MeetingScalarWhereInput
+    data: XOR<MeetingUpdateManyMutationInput, MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserInput>
+  }
+
+  export type MeetingUpsertWithWhereUniqueWithoutCmReviewedByUserInput = {
+    where: MeetingWhereUniqueInput
+    update: XOR<MeetingUpdateWithoutCmReviewedByUserInput, MeetingUncheckedUpdateWithoutCmReviewedByUserInput>
+    create: XOR<MeetingCreateWithoutCmReviewedByUserInput, MeetingUncheckedCreateWithoutCmReviewedByUserInput>
+  }
+
+  export type MeetingUpdateWithWhereUniqueWithoutCmReviewedByUserInput = {
+    where: MeetingWhereUniqueInput
+    data: XOR<MeetingUpdateWithoutCmReviewedByUserInput, MeetingUncheckedUpdateWithoutCmReviewedByUserInput>
+  }
+
+  export type MeetingUpdateManyWithWhereWithoutCmReviewedByUserInput = {
+    where: MeetingScalarWhereInput
+    data: XOR<MeetingUpdateManyMutationInput, MeetingUncheckedUpdateManyWithoutCmReviewedByUserInput>
+  }
+
+  export type MeetingUpsertWithWhereUniqueWithoutCcoSignedOffByUserInput = {
+    where: MeetingWhereUniqueInput
+    update: XOR<MeetingUpdateWithoutCcoSignedOffByUserInput, MeetingUncheckedUpdateWithoutCcoSignedOffByUserInput>
+    create: XOR<MeetingCreateWithoutCcoSignedOffByUserInput, MeetingUncheckedCreateWithoutCcoSignedOffByUserInput>
+  }
+
+  export type MeetingUpdateWithWhereUniqueWithoutCcoSignedOffByUserInput = {
+    where: MeetingWhereUniqueInput
+    data: XOR<MeetingUpdateWithoutCcoSignedOffByUserInput, MeetingUncheckedUpdateWithoutCcoSignedOffByUserInput>
+  }
+
+  export type MeetingUpdateManyWithWhereWithoutCcoSignedOffByUserInput = {
+    where: MeetingScalarWhereInput
+    data: XOR<MeetingUpdateManyMutationInput, MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserInput>
+  }
+
+  export type FlagUpsertWithWhereUniqueWithoutCmTriagedByUserInput = {
+    where: FlagWhereUniqueInput
+    update: XOR<FlagUpdateWithoutCmTriagedByUserInput, FlagUncheckedUpdateWithoutCmTriagedByUserInput>
+    create: XOR<FlagCreateWithoutCmTriagedByUserInput, FlagUncheckedCreateWithoutCmTriagedByUserInput>
+  }
+
+  export type FlagUpdateWithWhereUniqueWithoutCmTriagedByUserInput = {
+    where: FlagWhereUniqueInput
+    data: XOR<FlagUpdateWithoutCmTriagedByUserInput, FlagUncheckedUpdateWithoutCmTriagedByUserInput>
+  }
+
+  export type FlagUpdateManyWithWhereWithoutCmTriagedByUserInput = {
+    where: FlagScalarWhereInput
+    data: XOR<FlagUpdateManyMutationInput, FlagUncheckedUpdateManyWithoutCmTriagedByUserInput>
   }
 
   export type WorkspaceCreateWithoutInvitationsInput = {
@@ -36742,6 +38627,10 @@ export namespace Prisma {
     sharepointDepositedAt?: Date | string | null
     zohoCrmContactId?: string | null
     zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    cmReviewedAt?: Date | string | null
+    ccoSignedOffAt?: Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
@@ -36749,6 +38638,9 @@ export namespace Prisma {
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     flags?: FlagCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
+    advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
+    cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
+    ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
   }
 
   export type MeetingUncheckedCreateWithoutIntegrationSyncLogsInput = {
@@ -36781,6 +38673,13 @@ export namespace Prisma {
     sharepointDepositedAt?: Date | string | null
     zohoCrmContactId?: string | null
     zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    advisorCertifiedByUserId?: string | null
+    cmReviewedAt?: Date | string | null
+    cmReviewedByUserId?: string | null
+    ccoSignedOffAt?: Date | string | null
+    ccoSignedOffByUserId?: string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
@@ -36869,6 +38768,10 @@ export namespace Prisma {
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
     zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
@@ -36876,6 +38779,9 @@ export namespace Prisma {
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
+    advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
+    cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
+    ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
   }
 
   export type MeetingUncheckedUpdateWithoutIntegrationSyncLogsInput = {
@@ -36908,6 +38814,13 @@ export namespace Prisma {
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
     zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -36950,6 +38863,13 @@ export namespace Prisma {
     sharepointDepositedAt?: Date | string | null
     zohoCrmContactId?: string | null
     zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    advisorCertifiedByUserId?: string | null
+    cmReviewedAt?: Date | string | null
+    cmReviewedByUserId?: string | null
+    ccoSignedOffAt?: Date | string | null
+    ccoSignedOffByUserId?: string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -36989,6 +38909,11 @@ export namespace Prisma {
     resolvedAt?: Date | string | null
     resolutionType?: $Enums.FlagResolutionType | null
     resolutionNote?: string | null
+    cmDisposition?: $Enums.CmFlagDisposition
+    escalationReason?: string | null
+    cmTriageNote?: string | null
+    cmTriagedAt?: Date | string | null
+    cmTriagedByUserId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -37077,6 +39002,10 @@ export namespace Prisma {
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
     zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUpdateManyWithoutMeetingNestedInput
@@ -37084,6 +39013,9 @@ export namespace Prisma {
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
+    cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
+    ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
   }
 
   export type MeetingUncheckedUpdateWithoutWorkspaceInput = {
@@ -37115,6 +39047,13 @@ export namespace Prisma {
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
     zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
@@ -37153,6 +39092,13 @@ export namespace Prisma {
     sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
     zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -37235,10 +39181,15 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meeting?: MeetingUpdateOneRequiredWithoutFlagsNestedInput
     resolutionRecord?: ResolutionRecordUpdateOneWithoutFlagNestedInput
+    cmTriagedByUser?: UserUpdateOneWithoutFlagsCmTriagedNestedInput
   }
 
   export type FlagUncheckedUpdateWithoutWorkspaceInput = {
@@ -37254,6 +39205,11 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resolutionRecord?: ResolutionRecordUncheckedUpdateOneWithoutFlagNestedInput
@@ -37272,6 +39228,11 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -37437,6 +39398,11 @@ export namespace Prisma {
     resolvedAt?: Date | string | null
     resolutionType?: $Enums.FlagResolutionType | null
     resolutionNote?: string | null
+    cmDisposition?: $Enums.CmFlagDisposition
+    escalationReason?: string | null
+    cmTriageNote?: string | null
+    cmTriagedAt?: Date | string | null
+    cmTriagedByUserId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -37542,10 +39508,15 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutFlagsNestedInput
     resolutionRecord?: ResolutionRecordUpdateOneWithoutFlagNestedInput
+    cmTriagedByUser?: UserUpdateOneWithoutFlagsCmTriagedNestedInput
   }
 
   export type FlagUncheckedUpdateWithoutMeetingInput = {
@@ -37561,6 +39532,11 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resolutionRecord?: ResolutionRecordUncheckedUpdateOneWithoutFlagNestedInput
@@ -37579,6 +39555,11 @@ export namespace Prisma {
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
     resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -37876,6 +39857,148 @@ export namespace Prisma {
     role: $Enums.WorkspaceRole
   }
 
+  export type MeetingCreateManyAdvisorCertifiedByUserInput = {
+    id?: string
+    workspaceId: string
+    clientName: string
+    meetingType: string
+    meetingDate: Date | string
+    status?: $Enums.MeetingStatus
+    fileUrl?: string | null
+    sourceFileSha256?: string | null
+    sourceFileName?: string | null
+    sourceFileSize?: number | null
+    sourceFileMime?: string | null
+    sourceUploadedAt?: Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
+    finalizedBy?: string | null
+    finalizedAt?: Date | string | null
+    finalizeReason?: $Enums.FinalizeReason | null
+    finalizeNote?: string | null
+    finalizedPolicyVersion?: number | null
+    samplingBucket?: string | null
+    samplingRuleId?: string | null
+    draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
+    readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    cmReviewedAt?: Date | string | null
+    cmReviewedByUserId?: string | null
+    ccoSignedOffAt?: Date | string | null
+    ccoSignedOffByUserId?: string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MeetingCreateManyCmReviewedByUserInput = {
+    id?: string
+    workspaceId: string
+    clientName: string
+    meetingType: string
+    meetingDate: Date | string
+    status?: $Enums.MeetingStatus
+    fileUrl?: string | null
+    sourceFileSha256?: string | null
+    sourceFileName?: string | null
+    sourceFileSize?: number | null
+    sourceFileMime?: string | null
+    sourceUploadedAt?: Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
+    finalizedBy?: string | null
+    finalizedAt?: Date | string | null
+    finalizeReason?: $Enums.FinalizeReason | null
+    finalizeNote?: string | null
+    finalizedPolicyVersion?: number | null
+    samplingBucket?: string | null
+    samplingRuleId?: string | null
+    draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
+    readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    advisorCertifiedByUserId?: string | null
+    cmReviewedAt?: Date | string | null
+    ccoSignedOffAt?: Date | string | null
+    ccoSignedOffByUserId?: string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MeetingCreateManyCcoSignedOffByUserInput = {
+    id?: string
+    workspaceId: string
+    clientName: string
+    meetingType: string
+    meetingDate: Date | string
+    status?: $Enums.MeetingStatus
+    fileUrl?: string | null
+    sourceFileSha256?: string | null
+    sourceFileName?: string | null
+    sourceFileSize?: number | null
+    sourceFileMime?: string | null
+    sourceUploadedAt?: Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
+    finalizedBy?: string | null
+    finalizedAt?: Date | string | null
+    finalizeReason?: $Enums.FinalizeReason | null
+    finalizeNote?: string | null
+    finalizedPolicyVersion?: number | null
+    samplingBucket?: string | null
+    samplingRuleId?: string | null
+    draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
+    readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    advisorCertifiedByUserId?: string | null
+    cmReviewedAt?: Date | string | null
+    cmReviewedByUserId?: string | null
+    ccoSignedOffAt?: Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FlagCreateManyCmTriagedByUserInput = {
+    id?: string
+    workspaceId: string
+    meetingId: string
+    type: $Enums.FlagType
+    severity?: $Enums.FlagSeverity
+    status?: $Enums.FlagStatus
+    evidence?: NullableJsonNullValueInput | InputJsonValue
+    createdByType?: $Enums.FlagCreatedByType
+    createdByUserId?: string | null
+    resolvedByUserId?: string | null
+    resolvedAt?: Date | string | null
+    resolutionType?: $Enums.FlagResolutionType | null
+    resolutionNote?: string | null
+    cmDisposition?: $Enums.CmFlagDisposition
+    escalationReason?: string | null
+    cmTriageNote?: string | null
+    cmTriagedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type AccountUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
@@ -37952,6 +40075,464 @@ export namespace Prisma {
   export type UserWorkspaceUncheckedUpdateManyWithoutUserInput = {
     workspaceId?: StringFieldUpdateOperationsInput | string
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
+  }
+
+  export type MeetingUpdateWithoutAdvisorCertifiedByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    clientName?: StringFieldUpdateOperationsInput | string
+    meetingType?: StringFieldUpdateOperationsInput | string
+    meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileName?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    sourceFileMime?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUploadedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalizeReason?: NullableEnumFinalizeReasonFieldUpdateOperationsInput | $Enums.FinalizeReason | null
+    finalizeNote?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
+    samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
+    versions?: VersionUpdateManyWithoutMeetingNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
+    flags?: FlagUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
+    integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
+    ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
+  }
+
+  export type MeetingUncheckedUpdateWithoutAdvisorCertifiedByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    clientName?: StringFieldUpdateOperationsInput | string
+    meetingType?: StringFieldUpdateOperationsInput | string
+    meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileName?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    sourceFileMime?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUploadedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalizeReason?: NullableEnumFinalizeReasonFieldUpdateOperationsInput | $Enums.FinalizeReason | null
+    finalizeNote?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
+    samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
+    integrationSyncLogs?: IntegrationSyncLogUncheckedUpdateManyWithoutMeetingNestedInput
+  }
+
+  export type MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    clientName?: StringFieldUpdateOperationsInput | string
+    meetingType?: StringFieldUpdateOperationsInput | string
+    meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileName?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    sourceFileMime?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUploadedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalizeReason?: NullableEnumFinalizeReasonFieldUpdateOperationsInput | $Enums.FinalizeReason | null
+    finalizeNote?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
+    samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MeetingUpdateWithoutCmReviewedByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    clientName?: StringFieldUpdateOperationsInput | string
+    meetingType?: StringFieldUpdateOperationsInput | string
+    meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileName?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    sourceFileMime?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUploadedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalizeReason?: NullableEnumFinalizeReasonFieldUpdateOperationsInput | $Enums.FinalizeReason | null
+    finalizeNote?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
+    samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
+    versions?: VersionUpdateManyWithoutMeetingNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
+    flags?: FlagUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
+    integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
+    ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
+  }
+
+  export type MeetingUncheckedUpdateWithoutCmReviewedByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    clientName?: StringFieldUpdateOperationsInput | string
+    meetingType?: StringFieldUpdateOperationsInput | string
+    meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileName?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    sourceFileMime?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUploadedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalizeReason?: NullableEnumFinalizeReasonFieldUpdateOperationsInput | $Enums.FinalizeReason | null
+    finalizeNote?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
+    samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
+    integrationSyncLogs?: IntegrationSyncLogUncheckedUpdateManyWithoutMeetingNestedInput
+  }
+
+  export type MeetingUncheckedUpdateManyWithoutCmReviewedByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    clientName?: StringFieldUpdateOperationsInput | string
+    meetingType?: StringFieldUpdateOperationsInput | string
+    meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileName?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    sourceFileMime?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUploadedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalizeReason?: NullableEnumFinalizeReasonFieldUpdateOperationsInput | $Enums.FinalizeReason | null
+    finalizeNote?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
+    samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MeetingUpdateWithoutCcoSignedOffByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    clientName?: StringFieldUpdateOperationsInput | string
+    meetingType?: StringFieldUpdateOperationsInput | string
+    meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileName?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    sourceFileMime?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUploadedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalizeReason?: NullableEnumFinalizeReasonFieldUpdateOperationsInput | $Enums.FinalizeReason | null
+    finalizeNote?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
+    samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
+    versions?: VersionUpdateManyWithoutMeetingNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
+    flags?: FlagUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
+    integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
+    cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
+  }
+
+  export type MeetingUncheckedUpdateWithoutCcoSignedOffByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    clientName?: StringFieldUpdateOperationsInput | string
+    meetingType?: StringFieldUpdateOperationsInput | string
+    meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileName?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    sourceFileMime?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUploadedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalizeReason?: NullableEnumFinalizeReasonFieldUpdateOperationsInput | $Enums.FinalizeReason | null
+    finalizeNote?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
+    samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
+    integrationSyncLogs?: IntegrationSyncLogUncheckedUpdateManyWithoutMeetingNestedInput
+  }
+
+  export type MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    clientName?: StringFieldUpdateOperationsInput | string
+    meetingType?: StringFieldUpdateOperationsInput | string
+    meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileName?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    sourceFileMime?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUploadedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalizeReason?: NullableEnumFinalizeReasonFieldUpdateOperationsInput | $Enums.FinalizeReason | null
+    finalizeNote?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
+    samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FlagUpdateWithoutCmTriagedByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFlagTypeFieldUpdateOperationsInput | $Enums.FlagType
+    severity?: EnumFlagSeverityFieldUpdateOperationsInput | $Enums.FlagSeverity
+    status?: EnumFlagStatusFieldUpdateOperationsInput | $Enums.FlagStatus
+    evidence?: NullableJsonNullValueInput | InputJsonValue
+    createdByType?: EnumFlagCreatedByTypeFieldUpdateOperationsInput | $Enums.FlagCreatedByType
+    createdByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
+    resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    meeting?: MeetingUpdateOneRequiredWithoutFlagsNestedInput
+    workspace?: WorkspaceUpdateOneRequiredWithoutFlagsNestedInput
+    resolutionRecord?: ResolutionRecordUpdateOneWithoutFlagNestedInput
+  }
+
+  export type FlagUncheckedUpdateWithoutCmTriagedByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    meetingId?: StringFieldUpdateOperationsInput | string
+    type?: EnumFlagTypeFieldUpdateOperationsInput | $Enums.FlagType
+    severity?: EnumFlagSeverityFieldUpdateOperationsInput | $Enums.FlagSeverity
+    status?: EnumFlagStatusFieldUpdateOperationsInput | $Enums.FlagStatus
+    evidence?: NullableJsonNullValueInput | InputJsonValue
+    createdByType?: EnumFlagCreatedByTypeFieldUpdateOperationsInput | $Enums.FlagCreatedByType
+    createdByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
+    resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolutionRecord?: ResolutionRecordUncheckedUpdateOneWithoutFlagNestedInput
+  }
+
+  export type FlagUncheckedUpdateManyWithoutCmTriagedByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    meetingId?: StringFieldUpdateOperationsInput | string
+    type?: EnumFlagTypeFieldUpdateOperationsInput | $Enums.FlagType
+    severity?: EnumFlagSeverityFieldUpdateOperationsInput | $Enums.FlagSeverity
+    status?: EnumFlagStatusFieldUpdateOperationsInput | $Enums.FlagStatus
+    evidence?: NullableJsonNullValueInput | InputJsonValue
+    createdByType?: EnumFlagCreatedByTypeFieldUpdateOperationsInput | $Enums.FlagCreatedByType
+    createdByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
+    resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type IntegrationSyncLogCreateManyIntegrationConfigInput = {

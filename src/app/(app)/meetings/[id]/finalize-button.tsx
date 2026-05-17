@@ -50,12 +50,12 @@ export default function FinalizeButton({
   const [finalizeNote, setFinalizeNote] = useState<string>("");
   const router = useRouter();
 
-  // Only show for OWNER_CCO users and meetings in DRAFT_READY or DRAFT status
+  // CCO only, after three-layer CCO sign-off
   if (userRole !== "OWNER_CCO") {
     return null;
   }
 
-  if (meetingStatus !== "DRAFT_READY" && meetingStatus !== "DRAFT") {
+  if (meetingStatus !== "CCO_SIGNED_OFF") {
     return null;
   }
 

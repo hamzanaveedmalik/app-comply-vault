@@ -12,7 +12,9 @@ export function workspaceInitialsFromName(name: string): string {
 
 /** Maps Prisma roles to design-doc labels (only two enums in schema). */
 export function roleLabelForWorkspace(role: WorkspaceRole): string {
-  return role === "OWNER_CCO" ? "CCO" : "Compliance Manager";
+  if (role === "OWNER_CCO") return "CCO";
+  if (role === "ADVISOR") return "Advisor";
+  return "Compliance Manager";
 }
 
 const MEMBER_PALETTE = ["#3B82F6", "#8B5CF6", "#F97316"] as const;

@@ -19,7 +19,7 @@ declare module "next-auth" {
     user: {
       id: string;
       workspaceId: string | null;
-      role: "OWNER_CCO" | "MEMBER" | null;
+      role: "OWNER_CCO" | "MEMBER" | "ADVISOR" | null;
     } & DefaultSession["user"];
   }
 

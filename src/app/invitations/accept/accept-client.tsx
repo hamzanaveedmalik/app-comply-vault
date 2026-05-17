@@ -6,6 +6,8 @@ import { signIn, signOut } from "next-auth/react";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Alert, AlertDescription } from "~/components/ui/alert";
+import type { WorkspaceRole } from "../../../../generated/prisma";
+import { roleLabelForWorkspace } from "~/lib/workspace-display";
 
 export default function AcceptInvitationClient({
   token,
@@ -137,7 +139,7 @@ export default function AcceptInvitationClient({
           {invitation && (
             <CardDescription>
               You&apos;ve been invited to join <strong>{invitation.workspaceName}</strong> as a{" "}
-              <strong>{invitation.role === "OWNER_CCO" ? "Owner/CCO" : "Member"}</strong>
+              <strong>{roleLabelForWorkspace(invitation.role as WorkspaceRole)}</strong>
             </CardDescription>
           )}
         </CardHeader>

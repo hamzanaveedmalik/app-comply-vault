@@ -21,11 +21,11 @@ export default function InviteUserPage() {
   
   // Single invite state
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<"OWNER_CCO" | "MEMBER">("MEMBER");
+  const [role, setRole] = useState<"OWNER_CCO" | "MEMBER" | "ADVISOR">("MEMBER");
   
   // Bulk invite state
   const [bulkEmails, setBulkEmails] = useState("");
-  const [bulkRole, setBulkRole] = useState<"OWNER_CCO" | "MEMBER">("MEMBER");
+  const [bulkRole, setBulkRole] = useState<"OWNER_CCO" | "MEMBER" | "ADVISOR">("MEMBER");
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -193,17 +193,18 @@ export default function InviteUserPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="role">Role</Label>
-                  <Select value={role} onValueChange={(value) => setRole(value as "OWNER_CCO" | "MEMBER")}>
+                  <Select value={role} onValueChange={(value) => setRole(value as "OWNER_CCO" | "MEMBER" | "ADVISOR")}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="MEMBER">Member</SelectItem>
+                      <SelectItem value="MEMBER">Compliance Manager</SelectItem>
+                      <SelectItem value="ADVISOR">Advisor</SelectItem>
                       <SelectItem value="OWNER_CCO">Owner/CCO</SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
-                    Members can view and edit meetings. Owners/CCOs can finalize records and manage workspace settings.
+                    Advisors certify transcripts. Compliance Managers triage flags. Owners/CCOs sign off and finalize.
                   </p>
                 </div>
 
@@ -246,12 +247,13 @@ export default function InviteUserPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="bulkRole">Role for All Invitations</Label>
-                  <Select value={bulkRole} onValueChange={(value) => setBulkRole(value as "OWNER_CCO" | "MEMBER")}>
+                  <Select value={bulkRole} onValueChange={(value) => setBulkRole(value as "OWNER_CCO" | "MEMBER" | "ADVISOR")}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="MEMBER">Member</SelectItem>
+                      <SelectItem value="MEMBER">Compliance Manager</SelectItem>
+                      <SelectItem value="ADVISOR">Advisor</SelectItem>
                       <SelectItem value="OWNER_CCO">Owner/CCO</SelectItem>
                     </SelectContent>
                   </Select>

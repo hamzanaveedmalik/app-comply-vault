@@ -76,6 +76,7 @@ enum BillingCurrency {
 enum WorkspaceRole {
   OWNER_CCO
   MEMBER
+  ADVISOR
 }
 
 model UserWorkspace {
@@ -100,6 +101,9 @@ enum MeetingStatus {
   PROCESSING
   DRAFT_READY
   DRAFT
+  ADVISOR_CERTIFIED
+  CM_REVIEWED
+  CCO_SIGNED_OFF
   FINALIZED
 }
 
@@ -142,6 +146,14 @@ model Meeting {
   /// Epic 3 — Zoho CRM: explicit Contact record id; optional when name search is enough
   zohoCrmContactId   String?   @db.Text
   zohoCrmNotePostedAt DateTime?
+  advisorCertifiedAt       DateTime?
+  advisorCertifiedByUserId String?
+  cmReviewedAt             DateTime?
+  cmReviewedByUserId       String?
+  ccoSignedOffAt           DateTime?
+  ccoSignedOffByUserId     String?
+  /// Summary counts when CM completes review: { resolved, noted, escalated }
+  cmReviewSummary          Json?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 
@@ -152,6 +164,9 @@ model Meeting {
   flags       Flag[]
   resolutionRecords ResolutionRecord[]
   integrationSyncLogs IntegrationSyncLog[]
+  advisorCertifiedByUser User? @relation("MeetingAdvisorCertifiedBy", fields: [advisorCertifiedByUserId], references: [id], onDelete: SetNull)
+  cmReviewedByUser       User? @relation("MeetingCmReviewedBy", fields: [cmReviewedByUserId], references: [id], onDelete: SetNull)
+  ccoSignedOffByUser     User? @relation("MeetingCcoSignedOffBy", fields: [ccoSignedOffByUserId], references: [id], onDelete: SetNull)
 
   @@index([workspaceId])
   @@index([workspaceId, status])
@@ -200,6 +215,10 @@ enum AuditAction {
   INVITE_RESENT
   INVITE_ACCEPTED
   MEMBER_REMOVED
+  ADVISOR_CERTIFIED
+  CM_REVIEW_COMPLETED
+  CCO_SIGNED_OFF
+  WORKFLOW_REVERTED
 }
 
 enum FlagType {
@@ -254,6 +273,14 @@ enum FlagCreatedByType {
   USER
 }
 
+/// Layer-2 triage disposition set by Compliance Manager (three-layer sign-off).
+enum CmFlagDisposition {
+  NONE
+  RESOLVED
+  NOTED
+  ESCALATED
+}
+
 model Flag {
   id            String      @id @default(cuid())
   workspaceId   String
@@ -268,12 +295,19 @@ model Flag {
   resolvedAt    DateTime?
   resolutionType FlagResolutionType?
   resolutionNote String?
+  /// CM triage (resolve / note / escalate) for three-layer workflow.
+  cmDisposition    CmFlagDisposition @default(NONE)
+  escalationReason String?           @db.Text
+  cmTriageNote     String?           @db.Text
+  cmTriagedAt      DateTime?
+  cmTriagedByUserId String?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
   meeting   Meeting   @relation(fields: [meetingId], references: [id], onDelete: Cascade)
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   resolutionRecord ResolutionRecord?
+  cmTriagedByUser  User?    @relation("FlagCmTriagedBy", fields: [cmTriagedByUserId], references: [id], onDelete: SetNull)
 
   @@index([workspaceId])
   @@index([workspaceId, meetingId])
@@ -424,6 +458,10 @@ model User {
   accounts   Account[]
   sessions   Session[]
   workspaces UserWorkspace[]
+  meetingsAdvisorCertified Meeting[] @relation("MeetingAdvisorCertifiedBy")
+  meetingsCmReviewed       Meeting[] @relation("MeetingCmReviewedBy")
+  meetingsCcoSignedOff    Meeting[] @relation("MeetingCcoSignedOffBy")
+  flagsCmTriaged           Flag[]    @relation("FlagCmTriagedBy")
 }
 
 model VerificationToken {

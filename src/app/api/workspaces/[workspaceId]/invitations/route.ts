@@ -7,7 +7,7 @@ import { assertCanInvite } from "~/server/billing/guards";
 
 const inviteUserSchema = z.object({
   email: z.string().email("Invalid email address"),
-  role: z.enum(["OWNER_CCO", "MEMBER"]),
+  role: z.enum(["OWNER_CCO", "MEMBER", "ADVISOR"]),
 });
 
 export async function POST(

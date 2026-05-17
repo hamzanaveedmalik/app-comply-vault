@@ -9,6 +9,8 @@ import { Label } from "~/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 import { Badge } from "~/components/ui/badge";
+import { roleLabelForWorkspace } from "~/lib/workspace-display";
+import type { WorkspaceRole } from "../../../../generated/prisma";
 
 type Workspace = {
   id: string;
@@ -26,7 +28,7 @@ export function WorkspaceSettingsForm({
   workspace: Workspace;
   members: Array<{
     userId: string;
-    role: "OWNER_CCO" | "MEMBER";
+    role: WorkspaceRole;
     name: string | null;
     email: string | null;
   }>;
@@ -152,7 +154,7 @@ export function WorkspaceSettingsForm({
                         {label} {isCurrentUser ? "(You)" : ""}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        {member.role === "OWNER_CCO" ? "Owner/CCO" : "Member"}
+                        {roleLabelForWorkspace(member.role)}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">

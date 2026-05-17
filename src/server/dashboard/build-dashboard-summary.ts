@@ -39,6 +39,9 @@ function resolveUiStatus(
   openFlagCount: number,
 ): MeetingUiStatus {
   if (status === "FINALIZED") return "finalized";
+  if (status === "CCO_SIGNED_OFF") return "review";
+  if (status === "CM_REVIEWED") return openFlagCount > 0 ? "flagged" : "review";
+  if (status === "ADVISOR_CERTIFIED") return openFlagCount > 0 ? "flagged" : "review";
   if (openFlagCount > 0) return "flagged";
   if (status === "DRAFT_READY") return "review";
   if (status === "DRAFT") return "review";
@@ -50,6 +53,9 @@ function resolveStatusLabel(status: MeetingStatus, ui: MeetingUiStatus): string 
   if (ui === "flagged") return "Flagged";
   if (ui === "review") {
     if (status === "DRAFT_READY") return "Ready for Review";
+    if (status === "ADVISOR_CERTIFIED") return "Advisor certified";
+    if (status === "CM_REVIEWED") return "CM reviewed";
+    if (status === "CCO_SIGNED_OFF") return "CCO signed off";
     return "In review";
   }
   if (status === "PROCESSING" || status === "UPLOADING") return "Processing";
@@ -61,6 +67,9 @@ function pipelineCategory(
   openFlagCount: number,
 ): "draft" | "review" | "flagged" | "finalized" {
   if (status === "FINALIZED") return "finalized";
+  if (status === "CCO_SIGNED_OFF") return "review";
+  if (status === "CM_REVIEWED") return openFlagCount > 0 ? "flagged" : "review";
+  if (status === "ADVISOR_CERTIFIED") return openFlagCount > 0 ? "flagged" : "review";
   if (openFlagCount > 0) return "flagged";
   if (status === "DRAFT_READY" || status === "DRAFT") return "review";
   return "draft";

@@ -12,7 +12,6 @@ import ReprocessButton from "./reprocess-button";
 import ExportButton from "./export-button";
 import VersionHistory from "./version-history";
 import TranscriptViewer from "./transcript-viewer";
-import ReadyForCCOButton from "./ready-for-cco-button";
 import FinalizeButton from "./finalize-button";
 import { MeetingStatusPoller } from "./meeting-status-poller";
 import RetryButton from "./retry-button";
@@ -20,6 +19,10 @@ import FlagsPanel from "./flags-panel";
 import { IntegrationSyncPanel } from "./integration-sync-panel";
 import { ZohoCrmContactField } from "./zoho-crm-contact-field";
 import { validateEvidenceCoverage } from "~/server/extraction/evidence";
+import MeetingWorkflowPanel from "./meeting-workflow-panel";
+import CmFlagTriageList from "./cm-flag-triage";
+import TranscriptEditor from "./transcript-editor";
+import { isAdvisorActor, isComplianceActor } from "~/lib/meeting-workflow";
 
 export default async function MeetingDetailPage({
   params,
@@ -38,6 +41,11 @@ export default async function MeetingDetailPage({
     where: {
       id,
       workspaceId: session.user.workspaceId,
+    },
+    include: {
+      advisorCertifiedByUser: { select: { name: true, email: true } },
+      cmReviewedByUser: { select: { name: true, email: true } },
+      ccoSignedOffByUser: { select: { name: true, email: true } },
     },
   });
 
@@ -134,6 +142,12 @@ export default async function MeetingDetailPage({
     });
   }
 
+  const cmReviewSummary = meeting.cmReviewSummary as {
+    resolved?: number;
+    noted?: number;
+    escalated?: number;
+  } | null;
+
   const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
     switch (status) {
       case "UPLOADING":
@@ -144,6 +158,12 @@ export default async function MeetingDetailPage({
         return "default";
       case "DRAFT":
         return "outline";
+      case "ADVISOR_CERTIFIED":
+        return "default";
+      case "CM_REVIEWED":
+        return "outline";
+      case "CCO_SIGNED_OFF":
+        return "default";
       case "FINALIZED":
         return "default";
       default:
@@ -161,6 +181,12 @@ export default async function MeetingDetailPage({
         return "Draft Ready";
       case "DRAFT":
         return "Draft";
+      case "ADVISOR_CERTIFIED":
+        return "Advisor certified";
+      case "CM_REVIEWED":
+        return "CM reviewed";
+      case "CCO_SIGNED_OFF":
+        return "CCO signed off";
       case "FINALIZED":
         return "Finalized";
       default:
@@ -238,6 +264,45 @@ export default async function MeetingDetailPage({
           </CardContent>
         </Card>
 
+        <MeetingWorkflowPanel
+          meetingId={meeting.id}
+          status={meeting.status}
+          userRole={session.user.role}
+          flags={flags.map((f) => ({
+            id: f.id,
+            status: f.status,
+            cmDisposition: f.cmDisposition,
+            type: f.type,
+            severity: f.severity,
+          }))}
+          advisorCertifiedAt={meeting.advisorCertifiedAt?.toISOString() ?? null}
+          advisorName={
+            meeting.advisorCertifiedByUser?.name ??
+            meeting.advisorCertifiedByUser?.email ??
+            null
+          }
+          cmReviewedAt={meeting.cmReviewedAt?.toISOString() ?? null}
+          cmName={meeting.cmReviewedByUser?.name ?? meeting.cmReviewedByUser?.email ?? null}
+          ccoSignedOffAt={meeting.ccoSignedOffAt?.toISOString() ?? null}
+          ccoName={meeting.ccoSignedOffByUser?.name ?? meeting.ccoSignedOffByUser?.email ?? null}
+          cmReviewSummary={cmReviewSummary}
+        />
+
+        {meeting.status === "ADVISOR_CERTIFIED" && isComplianceActor(session.user.role) && (
+          <CmFlagTriageList
+            meetingId={meeting.id}
+            flags={flags.map((f) => ({
+              id: f.id,
+              type: f.type,
+              severity: f.severity,
+              status: f.status,
+              cmDisposition: f.cmDisposition,
+              escalationReason: f.escalationReason,
+              cmTriageNote: f.cmTriageNote,
+            }))}
+          />
+        )}
+
         <FlagsPanel
           flags={flags.map((flag) => ({
             id: flag.id,
@@ -287,6 +352,7 @@ export default async function MeetingDetailPage({
           }))}
           userRole={session.user.role}
           currentUserId={session.user.id}
+          readOnlyCompliance={session.user.role === "ADVISOR"}
         />
 
         {zohoCrmCredential?.status === "CONNECTED" &&
@@ -311,15 +377,29 @@ export default async function MeetingDetailPage({
           )}
 
         {/* Two-Column Layout: Transcript + Extracted Fields */}
-        {meeting.status === "DRAFT_READY" || meeting.status === "DRAFT" || meeting.status === "FINALIZED" ? (
+        {meeting.status === "DRAFT_READY" ||
+        meeting.status === "DRAFT" ||
+        meeting.status === "FINALIZED" ||
+        meeting.status === "ADVISOR_CERTIFIED" ||
+        meeting.status === "CM_REVIEWED" ||
+        meeting.status === "CCO_SIGNED_OFF" ? (
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Left Column: Transcript */}
             <Card>
               <CardHeader>
                 <CardTitle>Transcript</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 <TranscriptViewer segments={transcriptSegments} />
+                {(meeting.status === "DRAFT_READY" || meeting.status === "DRAFT") &&
+                  isAdvisorActor(session.user.role) &&
+                  transcriptSegments.length > 0 && (
+                    <TranscriptEditor
+                      meetingId={meeting.id}
+                      segments={transcriptSegments}
+                      canEdit
+                    />
+                  )}
               </CardContent>
             </Card>
 
@@ -344,7 +424,9 @@ export default async function MeetingDetailPage({
                   <EditableFields
                     meetingId={meeting.id}
                     extraction={extraction}
-                    isReadOnly={false}
+                    isReadOnly={
+                      session.user.role === "ADVISOR" || meeting.status === "CCO_SIGNED_OFF"
+                    }
                     transcript={transcript}
                     flags={flags.map((flag) => ({
                       id: flag.id,
@@ -385,22 +467,6 @@ export default async function MeetingDetailPage({
           </Card>
         )}
 
-        {meeting.status === "FINALIZED" && (
-          <Card>
-            <CardContent className="pt-6">
-              <p className="text-sm mb-2">
-                This meeting has been finalized and is ready for export.
-              </p>
-              <ExportButton
-                meetingId={meeting.id}
-                status={meeting.status}
-                hasExtraction={!!extraction}
-                openFlagsCount={openFlags.length}
-              />
-            </CardContent>
-          </Card>
-        )}
-
         {meeting.status === "FINALIZED" && meeting.sharepointItemWebUrl && (
           <Card>
             <CardContent className="pt-6">
@@ -424,12 +490,19 @@ export default async function MeetingDetailPage({
           </Card>
         )}
 
-        {/* Export button for DRAFT_READY meetings */}
-        {meeting.status === "DRAFT_READY" && (
+        {/* Export draft / in-progress audit pack */}
+        {(meeting.status === "DRAFT_READY" ||
+          meeting.status === "DRAFT" ||
+          meeting.status === "ADVISOR_CERTIFIED" ||
+          meeting.status === "CM_REVIEWED" ||
+          meeting.status === "CCO_SIGNED_OFF" ||
+          meeting.status === "FINALIZED") && (
           <Card>
             <CardContent className="pt-6">
               <p className="text-sm mb-2">
-                This meeting is ready for review. You can export a draft audit pack.
+                {meeting.status === "FINALIZED"
+                  ? "This meeting has been finalized and is ready for export."
+                  : "Export an audit pack (draft or current workflow state). Finalized packs include the full sign-off trail once all steps are complete."}
               </p>
               <ExportButton
                 meetingId={meeting.id}
@@ -441,21 +514,8 @@ export default async function MeetingDetailPage({
           </Card>
         )}
 
-        {/* Ready for CCO Button */}
-        {(meeting.status === "DRAFT_READY" || meeting.status === "DRAFT") && (
-          <Card>
-            <CardContent className="pt-6">
-              <ReadyForCCOButton
-                meetingId={meeting.id}
-                currentStatus={meeting.readyForCCO}
-                meetingStatus={meeting.status}
-              />
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Finalize Button (CCO only) */}
-        {(meeting.status === "DRAFT_READY" || meeting.status === "DRAFT") && (
+        {/* Finalize Button (CCO only, after CCO sign-off) */}
+        {meeting.status === "CCO_SIGNED_OFF" && (
           <Card>
             <CardContent className="pt-6">
               <FinalizeButton
@@ -472,7 +532,12 @@ export default async function MeetingDetailPage({
         )}
 
         {/* Version History */}
-        {(meeting.status === "DRAFT_READY" || meeting.status === "DRAFT" || meeting.status === "FINALIZED") && (
+        {(meeting.status === "DRAFT_READY" ||
+          meeting.status === "DRAFT" ||
+          meeting.status === "ADVISOR_CERTIFIED" ||
+          meeting.status === "CM_REVIEWED" ||
+          meeting.status === "CCO_SIGNED_OFF" ||
+          meeting.status === "FINALIZED") && (
           <Card>
             <CardHeader>
               <CardTitle>Version History</CardTitle>

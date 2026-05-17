@@ -38,6 +38,12 @@ export interface Meeting {
   draftReadyAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
+  advisorCertifiedAt?: Date | null;
+  advisorCertifiedByUser?: User | null;
+  cmReviewedAt?: Date | null;
+  cmReviewedByUser?: User | null;
+  ccoSignedOffAt?: Date | null;
+  ccoSignedOffByUser?: User | null;
 }
 
 export interface User {

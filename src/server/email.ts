@@ -14,15 +14,21 @@ export async function sendInvitationEmail({
   email: string;
   workspaceName: string;
   invitationToken: string;
-  role: "OWNER_CCO" | "MEMBER";
+  role: "OWNER_CCO" | "MEMBER" | "ADVISOR";
 }) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const invitationUrl = `${baseUrl}/invitations/accept?token=${invitationToken}`;
   const dashboardUrl = `${baseUrl}/dashboard`;
 
-  const roleDescription = role === "OWNER_CCO" 
-    ? "Owner/CCO - You can finalize records, manage workspace settings, and invite team members."
-    : "Member - You can view and edit meeting records.";
+  const roleDescription =
+    role === "OWNER_CCO"
+      ? "Owner/CCO - You can finalize records, manage workspace settings, and invite team members."
+      : role === "ADVISOR"
+        ? "Advisor - You certify meeting transcripts for accuracy."
+        : "Compliance Manager - You triage compliance flags and support the review workflow.";
+
+  const roleLabel =
+    role === "OWNER_CCO" ? "Owner/CCO" : role === "ADVISOR" ? "Advisor" : "Compliance Manager";
 
   const emailContent = {
     from: process.env.EMAIL_FROM || "noreply@ria-compliance.com",
@@ -34,7 +40,7 @@ export async function sendInvitationEmail({
         <p>You've been invited to join the workspace <strong>${workspaceName}</strong> on Comply Vault.</p>
         
         <div style="background-color: #f3f4f6; padding: 15px; border-radius: 6px; margin: 20px 0;">
-          <p style="margin: 0;"><strong>Your Role:</strong> ${role === "OWNER_CCO" ? "Owner/CCO" : "Member"}</p>
+          <p style="margin: 0;"><strong>Your Role:</strong> ${roleLabel}</p>
           <p style="margin: 5px 0 0 0; font-size: 14px; color: #6b7280;">${roleDescription}</p>
         </div>
         
@@ -64,7 +70,7 @@ export async function sendInvitationEmail({
     text: `
       You've been invited to join ${workspaceName} on Comply Vault.
       
-      Your Role: ${role === "OWNER_CCO" ? "Owner/CCO" : "Member"}
+      Your Role: ${roleLabel}
       ${roleDescription}
       
       What is Comply Vault?

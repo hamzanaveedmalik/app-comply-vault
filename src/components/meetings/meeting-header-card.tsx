@@ -1,0 +1,110 @@
+import { Lock, CheckCircle2 } from "lucide-react";
+import { cn } from "~/lib/utils";
+import type { MeetingStatus } from "../../../generated/prisma";
+
+function MeetingStatusPill({ status }: { status: MeetingStatus | string }): React.ReactElement {
+  const common = "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium";
+  switch (status) {
+    case "DRAFT_READY":
+    case "DRAFT":
+      return (
+        <span
+          className={cn(common, "bg-[#FAEEDA] text-[#633806]")}
+          aria-label="Status: draft ready"
+        >
+          Draft ready
+        </span>
+      );
+    case "ADVISOR_CERTIFIED":
+      return (
+        <span
+          className={cn(common, "bg-[#E1F5EE] text-[#085041]")}
+          aria-label="Status: advisor certified"
+        >
+          <CheckCircle2 className="h-3 w-3" aria-hidden />
+          Advisor certified
+        </span>
+      );
+    case "CM_REVIEWED":
+      return (
+        <span
+          className={cn(common, "bg-[#E6F1FB] text-[#0C447C]")}
+          aria-label="Status: CM reviewed"
+        >
+          CM reviewed
+        </span>
+      );
+    case "CCO_SIGNED_OFF":
+      return (
+        <span
+          className={cn(common, "bg-[#E1F5EE] text-[#085041]")}
+          aria-label="Status: CCO signed off"
+        >
+          <CheckCircle2 className="h-3 w-3" aria-hidden />
+          CCO signed off
+        </span>
+      );
+    case "FINALIZED":
+      return (
+        <span
+          className={cn(common, "bg-[#F1EFE8] text-[#444441]")}
+          aria-label="Status: finalized"
+        >
+          <Lock className="h-3 w-3" aria-hidden />
+          Finalized
+        </span>
+      );
+    default:
+      return (
+        <span
+          className={cn(common, "bg-muted text-muted-foreground")}
+          aria-label={`Status: ${status}`}
+        >
+          {String(status).replace(/_/g, " ")}
+        </span>
+      );
+  }
+}
+
+export function MeetingHeaderCard({
+  clientName,
+  meetingDate,
+  meetingType,
+  advisorLabel,
+  firmLabel,
+  status,
+}: {
+  clientName: string;
+  meetingDate: Date;
+  meetingType: string;
+  advisorLabel: string;
+  firmLabel: string;
+  status: MeetingStatus | string;
+}): React.ReactElement {
+  return (
+    <div className="rounded-xl border border-border bg-card px-5 py-4 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <h2 className="text-[18px] font-medium leading-snug text-foreground">{clientName}</h2>
+        <MeetingStatusPill status={status} />
+      </div>
+      <dl className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div>
+          <dt className="text-[13px] text-muted-foreground">Meeting date</dt>
+          <dd className="text-[13px] font-medium">{meetingDate.toLocaleDateString()}</dd>
+        </div>
+        <div>
+          <dt className="text-[13px] text-muted-foreground">Type</dt>
+          <dd className="text-[13px] font-medium">{meetingType}</dd>
+        </div>
+        <div>
+          <dt className="text-[13px] text-muted-foreground">Advisor</dt>
+          <dd className="text-[13px] font-medium">{advisorLabel}</dd>
+        </div>
+        <div>
+          <dt className="text-[13px] text-muted-foreground">Firm</dt>
+          <dd className="text-[13px] font-medium">{firmLabel}</dd>
+        </div>
+      </dl>
+    </div>
+  );
+}

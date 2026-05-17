@@ -1,5 +1,6 @@
- "use client";
+"use client";
 
+import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "~/components/ui/badge";
@@ -67,7 +68,7 @@ interface ResolutionRecord {
   verifications: VerificationItem[];
 }
 
-interface FlagItem {
+export interface FlagItem {
   id: string;
   type: string;
   severity: string;
@@ -75,6 +76,10 @@ interface FlagItem {
   evidence: any;
   createdAt: string;
   resolutionRecord: ResolutionRecord | null;
+  cmDisposition?: string;
+  escalationReason?: string | null;
+  cmTriageNote?: string | null;
+  resolutionNote?: string | null;
 }
 
 const getSeverityVariant = (severity: string): "default" | "secondary" | "destructive" | "outline" => {
@@ -120,11 +125,16 @@ export default function FlagsPanel({
   userRole,
   currentUserId,
   readOnlyCompliance,
+  renderFlagCards,
 }: {
   flags: FlagItem[];
   userRole: string | null | undefined;
   currentUserId: string | null | undefined;
   readOnlyCompliance?: boolean;
+  renderFlagCards?: (ctx: {
+    openRemediation: (flag: FlagItem) => void;
+    openAcceptRisk: (flag: FlagItem) => void;
+  }) => ReactNode;
 }) {
   const router = useRouter();
   const [activeFlag, setActiveFlag] = useState<FlagItem | null>(null);
@@ -164,6 +174,10 @@ export default function FlagsPanel({
     return () => window.removeEventListener("setTimestamp", handleTimestamp);
   }, []);
 
+  if (readOnlyCompliance && renderFlagCards) {
+    return <div className="space-y-3">{renderFlagCards({ openRemediation: () => undefined, openAcceptRisk: () => undefined })}</div>;
+  }
+
   if (readOnlyCompliance) {
     return (
       <Card>
@@ -196,7 +210,7 @@ export default function FlagsPanel({
     );
   }
 
-  if (!flags.length) {
+  if (!flags.length && !renderFlagCards) {
     return null;
   }
 
@@ -543,12 +557,16 @@ export default function FlagsPanel({
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Requires Attention</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {flags.map((flag) => {
+    <>
+      {renderFlagCards ? (
+        <div className="space-y-3">{renderFlagCards({ openRemediation: openDrawer, openAcceptRisk: openOverrideDialog })}</div>
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle>Requires Attention</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {flags.map((flag) => {
           const nextTask = flag.resolutionRecord?.tasks.find(
             (task) => task.required && task.status !== "COMPLETED"
           );
@@ -626,8 +644,10 @@ export default function FlagsPanel({
             </div>
           </div>
           );
-        })}
-      </CardContent>
+            })}
+          </CardContent>
+        </Card>
+      )}
 
       <Drawer open={drawerOpen} onOpenChange={(open) => !open && closeDrawer()}>
         <DrawerContent className="sm:max-w-xl">
@@ -1041,6 +1061,6 @@ export default function FlagsPanel({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </Card>
+    </>
   );
 }

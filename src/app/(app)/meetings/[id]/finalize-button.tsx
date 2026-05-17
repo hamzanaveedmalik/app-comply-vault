@@ -32,6 +32,8 @@ interface FinalizeButtonProps {
   editedClaimsCount: number;
   openCriticalFlagsCount: number;
   openWarningFlagsCount: number;
+  /** Render as compact control for ReviewActionBar */
+  embedInActionBar?: boolean;
 }
 
 export default function FinalizeButton({
@@ -42,6 +44,7 @@ export default function FinalizeButton({
   editedClaimsCount,
   openCriticalFlagsCount,
   openWarningFlagsCount,
+  embedInActionBar,
 }: FinalizeButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -99,12 +102,19 @@ export default function FinalizeButton({
   };
 
   return (
-    <div className="mt-4 space-y-2">
+    <div className={embedInActionBar ? "contents" : "mt-4 space-y-2"}>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button variant="default" className="w-full sm:w-auto">
+          <Button
+            variant="default"
+            className={
+              embedInActionBar
+                ? "shrink-0 rounded-full bg-[#185FA5] px-5 text-[14px] font-medium text-white hover:bg-[#185FA5]/90"
+                : "w-full sm:w-auto"
+            }
+          >
             <CheckCircle2 className="mr-2 h-4 w-4" />
-            Finalize Meeting
+            Finalize meeting
           </Button>
         </DialogTrigger>
         <DialogContent>
@@ -166,9 +176,12 @@ export default function FinalizeButton({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <p className="text-xs text-muted-foreground">
-        Finalizing this meeting will make it read-only and ready for export. Only workspace owners (CCO) can finalize meetings.
-      </p>
+      {!embedInActionBar ? (
+        <p className="text-xs text-muted-foreground">
+          Finalizing this meeting will make it read-only and ready for export. Only workspace owners (CCO) can
+          finalize meetings.
+        </p>
+      ) : null}
     </div>
   );
 }

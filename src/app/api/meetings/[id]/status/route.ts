@@ -29,6 +29,7 @@ export async function GET(
         clientName: true,
         draftReadyAt: true,
         finalizedAt: true,
+        updatedAt: true,
       },
     });
 
@@ -36,12 +37,23 @@ export async function GET(
       return NextResponse.json({ error: "Meeting not found" }, { status: 404 });
     }
 
+    const agg = await db.flag.aggregate({
+      where: { meetingId: id },
+      _max: { updatedAt: true },
+    });
+
+    const maxFlagAt = agg._max.updatedAt;
+    const syncToken = `${meeting.status}|${meeting.updatedAt.toISOString()}|${maxFlagAt?.toISOString() ?? "none"}`;
+
     return NextResponse.json({
       id: meeting.id,
       status: meeting.status,
       clientName: meeting.clientName,
       draftReadyAt: meeting.draftReadyAt?.toISOString() || null,
       finalizedAt: meeting.finalizedAt?.toISOString() || null,
+      updatedAt: meeting.updatedAt.toISOString(),
+      maxFlagUpdatedAt: maxFlagAt?.toISOString() ?? null,
+      syncToken,
     });
   } catch (error) {
     console.error("Error fetching meeting status:", error);

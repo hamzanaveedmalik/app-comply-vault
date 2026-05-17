@@ -15,7 +15,7 @@ const triageSchema = z.discriminatedUnion("action", [
   }),
   z.object({
     action: z.literal("note"),
-    cmTriageNote: z.string().min(5, "Note required"),
+    cmTriageNote: z.string().min(10, "Note required"),
   }),
   z.object({
     action: z.literal("escalate"),

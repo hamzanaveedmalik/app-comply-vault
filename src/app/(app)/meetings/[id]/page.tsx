@@ -5,24 +5,27 @@ import { notFound } from "next/navigation";
 import type { TranscriptSegment } from "~/server/transcription";
 import type { ExtractionData } from "~/server/extraction/types";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { Badge } from "~/components/ui/badge";
 import ExtractedFields from "./extracted-fields";
 import EditableFields from "./editable-fields";
 import ReprocessButton from "./reprocess-button";
 import ExportButton from "./export-button";
 import VersionHistory from "./version-history";
 import TranscriptViewer from "./transcript-viewer";
-import FinalizeButton from "./finalize-button";
 import { MeetingStatusPoller } from "./meeting-status-poller";
 import RetryButton from "./retry-button";
-import FlagsPanel from "./flags-panel";
 import { IntegrationSyncPanel } from "./integration-sync-panel";
 import { ZohoCrmContactField } from "./zoho-crm-contact-field";
 import { validateEvidenceCoverage } from "~/server/extraction/evidence";
-import MeetingWorkflowPanel from "./meeting-workflow-panel";
-import CmFlagTriageList from "./cm-flag-triage";
 import TranscriptEditor from "./transcript-editor";
-import { isAdvisorActor, isComplianceActor } from "~/lib/meeting-workflow";
+import { isAdvisorActor, isComplianceActor, flagIsCmTriaged } from "~/lib/meeting-workflow";
+import { MeetingHeaderCard } from "~/components/meetings/meeting-header-card";
+import { MeetingWorkflowProgress } from "~/components/meetings/meeting-workflow-progress";
+import { ReviewActionBar } from "~/components/meetings/review-action-bar";
+import { CcoRevertPanel } from "~/components/meetings/cco-revert-panel";
+import { MeetingTranscriptSection } from "~/components/meetings/meeting-transcript-section";
+import MeetingFlagsWorkspace from "./meeting-flags-workspace";
+import { buildMeetingSyncToken } from "~/lib/meeting-sync-token";
+import { MeetingStaleBanner } from "~/components/meetings/meeting-stale-banner";
 
 export default async function MeetingDetailPage({
   params,
@@ -43,6 +46,7 @@ export default async function MeetingDetailPage({
       workspaceId: session.user.workspaceId,
     },
     include: {
+      workspace: { select: { name: true } },
       advisorCertifiedByUser: { select: { name: true, email: true } },
       cmReviewedByUser: { select: { name: true, email: true } },
       ccoSignedOffByUser: { select: { name: true, email: true } },
@@ -142,58 +146,72 @@ export default async function MeetingDetailPage({
     });
   }
 
-  const cmReviewSummary = meeting.cmReviewSummary as {
-    resolved?: number;
-    noted?: number;
-    escalated?: number;
-  } | null;
+  const topicCount = Array.isArray((extraction as { topics?: unknown[] } | null)?.topics)
+    ? (extraction as { topics: unknown[] }).topics.length
+    : 0;
+  const recommendationCount = Array.isArray((extraction as { recommendations?: unknown[] } | null)?.recommendations)
+    ? (extraction as { recommendations: unknown[] }).recommendations.length
+    : 0;
 
-  const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
-    switch (status) {
-      case "UPLOADING":
-        return "secondary";
-      case "PROCESSING":
-        return "default";
-      case "DRAFT_READY":
-        return "default";
-      case "DRAFT":
-        return "outline";
-      case "ADVISOR_CERTIFIED":
-        return "default";
-      case "CM_REVIEWED":
-        return "outline";
-      case "CCO_SIGNED_OFF":
-        return "default";
-      case "FINALIZED":
-        return "default";
-      default:
-        return "secondary";
-    }
-  };
+  const flagsAwaitingTriage = flags.filter(
+    (f) => !flagIsCmTriaged({ status: f.status, cmDisposition: f.cmDisposition }),
+  ).length;
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "UPLOADING":
-        return "Uploading";
-      case "PROCESSING":
-        return "Processing";
-      case "DRAFT_READY":
-        return "Draft Ready";
-      case "DRAFT":
-        return "Draft";
-      case "ADVISOR_CERTIFIED":
-        return "Advisor certified";
-      case "CM_REVIEWED":
-        return "CM reviewed";
-      case "CCO_SIGNED_OFF":
-        return "CCO signed off";
-      case "FINALIZED":
-        return "Finalized";
-      default:
-        return status;
-    }
-  };
+  const advisorTranscriptExpanded =
+    (meeting.status === "DRAFT_READY" || meeting.status === "DRAFT") && session.user.role === "ADVISOR";
 
+  const initialSyncToken = buildMeetingSyncToken(meeting.status, meeting.updatedAt, flags);
+
+  const mappedFlags = flags.map((flag) => ({
+    id: flag.id,
+    type: flag.type,
+    severity: flag.severity,
+    status: flag.status,
+    evidence: flag.evidence,
+    createdAt: flag.createdAt.toISOString(),
+    cmDisposition: flag.cmDisposition,
+    escalationReason: flag.escalationReason,
+    cmTriageNote: flag.cmTriageNote,
+    resolutionNote: flag.resolutionNote,
+    resolutionRecord: flag.resolutionRecord
+      ? {
+          id: flag.resolutionRecord.id,
+          resolutionType: flag.resolutionRecord.resolutionType,
+          rationale: flag.resolutionRecord.rationale,
+          metadata: flag.resolutionRecord.metadata,
+          submittedForVerificationAt:
+            flag.resolutionRecord.submittedForVerificationAt?.toISOString() ?? null,
+          closedAt: flag.resolutionRecord.closedAt?.toISOString() ?? null,
+          overrideReason: flag.resolutionRecord.overrideReason,
+          overrideCategory: flag.resolutionRecord.overrideCategory,
+          tasks: flag.resolutionRecord.tasks.map((task) => ({
+            id: task.id,
+            title: task.title,
+            status: task.status,
+            ownerId: task.ownerId,
+            dueDate: task.dueDate.toISOString(),
+            required: task.required,
+            completionNote: task.completionNote,
+            completedAt: task.completedAt?.toISOString() ?? null,
+          })),
+          evidence: flag.resolutionRecord.evidence.map((item) => ({
+            id: item.id,
+            type: item.type,
+            label: item.label,
+            url: item.url,
+            metadata: item.metadata,
+            createdAt: item.createdAt.toISOString(),
+          })),
+          verifications: flag.resolutionRecord.verifications.map((verification) => ({
+            id: verification.id,
+            reviewerId: verification.reviewerId,
+            decision: verification.decision,
+            note: verification.note,
+            decidedAt: verification.decidedAt.toISOString(),
+          })),
+        }
+      : null,
+  }));
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -203,157 +221,99 @@ export default async function MeetingDetailPage({
         initialStatus={meeting.status}
         clientName={meeting.clientName}
       />
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Meeting Details</h1>
-      </div>
-
-      <div className="space-y-6">
-        {/* Overview Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Overview</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <dt className="text-sm font-medium text-muted-foreground">Client Name</dt>
-                <dd className="mt-1 text-sm">{meeting.clientName}</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-muted-foreground">Meeting Type</dt>
-                <dd className="mt-1 text-sm">{meeting.meetingType}</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-muted-foreground">Meeting Date</dt>
-                <dd className="mt-1 text-sm">
-                  {new Date(meeting.meetingDate).toLocaleDateString()}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-muted-foreground">Status</dt>
-                <dd className="mt-1">
-                  <Badge variant={getStatusVariant(meeting.status)}>
-                    {getStatusLabel(meeting.status)}
-                  </Badge>
-                </dd>
-              </div>
-            </dl>
-          </CardContent>
-        </Card>
-
-        {/* Review Readiness Banner */}
-        <Card className={openCriticalFlags.length > 0 ? "border-red-300" : "border-emerald-300"}>
-          <CardContent className="pt-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <p className="text-sm font-semibold">
-                  {openCriticalFlags.length > 0
-                    ? `Blocked: ${openCriticalFlags.length} critical flag${openCriticalFlags.length > 1 ? "s" : ""} open`
-                    : "Ready: no critical flags open"}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {openWarningFlags.length > 0
-                    ? `${openWarningFlags.length} warning flag${openWarningFlags.length > 1 ? "s" : ""} remain open`
-                    : "No warning flags open"}
-                </p>
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Evidence coverage: {evidenceStats ? `${(evidenceStats.coverage * 100).toFixed(1)}%` : "N/A"}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <MeetingWorkflowPanel
-          meetingId={meeting.id}
-          status={meeting.status}
-          userRole={session.user.role}
-          flags={flags.map((f) => ({
-            id: f.id,
-            status: f.status,
-            cmDisposition: f.cmDisposition,
-            type: f.type,
-            severity: f.severity,
-          }))}
-          advisorCertifiedAt={meeting.advisorCertifiedAt?.toISOString() ?? null}
-          advisorName={
+      <MeetingStaleBanner
+        meetingId={meeting.id}
+        meetingStatus={meeting.status}
+        initialSyncToken={initialSyncToken}
+      />
+      <div className="space-y-5">
+        <MeetingHeaderCard
+          clientName={meeting.clientName}
+          meetingDate={meeting.meetingDate}
+          meetingType={meeting.meetingType}
+          advisorLabel={
             meeting.advisorCertifiedByUser?.name ??
             meeting.advisorCertifiedByUser?.email ??
-            null
+            "—"
           }
-          cmReviewedAt={meeting.cmReviewedAt?.toISOString() ?? null}
-          cmName={meeting.cmReviewedByUser?.name ?? meeting.cmReviewedByUser?.email ?? null}
-          ccoSignedOffAt={meeting.ccoSignedOffAt?.toISOString() ?? null}
-          ccoName={meeting.ccoSignedOffByUser?.name ?? meeting.ccoSignedOffByUser?.email ?? null}
-          cmReviewSummary={cmReviewSummary}
+          firmLabel={meeting.workspace.name}
+          status={meeting.status}
         />
 
         {meeting.status === "ADVISOR_CERTIFIED" && isComplianceActor(session.user.role) && (
-          <CmFlagTriageList
-            meetingId={meeting.id}
-            flags={flags.map((f) => ({
-              id: f.id,
-              type: f.type,
-              severity: f.severity,
-              status: f.status,
-              cmDisposition: f.cmDisposition,
-              escalationReason: f.escalationReason,
-              cmTriageNote: f.cmTriageNote,
-            }))}
-          />
+          <div className="rounded-xl border border-[#E6F1FB] bg-[#E6F1FB]/35 px-5 py-4 text-[13px] text-[#0C447C]">
+            Awaiting compliance review — {flagsAwaitingTriage} flag{flagsAwaitingTriage === 1 ? "" : "s"}{" "}
+            require triage
+          </div>
         )}
 
-        <FlagsPanel
-          flags={flags.map((flag) => ({
-            id: flag.id,
-            type: flag.type,
-            severity: flag.severity,
-            status: flag.status,
-            evidence: flag.evidence,
-            createdAt: flag.createdAt.toISOString(),
-            resolutionRecord: flag.resolutionRecord
-              ? {
-                  id: flag.resolutionRecord.id,
-                  resolutionType: flag.resolutionRecord.resolutionType,
-                  rationale: flag.resolutionRecord.rationale,
-                  metadata: flag.resolutionRecord.metadata,
-                  submittedForVerificationAt:
-                    flag.resolutionRecord.submittedForVerificationAt?.toISOString() ?? null,
-                  closedAt: flag.resolutionRecord.closedAt?.toISOString() ?? null,
-                  overrideReason: flag.resolutionRecord.overrideReason,
-                  overrideCategory: flag.resolutionRecord.overrideCategory,
-                  tasks: flag.resolutionRecord.tasks.map((task) => ({
-                    id: task.id,
-                    title: task.title,
-                    status: task.status,
-                    ownerId: task.ownerId,
-                    dueDate: task.dueDate.toISOString(),
-                    required: task.required,
-                    completionNote: task.completionNote,
-                    completedAt: task.completedAt?.toISOString() ?? null,
-                  })),
-                  evidence: flag.resolutionRecord.evidence.map((item) => ({
-                    id: item.id,
-                    type: item.type,
-                    label: item.label,
-                    url: item.url,
-                    metadata: item.metadata,
-                    createdAt: item.createdAt.toISOString(),
-                  })),
-                  verifications: flag.resolutionRecord.verifications.map((verification) => ({
-                    id: verification.id,
-                    reviewerId: verification.reviewerId,
-                    decision: verification.decision,
-                    note: verification.note,
-                    decidedAt: verification.decidedAt.toISOString(),
-                  })),
-                }
-              : null,
-          }))}
+        {!(
+          meeting.status === "ADVISOR_CERTIFIED" && isComplianceActor(session.user.role)
+        ) && (
+          <Card
+            className={
+              openCriticalFlags.length > 0 ? "border-amber-200/80 bg-[#FAEEDA]/25" : "border-emerald-200/80"
+            }
+          >
+            <CardContent className="pt-6">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm font-semibold">
+                    {openCriticalFlags.length > 0
+                      ? `${openCriticalFlags.length} critical flag${openCriticalFlags.length > 1 ? "s" : ""} open (review in flag workspace)`
+                      : "No critical flags open"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {openWarningFlags.length > 0
+                      ? `${openWarningFlags.length} warning flag${openWarningFlags.length > 1 ? "s" : ""}`
+                      : "No warning flags open"}
+                  </p>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Evidence coverage: {evidenceStats ? `${(evidenceStats.coverage * 100).toFixed(1)}%` : "N/A"}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        <MeetingWorkflowProgress
+          meetingStatus={meeting.status}
           userRole={session.user.role}
-          currentUserId={session.user.id}
-          readOnlyCompliance={session.user.role === "ADVISOR"}
+          advisorName={
+            meeting.advisorCertifiedByUser?.name ?? meeting.advisorCertifiedByUser?.email ?? null
+          }
+          advisorCertifiedAt={meeting.advisorCertifiedAt?.toISOString() ?? null}
+          flags={flags.map((f) => ({ status: f.status, cmDisposition: f.cmDisposition }))}
         />
+
+        <section className="space-y-3">
+          <MeetingFlagsWorkspace
+            meetingId={meeting.id}
+            meetingStatus={meeting.status}
+            flags={mappedFlags}
+            userRole={session.user.role}
+            currentUserId={session.user.id}
+            readOnlyCompliance={session.user.role === "ADVISOR"}
+          />
+          <ReviewActionBar
+            meetingId={meeting.id}
+            clientName={meeting.clientName}
+            meetingStatus={meeting.status}
+            userRole={session.user.role}
+            flags={flags.map((f) => ({
+              id: f.id,
+              status: f.status,
+              cmDisposition: f.cmDisposition,
+            }))}
+            evidenceCoverage={evidenceStats?.coverage ?? null}
+            editedClaimsCount={editedClaimsCount}
+            openCriticalFlagsCount={openCriticalFlags.length}
+            openWarningFlagsCount={openWarningFlags.length}
+          />
+        </section>
+
+        <CcoRevertPanel meetingId={meeting.id} meetingStatus={meeting.status} userRole={session.user.role} />
 
         {zohoCrmCredential?.status === "CONNECTED" &&
           (meeting.status === "DRAFT_READY" || meeting.status === "DRAFT") && (
@@ -376,77 +336,132 @@ export default async function MeetingDetailPage({
             </Card>
           )}
 
-        {/* Two-Column Layout: Transcript + Extracted Fields */}
+        {/* Transcript + extracted fields */}
         {meeting.status === "DRAFT_READY" ||
         meeting.status === "DRAFT" ||
         meeting.status === "FINALIZED" ||
         meeting.status === "ADVISOR_CERTIFIED" ||
         meeting.status === "CM_REVIEWED" ||
         meeting.status === "CCO_SIGNED_OFF" ? (
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {/* Left Column: Transcript */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Transcript</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <TranscriptViewer segments={transcriptSegments} />
-                {(meeting.status === "DRAFT_READY" || meeting.status === "DRAFT") &&
-                  isAdvisorActor(session.user.role) &&
-                  transcriptSegments.length > 0 && (
-                    <TranscriptEditor
-                      meetingId={meeting.id}
-                      segments={transcriptSegments}
-                      canEdit
-                    />
-                  )}
-              </CardContent>
-            </Card>
-
-            {/* Right Column: Extracted Fields */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Extracted Fields</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {meeting.status === "FINALIZED" ? (
-                  <ExtractedFields
-                    extraction={extraction}
-                    flags={flags.map((flag) => ({
-                      id: flag.id,
-                      type: flag.type,
-                      severity: flag.severity,
-                      status: flag.status,
-                      evidence: flag.evidence,
-                    }))}
-                  />
-                ) : (
-                  <EditableFields
-                    meetingId={meeting.id}
-                    extraction={extraction}
-                    isReadOnly={
-                      session.user.role === "ADVISOR" || meeting.status === "CCO_SIGNED_OFF"
-                    }
-                    transcript={transcript}
-                    flags={flags.map((flag) => ({
-                      id: flag.id,
-                      type: flag.type,
-                      severity: flag.severity,
-                      status: flag.status,
-                      evidence: flag.evidence,
-                    }))}
-                  />
-                )}
-                {meeting.status !== "FINALIZED" && (
-                  <ReprocessButton
-                    meetingId={meeting.id}
-                    hasTranscript={!!(transcript && transcript.segments && transcript.segments.length > 0)}
-                    hasExtraction={!!extraction}
-                  />
-                )}
-              </CardContent>
-            </Card>
-          </div>
+          <MeetingTranscriptSection
+            collapsedByDefault={!advisorTranscriptExpanded}
+            transcriptSegments={transcriptSegments}
+            topicCount={topicCount}
+            recommendationCount={recommendationCount}
+            advisorExpandedGrid={
+              <>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Transcript</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <TranscriptViewer segments={transcriptSegments} />
+                    {(meeting.status === "DRAFT_READY" || meeting.status === "DRAFT") &&
+                      isAdvisorActor(session.user.role) &&
+                      transcriptSegments.length > 0 && (
+                        <TranscriptEditor meetingId={meeting.id} segments={transcriptSegments} canEdit />
+                      )}
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Extracted Fields</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {meeting.status === "FINALIZED" ? (
+                      <ExtractedFields
+                        extraction={extraction}
+                        flags={flags.map((flag) => ({
+                          id: flag.id,
+                          type: flag.type,
+                          severity: flag.severity,
+                          status: flag.status,
+                          evidence: flag.evidence,
+                        }))}
+                      />
+                    ) : (
+                      <EditableFields
+                        meetingId={meeting.id}
+                        extraction={extraction}
+                        isReadOnly={
+                          session.user.role === "ADVISOR" || meeting.status === "CCO_SIGNED_OFF"
+                        }
+                        transcript={transcript}
+                        flags={flags.map((flag) => ({
+                          id: flag.id,
+                          type: flag.type,
+                          severity: flag.severity,
+                          status: flag.status,
+                          evidence: flag.evidence,
+                        }))}
+                      />
+                    )}
+                    {meeting.status !== "FINALIZED" && (
+                      <ReprocessButton
+                        meetingId={meeting.id}
+                        hasTranscript={!!(transcript && transcript.segments && transcript.segments.length > 0)}
+                        hasExtraction={!!extraction}
+                      />
+                    )}
+                  </CardContent>
+                </Card>
+              </>
+            }
+            expandedContent={
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Transcript</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <TranscriptViewer segments={transcriptSegments} />
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Extracted Fields</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {meeting.status === "FINALIZED" ? (
+                      <ExtractedFields
+                        extraction={extraction}
+                        flags={flags.map((flag) => ({
+                          id: flag.id,
+                          type: flag.type,
+                          severity: flag.severity,
+                          status: flag.status,
+                          evidence: flag.evidence,
+                        }))}
+                      />
+                    ) : (
+                      <EditableFields
+                        meetingId={meeting.id}
+                        extraction={extraction}
+                        isReadOnly={
+                          session.user.role === "ADVISOR" || meeting.status === "CCO_SIGNED_OFF"
+                        }
+                        transcript={transcript}
+                        flags={flags.map((flag) => ({
+                          id: flag.id,
+                          type: flag.type,
+                          severity: flag.severity,
+                          status: flag.status,
+                          evidence: flag.evidence,
+                        }))}
+                      />
+                    )}
+                    {meeting.status !== "FINALIZED" && (
+                      <ReprocessButton
+                        meetingId={meeting.id}
+                        hasTranscript={!!(transcript && transcript.segments && transcript.segments.length > 0)}
+                        hasExtraction={!!extraction}
+                      />
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            }
+          />
         ) : (
           <Card>
             <CardContent className="pt-6 space-y-4">
@@ -509,23 +524,6 @@ export default async function MeetingDetailPage({
                 status={meeting.status}
                 hasExtraction={!!extraction}
                 openFlagsCount={openFlags.length}
-              />
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Finalize Button (CCO only, after CCO sign-off) */}
-        {meeting.status === "CCO_SIGNED_OFF" && (
-          <Card>
-            <CardContent className="pt-6">
-              <FinalizeButton
-                meetingId={meeting.id}
-                meetingStatus={meeting.status}
-                userRole={session.user.role}
-                evidenceCoverage={evidenceStats?.coverage ?? null}
-                editedClaimsCount={editedClaimsCount}
-                openCriticalFlagsCount={openCriticalFlags.length}
-                openWarningFlagsCount={openWarningFlags.length}
               />
             </CardContent>
           </Card>

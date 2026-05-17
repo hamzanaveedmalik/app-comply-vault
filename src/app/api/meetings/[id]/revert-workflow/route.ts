@@ -3,6 +3,7 @@ import { db } from "~/server/db";
 import { isCcoActor } from "~/lib/meeting-workflow";
 import { z } from "zod";
 import type { MeetingStatus } from "../../../../../../generated/prisma";
+import { Prisma } from "../../../../../../generated/prisma";
 
 export const runtime = "nodejs";
 
@@ -73,7 +74,7 @@ export async function POST(
             status: "ADVISOR_CERTIFIED" as const,
             cmReviewedAt: null,
             cmReviewedByUserId: null,
-            cmReviewSummary: null,
+            cmReviewSummary: Prisma.JsonNull,
             ccoSignedOffAt: null,
             ccoSignedOffByUserId: null,
           }

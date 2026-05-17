@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { Fragment, useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Loader2 } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -27,6 +27,14 @@ interface SearchResult {
 interface GlobalSearchProps {
   className?: string;
 }
+
+const EXAMPLE_QUERIES = [
+  "Did Rob discuss fee changes?",
+  "Show suitability flags from last week",
+] as const;
+
+const EXAMPLE_CHIP_CLASS =
+  "inline-flex max-w-full rounded-full border border-border bg-muted/50 px-3 py-1.5 text-left text-xs font-medium text-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 export function GlobalSearch({ className }: GlobalSearchProps): React.JSX.Element {
   const [open, setOpen] = useState(false);
@@ -144,8 +152,8 @@ export function GlobalSearch({ className }: GlobalSearchProps): React.JSX.Elemen
           className
         )}
       >
-        <Search className="h-4 w-4 shrink-0" />
-        <span className="flex-1 text-left">Search meetings...</span>
+        <Sparkles className="h-4 w-4 shrink-0 text-muted-foreground" />
+        <span className="flex-1 text-left">Ask ComplyVault...</span>
         <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
           <span className="text-xs">⌘</span>K
         </kbd>
@@ -154,7 +162,7 @@ export function GlobalSearch({ className }: GlobalSearchProps): React.JSX.Elemen
       {/* Search Dialog */}
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput
-          placeholder="Search by client name, date, or keywords..."
+          placeholder="Ask anything across your meetings..."
           value={query}
           onValueChange={setQuery}
         />
@@ -166,8 +174,20 @@ export function GlobalSearch({ className }: GlobalSearchProps): React.JSX.Elemen
           )}
           {!isLoading && query.length < 2 && (
             <CommandEmpty>
-              <div className="py-6 text-center text-sm text-muted-foreground">
-                Type at least 2 characters to search...
+              <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 px-4 py-6 text-sm text-muted-foreground">
+                <span className="shrink-0">Try</span>
+                {EXAMPLE_QUERIES.map((example, index) => (
+                  <Fragment key={example}>
+                    {index > 0 ? <span className="shrink-0">or</span> : null}
+                    <button
+                      type="button"
+                      className={EXAMPLE_CHIP_CLASS}
+                      onClick={() => setQuery(example)}
+                    >
+                      {example}
+                    </button>
+                  </Fragment>
+                ))}
               </div>
             </CommandEmpty>
           )}

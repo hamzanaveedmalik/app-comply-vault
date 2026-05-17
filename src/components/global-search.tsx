@@ -160,7 +160,11 @@ export function GlobalSearch({ className }: GlobalSearchProps): React.JSX.Elemen
       </button>
 
       {/* Search Dialog */}
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog
+        open={open}
+        onOpenChange={setOpen}
+        className="sm:max-w-5xl"
+      >
         <CommandInput
           placeholder="Ask anything across your meetings..."
           value={query}

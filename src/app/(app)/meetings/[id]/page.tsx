@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import ExtractedFields from "./extracted-fields";
 import EditableFields from "./editable-fields";
 import ReprocessButton from "./reprocess-button";
-import ExportButton from "./export-button";
 import VersionHistory from "./version-history";
 import TranscriptViewer from "./transcript-viewer";
 import { MeetingStatusPoller } from "./meeting-status-poller";
@@ -26,6 +25,11 @@ import { MeetingTranscriptSection } from "~/components/meetings/meeting-transcri
 import MeetingFlagsWorkspace from "./meeting-flags-workspace";
 import { buildMeetingSyncToken } from "~/lib/meeting-sync-token";
 import { MeetingStaleBanner } from "~/components/meetings/meeting-stale-banner";
+import { SignOffSummary, buildSignOffRowsFromMeeting } from "~/components/meetings/sign-off-summary";
+import { MeetingAuditTrail } from "~/components/meetings/meeting-audit-trail";
+import { ExportCard } from "~/components/meetings/export-card";
+import { buildMeetingAuditTrailEntries } from "~/lib/meeting-audit-trail";
+import { parseCmReviewSummary, computeCmReviewSummaryFromFlags } from "~/lib/cm-review-summary";
 
 export default async function MeetingDetailPage({
   params,
@@ -60,7 +64,7 @@ export default async function MeetingDetailPage({
   // Parse extraction data if available
   const extraction = meeting.extraction as ExtractionData | null | undefined;
 
-  const [flags, syncLogs, configs, zohoCrmCredential] = await Promise.all([
+  const [flags, syncLogs, configs, zohoCrmCredential, auditEventsRaw] = await Promise.all([
     db.flag.findMany({
       where: { meetingId: meeting.id },
       orderBy: { createdAt: "desc" },
@@ -87,7 +91,57 @@ export default async function MeetingDetailPage({
         workspaceId_provider: { workspaceId: session.user.workspaceId, provider: "ZOHO_CRM" },
       },
     }),
+    db.auditEvent.findMany({
+      where: {
+        workspaceId: session.user.workspaceId,
+        OR: [{ meetingId: meeting.id }, { resourceType: "meeting", resourceId: meeting.id }],
+        action: { not: "VIEW" },
+      },
+      orderBy: { timestamp: "desc" },
+      take: 100,
+      select: {
+        id: true,
+        action: true,
+        userId: true,
+        timestamp: true,
+        metadata: true,
+        resourceType: true,
+        resourceId: true,
+      },
+    }),
   ]);
+
+  const auditUserIds = [
+    ...new Set(auditEventsRaw.map((e) => e.userId).filter((id) => id !== "system")),
+  ];
+  const auditUsers =
+    auditUserIds.length > 0
+      ? await db.user.findMany({
+          where: { id: { in: auditUserIds } },
+          select: { id: true, name: true, email: true },
+        })
+      : [];
+  const auditUserNameMap = new Map<string, string>(
+    auditUsers.map((u) => [u.id, u.name ?? u.email ?? "Team member"]),
+  );
+  const flagTypeById = new Map(flags.map((f) => [f.id, f.type]));
+  const auditTrailEntries = buildMeetingAuditTrailEntries(auditEventsRaw, auditUserNameMap, flagTypeById);
+
+  const cmSummaryParsed = parseCmReviewSummary(meeting.cmReviewSummary);
+  const cmSummaryForSignOff =
+    cmSummaryParsed ??
+    (meeting.cmReviewedAt ? computeCmReviewSummaryFromFlags(flags) : null);
+
+  const signOffRows = buildSignOffRowsFromMeeting({
+    workspaceName: meeting.workspace.name,
+    advisorName: meeting.advisorCertifiedByUser?.name ?? meeting.advisorCertifiedByUser?.email ?? null,
+    advisorCertifiedAt: meeting.advisorCertifiedAt,
+    cmName: meeting.cmReviewedByUser?.name ?? meeting.cmReviewedByUser?.email ?? null,
+    cmReviewedAt: meeting.cmReviewedAt,
+    cmReviewSummary: cmSummaryForSignOff,
+    ccoName: meeting.ccoSignedOffByUser?.name ?? meeting.ccoSignedOffByUser?.email ?? null,
+    ccoSignedOffAt: meeting.ccoSignedOffAt,
+  });
 
   const syncStatuses = configs.flatMap((c) => {
     const logs = syncLogs.filter((l) => l.provider === c.provider);
@@ -245,36 +299,6 @@ export default async function MeetingDetailPage({
             Awaiting compliance review — {flagsAwaitingTriage} flag{flagsAwaitingTriage === 1 ? "" : "s"}{" "}
             require triage
           </div>
-        )}
-
-        {!(
-          meeting.status === "ADVISOR_CERTIFIED" && isComplianceActor(session.user.role)
-        ) && (
-          <Card
-            className={
-              openCriticalFlags.length > 0 ? "border-amber-200/80 bg-[#FAEEDA]/25" : "border-emerald-200/80"
-            }
-          >
-            <CardContent className="pt-6">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <p className="text-sm font-semibold">
-                    {openCriticalFlags.length > 0
-                      ? `${openCriticalFlags.length} critical flag${openCriticalFlags.length > 1 ? "s" : ""} open (review in flag workspace)`
-                      : "No critical flags open"}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {openWarningFlags.length > 0
-                      ? `${openWarningFlags.length} warning flag${openWarningFlags.length > 1 ? "s" : ""}`
-                      : "No warning flags open"}
-                  </p>
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  Evidence coverage: {evidenceStats ? `${(evidenceStats.coverage * 100).toFixed(1)}%` : "N/A"}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         )}
 
         <MeetingWorkflowProgress
@@ -482,6 +506,25 @@ export default async function MeetingDetailPage({
           </Card>
         )}
 
+        {signOffRows.length > 0 ? <SignOffSummary rows={signOffRows} /> : null}
+
+        {(meeting.status === "CCO_SIGNED_OFF" || meeting.status === "FINALIZED") && (
+          <ExportCard
+            meetingId={meeting.id}
+            meetingStatus={meeting.status === "FINALIZED" ? "FINALIZED" : "CCO_SIGNED_OFF"}
+            hasExtraction={!!extraction}
+          />
+        )}
+
+        {(meeting.status === "DRAFT_READY" ||
+          meeting.status === "DRAFT" ||
+          meeting.status === "ADVISOR_CERTIFIED" ||
+          meeting.status === "CM_REVIEWED" ||
+          meeting.status === "CCO_SIGNED_OFF" ||
+          meeting.status === "FINALIZED") && (
+          <MeetingAuditTrail entries={auditTrailEntries} />
+        )}
+
         {meeting.status === "FINALIZED" && meeting.sharepointItemWebUrl && (
           <Card>
             <CardContent className="pt-6">
@@ -505,31 +548,7 @@ export default async function MeetingDetailPage({
           </Card>
         )}
 
-        {/* Export draft / in-progress audit pack */}
-        {(meeting.status === "DRAFT_READY" ||
-          meeting.status === "DRAFT" ||
-          meeting.status === "ADVISOR_CERTIFIED" ||
-          meeting.status === "CM_REVIEWED" ||
-          meeting.status === "CCO_SIGNED_OFF" ||
-          meeting.status === "FINALIZED") && (
-          <Card>
-            <CardContent className="pt-6">
-              <p className="text-sm mb-2">
-                {meeting.status === "FINALIZED"
-                  ? "This meeting has been finalized and is ready for export."
-                  : "Export an audit pack (draft or current workflow state). Finalized packs include the full sign-off trail once all steps are complete."}
-              </p>
-              <ExportButton
-                meetingId={meeting.id}
-                status={meeting.status}
-                hasExtraction={!!extraction}
-                openFlagsCount={openFlags.length}
-              />
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Version History */}
+        {/* Document revisions (field edits), distinct from workflow audit trail */}
         {(meeting.status === "DRAFT_READY" ||
           meeting.status === "DRAFT" ||
           meeting.status === "ADVISOR_CERTIFIED" ||
@@ -538,7 +557,7 @@ export default async function MeetingDetailPage({
           meeting.status === "FINALIZED") && (
           <Card>
             <CardHeader>
-              <CardTitle>Version History</CardTitle>
+              <CardTitle>Document revisions</CardTitle>
             </CardHeader>
             <CardContent>
               <VersionHistory meetingId={meeting.id} />

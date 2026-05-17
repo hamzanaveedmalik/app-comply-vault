@@ -180,8 +180,112 @@
   animation: workspace-dropdown-slide 0.2s ease;
 }
 
+/* Global search bar — Siri-style animated conic border (focused / palette open) */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes glow-spin {
+  to {
+    --angle: 360deg;
+  }
+}
+
+.search-glow-wrapper {
+  --search-inner-radius: calc(var(--radius) - 2px);
+  --search-outer-radius: calc(var(--search-inner-radius) + 2px);
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  isolation: isolate;
+  border-radius: var(--search-outer-radius);
+  padding: 2px;
+  box-shadow: 0 0 0 1px var(--border);
+  transition: box-shadow 0.35s ease;
+}
+
+.search-glow-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: calc(var(--search-outer-radius) + 4px);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: conic-gradient(
+    from var(--angle),
+    #117a4b,
+    #1a9b5f,
+    #2dd881,
+    #22d3ee,
+    #1a9b5f,
+    #117a4b
+  );
+  animation: glow-spin 5s linear infinite;
+  animation-play-state: paused;
+  filter: blur(12px);
+}
+
+.search-glow-wrapper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: conic-gradient(
+    from var(--angle),
+    #117a4b,
+    #1a9b5f,
+    #2dd881,
+    #22d3ee,
+    #1a9b5f,
+    #117a4b
+  );
+  animation: glow-spin 5s linear infinite;
+  animation-play-state: paused;
+}
+
+.search-glow-wrapper.glow-active {
+  box-shadow: 0 0 0 0 transparent;
+}
+
+.search-glow-wrapper.glow-active::before {
+  opacity: 0.4;
+  animation-play-state: running;
+}
+
+.search-glow-wrapper.glow-active::after {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+.search-glow-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  min-height: 2.25rem;
+  width: 100%;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--search-inner-radius);
+  background: var(--background);
+  padding: 0 0.75rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .workspace-dropdown-panel {
+    animation: none !important;
+  }
+
+  .search-glow-wrapper::before,
+  .search-glow-wrapper::after {
     animation: none !important;
   }
 }

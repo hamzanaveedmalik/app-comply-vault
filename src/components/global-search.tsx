@@ -28,8 +28,9 @@ interface GlobalSearchProps {
   className?: string;
 }
 
-export function GlobalSearch({ className }: GlobalSearchProps) {
+export function GlobalSearch({ className }: GlobalSearchProps): React.JSX.Element {
   const [open, setOpen] = useState(false);
+  const [triggerFocused, setTriggerFocused] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -133,22 +134,35 @@ export function GlobalSearch({ className }: GlobalSearchProps) {
     }
   };
 
+  const glowActive = triggerFocused || open;
+
   return (
     <>
       {/* Search Button/Input in Top Bar */}
-      <button
-        onClick={() => setOpen(true)}
+      <div
         className={cn(
-          "flex h-9 w-full items-center gap-2 rounded-md border border-input bg-background px-3 text-sm text-muted-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+          "search-glow-wrapper",
+          glowActive ? "glow-active" : "glow-idle",
           className
         )}
       >
-        <Search className="h-4 w-4 shrink-0" />
-        <span className="flex-1 text-left">Search meetings...</span>
-        <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-          <span className="text-xs">⌘</span>K
-        </kbd>
-      </button>
+        <div className="search-glow-inner group text-sm text-muted-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground">
+          <button
+            type="button"
+            aria-label="Open search"
+            onClick={() => setOpen(true)}
+            onFocus={() => setTriggerFocused(true)}
+            onBlur={() => setTriggerFocused(false)}
+            className="search-glow-trigger flex min-h-[2.25rem] min-w-0 flex-1 items-center gap-2 border-0 bg-transparent py-2 text-left text-inherit outline-none ring-0 focus-visible:outline-none focus-visible:ring-0 [&:focus-visible]:outline-none [&:focus-visible]:ring-0"
+          >
+            <Search className="h-4 w-4 shrink-0" />
+            <span className="min-w-0 flex-1 truncate">Search meetings...</span>
+            <kbd className="pointer-events-none ml-auto hidden h-5 shrink-0 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 group-hover:text-accent-foreground sm:inline-flex">
+              <span className="text-xs">⌘</span>K
+            </kbd>
+          </button>
+        </div>
+      </div>
 
       {/* Search Dialog */}
       <CommandDialog open={open} onOpenChange={setOpen}>

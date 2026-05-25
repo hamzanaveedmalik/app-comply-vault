@@ -160,6 +160,15 @@ export const authConfig = {
     },
   },
   events: {
+    createUser: async ({ user }) => {
+      // OAuth users are created after signIn; mark email verified once the row exists.
+      if (user.email) {
+        await db.user.update({
+          where: { id: user.id },
+          data: { emailVerified: new Date() },
+        });
+      }
+    },
     signOut: async () => {
       const store = await cookies();
       store.delete(ACTIVE_WORKSPACE_COOKIE);
@@ -167,19 +176,14 @@ export const authConfig = {
   },
   callbacks: {
     signIn: async ({ user, account }) => {
-      // For OAuth providers (Google, etc.), automatically verify email
-      // since the OAuth provider has already verified it
+      // For OAuth providers (Google, etc.), mark email verified for returning users.
+      // New users do not exist yet when signIn runs; createUser handles verification.
       if (account?.provider !== "credentials" && user.email) {
-        // Update user to mark email as verified
-        await db.user.update({
+        await db.user.updateMany({
           where: { email: user.email },
-          data: {
-            emailVerified: new Date(),
-          },
+          data: { emailVerified: new Date() },
         });
       }
-      // Allow sign-in - account linking will be handled by allowDangerousEmailAccountLinking
-      // or manually if needed
       return true;
     },
     session: async ({ session, token }) => {

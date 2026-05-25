@@ -191,6 +191,7 @@ export const AuditAction: {
   INVITE_SENT: 'INVITE_SENT',
   INVITE_RESENT: 'INVITE_RESENT',
   INVITE_ACCEPTED: 'INVITE_ACCEPTED',
+  INVITE_REVOKED: 'INVITE_REVOKED',
   MEMBER_REMOVED: 'MEMBER_REMOVED',
   ADVISOR_CERTIFIED: 'ADVISOR_CERTIFIED',
   CM_REVIEW_COMPLETED: 'CM_REVIEW_COMPLETED',
@@ -3028,6 +3029,7 @@ export namespace Prisma {
     meetingsCmReviewed: number
     meetingsCcoSignedOff: number
     flagsCmTriaged: number
+    invitationsSent: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3038,6 +3040,7 @@ export namespace Prisma {
     meetingsCmReviewed?: boolean | UserCountOutputTypeCountMeetingsCmReviewedArgs
     meetingsCcoSignedOff?: boolean | UserCountOutputTypeCountMeetingsCcoSignedOffArgs
     flagsCmTriaged?: boolean | UserCountOutputTypeCountFlagsCmTriagedArgs
+    invitationsSent?: boolean | UserCountOutputTypeCountInvitationsSentArgs
   }
 
   // Custom InputTypes
@@ -3098,6 +3101,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountFlagsCmTriagedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: FlagWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountInvitationsSentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: InvitationWhereInput
   }
 
 
@@ -4632,18 +4642,21 @@ export namespace Prisma {
     userId: string | null
     workspaceId: string | null
     role: $Enums.WorkspaceRole | null
+    onboardingDismissedAt: Date | null
   }
 
   export type UserWorkspaceMaxAggregateOutputType = {
     userId: string | null
     workspaceId: string | null
     role: $Enums.WorkspaceRole | null
+    onboardingDismissedAt: Date | null
   }
 
   export type UserWorkspaceCountAggregateOutputType = {
     userId: number
     workspaceId: number
     role: number
+    onboardingDismissedAt: number
     _all: number
   }
 
@@ -4652,18 +4665,21 @@ export namespace Prisma {
     userId?: true
     workspaceId?: true
     role?: true
+    onboardingDismissedAt?: true
   }
 
   export type UserWorkspaceMaxAggregateInputType = {
     userId?: true
     workspaceId?: true
     role?: true
+    onboardingDismissedAt?: true
   }
 
   export type UserWorkspaceCountAggregateInputType = {
     userId?: true
     workspaceId?: true
     role?: true
+    onboardingDismissedAt?: true
     _all?: true
   }
 
@@ -4743,6 +4759,7 @@ export namespace Prisma {
     userId: string
     workspaceId: string
     role: $Enums.WorkspaceRole
+    onboardingDismissedAt: Date | null
     _count: UserWorkspaceCountAggregateOutputType | null
     _min: UserWorkspaceMinAggregateOutputType | null
     _max: UserWorkspaceMaxAggregateOutputType | null
@@ -4766,6 +4783,7 @@ export namespace Prisma {
     userId?: boolean
     workspaceId?: boolean
     role?: boolean
+    onboardingDismissedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userWorkspace"]>
@@ -4774,6 +4792,7 @@ export namespace Prisma {
     userId?: boolean
     workspaceId?: boolean
     role?: boolean
+    onboardingDismissedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userWorkspace"]>
@@ -4782,6 +4801,7 @@ export namespace Prisma {
     userId?: boolean
     workspaceId?: boolean
     role?: boolean
+    onboardingDismissedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userWorkspace"]>
@@ -4790,9 +4810,10 @@ export namespace Prisma {
     userId?: boolean
     workspaceId?: boolean
     role?: boolean
+    onboardingDismissedAt?: boolean
   }
 
-  export type UserWorkspaceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userId" | "workspaceId" | "role", ExtArgs["result"]["userWorkspace"]>
+  export type UserWorkspaceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userId" | "workspaceId" | "role" | "onboardingDismissedAt", ExtArgs["result"]["userWorkspace"]>
   export type UserWorkspaceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
@@ -4816,6 +4837,7 @@ export namespace Prisma {
       userId: string
       workspaceId: string
       role: $Enums.WorkspaceRole
+      onboardingDismissedAt: Date | null
     }, ExtArgs["result"]["userWorkspace"]>
     composites: {}
   }
@@ -5244,6 +5266,7 @@ export namespace Prisma {
     readonly userId: FieldRef<"UserWorkspace", 'String'>
     readonly workspaceId: FieldRef<"UserWorkspace", 'String'>
     readonly role: FieldRef<"UserWorkspace", 'WorkspaceRole'>
+    readonly onboardingDismissedAt: FieldRef<"UserWorkspace", 'DateTime'>
   }
     
 
@@ -18040,6 +18063,7 @@ export namespace Prisma {
     meetingsCmReviewed?: boolean | User$meetingsCmReviewedArgs<ExtArgs>
     meetingsCcoSignedOff?: boolean | User$meetingsCcoSignedOffArgs<ExtArgs>
     flagsCmTriaged?: boolean | User$flagsCmTriagedArgs<ExtArgs>
+    invitationsSent?: boolean | User$invitationsSentArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -18076,6 +18100,7 @@ export namespace Prisma {
     meetingsCmReviewed?: boolean | User$meetingsCmReviewedArgs<ExtArgs>
     meetingsCcoSignedOff?: boolean | User$meetingsCcoSignedOffArgs<ExtArgs>
     flagsCmTriaged?: boolean | User$flagsCmTriagedArgs<ExtArgs>
+    invitationsSent?: boolean | User$invitationsSentArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -18091,6 +18116,7 @@ export namespace Prisma {
       meetingsCmReviewed: Prisma.$MeetingPayload<ExtArgs>[]
       meetingsCcoSignedOff: Prisma.$MeetingPayload<ExtArgs>[]
       flagsCmTriaged: Prisma.$FlagPayload<ExtArgs>[]
+      invitationsSent: Prisma.$InvitationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -18499,6 +18525,7 @@ export namespace Prisma {
     meetingsCmReviewed<T extends User$meetingsCmReviewedArgs<ExtArgs> = {}>(args?: Subset<T, User$meetingsCmReviewedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MeetingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     meetingsCcoSignedOff<T extends User$meetingsCcoSignedOffArgs<ExtArgs> = {}>(args?: Subset<T, User$meetingsCcoSignedOffArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MeetingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     flagsCmTriaged<T extends User$flagsCmTriagedArgs<ExtArgs> = {}>(args?: Subset<T, User$flagsCmTriagedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FlagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    invitationsSent<T extends User$invitationsSentArgs<ExtArgs> = {}>(args?: Subset<T, User$invitationsSentArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -19086,6 +19113,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: FlagScalarFieldEnum | FlagScalarFieldEnum[]
+  }
+
+  /**
+   * User.invitationsSent
+   */
+  export type User$invitationsSentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Invitation
+     */
+    select?: InvitationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invitation
+     */
+    omit?: InvitationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: InvitationInclude<ExtArgs> | null
+    where?: InvitationWhereInput
+    orderBy?: InvitationOrderByWithRelationInput | InvitationOrderByWithRelationInput[]
+    cursor?: InvitationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: InvitationScalarFieldEnum | InvitationScalarFieldEnum[]
   }
 
   /**
@@ -20092,9 +20143,10 @@ export namespace Prisma {
     email: string | null
     role: $Enums.WorkspaceRole | null
     token: string | null
-    invitedBy: string | null
+    invitedById: string | null
     expiresAt: Date | null
     acceptedAt: Date | null
+    revokedAt: Date | null
     createdAt: Date | null
   }
 
@@ -20104,9 +20156,10 @@ export namespace Prisma {
     email: string | null
     role: $Enums.WorkspaceRole | null
     token: string | null
-    invitedBy: string | null
+    invitedById: string | null
     expiresAt: Date | null
     acceptedAt: Date | null
+    revokedAt: Date | null
     createdAt: Date | null
   }
 
@@ -20116,9 +20169,10 @@ export namespace Prisma {
     email: number
     role: number
     token: number
-    invitedBy: number
+    invitedById: number
     expiresAt: number
     acceptedAt: number
+    revokedAt: number
     createdAt: number
     _all: number
   }
@@ -20130,9 +20184,10 @@ export namespace Prisma {
     email?: true
     role?: true
     token?: true
-    invitedBy?: true
+    invitedById?: true
     expiresAt?: true
     acceptedAt?: true
+    revokedAt?: true
     createdAt?: true
   }
 
@@ -20142,9 +20197,10 @@ export namespace Prisma {
     email?: true
     role?: true
     token?: true
-    invitedBy?: true
+    invitedById?: true
     expiresAt?: true
     acceptedAt?: true
+    revokedAt?: true
     createdAt?: true
   }
 
@@ -20154,9 +20210,10 @@ export namespace Prisma {
     email?: true
     role?: true
     token?: true
-    invitedBy?: true
+    invitedById?: true
     expiresAt?: true
     acceptedAt?: true
+    revokedAt?: true
     createdAt?: true
     _all?: true
   }
@@ -20239,9 +20296,10 @@ export namespace Prisma {
     email: string
     role: $Enums.WorkspaceRole
     token: string
-    invitedBy: string
+    invitedById: string | null
     expiresAt: Date
     acceptedAt: Date | null
+    revokedAt: Date | null
     createdAt: Date
     _count: InvitationCountAggregateOutputType | null
     _min: InvitationMinAggregateOutputType | null
@@ -20268,11 +20326,13 @@ export namespace Prisma {
     email?: boolean
     role?: boolean
     token?: boolean
-    invitedBy?: boolean
+    invitedById?: boolean
     expiresAt?: boolean
     acceptedAt?: boolean
+    revokedAt?: boolean
     createdAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    invitedBy?: boolean | Invitation$invitedByArgs<ExtArgs>
   }, ExtArgs["result"]["invitation"]>
 
   export type InvitationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -20281,11 +20341,13 @@ export namespace Prisma {
     email?: boolean
     role?: boolean
     token?: boolean
-    invitedBy?: boolean
+    invitedById?: boolean
     expiresAt?: boolean
     acceptedAt?: boolean
+    revokedAt?: boolean
     createdAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    invitedBy?: boolean | Invitation$invitedByArgs<ExtArgs>
   }, ExtArgs["result"]["invitation"]>
 
   export type InvitationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -20294,11 +20356,13 @@ export namespace Prisma {
     email?: boolean
     role?: boolean
     token?: boolean
-    invitedBy?: boolean
+    invitedById?: boolean
     expiresAt?: boolean
     acceptedAt?: boolean
+    revokedAt?: boolean
     createdAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    invitedBy?: boolean | Invitation$invitedByArgs<ExtArgs>
   }, ExtArgs["result"]["invitation"]>
 
   export type InvitationSelectScalar = {
@@ -20307,27 +20371,32 @@ export namespace Prisma {
     email?: boolean
     role?: boolean
     token?: boolean
-    invitedBy?: boolean
+    invitedById?: boolean
     expiresAt?: boolean
     acceptedAt?: boolean
+    revokedAt?: boolean
     createdAt?: boolean
   }
 
-  export type InvitationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "email" | "role" | "token" | "invitedBy" | "expiresAt" | "acceptedAt" | "createdAt", ExtArgs["result"]["invitation"]>
+  export type InvitationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "email" | "role" | "token" | "invitedById" | "expiresAt" | "acceptedAt" | "revokedAt" | "createdAt", ExtArgs["result"]["invitation"]>
   export type InvitationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    invitedBy?: boolean | Invitation$invitedByArgs<ExtArgs>
   }
   export type InvitationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    invitedBy?: boolean | Invitation$invitedByArgs<ExtArgs>
   }
   export type InvitationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    invitedBy?: boolean | Invitation$invitedByArgs<ExtArgs>
   }
 
   export type $InvitationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Invitation"
     objects: {
       workspace: Prisma.$WorkspacePayload<ExtArgs>
+      invitedBy: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -20335,9 +20404,10 @@ export namespace Prisma {
       email: string
       role: $Enums.WorkspaceRole
       token: string
-      invitedBy: string
+      invitedById: string | null
       expiresAt: Date
       acceptedAt: Date | null
+      revokedAt: Date | null
       createdAt: Date
     }, ExtArgs["result"]["invitation"]>
     composites: {}
@@ -20734,6 +20804,7 @@ export namespace Prisma {
   export interface Prisma__InvitationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    invitedBy<T extends Invitation$invitedByArgs<ExtArgs> = {}>(args?: Subset<T, Invitation$invitedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -20768,9 +20839,10 @@ export namespace Prisma {
     readonly email: FieldRef<"Invitation", 'String'>
     readonly role: FieldRef<"Invitation", 'WorkspaceRole'>
     readonly token: FieldRef<"Invitation", 'String'>
-    readonly invitedBy: FieldRef<"Invitation", 'String'>
+    readonly invitedById: FieldRef<"Invitation", 'String'>
     readonly expiresAt: FieldRef<"Invitation", 'DateTime'>
     readonly acceptedAt: FieldRef<"Invitation", 'DateTime'>
+    readonly revokedAt: FieldRef<"Invitation", 'DateTime'>
     readonly createdAt: FieldRef<"Invitation", 'DateTime'>
   }
     
@@ -21165,6 +21237,25 @@ export namespace Prisma {
      * Limit how many Invitations to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Invitation.invitedBy
+   */
+  export type Invitation$invitedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
   }
 
   /**
@@ -25711,7 +25802,8 @@ export namespace Prisma {
   export const UserWorkspaceScalarFieldEnum: {
     userId: 'userId',
     workspaceId: 'workspaceId',
-    role: 'role'
+    role: 'role',
+    onboardingDismissedAt: 'onboardingDismissedAt'
   };
 
   export type UserWorkspaceScalarFieldEnum = (typeof UserWorkspaceScalarFieldEnum)[keyof typeof UserWorkspaceScalarFieldEnum]
@@ -25935,9 +26027,10 @@ export namespace Prisma {
     email: 'email',
     role: 'role',
     token: 'token',
-    invitedBy: 'invitedBy',
+    invitedById: 'invitedById',
     expiresAt: 'expiresAt',
     acceptedAt: 'acceptedAt',
+    revokedAt: 'revokedAt',
     createdAt: 'createdAt'
   };
 
@@ -26544,6 +26637,7 @@ export namespace Prisma {
     userId?: StringFilter<"UserWorkspace"> | string
     workspaceId?: StringFilter<"UserWorkspace"> | string
     role?: EnumWorkspaceRoleFilter<"UserWorkspace"> | $Enums.WorkspaceRole
+    onboardingDismissedAt?: DateTimeNullableFilter<"UserWorkspace"> | Date | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
   }
@@ -26552,6 +26646,7 @@ export namespace Prisma {
     userId?: SortOrder
     workspaceId?: SortOrder
     role?: SortOrder
+    onboardingDismissedAt?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
     workspace?: WorkspaceOrderByWithRelationInput
   }
@@ -26564,6 +26659,7 @@ export namespace Prisma {
     userId?: StringFilter<"UserWorkspace"> | string
     workspaceId?: StringFilter<"UserWorkspace"> | string
     role?: EnumWorkspaceRoleFilter<"UserWorkspace"> | $Enums.WorkspaceRole
+    onboardingDismissedAt?: DateTimeNullableFilter<"UserWorkspace"> | Date | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
   }, "userId_workspaceId">
@@ -26572,6 +26668,7 @@ export namespace Prisma {
     userId?: SortOrder
     workspaceId?: SortOrder
     role?: SortOrder
+    onboardingDismissedAt?: SortOrderInput | SortOrder
     _count?: UserWorkspaceCountOrderByAggregateInput
     _max?: UserWorkspaceMaxOrderByAggregateInput
     _min?: UserWorkspaceMinOrderByAggregateInput
@@ -26584,6 +26681,7 @@ export namespace Prisma {
     userId?: StringWithAggregatesFilter<"UserWorkspace"> | string
     workspaceId?: StringWithAggregatesFilter<"UserWorkspace"> | string
     role?: EnumWorkspaceRoleWithAggregatesFilter<"UserWorkspace"> | $Enums.WorkspaceRole
+    onboardingDismissedAt?: DateTimeNullableWithAggregatesFilter<"UserWorkspace"> | Date | string | null
   }
 
   export type MeetingWhereInput = {
@@ -27626,6 +27724,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingListRelationFilter
     meetingsCcoSignedOff?: MeetingListRelationFilter
     flagsCmTriaged?: FlagListRelationFilter
+    invitationsSent?: InvitationListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -27641,6 +27740,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingOrderByRelationAggregateInput
     meetingsCcoSignedOff?: MeetingOrderByRelationAggregateInput
     flagsCmTriaged?: FlagOrderByRelationAggregateInput
+    invitationsSent?: InvitationOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -27659,6 +27759,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingListRelationFilter
     meetingsCcoSignedOff?: MeetingListRelationFilter
     flagsCmTriaged?: FlagListRelationFilter
+    invitationsSent?: InvitationListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -27735,11 +27836,13 @@ export namespace Prisma {
     email?: StringFilter<"Invitation"> | string
     role?: EnumWorkspaceRoleFilter<"Invitation"> | $Enums.WorkspaceRole
     token?: StringFilter<"Invitation"> | string
-    invitedBy?: StringFilter<"Invitation"> | string
+    invitedById?: StringNullableFilter<"Invitation"> | string | null
     expiresAt?: DateTimeFilter<"Invitation"> | Date | string
     acceptedAt?: DateTimeNullableFilter<"Invitation"> | Date | string | null
+    revokedAt?: DateTimeNullableFilter<"Invitation"> | Date | string | null
     createdAt?: DateTimeFilter<"Invitation"> | Date | string
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    invitedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type InvitationOrderByWithRelationInput = {
@@ -27748,11 +27851,13 @@ export namespace Prisma {
     email?: SortOrder
     role?: SortOrder
     token?: SortOrder
-    invitedBy?: SortOrder
+    invitedById?: SortOrderInput | SortOrder
     expiresAt?: SortOrder
     acceptedAt?: SortOrderInput | SortOrder
+    revokedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     workspace?: WorkspaceOrderByWithRelationInput
+    invitedBy?: UserOrderByWithRelationInput
   }
 
   export type InvitationWhereUniqueInput = Prisma.AtLeast<{
@@ -27765,11 +27870,13 @@ export namespace Prisma {
     workspaceId?: StringFilter<"Invitation"> | string
     email?: StringFilter<"Invitation"> | string
     role?: EnumWorkspaceRoleFilter<"Invitation"> | $Enums.WorkspaceRole
-    invitedBy?: StringFilter<"Invitation"> | string
+    invitedById?: StringNullableFilter<"Invitation"> | string | null
     expiresAt?: DateTimeFilter<"Invitation"> | Date | string
     acceptedAt?: DateTimeNullableFilter<"Invitation"> | Date | string | null
+    revokedAt?: DateTimeNullableFilter<"Invitation"> | Date | string | null
     createdAt?: DateTimeFilter<"Invitation"> | Date | string
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    invitedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id" | "token" | "workspaceId_email">
 
   export type InvitationOrderByWithAggregationInput = {
@@ -27778,9 +27885,10 @@ export namespace Prisma {
     email?: SortOrder
     role?: SortOrder
     token?: SortOrder
-    invitedBy?: SortOrder
+    invitedById?: SortOrderInput | SortOrder
     expiresAt?: SortOrder
     acceptedAt?: SortOrderInput | SortOrder
+    revokedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: InvitationCountOrderByAggregateInput
     _max?: InvitationMaxOrderByAggregateInput
@@ -27796,9 +27904,10 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"Invitation"> | string
     role?: EnumWorkspaceRoleWithAggregatesFilter<"Invitation"> | $Enums.WorkspaceRole
     token?: StringWithAggregatesFilter<"Invitation"> | string
-    invitedBy?: StringWithAggregatesFilter<"Invitation"> | string
+    invitedById?: StringNullableWithAggregatesFilter<"Invitation"> | string | null
     expiresAt?: DateTimeWithAggregatesFilter<"Invitation"> | Date | string
     acceptedAt?: DateTimeNullableWithAggregatesFilter<"Invitation"> | Date | string | null
+    revokedAt?: DateTimeNullableWithAggregatesFilter<"Invitation"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Invitation"> | Date | string
   }
 
@@ -28297,6 +28406,7 @@ export namespace Prisma {
 
   export type UserWorkspaceCreateInput = {
     role: $Enums.WorkspaceRole
+    onboardingDismissedAt?: Date | string | null
     user: UserCreateNestedOneWithoutWorkspacesInput
     workspace: WorkspaceCreateNestedOneWithoutUsersInput
   }
@@ -28305,10 +28415,12 @@ export namespace Prisma {
     userId: string
     workspaceId: string
     role: $Enums.WorkspaceRole
+    onboardingDismissedAt?: Date | string | null
   }
 
   export type UserWorkspaceUpdateInput = {
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
+    onboardingDismissedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     user?: UserUpdateOneRequiredWithoutWorkspacesNestedInput
     workspace?: WorkspaceUpdateOneRequiredWithoutUsersNestedInput
   }
@@ -28317,22 +28429,26 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     workspaceId?: StringFieldUpdateOperationsInput | string
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
+    onboardingDismissedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type UserWorkspaceCreateManyInput = {
     userId: string
     workspaceId: string
     role: $Enums.WorkspaceRole
+    onboardingDismissedAt?: Date | string | null
   }
 
   export type UserWorkspaceUpdateManyMutationInput = {
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
+    onboardingDismissedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type UserWorkspaceUncheckedUpdateManyInput = {
     userId?: StringFieldUpdateOperationsInput | string
     workspaceId?: StringFieldUpdateOperationsInput | string
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
+    onboardingDismissedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type MeetingCreateInput = {
@@ -29503,6 +29619,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -29518,6 +29635,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   }
 
   export type UserUpdateInput = {
@@ -29533,6 +29651,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -29548,6 +29667,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -29621,11 +29741,12 @@ export namespace Prisma {
     email: string
     role: $Enums.WorkspaceRole
     token: string
-    invitedBy: string
     expiresAt: Date | string
     acceptedAt?: Date | string | null
+    revokedAt?: Date | string | null
     createdAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutInvitationsInput
+    invitedBy?: UserCreateNestedOneWithoutInvitationsSentInput
   }
 
   export type InvitationUncheckedCreateInput = {
@@ -29634,9 +29755,10 @@ export namespace Prisma {
     email: string
     role: $Enums.WorkspaceRole
     token: string
-    invitedBy: string
+    invitedById?: string | null
     expiresAt: Date | string
     acceptedAt?: Date | string | null
+    revokedAt?: Date | string | null
     createdAt?: Date | string
   }
 
@@ -29645,11 +29767,12 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
     token?: StringFieldUpdateOperationsInput | string
-    invitedBy?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutInvitationsNestedInput
+    invitedBy?: UserUpdateOneWithoutInvitationsSentNestedInput
   }
 
   export type InvitationUncheckedUpdateInput = {
@@ -29658,9 +29781,10 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
     token?: StringFieldUpdateOperationsInput | string
-    invitedBy?: StringFieldUpdateOperationsInput | string
+    invitedById?: NullableStringFieldUpdateOperationsInput | string | null
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -29670,9 +29794,10 @@ export namespace Prisma {
     email: string
     role: $Enums.WorkspaceRole
     token: string
-    invitedBy: string
+    invitedById?: string | null
     expiresAt: Date | string
     acceptedAt?: Date | string | null
+    revokedAt?: Date | string | null
     createdAt?: Date | string
   }
 
@@ -29681,9 +29806,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
     token?: StringFieldUpdateOperationsInput | string
-    invitedBy?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -29693,9 +29818,10 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
     token?: StringFieldUpdateOperationsInput | string
-    invitedBy?: StringFieldUpdateOperationsInput | string
+    invitedById?: NullableStringFieldUpdateOperationsInput | string | null
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -30427,18 +30553,21 @@ export namespace Prisma {
     userId?: SortOrder
     workspaceId?: SortOrder
     role?: SortOrder
+    onboardingDismissedAt?: SortOrder
   }
 
   export type UserWorkspaceMaxOrderByAggregateInput = {
     userId?: SortOrder
     workspaceId?: SortOrder
     role?: SortOrder
+    onboardingDismissedAt?: SortOrder
   }
 
   export type UserWorkspaceMinOrderByAggregateInput = {
     userId?: SortOrder
     workspaceId?: SortOrder
     role?: SortOrder
+    onboardingDismissedAt?: SortOrder
   }
 
   export type EnumWorkspaceRoleWithAggregatesFilter<$PrismaModel = never> = {
@@ -31418,9 +31547,10 @@ export namespace Prisma {
     email?: SortOrder
     role?: SortOrder
     token?: SortOrder
-    invitedBy?: SortOrder
+    invitedById?: SortOrder
     expiresAt?: SortOrder
     acceptedAt?: SortOrder
+    revokedAt?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -31430,9 +31560,10 @@ export namespace Prisma {
     email?: SortOrder
     role?: SortOrder
     token?: SortOrder
-    invitedBy?: SortOrder
+    invitedById?: SortOrder
     expiresAt?: SortOrder
     acceptedAt?: SortOrder
+    revokedAt?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -31442,9 +31573,10 @@ export namespace Prisma {
     email?: SortOrder
     role?: SortOrder
     token?: SortOrder
-    invitedBy?: SortOrder
+    invitedById?: SortOrder
     expiresAt?: SortOrder
     acceptedAt?: SortOrder
+    revokedAt?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -32901,6 +33033,13 @@ export namespace Prisma {
     connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
   }
 
+  export type InvitationCreateNestedManyWithoutInvitedByInput = {
+    create?: XOR<InvitationCreateWithoutInvitedByInput, InvitationUncheckedCreateWithoutInvitedByInput> | InvitationCreateWithoutInvitedByInput[] | InvitationUncheckedCreateWithoutInvitedByInput[]
+    connectOrCreate?: InvitationCreateOrConnectWithoutInvitedByInput | InvitationCreateOrConnectWithoutInvitedByInput[]
+    createMany?: InvitationCreateManyInvitedByInputEnvelope
+    connect?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
+  }
+
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -32948,6 +33087,13 @@ export namespace Prisma {
     connectOrCreate?: FlagCreateOrConnectWithoutCmTriagedByUserInput | FlagCreateOrConnectWithoutCmTriagedByUserInput[]
     createMany?: FlagCreateManyCmTriagedByUserInputEnvelope
     connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+  }
+
+  export type InvitationUncheckedCreateNestedManyWithoutInvitedByInput = {
+    create?: XOR<InvitationCreateWithoutInvitedByInput, InvitationUncheckedCreateWithoutInvitedByInput> | InvitationCreateWithoutInvitedByInput[] | InvitationUncheckedCreateWithoutInvitedByInput[]
+    connectOrCreate?: InvitationCreateOrConnectWithoutInvitedByInput | InvitationCreateOrConnectWithoutInvitedByInput[]
+    createMany?: InvitationCreateManyInvitedByInputEnvelope
+    connect?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
   }
 
   export type AccountUpdateManyWithoutUserNestedInput = {
@@ -33048,6 +33194,20 @@ export namespace Prisma {
     deleteMany?: FlagScalarWhereInput | FlagScalarWhereInput[]
   }
 
+  export type InvitationUpdateManyWithoutInvitedByNestedInput = {
+    create?: XOR<InvitationCreateWithoutInvitedByInput, InvitationUncheckedCreateWithoutInvitedByInput> | InvitationCreateWithoutInvitedByInput[] | InvitationUncheckedCreateWithoutInvitedByInput[]
+    connectOrCreate?: InvitationCreateOrConnectWithoutInvitedByInput | InvitationCreateOrConnectWithoutInvitedByInput[]
+    upsert?: InvitationUpsertWithWhereUniqueWithoutInvitedByInput | InvitationUpsertWithWhereUniqueWithoutInvitedByInput[]
+    createMany?: InvitationCreateManyInvitedByInputEnvelope
+    set?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
+    disconnect?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
+    delete?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
+    connect?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
+    update?: InvitationUpdateWithWhereUniqueWithoutInvitedByInput | InvitationUpdateWithWhereUniqueWithoutInvitedByInput[]
+    updateMany?: InvitationUpdateManyWithWhereWithoutInvitedByInput | InvitationUpdateManyWithWhereWithoutInvitedByInput[]
+    deleteMany?: InvitationScalarWhereInput | InvitationScalarWhereInput[]
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -33146,10 +33306,30 @@ export namespace Prisma {
     deleteMany?: FlagScalarWhereInput | FlagScalarWhereInput[]
   }
 
+  export type InvitationUncheckedUpdateManyWithoutInvitedByNestedInput = {
+    create?: XOR<InvitationCreateWithoutInvitedByInput, InvitationUncheckedCreateWithoutInvitedByInput> | InvitationCreateWithoutInvitedByInput[] | InvitationUncheckedCreateWithoutInvitedByInput[]
+    connectOrCreate?: InvitationCreateOrConnectWithoutInvitedByInput | InvitationCreateOrConnectWithoutInvitedByInput[]
+    upsert?: InvitationUpsertWithWhereUniqueWithoutInvitedByInput | InvitationUpsertWithWhereUniqueWithoutInvitedByInput[]
+    createMany?: InvitationCreateManyInvitedByInputEnvelope
+    set?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
+    disconnect?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
+    delete?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
+    connect?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
+    update?: InvitationUpdateWithWhereUniqueWithoutInvitedByInput | InvitationUpdateWithWhereUniqueWithoutInvitedByInput[]
+    updateMany?: InvitationUpdateManyWithWhereWithoutInvitedByInput | InvitationUpdateManyWithWhereWithoutInvitedByInput[]
+    deleteMany?: InvitationScalarWhereInput | InvitationScalarWhereInput[]
+  }
+
   export type WorkspaceCreateNestedOneWithoutInvitationsInput = {
     create?: XOR<WorkspaceCreateWithoutInvitationsInput, WorkspaceUncheckedCreateWithoutInvitationsInput>
     connectOrCreate?: WorkspaceCreateOrConnectWithoutInvitationsInput
     connect?: WorkspaceWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutInvitationsSentInput = {
+    create?: XOR<UserCreateWithoutInvitationsSentInput, UserUncheckedCreateWithoutInvitationsSentInput>
+    connectOrCreate?: UserCreateOrConnectWithoutInvitationsSentInput
+    connect?: UserWhereUniqueInput
   }
 
   export type WorkspaceUpdateOneRequiredWithoutInvitationsNestedInput = {
@@ -33158,6 +33338,16 @@ export namespace Prisma {
     upsert?: WorkspaceUpsertWithoutInvitationsInput
     connect?: WorkspaceWhereUniqueInput
     update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutInvitationsInput, WorkspaceUpdateWithoutInvitationsInput>, WorkspaceUncheckedUpdateWithoutInvitationsInput>
+  }
+
+  export type UserUpdateOneWithoutInvitationsSentNestedInput = {
+    create?: XOR<UserCreateWithoutInvitationsSentInput, UserUncheckedCreateWithoutInvitationsSentInput>
+    connectOrCreate?: UserCreateOrConnectWithoutInvitationsSentInput
+    upsert?: UserUpsertWithoutInvitationsSentInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutInvitationsSentInput, UserUpdateWithoutInvitationsSentInput>, UserUncheckedUpdateWithoutInvitationsSentInput>
   }
 
   export type WorkspaceCreateNestedOneWithoutIntegrationCredentialsInput = {
@@ -33842,12 +34032,14 @@ export namespace Prisma {
 
   export type UserWorkspaceCreateWithoutWorkspaceInput = {
     role: $Enums.WorkspaceRole
+    onboardingDismissedAt?: Date | string | null
     user: UserCreateNestedOneWithoutWorkspacesInput
   }
 
   export type UserWorkspaceUncheckedCreateWithoutWorkspaceInput = {
     userId: string
     role: $Enums.WorkspaceRole
+    onboardingDismissedAt?: Date | string | null
   }
 
   export type UserWorkspaceCreateOrConnectWithoutWorkspaceInput = {
@@ -33997,10 +34189,11 @@ export namespace Prisma {
     email: string
     role: $Enums.WorkspaceRole
     token: string
-    invitedBy: string
     expiresAt: Date | string
     acceptedAt?: Date | string | null
+    revokedAt?: Date | string | null
     createdAt?: Date | string
+    invitedBy?: UserCreateNestedOneWithoutInvitationsSentInput
   }
 
   export type InvitationUncheckedCreateWithoutWorkspaceInput = {
@@ -34008,9 +34201,10 @@ export namespace Prisma {
     email: string
     role: $Enums.WorkspaceRole
     token: string
-    invitedBy: string
+    invitedById?: string | null
     expiresAt: Date | string
     acceptedAt?: Date | string | null
+    revokedAt?: Date | string | null
     createdAt?: Date | string
   }
 
@@ -34221,6 +34415,7 @@ export namespace Prisma {
     userId?: StringFilter<"UserWorkspace"> | string
     workspaceId?: StringFilter<"UserWorkspace"> | string
     role?: EnumWorkspaceRoleFilter<"UserWorkspace"> | $Enums.WorkspaceRole
+    onboardingDismissedAt?: DateTimeNullableFilter<"UserWorkspace"> | Date | string | null
   }
 
   export type MeetingUpsertWithWhereUniqueWithoutWorkspaceInput = {
@@ -34339,9 +34534,10 @@ export namespace Prisma {
     email?: StringFilter<"Invitation"> | string
     role?: EnumWorkspaceRoleFilter<"Invitation"> | $Enums.WorkspaceRole
     token?: StringFilter<"Invitation"> | string
-    invitedBy?: StringFilter<"Invitation"> | string
+    invitedById?: StringNullableFilter<"Invitation"> | string | null
     expiresAt?: DateTimeFilter<"Invitation"> | Date | string
     acceptedAt?: DateTimeNullableFilter<"Invitation"> | Date | string | null
+    revokedAt?: DateTimeNullableFilter<"Invitation"> | Date | string | null
     createdAt?: DateTimeFilter<"Invitation"> | Date | string
   }
 
@@ -34499,6 +34695,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
   }
 
   export type UserUncheckedCreateWithoutWorkspacesInput = {
@@ -34513,6 +34710,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   }
 
   export type UserCreateOrConnectWithoutWorkspacesInput = {
@@ -34606,6 +34804,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWorkspacesInput = {
@@ -34620,6 +34819,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   }
 
   export type WorkspaceUpsertWithoutUsersInput = {
@@ -34966,6 +35166,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
   }
 
   export type UserUncheckedCreateWithoutMeetingsAdvisorCertifiedInput = {
@@ -34980,6 +35181,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   }
 
   export type UserCreateOrConnectWithoutMeetingsAdvisorCertifiedInput = {
@@ -34999,6 +35201,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingCreateNestedManyWithoutAdvisorCertifiedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
   }
 
   export type UserUncheckedCreateWithoutMeetingsCmReviewedInput = {
@@ -35013,6 +35216,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUncheckedCreateNestedManyWithoutAdvisorCertifiedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   }
 
   export type UserCreateOrConnectWithoutMeetingsCmReviewedInput = {
@@ -35032,6 +35236,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingCreateNestedManyWithoutAdvisorCertifiedByUserInput
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
   }
 
   export type UserUncheckedCreateWithoutMeetingsCcoSignedOffInput = {
@@ -35046,6 +35251,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUncheckedCreateNestedManyWithoutAdvisorCertifiedByUserInput
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   }
 
   export type UserCreateOrConnectWithoutMeetingsCcoSignedOffInput = {
@@ -35254,6 +35460,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMeetingsAdvisorCertifiedInput = {
@@ -35268,6 +35475,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   }
 
   export type UserUpsertWithoutMeetingsCmReviewedInput = {
@@ -35293,6 +35501,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUpdateManyWithoutAdvisorCertifiedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMeetingsCmReviewedInput = {
@@ -35307,6 +35516,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   }
 
   export type UserUpsertWithoutMeetingsCcoSignedOffInput = {
@@ -35332,6 +35542,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUpdateManyWithoutAdvisorCertifiedByUserNestedInput
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMeetingsCcoSignedOffInput = {
@@ -35346,6 +35557,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserNestedInput
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   }
 
   export type MeetingCreateWithoutVersionsInput = {
@@ -35759,6 +35971,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingCreateNestedManyWithoutAdvisorCertifiedByUserInput
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
+    invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
   }
 
   export type UserUncheckedCreateWithoutFlagsCmTriagedInput = {
@@ -35773,6 +35986,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUncheckedCreateNestedManyWithoutAdvisorCertifiedByUserInput
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
+    invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   }
 
   export type UserCreateOrConnectWithoutFlagsCmTriagedInput = {
@@ -36024,6 +36238,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUpdateManyWithoutAdvisorCertifiedByUserNestedInput
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
+    invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFlagsCmTriagedInput = {
@@ -36038,6 +36253,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserNestedInput
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
+    invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   }
 
   export type FlagCreateWithoutResolutionRecordInput = {
@@ -37412,6 +37628,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -37426,6 +37643,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -37456,6 +37674,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -37470,6 +37689,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -37484,6 +37704,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -37498,6 +37719,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -37528,6 +37750,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -37542,6 +37765,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -37608,12 +37832,14 @@ export namespace Prisma {
 
   export type UserWorkspaceCreateWithoutUserInput = {
     role: $Enums.WorkspaceRole
+    onboardingDismissedAt?: Date | string | null
     workspace: WorkspaceCreateNestedOneWithoutUsersInput
   }
 
   export type UserWorkspaceUncheckedCreateWithoutUserInput = {
     workspaceId: string
     role: $Enums.WorkspaceRole
+    onboardingDismissedAt?: Date | string | null
   }
 
   export type UserWorkspaceCreateOrConnectWithoutUserInput = {
@@ -37982,6 +38208,40 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type InvitationCreateWithoutInvitedByInput = {
+    id?: string
+    email: string
+    role: $Enums.WorkspaceRole
+    token: string
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    revokedAt?: Date | string | null
+    createdAt?: Date | string
+    workspace: WorkspaceCreateNestedOneWithoutInvitationsInput
+  }
+
+  export type InvitationUncheckedCreateWithoutInvitedByInput = {
+    id?: string
+    workspaceId: string
+    email: string
+    role: $Enums.WorkspaceRole
+    token: string
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    revokedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type InvitationCreateOrConnectWithoutInvitedByInput = {
+    where: InvitationWhereUniqueInput
+    create: XOR<InvitationCreateWithoutInvitedByInput, InvitationUncheckedCreateWithoutInvitedByInput>
+  }
+
+  export type InvitationCreateManyInvitedByInputEnvelope = {
+    data: InvitationCreateManyInvitedByInput | InvitationCreateManyInvitedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
     where: AccountWhereUniqueInput
     update: XOR<AccountUpdateWithoutUserInput, AccountUncheckedUpdateWithoutUserInput>
@@ -38123,6 +38383,22 @@ export namespace Prisma {
     data: XOR<FlagUpdateManyMutationInput, FlagUncheckedUpdateManyWithoutCmTriagedByUserInput>
   }
 
+  export type InvitationUpsertWithWhereUniqueWithoutInvitedByInput = {
+    where: InvitationWhereUniqueInput
+    update: XOR<InvitationUpdateWithoutInvitedByInput, InvitationUncheckedUpdateWithoutInvitedByInput>
+    create: XOR<InvitationCreateWithoutInvitedByInput, InvitationUncheckedCreateWithoutInvitedByInput>
+  }
+
+  export type InvitationUpdateWithWhereUniqueWithoutInvitedByInput = {
+    where: InvitationWhereUniqueInput
+    data: XOR<InvitationUpdateWithoutInvitedByInput, InvitationUncheckedUpdateWithoutInvitedByInput>
+  }
+
+  export type InvitationUpdateManyWithWhereWithoutInvitedByInput = {
+    where: InvitationScalarWhereInput
+    data: XOR<InvitationUpdateManyMutationInput, InvitationUncheckedUpdateManyWithoutInvitedByInput>
+  }
+
   export type WorkspaceCreateWithoutInvitationsInput = {
     id?: string
     name: string
@@ -38184,6 +38460,41 @@ export namespace Prisma {
   export type WorkspaceCreateOrConnectWithoutInvitationsInput = {
     where: WorkspaceWhereUniqueInput
     create: XOR<WorkspaceCreateWithoutInvitationsInput, WorkspaceUncheckedCreateWithoutInvitationsInput>
+  }
+
+  export type UserCreateWithoutInvitationsSentInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    workspaces?: UserWorkspaceCreateNestedManyWithoutUserInput
+    meetingsAdvisorCertified?: MeetingCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+  }
+
+  export type UserUncheckedCreateWithoutInvitationsSentInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    workspaces?: UserWorkspaceUncheckedCreateNestedManyWithoutUserInput
+    meetingsAdvisorCertified?: MeetingUncheckedCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+  }
+
+  export type UserCreateOrConnectWithoutInvitationsSentInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutInvitationsSentInput, UserUncheckedCreateWithoutInvitationsSentInput>
   }
 
   export type WorkspaceUpsertWithoutInvitationsInput = {
@@ -38253,6 +38564,47 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type UserUpsertWithoutInvitationsSentInput = {
+    update: XOR<UserUpdateWithoutInvitationsSentInput, UserUncheckedUpdateWithoutInvitationsSentInput>
+    create: XOR<UserCreateWithoutInvitationsSentInput, UserUncheckedCreateWithoutInvitationsSentInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutInvitationsSentInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutInvitationsSentInput, UserUncheckedUpdateWithoutInvitationsSentInput>
+  }
+
+  export type UserUpdateWithoutInvitationsSentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    workspaces?: UserWorkspaceUpdateManyWithoutUserNestedInput
+    meetingsAdvisorCertified?: MeetingUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutInvitationsSentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    workspaces?: UserWorkspaceUncheckedUpdateManyWithoutUserNestedInput
+    meetingsAdvisorCertified?: MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
   }
 
   export type WorkspaceCreateWithoutIntegrationCredentialsInput = {
@@ -38832,6 +39184,7 @@ export namespace Prisma {
   export type UserWorkspaceCreateManyWorkspaceInput = {
     userId: string
     role: $Enums.WorkspaceRole
+    onboardingDismissedAt?: Date | string | null
   }
 
   export type MeetingCreateManyWorkspaceInput = {
@@ -38890,9 +39243,10 @@ export namespace Prisma {
     email: string
     role: $Enums.WorkspaceRole
     token: string
-    invitedBy: string
+    invitedById?: string | null
     expiresAt: Date | string
     acceptedAt?: Date | string | null
+    revokedAt?: Date | string | null
     createdAt?: Date | string
   }
 
@@ -38960,17 +39314,20 @@ export namespace Prisma {
 
   export type UserWorkspaceUpdateWithoutWorkspaceInput = {
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
+    onboardingDismissedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     user?: UserUpdateOneRequiredWithoutWorkspacesNestedInput
   }
 
   export type UserWorkspaceUncheckedUpdateWithoutWorkspaceInput = {
     userId?: StringFieldUpdateOperationsInput | string
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
+    onboardingDismissedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type UserWorkspaceUncheckedUpdateManyWithoutWorkspaceInput = {
     userId?: StringFieldUpdateOperationsInput | string
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
+    onboardingDismissedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type MeetingUpdateWithoutWorkspaceInput = {
@@ -39141,10 +39498,11 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
     token?: StringFieldUpdateOperationsInput | string
-    invitedBy?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    invitedBy?: UserUpdateOneWithoutInvitationsSentNestedInput
   }
 
   export type InvitationUncheckedUpdateWithoutWorkspaceInput = {
@@ -39152,9 +39510,10 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
     token?: StringFieldUpdateOperationsInput | string
-    invitedBy?: StringFieldUpdateOperationsInput | string
+    invitedById?: NullableStringFieldUpdateOperationsInput | string | null
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -39163,9 +39522,10 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
     token?: StringFieldUpdateOperationsInput | string
-    invitedBy?: StringFieldUpdateOperationsInput | string
+    invitedById?: NullableStringFieldUpdateOperationsInput | string | null
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -39855,6 +40215,7 @@ export namespace Prisma {
   export type UserWorkspaceCreateManyUserInput = {
     workspaceId: string
     role: $Enums.WorkspaceRole
+    onboardingDismissedAt?: Date | string | null
   }
 
   export type MeetingCreateManyAdvisorCertifiedByUserInput = {
@@ -39999,6 +40360,18 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type InvitationCreateManyInvitedByInput = {
+    id?: string
+    workspaceId: string
+    email: string
+    role: $Enums.WorkspaceRole
+    token: string
+    expiresAt: Date | string
+    acceptedAt?: Date | string | null
+    revokedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
   export type AccountUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
@@ -40064,17 +40437,20 @@ export namespace Prisma {
 
   export type UserWorkspaceUpdateWithoutUserInput = {
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
+    onboardingDismissedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     workspace?: WorkspaceUpdateOneRequiredWithoutUsersNestedInput
   }
 
   export type UserWorkspaceUncheckedUpdateWithoutUserInput = {
     workspaceId?: StringFieldUpdateOperationsInput | string
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
+    onboardingDismissedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type UserWorkspaceUncheckedUpdateManyWithoutUserInput = {
     workspaceId?: StringFieldUpdateOperationsInput | string
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
+    onboardingDismissedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type MeetingUpdateWithoutAdvisorCertifiedByUserInput = {
@@ -40533,6 +40909,42 @@ export namespace Prisma {
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type InvitationUpdateWithoutInvitedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspace?: WorkspaceUpdateOneRequiredWithoutInvitationsNestedInput
+  }
+
+  export type InvitationUncheckedUpdateWithoutInvitedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type InvitationUncheckedUpdateManyWithoutInvitedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type IntegrationSyncLogCreateManyIntegrationConfigInput = {

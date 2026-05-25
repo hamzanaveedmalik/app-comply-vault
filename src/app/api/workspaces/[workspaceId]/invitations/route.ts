@@ -1,9 +1,11 @@
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
-import { sendInvitationEmail } from "~/server/email";
 import { z } from "zod";
-import { randomBytes } from "crypto";
 import { assertCanInvite } from "~/server/billing/guards";
+import {
+  createOrRenewInvitation,
+  getInviterDetails,
+} from "~/server/invitations/invitation-service";
 
 const inviteUserSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -12,8 +14,8 @@ const inviteUserSchema = z.object({
 
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ workspaceId: string }> }
-) {
+  { params }: { params: Promise<{ workspaceId: string }> },
+): Promise<Response> {
   try {
     const session = await auth();
     if (!session?.user) {
@@ -44,14 +46,12 @@ export async function POST(
       },
     });
 
-    // Verify user has permission to invite (must be OWNER_CCO)
     if (session.user.role !== "OWNER_CCO") {
       return new Response("Forbidden: Only workspace owners can invite users", {
         status: 403,
       });
     }
 
-    // Verify workspace exists and user belongs to it
     const workspace = await db.workspace.findFirst({
       where: {
         id: workspaceId,
@@ -70,143 +70,77 @@ export async function POST(
       });
     }
 
-    const gate = await assertCanInvite(workspaceId);
-    if (!gate.ok) {
-      return Response.json({ error: gate.error }, { status: gate.status });
-    }
-
-    // Check if user is already a member
     const existingMembership = await db.userWorkspace.findFirst({
       where: {
         workspaceId,
-        user: {
-          email,
-        },
+        user: { email },
       },
     });
 
     if (existingMembership) {
       return Response.json(
         { error: "User is already a member of this workspace" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // Check if there's a pending invitation
     const existingInvitation = await db.invitation.findUnique({
-      where: {
-        workspaceId_email: {
-          workspaceId,
-          email,
-        },
-      },
+      where: { workspaceId_email: { workspaceId, email } },
     });
 
-    if (existingInvitation && !existingInvitation.acceptedAt) {
-      // Resend invitation if not expired
-      if (existingInvitation.expiresAt > new Date()) {
-        try {
-        await sendInvitationEmail({
-          email,
-          workspaceName: workspace.name,
-          invitationToken: existingInvitation.token,
-          role: existingInvitation.role,
-        });
-        } catch (emailError) {
-          console.error("Error resending invitation email:", emailError);
-        }
+    const isActivePending =
+      existingInvitation &&
+      !existingInvitation.acceptedAt &&
+      !existingInvitation.revokedAt &&
+      existingInvitation.expiresAt > new Date();
 
-        // Log invitation resend
-        await db.auditEvent.create({
-          data: {
-            workspaceId,
-            userId: session.user.id,
-            action: "INVITE_RESENT",
-            resourceType: "invitation",
-            resourceId: existingInvitation.id,
-            metadata: {
-              email,
-              role,
-              action: "invitation_resent",
-              ipAddress,
-              userAgent,
-            },
-          },
-        });
-
-        return Response.json(
-          { message: "Invitation resent successfully", invitationId: existingInvitation.id },
-          { status: 200 }
-        );
+    if (!isActivePending) {
+      const gate = await assertCanInvite(workspaceId);
+      if (!gate.ok) {
+        return Response.json({ error: gate.error }, { status: gate.status });
       }
     }
 
-    // Create new invitation
-    const token = randomBytes(32).toString("hex");
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7); // 7 days expiration
-
-    const invitation = await db.invitation.create({
-      data: {
-        workspaceId,
-        email,
-        role,
-        token,
-        invitedBy: session.user.id,
-        expiresAt,
-      },
-    });
-
-    // Send invitation email
-    try {
-    await sendInvitationEmail({
-      email,
+    const inviter = await getInviterDetails(session.user.id, workspaceId);
+    const result = await createOrRenewInvitation({
+      workspaceId,
       workspaceName: workspace.name,
-      invitationToken: token,
+      email,
       role,
+      invitedById: session.user.id,
+      inviter,
+      ipAddress,
+      userAgent,
+      auditAction: isActivePending ? "INVITE_RESENT" : "INVITE_SENT",
     });
-    } catch (emailError) {
-      console.error("Error sending invitation email:", emailError);
-    }
 
-    // Log invitation creation
-    await db.auditEvent.create({
-      data: {
-        workspaceId,
-        userId: session.user.id,
-        action: "INVITE_SENT",
-        resourceType: "invitation",
-        resourceId: invitation.id,
-        metadata: {
-          email,
-          role,
-          action: "invitation_created",
-          ipAddress,
-          userAgent,
-        },
-      },
+    const invitation = await db.invitation.findUnique({
+      where: { id: result.invitationId },
     });
+
+    if (isActivePending && !result.renewed) {
+      return Response.json(
+        { message: "Invitation resent successfully", invitationId: result.invitationId },
+        { status: 200 },
+      );
+    }
 
     return Response.json(
       {
         invitation: {
-          id: invitation.id,
-          email: invitation.email,
-          role: invitation.role,
-          expiresAt: invitation.expiresAt,
+          id: result.invitationId,
+          email,
+          role,
+          expiresAt: invitation?.expiresAt,
         },
       },
-      { status: 201 }
+      { status: result.renewed ? 200 : 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return Response.json({ error: error.errors }, { status: 400 });
     }
     console.error("Error creating invitation:", error);
-    return Response.json(
-      { error: "Failed to create invitation" },
-      { status: 500 }
-    );
+    return Response.json({ error: "Failed to create invitation" }, { status: 500 });
   }
 }
-

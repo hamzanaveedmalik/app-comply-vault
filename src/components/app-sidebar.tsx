@@ -16,6 +16,7 @@ import {
   Shield,
   Upload,
 } from "lucide-react";
+import { ROLE_CONFIG, type WorkspaceRoleKey } from "~/lib/role-config";
 import { cn } from "~/lib/utils";
 import { WorkspaceDropdown } from "~/components/layout/workspace-dropdown";
 import { fetchTeamMembers, workspaceDtoToWorkspace } from "~/lib/workspace-api";
@@ -146,6 +147,7 @@ function AppSidebarPanel({
           onSelectWorkspace={onSelectWorkspace}
           onInvite={onInvite}
           onSettings={onSettings}
+          canInviteTeam={userRole === "OWNER_CCO"}
           onOpenChange={onOpenChange}
         />
       ) : (
@@ -207,7 +209,9 @@ function AppSidebarPanel({
                 {userName || userEmail || "User"}
               </div>
               <div className="truncate text-[11px] text-sidebar-muted">
-                {userRole === "OWNER_CCO" ? "Owner / CCO" : "Member"}
+                {userRole && userRole in ROLE_CONFIG
+                  ? ROLE_CONFIG[userRole as WorkspaceRoleKey].label
+                  : "Member"}
               </div>
             </div>
             <Button

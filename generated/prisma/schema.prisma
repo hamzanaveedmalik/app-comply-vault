@@ -80,9 +80,10 @@ enum WorkspaceRole {
 }
 
 model UserWorkspace {
-  userId      String
-  workspaceId String
-  role        WorkspaceRole
+  userId                String
+  workspaceId           String
+  role                  WorkspaceRole
+  onboardingDismissedAt DateTime?
 
   // Relations
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -214,6 +215,7 @@ enum AuditAction {
   INVITE_SENT
   INVITE_RESENT
   INVITE_ACCEPTED
+  INVITE_REVOKED
   MEMBER_REMOVED
   ADVISOR_CERTIFIED
   CM_REVIEW_COMPLETED
@@ -462,6 +464,7 @@ model User {
   meetingsCmReviewed       Meeting[]       @relation("MeetingCmReviewedBy")
   meetingsCcoSignedOff     Meeting[]       @relation("MeetingCcoSignedOffBy")
   flagsCmTriaged           Flag[]          @relation("FlagCmTriagedBy")
+  invitationsSent          Invitation[]    @relation("InvitationsSent")
 }
 
 model VerificationToken {
@@ -482,13 +485,15 @@ model Invitation {
   email       String
   role        WorkspaceRole
   token       String        @unique
-  invitedBy   String // userId who sent the invitation
+  invitedById String?
   expiresAt   DateTime
   acceptedAt  DateTime?
+  revokedAt   DateTime?
   createdAt   DateTime      @default(now())
 
   // Relations
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  invitedBy User?     @relation("InvitationsSent", fields: [invitedById], references: [id], onDelete: SetNull)
 
   @@unique([workspaceId, email]) // One invitation per email per workspace
   @@index([token])

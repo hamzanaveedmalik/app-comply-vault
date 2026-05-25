@@ -17,6 +17,7 @@ export type WorkspaceDropdownProps = {
   onSelectWorkspace: (ws: Workspace) => void;
   onInvite: () => void;
   onSettings: () => void;
+  canInviteTeam?: boolean;
   /** Fires when the panel opens or closes (e.g. parent refetch team on open). */
   onOpenChange?: (open: boolean) => void;
 };
@@ -29,6 +30,7 @@ export function WorkspaceDropdown({
   onSelectWorkspace,
   onInvite,
   onSettings,
+  canInviteTeam = false,
   onOpenChange,
 }: WorkspaceDropdownProps): React.JSX.Element {
   const listboxId = useId();
@@ -214,17 +216,19 @@ export function WorkspaceDropdown({
           <div className="mx-2.5 my-0.5 h-px shrink-0 bg-sidebar-active-border" aria-hidden />
 
           <div className="px-2.5 py-1 pb-2">
-            <button
-              type="button"
-              className="flex w-full cursor-pointer items-center gap-1.5 rounded-[6px] border-0 bg-transparent px-2 py-[7px] text-left font-sans text-[11px] font-medium text-sidebar-text transition-[background] duration-100 hover:bg-[rgba(255,255,255,0.05)]"
-              onClick={() => {
-                onInvite();
-                setOpen(false);
-              }}
-            >
-              <Plus className="h-[14px] w-[14px] shrink-0" strokeWidth={2} aria-hidden />
-              Invite team member
-            </button>
+            {canInviteTeam ? (
+              <button
+                type="button"
+                className="flex w-full cursor-pointer items-center gap-1.5 rounded-[6px] border-0 bg-transparent px-2 py-[7px] text-left font-sans text-[11px] font-medium text-sidebar-text transition-[background] duration-100 hover:bg-[rgba(255,255,255,0.05)]"
+                onClick={() => {
+                  onInvite();
+                  setOpen(false);
+                }}
+              >
+                <Plus className="h-[14px] w-[14px] shrink-0" strokeWidth={2} aria-hidden />
+                Invite team member
+              </button>
+            ) : null}
             <button
               type="button"
               className="flex w-full cursor-pointer items-center gap-1.5 rounded-[6px] border-0 bg-transparent px-2 py-[7px] text-left font-sans text-[11px] font-medium text-sidebar-text transition-[background] duration-100 hover:bg-[rgba(255,255,255,0.05)]"

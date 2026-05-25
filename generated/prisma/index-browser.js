@@ -146,7 +146,8 @@ exports.Prisma.WorkspaceScalarFieldEnum = {
 exports.Prisma.UserWorkspaceScalarFieldEnum = {
   userId: 'userId',
   workspaceId: 'workspaceId',
-  role: 'role'
+  role: 'role',
+  onboardingDismissedAt: 'onboardingDismissedAt'
 };
 
 exports.Prisma.MeetingScalarFieldEnum = {
@@ -331,9 +332,10 @@ exports.Prisma.InvitationScalarFieldEnum = {
   email: 'email',
   role: 'role',
   token: 'token',
-  invitedBy: 'invitedBy',
+  invitedById: 'invitedById',
   expiresAt: 'expiresAt',
   acceptedAt: 'acceptedAt',
+  revokedAt: 'revokedAt',
   createdAt: 'createdAt'
 };
 
@@ -533,6 +535,7 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   INVITE_SENT: 'INVITE_SENT',
   INVITE_RESENT: 'INVITE_RESENT',
   INVITE_ACCEPTED: 'INVITE_ACCEPTED',
+  INVITE_REVOKED: 'INVITE_REVOKED',
   MEMBER_REMOVED: 'MEMBER_REMOVED',
   ADVISOR_CERTIFIED: 'ADVISOR_CERTIFIED',
   CM_REVIEW_COMPLETED: 'CM_REVIEW_COMPLETED',

@@ -1,6 +1,6 @@
 import { Resend } from "resend";
+import { ROLE_CONFIG, type WorkspaceRoleKey } from "~/lib/role-config";
 
-// Initialize Resend client (fallback to mock in development if no API key)
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
@@ -10,85 +10,77 @@ export async function sendInvitationEmail({
   workspaceName,
   invitationToken,
   role,
+  inviterName,
+  inviterRole,
 }: {
   email: string;
   workspaceName: string;
   invitationToken: string;
   role: "OWNER_CCO" | "MEMBER" | "ADVISOR";
-}) {
+  inviterName: string;
+  inviterRole: string;
+}): Promise<{ success: boolean; id: string }> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const invitationUrl = `${baseUrl}/invitations/accept?token=${invitationToken}`;
-  const dashboardUrl = `${baseUrl}/dashboard`;
 
-  const roleDescription =
-    role === "OWNER_CCO"
-      ? "Owner/CCO - You can finalize records, manage workspace settings, and invite team members."
-      : role === "ADVISOR"
-        ? "Advisor - You certify meeting transcripts for accuracy."
-        : "Compliance Manager - You triage compliance flags and support the review workflow.";
+  const roleConfig = ROLE_CONFIG[role as WorkspaceRoleKey];
+  const roleLabel = roleConfig.label;
+  const roleSummary = roleConfig.summary;
+  const steps = roleConfig.steps;
 
-  const roleLabel =
-    role === "OWNER_CCO" ? "Owner/CCO" : role === "ADVISOR" ? "Advisor" : "Compliance Manager";
+  const stepsHtml = steps
+    .map((step, index) => `<li style="margin-bottom: 6px;">${index + 1}. ${step}</li>`)
+    .join("");
+  const stepsText = steps.map((step, index) => `${index + 1}. ${step}`).join("\n");
 
   const emailContent = {
     from: process.env.EMAIL_FROM || "noreply@ria-compliance.com",
     to: email,
-    subject: `Invitation to join ${workspaceName} on Comply Vault`,
+    subject: `${inviterName} invited you to join ${workspaceName} on ComplyVault`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
         <h2>You've been invited to join ${workspaceName}</h2>
-        <p>You've been invited to join the workspace <strong>${workspaceName}</strong> on Comply Vault.</p>
-        
-        <div style="background-color: #f3f4f6; padding: 15px; border-radius: 6px; margin: 20px 0;">
+        <p>${inviterName} (${inviterRole}) has invited you to join as ${roleLabel}.</p>
+
+        <div style="background-color: #e9f3ee; padding: 15px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #117A4B;">
           <p style="margin: 0;"><strong>Your Role:</strong> ${roleLabel}</p>
-          <p style="margin: 5px 0 0 0; font-size: 14px; color: #6b7280;">${roleDescription}</p>
+          <p style="margin: 8px 0 0 0; font-size: 14px; color: #4b5563;">${roleSummary}</p>
         </div>
-        
-        <p><strong>What is Comply Vault?</strong></p>
-        <p>Comply Vault helps RIA firms create exam-ready client interaction records from meeting recordings. Upload recordings, review extracted compliance data, and export audit packs.</p>
-        
+
         <div style="margin: 30px 0;">
-          <a href="${invitationUrl}" style="display: inline-block; padding: 12px 24px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 6px;">
+          <a href="${invitationUrl}" style="display: inline-block; padding: 12px 24px; background-color: #117A4B; color: white; text-decoration: none; border-radius: 6px;">
             Accept Invitation
           </a>
         </div>
-        
+
         <p>Or copy and paste this link into your browser:</p>
         <p style="word-break: break-all; color: #666; font-size: 12px;">${invitationUrl}</p>
-        
+
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 12px;">
-          <p><strong>Next Steps After Accepting:</strong></p>
+          <p><strong>Getting started:</strong></p>
           <ol style="padding-left: 20px; margin: 10px 0;">
-            <li>Review your workspace settings</li>
-            <li>Upload your first meeting recording</li>
-            <li>Review and finalize meeting records</li>
+            ${stepsHtml}
           </ol>
           <p style="margin-top: 15px;">This invitation will expire in 7 days.</p>
         </div>
       </div>
     `,
     text: `
-      You've been invited to join ${workspaceName} on Comply Vault.
-      
-      Your Role: ${roleLabel}
-      ${roleDescription}
-      
-      What is Comply Vault?
-      Comply Vault helps RIA firms create exam-ready client interaction records from meeting recordings.
-      
-      Accept your invitation by visiting:
-      ${invitationUrl}
-      
-      Next Steps After Accepting:
-      1. Review your workspace settings
-      2. Upload your first meeting recording
-      3. Review and finalize meeting records
-      
-      This invitation will expire in 7 days.
+You've been invited to join ${workspaceName} on ComplyVault.
+
+${inviterName} (${inviterRole}) has invited you to join as ${roleLabel}.
+${roleSummary}
+
+Accept your invitation by visiting:
+${invitationUrl}
+
+Getting started:
+${stepsText}
+
+This invitation will expire in 7 days.
     `,
   };
 
-  // In development without Resend API key, log the email instead
   if (!resend) {
     console.log("📧 [DEV MODE] Invitation email would be sent:");
     console.log("To:", email);
@@ -108,7 +100,6 @@ export async function sendInvitationEmail({
     throw new Error("Failed to send invitation email");
   }
 }
-
 /**
  * Send welcome email with onboarding checklist when workspace is provisioned
  */

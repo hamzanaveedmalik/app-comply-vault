@@ -1,6 +1,7 @@
 import type { Workspace } from "../../../generated/prisma";
 import { db } from "~/server/db";
 import { getEntitlements, isPaywallBypassed, isTrialExpired } from "./entitlements";
+import { activePendingInvitationWhere } from "~/lib/invitation-utils";
 
 const ACTIVE_STATUSES = ["ACTIVE", "TRIALING"] as const;
 
@@ -113,8 +114,7 @@ export async function assertCanInvite(workspaceId: string) {
   const pendingInvites = await db.invitation.count({
     where: {
       workspaceId,
-      acceptedAt: null,
-      expiresAt: { gt: new Date() },
+      ...activePendingInvitationWhere(),
     },
   });
 

@@ -1,13 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import { signIn, signOut } from "next-auth/react";
-import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
-import { Alert, AlertDescription } from "~/components/ui/alert";
-import type { WorkspaceRole } from "../../../../generated/prisma";
-import { roleLabelForWorkspace } from "~/lib/workspace-display";
+import { ConfirmScreen } from "./components/confirm-screen";
+import { ErrorScreen } from "./components/error-screen";
+import { LoadingScreen } from "./components/loading-screen";
+import { SignInScreen } from "./components/sign-in-screen";
+import { SuccessScreen } from "./components/success-screen";
+import {
+  ACCEPT_PAGE_COLORS,
+  ACCEPT_PAGE_FONT,
+  type AcceptErrorType,
+  type AcceptScreenState,
+  type InvitationDetails,
+} from "./types";
+
+type VerifyResponse =
+  | (InvitationDetails & { valid: true })
+  | { valid: false; errorType: AcceptErrorType; message: string };
 
 export default function AcceptInvitationClient({
   token,
@@ -15,181 +25,203 @@ export default function AcceptInvitationClient({
 }: {
   token?: string;
   signedInEmail: string | null;
-}) {
-  const router = useRouter();
+}): React.ReactElement {
+  const [screen, setScreen] = useState<AcceptScreenState>("loading");
+  const [invitation, setInvitation] = useState<InvitationDetails | null>(null);
+  const [errorType, setErrorType] = useState<AcceptErrorType>("invalid");
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [invitation, setInvitation] = useState<{
-    workspaceName: string;
-    role: string;
-    email: string;
-  } | null>(null);
+  const acceptUrl =
+    typeof window !== "undefined" && token
+      ? `${window.location.origin}/invitations/accept?token=${token}`
+      : token
+        ? `/invitations/accept?token=${token}`
+        : "/invitations/accept";
 
-  useEffect(() => {
+  const verifyInvitation = useCallback(async (): Promise<void> => {
     if (!token) {
-      setError("Invalid invitation link");
+      setErrorType("invalid");
+      setScreen("error");
       return;
     }
 
-    // Fetch invitation details
-    fetch(`/api/invitations/verify?token=${token}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          setError(data.error);
-        } else {
-          setInvitation(data.invitation);
-        }
-      })
-      .catch((err) => {
-        setError("Failed to verify invitation");
-        console.error(err);
-      });
-  }, [token]);
-
-  const handleAccept = async () => {
-    if (!token) return;
-
-    if (!signedInEmail) {
-      await signIn(undefined, {
-        callbackUrl: `/invitations/accept?token=${token}`,
-      });
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
+    setScreen("loading");
 
     try {
-      // Accept invitation (creates UserWorkspace record)
+      const response = await fetch(`/api/invitations/verify?token=${encodeURIComponent(token)}`);
+      const data = (await response.json()) as VerifyResponse;
+
+      if (!data.valid) {
+        setErrorType(data.errorType);
+        setScreen("error");
+        return;
+      }
+
+      const details: InvitationDetails = {
+        workspaceName: data.workspaceName,
+        role: data.role,
+        invitedEmail: data.invitedEmail,
+        inviterName: data.inviterName,
+        inviterRole: data.inviterRole,
+        firmCRD: data.firmCRD,
+      };
+      setInvitation(details);
+
+      if (!signedInEmail) {
+        setScreen("sign-in");
+        return;
+      }
+
+      if (signedInEmail.toLowerCase() !== details.invitedEmail.toLowerCase()) {
+        setErrorType("mismatch");
+        setScreen("error");
+        return;
+      }
+
+      setScreen("confirm");
+    } catch {
+      setErrorType("error");
+      setScreen("error");
+    }
+  }, [token, signedInEmail]);
+
+  useEffect(() => {
+    void verifyInvitation();
+  }, [verifyInvitation]);
+
+  const handleSignIn = useCallback(async (): Promise<void> => {
+    await signIn("google", { callbackUrl: acceptUrl });
+  }, [acceptUrl]);
+
+  const handleSwitchAccount = useCallback(async (): Promise<void> => {
+    await signOut({ callbackUrl: acceptUrl });
+  }, [acceptUrl]);
+
+  const handleAccept = useCallback(async (): Promise<void> => {
+    if (!token) {
+      return;
+    }
+
+    setScreen("accepting");
+
+    try {
       const response = await fetch("/api/invitations/accept", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token }),
       });
 
       if (!response.ok) {
-        const data = await response.json();
+        const data = (await response.json()) as { error?: string; requiresAuth?: boolean };
         if (response.status === 401 && data.requiresAuth) {
-          await signIn(undefined, {
-            callbackUrl: `/invitations/accept?token=${token}`,
-          });
+          await handleSignIn();
           return;
         }
-        throw new Error(data.error || "Failed to accept invitation");
+        setErrorType("error");
+        setScreen("error");
+        return;
       }
 
-      // Redirect to sign in (user will be added to workspace after auth)
-      const data = await response.json();
-      if (data.requiresAuth) {
-        // User needs to sign in first
-        await signIn(undefined, {
-          callbackUrl: `/invitations/accept?token=${token}`,
-        });
-      } else {
-        // User is already authenticated, redirect to dashboard
-        router.push("/dashboard");
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-      setIsLoading(false);
+      setScreen("success");
+      window.setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 2000);
+    } catch {
+      setErrorType("error");
+      setScreen("error");
     }
-  };
-
-  if (!token) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle>Invalid Invitation</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">This invitation link is invalid.</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  if (error && !invitation) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle>Error</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  }, [token, handleSignIn]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Accept Invitation</CardTitle>
-          {invitation && (
-            <CardDescription>
-              You&apos;ve been invited to join <strong>{invitation.workspaceName}</strong> as a{" "}
-              <strong>{roleLabelForWorkspace(invitation.role as WorkspaceRole)}</strong>
-            </CardDescription>
-          )}
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
+    <div
+      style={{
+        minHeight: "100vh",
+        background: ACCEPT_PAGE_COLORS.bg,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "24px 16px",
+        fontFamily: ACCEPT_PAGE_FONT,
+      }}
+    >
+      <div style={{ width: "100%", maxWidth: 420, marginBottom: 24, textAlign: "center" }}>
+        <div
+          style={{
+            fontSize: 18,
+            fontWeight: 600,
+            letterSpacing: "-0.02em",
+            color: ACCEPT_PAGE_COLORS.brand,
+          }}
+        >
+          ComplyVault
+        </div>
+      </div>
 
-          {invitation && (
-            <div className="space-y-1 text-xs text-muted-foreground">
-              <div>
-                Invited email: <span className="font-medium text-foreground">{invitation.email}</span>
-              </div>
-              <div>
-                Signed in as:{" "}
-                <span className="font-medium text-foreground">
-                  {signedInEmail ?? "Not signed in"}
-                </span>
-              </div>
-            </div>
-          )}
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 420,
+          background: ACCEPT_PAGE_COLORS.surface,
+          border: `1px solid ${ACCEPT_PAGE_COLORS.border}`,
+          borderRadius: 12,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+          padding: 24,
+        }}
+      >
+        {screen === "loading" ? <LoadingScreen /> : null}
 
-          {invitation && (
-            <Button onClick={handleAccept} disabled={isLoading} className="w-full">
-              {isLoading
-                ? "Accepting..."
-                : signedInEmail
-                ? "Accept Invitation"
-                : "Sign in to accept"}
-            </Button>
-          )}
+        {screen === "accepting" && invitation && signedInEmail ? (
+          <ConfirmScreen
+            invitation={invitation}
+            signedInEmail={signedInEmail}
+            isAccepting
+            onAccept={() => undefined}
+            onSwitchAccount={() => undefined}
+          />
+        ) : null}
 
-          {invitation && signedInEmail && signedInEmail !== invitation.email && (
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() =>
-                signOut({
-                  callbackUrl: `/invitations/accept?token=${token}`,
-                })
-              }
-            >
-              Sign in with a different email
-            </Button>
-          )}
-        </CardContent>
-      </Card>
+        {screen === "sign-in" && invitation ? (
+          <SignInScreen
+            invitation={invitation}
+            acceptUrl={acceptUrl}
+            onSignIn={() => void handleSignIn()}
+          />
+        ) : null}
+
+        {screen === "confirm" && invitation && signedInEmail ? (
+          <ConfirmScreen
+            invitation={invitation}
+            signedInEmail={signedInEmail}
+            isAccepting={false}
+            onAccept={() => void handleAccept()}
+            onSwitchAccount={() => void handleSwitchAccount()}
+          />
+        ) : null}
+
+        {screen === "success" && invitation ? (
+          <SuccessScreen workspaceName={invitation.workspaceName} role={invitation.role} />
+        ) : null}
+
+        {screen === "error" ? (
+          <ErrorScreen
+            errorType={errorType}
+            currentEmail={signedInEmail ?? undefined}
+            invitedEmail={invitation?.invitedEmail}
+            onSwitchAccount={() => void handleSwitchAccount()}
+          />
+        ) : null}
+      </div>
+
+      <p
+        style={{
+          marginTop: 24,
+          fontSize: 12,
+          color: ACCEPT_PAGE_COLORS.textTertiary,
+          textAlign: "center",
+        }}
+      >
+        SEC-compliant meeting documentation for RIA firms
+      </p>
     </div>
   );
 }
-

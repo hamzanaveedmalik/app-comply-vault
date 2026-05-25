@@ -1,6 +1,19 @@
+import { cookies } from "next/headers";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
+import { ACTIVE_WORKSPACE_COOKIE } from "~/lib/workspace-constants";
 import { z } from "zod";
+
+async function setActiveWorkspaceCookie(workspaceId: string): Promise<void> {
+  const store = await cookies();
+  store.set(ACTIVE_WORKSPACE_COOKIE, workspaceId, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 30,
+  });
+}
 
 const acceptInvitationSchema = z.object({
   token: z.string().min(1, "Token is required"),
@@ -36,6 +49,13 @@ export async function POST(request: Request) {
       return Response.json(
         { error: "This invitation has already been accepted" },
         { status: 400 }
+      );
+    }
+
+    if (invitation.revokedAt) {
+      return Response.json(
+        { error: "Invitation not found" },
+        { status: 404 }
       );
     }
 
@@ -79,6 +99,8 @@ export async function POST(request: Request) {
         data: { acceptedAt: new Date() },
       });
 
+      await setActiveWorkspaceCookie(invitation.workspaceId);
+
       return Response.json({
         message: "You are already a member of this workspace",
         workspaceId: invitation.workspaceId,
@@ -99,6 +121,8 @@ export async function POST(request: Request) {
       where: { id: invitation.id },
       data: { acceptedAt: new Date() },
     });
+
+    await setActiveWorkspaceCookie(invitation.workspaceId);
 
     // Log invitation acceptance
     await db.auditEvent.create({

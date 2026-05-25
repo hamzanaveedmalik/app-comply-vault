@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/com
 import { Alert, AlertDescription } from "~/components/ui/alert";
 import { Badge } from "~/components/ui/badge";
 import { roleLabelForWorkspace } from "~/lib/workspace-display";
+import { PendingInvitations } from "./components/pending-invitations";
 import type { WorkspaceRole } from "../../../../generated/prisma";
 
 type Workspace = {
@@ -179,6 +180,8 @@ export function WorkspaceSettingsForm({
           </div>
         </CardContent>
       </Card>
+
+      <PendingInvitations workspaceId={workspace.id} />
 
       <Card>
         <CardHeader>

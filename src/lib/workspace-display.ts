@@ -1,4 +1,5 @@
 import type { WorkspaceRole } from "../../generated/prisma";
+import { ROLE_CONFIG, type WorkspaceRoleKey } from "./role-config";
 
 export function workspaceInitialsFromName(name: string): string {
   const t = name.trim();
@@ -10,11 +11,12 @@ export function workspaceInitialsFromName(name: string): string {
   return t.slice(0, 2).toUpperCase();
 }
 
-/** Maps Prisma roles to design-doc labels (only two enums in schema). */
+/** Maps Prisma roles to display labels from role-config. */
 export function roleLabelForWorkspace(role: WorkspaceRole): string {
-  if (role === "OWNER_CCO") return "CCO";
-  if (role === "ADVISOR") return "Advisor";
-  return "Compliance Manager";
+  if (role in ROLE_CONFIG) {
+    return ROLE_CONFIG[role as WorkspaceRoleKey].label;
+  }
+  return "Member";
 }
 
 const MEMBER_PALETTE = ["#3B82F6", "#8B5CF6", "#F97316"] as const;

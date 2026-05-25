@@ -59,8 +59,8 @@ export async function createOrRenewInvitation(params: {
     },
   });
 
-  if (existingInvitation && !existingInvitation.acceptedAt) {
-    if (isInvitationActive(existingInvitation)) {
+  if (existingInvitation) {
+    if (!existingInvitation.acceptedAt && isInvitationActive(existingInvitation)) {
       try {
         await sendInvitationEmail({
           email: params.email,
@@ -100,6 +100,7 @@ export async function createOrRenewInvitation(params: {
     }
 
     const token = randomBytes(32).toString("hex");
+    const wasAccepted = existingInvitation.acceptedAt !== null;
     const invitation = await db.invitation.update({
       where: { id: existingInvitation.id },
       data: {
@@ -108,6 +109,7 @@ export async function createOrRenewInvitation(params: {
         invitedById: params.invitedById,
         expiresAt: newInvitationExpiry(),
         revokedAt: null,
+        acceptedAt: null,
       },
     });
 
@@ -134,7 +136,7 @@ export async function createOrRenewInvitation(params: {
         metadata: {
           email: params.email,
           role: params.role,
-          action: "invitation_renewed",
+          action: wasAccepted ? "invitation_reinvited" : "invitation_renewed",
           previousStatus: getInvitationStatus(existingInvitation),
           ipAddress: params.ipAddress,
           userAgent: params.userAgent,

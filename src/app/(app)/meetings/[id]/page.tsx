@@ -30,6 +30,7 @@ import { MeetingAuditTrail } from "~/components/meetings/meeting-audit-trail";
 import { ExportCard } from "~/components/meetings/export-card";
 import { buildMeetingAuditTrailEntries } from "~/lib/meeting-audit-trail";
 import { parseCmReviewSummary, computeCmReviewSummaryFromFlags } from "~/lib/cm-review-summary";
+import { redirectPathForMissingWorkspace } from "~/server/workspace/no-workspace-redirect";
 
 export default async function MeetingDetailPage({
   params,
@@ -39,7 +40,12 @@ export default async function MeetingDetailPage({
   const session = await auth();
 
   if (!session?.user?.workspaceId) {
-    redirect("/workspaces/new");
+    if (!session?.user) {
+      redirect("/auth/signin");
+    }
+    redirect(
+      await redirectPathForMissingWorkspace(session.user.id, session.user.email),
+    );
   }
 
   const { id } = await params;

@@ -84,13 +84,17 @@ model UserWorkspace {
   workspaceId            String
   role                   WorkspaceRole
   onboardingDismissedAt  DateTime?
+  removedAt              DateTime?
+  removedById            String?
 
   // Relations
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  removedBy User?     @relation("UserWorkspaceRemovedBy", fields: [removedById], references: [id])
 
   @@id([userId, workspaceId])
   @@index([workspaceId])
+  @@index([userId, removedAt])
 }
 
 // ============================================
@@ -460,6 +464,7 @@ model User {
   accounts   Account[]
   sessions   Session[]
   workspaces UserWorkspace[]
+  removedWorkspaceMemberships UserWorkspace[] @relation("UserWorkspaceRemovedBy")
   meetingsAdvisorCertified Meeting[] @relation("MeetingAdvisorCertifiedBy")
   meetingsCmReviewed       Meeting[] @relation("MeetingCmReviewedBy")
   meetingsCcoSignedOff    Meeting[] @relation("MeetingCcoSignedOffBy")

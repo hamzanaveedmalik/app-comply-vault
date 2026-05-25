@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/com
 import { Badge } from "~/components/ui/badge";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
+import { redirectPathForMissingWorkspace } from "~/server/workspace/no-workspace-redirect";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,12 @@ export default async function NotificationsPage() {
   const session = await auth();
 
   if (!session?.user?.workspaceId) {
-    redirect("/workspaces/new");
+    if (!session?.user) {
+      redirect("/auth/signin");
+    }
+    redirect(
+      await redirectPathForMissingWorkspace(session.user.id, session.user.email),
+    );
   }
 
   // Fetch notifications directly from database

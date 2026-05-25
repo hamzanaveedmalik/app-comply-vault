@@ -2,6 +2,7 @@ import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { redirect } from "next/navigation";
 import AuditLogsClient from "./audit-logs-client";
+import { redirectPathForMissingWorkspace } from "~/server/workspace/no-workspace-redirect";
 
 // Force dynamic rendering since we use searchParams
 export const dynamic = "force-dynamic";
@@ -14,7 +15,12 @@ export default async function AuditLogsPage({
   const session = await auth();
 
   if (!session?.user?.workspaceId) {
-    redirect("/workspaces/new");
+    if (!session?.user) {
+      redirect("/auth/signin");
+    }
+    redirect(
+      await redirectPathForMissingWorkspace(session.user.id, session.user.email),
+    );
   }
 
   // Only OWNER_CCO can view audit logs

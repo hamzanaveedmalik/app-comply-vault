@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Image from "next/image";
 import { SignInForm } from "./signin-form";
 import { buildBillingIntentQuery, parseBillingIntent } from "~/lib/billing-intent";
+import { resolvePostAuthRedirect } from "~/lib/auth-redirect";
 
 export default async function SignInPage({
   searchParams,
@@ -31,9 +32,15 @@ export default async function SignInPage({
       // User is authenticated and verified - redirect based on workspace
       if (session.user.workspaceId && session.user.workspaceId !== "") {
         redirect("/dashboard");
-      } else {
-        redirect(`/workspaces/new${intentQuery}`);
       }
+      redirect(
+        await resolvePostAuthRedirect({
+          userId: session.user.id,
+          email: session.user.email,
+          workspaceId: session.user.workspaceId,
+          fallback: `/workspaces/new${intentQuery}`,
+        }),
+      );
     }
   }
 

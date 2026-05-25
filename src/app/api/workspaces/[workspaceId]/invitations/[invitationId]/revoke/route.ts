@@ -1,18 +1,22 @@
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { getInvitationStatus } from "~/lib/invitation-utils";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 
 async function assertOwnerAccess(
   workspaceId: string,
   userId: string,
 ): Promise<Response | null> {
-  const membership = await db.userWorkspace.findUnique({
+  const membership = await db.userWorkspace.findFirst({
     where: {
-      userId_workspaceId: { userId, workspaceId },
+      userId,
+      workspaceId,
+      role: "OWNER_CCO",
+      ...activeUserWorkspaceWhere,
     },
   });
 
-  if (!membership || membership.role !== "OWNER_CCO") {
+  if (!membership) {
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 

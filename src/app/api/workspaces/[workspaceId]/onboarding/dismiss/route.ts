@@ -1,5 +1,6 @@
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 
 export async function PATCH(
   _request: Request,
@@ -13,12 +14,11 @@ export async function PATCH(
 
     const { workspaceId } = await params;
 
-    const membership = await db.userWorkspace.findUnique({
+    const membership = await db.userWorkspace.findFirst({
       where: {
-        userId_workspaceId: {
-          userId: session.user.id,
-          workspaceId,
-        },
+        userId: session.user.id,
+        workspaceId,
+        ...activeUserWorkspaceWhere,
       },
     });
 

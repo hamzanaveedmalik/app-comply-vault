@@ -1,5 +1,6 @@
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 
 export async function DELETE(
   request: Request,
@@ -32,6 +33,7 @@ export async function DELETE(
       where: {
         workspaceId,
         userId,
+        ...activeUserWorkspaceWhere,
       },
       include: {
         user: true,
@@ -47,6 +49,7 @@ export async function DELETE(
         where: {
           workspaceId,
           role: "OWNER_CCO",
+          ...activeUserWorkspaceWhere,
         },
       });
       if (ownerCount <= 1) {
@@ -62,12 +65,16 @@ export async function DELETE(
       request.headers.get("x-real-ip");
     const userAgent = request.headers.get("user-agent");
 
-    await db.userWorkspace.delete({
+    await db.userWorkspace.update({
       where: {
         userId_workspaceId: {
           userId,
           workspaceId,
         },
+      },
+      data: {
+        removedAt: new Date(),
+        removedById: session.user.id,
       },
     });
 

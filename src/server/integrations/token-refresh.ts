@@ -6,6 +6,7 @@
 import { db } from "~/server/db";
 import { decryptToken, encryptToken } from "./crypto";
 import { sendIntegrationReconnectEmail } from "~/server/email";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 import type { IntegrationProvider } from "../../../generated/prisma";
 import { exchangeZohoRefreshToken } from "./zoho/crm-token";
 
@@ -77,7 +78,7 @@ export async function refreshExpiringTokens(): Promise<{ refreshed: number; fail
       });
 
       const owner = await db.userWorkspace.findFirst({
-        where: { workspaceId: cred.workspaceId, role: "OWNER_CCO" },
+        where: { workspaceId: cred.workspaceId, role: "OWNER_CCO", ...activeUserWorkspaceWhere },
         include: { user: { select: { email: true } } },
       });
       if (owner?.user?.email) {

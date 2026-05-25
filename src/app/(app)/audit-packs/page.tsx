@@ -1,11 +1,17 @@
 import { auth } from "~/server/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { redirectPathForMissingWorkspace } from "~/server/workspace/no-workspace-redirect";
 
 export default async function AuditPacksPage() {
   const session = await auth();
   if (!session?.user?.workspaceId || session.user.workspaceId === "") {
-    redirect("/workspaces/new");
+    if (!session?.user) {
+      redirect("/auth/signin");
+    }
+    redirect(
+      await redirectPathForMissingWorkspace(session.user.id, session.user.email),
+    );
   }
 
   return (

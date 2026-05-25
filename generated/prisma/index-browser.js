@@ -147,7 +147,9 @@ exports.Prisma.UserWorkspaceScalarFieldEnum = {
   userId: 'userId',
   workspaceId: 'workspaceId',
   role: 'role',
-  onboardingDismissedAt: 'onboardingDismissedAt'
+  onboardingDismissedAt: 'onboardingDismissedAt',
+  removedAt: 'removedAt',
+  removedById: 'removedById'
 };
 
 exports.Prisma.MeetingScalarFieldEnum = {

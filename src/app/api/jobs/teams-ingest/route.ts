@@ -8,6 +8,7 @@ import { db } from "~/server/db";
 import { verifySignatureAppRouter } from "@upstash/qstash/nextjs";
 import { z } from "zod";
 import { decryptToken } from "~/server/integrations/crypto";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 
 const GRAPH_BASE = "https://graph.microsoft.com/v1.0";
 
@@ -220,7 +221,7 @@ async function handler(request: Request) {
     try {
       const { sendDraftReadyEmail } = await import("~/server/email");
       const owner = await db.userWorkspace.findFirst({
-        where: { workspaceId, role: "OWNER_CCO" },
+        where: { workspaceId, role: "OWNER_CCO", ...activeUserWorkspaceWhere },
         include: { user: true },
       });
       if (owner?.user?.email) {

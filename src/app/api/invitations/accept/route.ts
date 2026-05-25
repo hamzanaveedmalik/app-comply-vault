@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { ACTIVE_WORKSPACE_COOKIE } from "~/lib/workspace-constants";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 import { z } from "zod";
 
 async function setActiveWorkspaceCookie(workspaceId: string): Promise<void> {
@@ -84,16 +85,17 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if user is already a member
-    const existingMembership = await db.userWorkspace.findFirst({
+    // Check if user is already an active member, or restore a removed membership
+    const existingMembership = await db.userWorkspace.findUnique({
       where: {
-        userId: session.user.id,
-        workspaceId: invitation.workspaceId,
+        userId_workspaceId: {
+          userId: session.user.id,
+          workspaceId: invitation.workspaceId,
+        },
       },
     });
 
-    if (existingMembership) {
-      // User is already a member, just mark invitation as accepted
+    if (existingMembership && existingMembership.removedAt === null) {
       await db.invitation.update({
         where: { id: invitation.id },
         data: { acceptedAt: new Date() },
@@ -107,14 +109,29 @@ export async function POST(request: Request) {
       });
     }
 
-    // Create UserWorkspace record
-    await db.userWorkspace.create({
-      data: {
-        userId: session.user.id,
-        workspaceId: invitation.workspaceId,
-        role: invitation.role,
-      },
-    });
+    if (existingMembership?.removedAt) {
+      await db.userWorkspace.update({
+        where: {
+          userId_workspaceId: {
+            userId: session.user.id,
+            workspaceId: invitation.workspaceId,
+          },
+        },
+        data: {
+          removedAt: null,
+          removedById: null,
+          role: invitation.role,
+        },
+      });
+    } else {
+      await db.userWorkspace.create({
+        data: {
+          userId: session.user.id,
+          workspaceId: invitation.workspaceId,
+          role: invitation.role,
+        },
+      });
+    }
 
     // Mark invitation as accepted
     await db.invitation.update({

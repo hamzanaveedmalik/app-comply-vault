@@ -2,6 +2,7 @@ import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { z } from "zod";
 import { assertCanInvite } from "~/server/billing/guards";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 import {
   createOrRenewInvitation,
   getInviterDetails,
@@ -59,6 +60,7 @@ export async function POST(
           some: {
             userId: session.user.id,
             role: "OWNER_CCO",
+            ...activeUserWorkspaceWhere,
           },
         },
       },
@@ -74,6 +76,7 @@ export async function POST(
       where: {
         workspaceId,
         user: { email },
+        ...activeUserWorkspaceWhere,
       },
     });
 

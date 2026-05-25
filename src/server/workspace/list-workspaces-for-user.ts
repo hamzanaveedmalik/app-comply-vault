@@ -1,10 +1,11 @@
 import { db } from "~/server/db";
 import { workspaceInitialsFromName, roleLabelForWorkspace } from "~/lib/workspace-display";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 import type { WorkspaceListItemDto } from "~/lib/workspace-types";
 
 export async function listWorkspacesForUser(userId: string): Promise<WorkspaceListItemDto[]> {
   const memberships = await db.userWorkspace.findMany({
-    where: { userId },
+    where: { userId, ...activeUserWorkspaceWhere },
     include: {
       workspace: { select: { id: true, name: true } },
     },

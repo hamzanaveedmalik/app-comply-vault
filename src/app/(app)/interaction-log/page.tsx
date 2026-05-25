@@ -3,6 +3,7 @@ import { db } from "~/server/db";
 import { topicToString } from "~/lib/topics";
 import { redirect } from "next/navigation";
 import InteractionLogClient from "./interaction-log-client";
+import { redirectPathForMissingWorkspace } from "~/server/workspace/no-workspace-redirect";
 
 // Force dynamic rendering since we use searchParams
 export const dynamic = "force-dynamic";
@@ -15,7 +16,12 @@ export default async function InteractionLogPage({
   const session = await auth();
 
   if (!session?.user?.workspaceId) {
-    redirect("/workspaces/new");
+    if (!session?.user) {
+      redirect("/auth/signin");
+    }
+    redirect(
+      await redirectPathForMissingWorkspace(session.user.id, session.user.email),
+    );
   }
 
   const params = await searchParams;

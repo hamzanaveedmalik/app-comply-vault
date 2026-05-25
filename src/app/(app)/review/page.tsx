@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import ReviewQueueClient from "./review-queue-client";
+import { redirectPathForMissingWorkspace } from "~/server/workspace/no-workspace-redirect";
 
 // Force dynamic rendering since we use searchParams
 export const dynamic = "force-dynamic";
@@ -20,7 +21,12 @@ export default async function ReviewQueuePage({
   const session = await auth();
 
   if (!session?.user?.workspaceId) {
-    redirect("/workspaces/new");
+    if (!session?.user) {
+      redirect("/auth/signin");
+    }
+    redirect(
+      await redirectPathForMissingWorkspace(session.user.id, session.user.email),
+    );
   }
 
   try {

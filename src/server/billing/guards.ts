@@ -2,6 +2,7 @@ import type { Workspace } from "../../../generated/prisma";
 import { db } from "~/server/db";
 import { getEntitlements, isPaywallBypassed, isTrialExpired } from "./entitlements";
 import { activePendingInvitationWhere } from "~/lib/invitation-utils";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 
 const ACTIVE_STATUSES = ["ACTIVE", "TRIALING"] as const;
 
@@ -110,7 +111,9 @@ export async function assertCanInvite(workspaceId: string) {
   }
 
   const ent = getEntitlements(workspace);
-  const memberCount = await db.userWorkspace.count({ where: { workspaceId } });
+  const memberCount = await db.userWorkspace.count({
+    where: { workspaceId, ...activeUserWorkspaceWhere },
+  });
   const pendingInvites = await db.invitation.count({
     where: {
       workspaceId,

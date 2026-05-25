@@ -5,24 +5,30 @@ import { buildDashboardSummary } from "~/server/dashboard/build-dashboard-summar
 import { DashboardView } from "~/components/dashboard/dashboard-view";
 import { WelcomeBanner } from "./components/welcome-banner";
 import type { WorkspaceRoleKey } from "~/lib/role-config";
+import { redirectPathForMissingWorkspace } from "~/server/workspace/no-workspace-redirect";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 
 export default async function DashboardPage(): Promise<React.ReactElement> {
   const session = await auth();
 
   if (!session?.user?.workspaceId || session.user.workspaceId === "") {
-    redirect("/workspaces/new");
+    if (!session?.user) {
+      redirect("/auth/signin");
+    }
+    redirect(
+      await redirectPathForMissingWorkspace(session.user.id, session.user.email),
+    );
   }
 
   const workspaceId = session.user.workspaceId;
 
   const [summary, membership, workspace, inviteAccepted] = await Promise.all([
     buildDashboardSummary(db, workspaceId),
-    db.userWorkspace.findUnique({
+    db.userWorkspace.findFirst({
       where: {
-        userId_workspaceId: {
-          userId: session.user.id,
-          workspaceId,
-        },
+        userId: session.user.id,
+        workspaceId,
+        ...activeUserWorkspaceWhere,
       },
       select: { onboardingDismissedAt: true, role: true },
     }),

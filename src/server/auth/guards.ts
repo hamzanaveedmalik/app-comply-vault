@@ -2,6 +2,7 @@ import type { Session } from "next-auth";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { getEntitlements, isPaywallBypassed, isTrialExpired, type Entitlements } from "~/server/billing/entitlements";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 
 /**
  * Workspace fields returned by requireAppAccess
@@ -93,6 +94,7 @@ export async function requireAppAccess(): Promise<AppAccessResult> {
       users: {
         some: {
           userId: session.user.id,
+          ...activeUserWorkspaceWhere,
         },
       },
     },

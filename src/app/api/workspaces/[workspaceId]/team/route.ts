@@ -1,6 +1,7 @@
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { avatarColorForMember, roleLabelForWorkspace } from "~/lib/workspace-display";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 import type { TeamMemberDto } from "~/lib/workspace-types";
 
 function initialsFromUser(name: string | null, email: string | null): string {
@@ -34,7 +35,7 @@ export async function GET(
     const { workspaceId } = await context.params;
 
     const membership = await db.userWorkspace.findFirst({
-      where: { userId: session.user.id, workspaceId },
+      where: { userId: session.user.id, workspaceId, ...activeUserWorkspaceWhere },
     });
 
     if (!membership) {
@@ -42,7 +43,7 @@ export async function GET(
     }
 
     const members = await db.userWorkspace.findMany({
-      where: { workspaceId },
+      where: { workspaceId, ...activeUserWorkspaceWhere },
       include: {
         user: { select: { id: true, name: true, email: true } },
       },

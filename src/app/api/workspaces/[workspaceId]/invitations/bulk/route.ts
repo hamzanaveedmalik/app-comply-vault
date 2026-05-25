@@ -3,6 +3,7 @@ import { db } from "~/server/db";
 import { z } from "zod";
 import { getEntitlements, isPaywallBypassed, isTrialExpired } from "~/server/billing/entitlements";
 import { activePendingInvitationWhere, isInvitationActive } from "~/lib/invitation-utils";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 import {
   createOrRenewInvitation,
   getInviterDetails,
@@ -67,6 +68,7 @@ export async function POST(
           some: {
             userId: session.user.id,
             role: "OWNER_CCO",
+            ...activeUserWorkspaceWhere,
           },
         },
       },
@@ -108,7 +110,9 @@ export async function POST(
         );
       }
       const ent = getEntitlements(workspace);
-      const memberCount = await db.userWorkspace.count({ where: { workspaceId } });
+      const memberCount = await db.userWorkspace.count({
+        where: { workspaceId, ...activeUserWorkspaceWhere },
+      });
       const pendingInvites = await db.invitation.count({
         where: { workspaceId, ...activePendingInvitationWhere() },
       });
@@ -121,6 +125,7 @@ export async function POST(
           where: {
             workspaceId,
             user: { email },
+            ...activeUserWorkspaceWhere,
           },
         });
 

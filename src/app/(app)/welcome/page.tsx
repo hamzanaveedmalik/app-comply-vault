@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { getEntitlements, isTrialExpired } from "~/server/billing/entitlements";
 import WelcomeClient from "./welcome-client";
 import { buildBillingIntentQuery, parseBillingIntent } from "~/lib/billing-intent";
+import { redirectPathForMissingWorkspace } from "~/server/workspace/no-workspace-redirect";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 
 function getUsageWindow(currentPeriodStart: Date | null, currentPeriodEnd: Date | null) {
   if (currentPeriodStart && currentPeriodEnd) {
@@ -28,7 +30,11 @@ export default async function WelcomePage({
     redirect(`/auth/signin${intentQuery}`);
   }
   if (!session.user.workspaceId) {
-    redirect(`/workspaces/new${intentQuery}`);
+    redirect(
+      await redirectPathForMissingWorkspace(session.user.id, session.user.email, {
+        intentQuery,
+      }),
+    );
   }
 
   const workspace = await db.workspace.findUnique({
@@ -36,7 +42,11 @@ export default async function WelcomePage({
   });
 
   if (!workspace) {
-    redirect(`/workspaces/new${intentQuery}`);
+    redirect(
+      await redirectPathForMissingWorkspace(session.user.id, session.user.email, {
+        intentQuery,
+      }),
+    );
   }
 
   const entitlements = getEntitlements(workspace);
@@ -50,7 +60,7 @@ export default async function WelcomePage({
   });
 
   const membersCount = await db.userWorkspace.count({
-    where: { workspaceId: workspace.id },
+    where: { workspaceId: workspace.id, ...activeUserWorkspaceWhere },
   });
 
   const trialExpired =

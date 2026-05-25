@@ -1,6 +1,7 @@
 import { auth } from "~/server/auth";
 import { redirect } from "next/navigation";
 import { db } from "~/server/db";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 
 export default async function InviteLayout({
   children,
@@ -16,16 +17,16 @@ export default async function InviteLayout({
     redirect("/auth/signin");
   }
 
-  const membership = await db.userWorkspace.findUnique({
+  const membership = await db.userWorkspace.findFirst({
     where: {
-      userId_workspaceId: {
-        userId: session.user.id,
-        workspaceId,
-      },
+      userId: session.user.id,
+      workspaceId,
+      role: "OWNER_CCO",
+      ...activeUserWorkspaceWhere,
     },
   });
 
-  if (membership?.role !== "OWNER_CCO") {
+  if (!membership) {
     redirect("/dashboard");
   }
 

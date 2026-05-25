@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { z } from "zod";
 import { db } from "~/server/db";
 import { ACTIVE_WORKSPACE_COOKIE } from "~/lib/workspace-constants";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 
 const switchBodySchema = z.object({
   workspaceId: z.string().min(1),
@@ -19,7 +20,7 @@ export async function POST(request: Request) {
     const { workspaceId } = switchBodySchema.parse(json);
 
     const membership = await db.userWorkspace.findFirst({
-      where: { userId: session.user.id, workspaceId },
+      where: { userId: session.user.id, workspaceId, ...activeUserWorkspaceWhere },
     });
 
     if (!membership) {

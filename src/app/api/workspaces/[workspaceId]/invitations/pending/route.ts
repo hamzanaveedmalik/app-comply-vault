@@ -6,19 +6,23 @@ import {
   getInvitationStatus,
   invitationRoleLabel,
 } from "~/lib/invitation-utils";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 import type { WorkspaceRoleKey } from "~/lib/role-config";
 
 async function assertOwnerAccess(
   workspaceId: string,
   userId: string,
 ): Promise<Response | null> {
-  const membership = await db.userWorkspace.findUnique({
+  const membership = await db.userWorkspace.findFirst({
     where: {
-      userId_workspaceId: { userId, workspaceId },
+      userId,
+      workspaceId,
+      role: "OWNER_CCO",
+      ...activeUserWorkspaceWhere,
     },
   });
 
-  if (!membership || membership.role !== "OWNER_CCO") {
+  if (!membership) {
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -52,7 +56,7 @@ export async function GET(
         },
         orderBy: { createdAt: "desc" },
       }),
-      db.userWorkspace.count({ where: { workspaceId } }),
+      db.userWorkspace.count({ where: { workspaceId, ...activeUserWorkspaceWhere } }),
       db.invitation.count({
         where: { workspaceId, ...activePendingInvitationWhere() },
       }),

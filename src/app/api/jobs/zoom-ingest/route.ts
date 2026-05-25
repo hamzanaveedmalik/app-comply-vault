@@ -11,6 +11,7 @@ import { uploadFile } from "~/server/storage";
 import { publishProcessMeetingJob } from "~/server/qstash";
 import { verifySignatureAppRouter } from "@upstash/qstash/nextjs";
 import { z } from "zod";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 
 const zoomIngestSchema = z.object({
   zoomMeetingId: z.string(),
@@ -272,7 +273,7 @@ async function handler(request: Request) {
         try {
           const { sendDraftReadyEmail } = await import("~/server/email");
           const owner = await db.userWorkspace.findFirst({
-            where: { workspaceId, role: "OWNER_CCO" },
+            where: { workspaceId, role: "OWNER_CCO", ...activeUserWorkspaceWhere },
             include: { user: true },
           });
           if (owner?.user?.email) {

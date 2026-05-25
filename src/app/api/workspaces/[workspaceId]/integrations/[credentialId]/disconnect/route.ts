@@ -6,6 +6,7 @@
 import { requireAppAccess } from "~/server/auth/guards";
 import { db } from "~/server/db";
 import { sendIntegrationDisconnectEmail } from "~/server/email";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 import { zoomAdapter } from "~/server/integrations/adapters/zoom";
 import { teamsAdapter } from "~/server/integrations/adapters/teams";
 import { sharepointAdapter } from "~/server/integrations/adapters/sharepoint";
@@ -56,7 +57,7 @@ export async function POST(
   }
 
   const owner = await db.userWorkspace.findFirst({
-    where: { workspaceId, role: "OWNER_CCO" },
+    where: { workspaceId, role: "OWNER_CCO", ...activeUserWorkspaceWhere },
     include: { user: { select: { email: true } } },
   });
   if (owner?.user?.email) {

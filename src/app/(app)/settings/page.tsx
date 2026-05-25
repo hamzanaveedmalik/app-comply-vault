@@ -3,12 +3,19 @@ import { db } from "~/server/db";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { WorkspaceSettingsForm } from "./workspace-settings-form";
+import { redirectPathForMissingWorkspace } from "~/server/workspace/no-workspace-redirect";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 
 export default async function SettingsPage() {
   const session = await auth();
 
   if (!session?.user?.workspaceId) {
-    redirect("/workspaces/new");
+    if (!session?.user) {
+      redirect("/auth/signin");
+    }
+    redirect(
+      await redirectPathForMissingWorkspace(session.user.id, session.user.email),
+    );
   }
 
   // Only OWNER_CCO can access settings
@@ -21,7 +28,7 @@ export default async function SettingsPage() {
   });
 
   const members = await db.userWorkspace.findMany({
-    where: { workspaceId: session.user.workspaceId },
+    where: { workspaceId: session.user.workspaceId, ...activeUserWorkspaceWhere },
     include: {
       user: true,
     },

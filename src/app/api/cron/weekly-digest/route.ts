@@ -6,6 +6,7 @@
 import { db } from "~/server/db";
 import { sendWeeklyActivityDigest } from "~/server/email";
 import { env } from "~/env";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 
 export const maxDuration = 60;
 
@@ -30,7 +31,7 @@ async function run(): Promise<Response> {
 
   for (const ws of workspaces) {
     const owners = await db.userWorkspace.findMany({
-      where: { workspaceId: ws.id, role: "OWNER_CCO" },
+      where: { workspaceId: ws.id, role: "OWNER_CCO", ...activeUserWorkspaceWhere },
       include: { user: { select: { email: true } } },
     });
     if (owners.length === 0) continue;

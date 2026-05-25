@@ -2,18 +2,23 @@ import Link from "next/link";
 import Image from "next/image";
 import { auth } from "~/server/auth";
 import { redirect } from "next/navigation";
+import { resolvePostAuthRedirect } from "~/lib/auth-redirect";
 
 export default async function HomePage() {
   const session = await auth();
 
   // If authenticated, redirect to dashboard or workspace creation
   if (session?.user) {
-    // Check if user has a workspace (workspaceId should be a non-empty string)
     if (session.user.workspaceId && session.user.workspaceId !== "") {
       redirect("/dashboard");
-    } else {
-      redirect("/workspaces/new");
     }
+    redirect(
+      await resolvePostAuthRedirect({
+        userId: session.user.id,
+        email: session.user.email,
+        workspaceId: session.user.workspaceId,
+      }),
+    );
   }
 
   return (

@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 
 import { cookies } from "next/headers";
 import { ACTIVE_WORKSPACE_COOKIE } from "~/lib/workspace-constants";
+import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 import { db } from "~/server/db";
 
 /**
@@ -214,6 +215,7 @@ export const authConfig = {
               where: {
                 userId,
                 workspaceId: preferredWorkspaceId,
+                ...activeUserWorkspaceWhere,
               },
               include: { workspace: true },
             })
@@ -221,7 +223,7 @@ export const authConfig = {
 
       if (!userWorkspace) {
         userWorkspace = await db.userWorkspace.findFirst({
-          where: { userId },
+          where: { userId, ...activeUserWorkspaceWhere },
           orderBy: [
             { role: "asc" },
             { workspace: { name: "asc" } },

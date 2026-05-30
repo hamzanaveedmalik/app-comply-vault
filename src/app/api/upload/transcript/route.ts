@@ -6,6 +6,7 @@ import { extractFields } from "~/server/extraction";
 import { toExtractionData, validateEvidenceCoverage } from "~/server/extraction/evidence";
 import { generateSearchableText } from "~/server/search/index";
 import { detectMissingDisclosureFlags } from "~/server/flags";
+import { getDisclosureProfileForWorkspace } from "~/server/firm-profile/get-disclosure-profile-for-workspace";
 
 const transcriptUploadSchema = z.object({
   clientName: z.string().min(1, "Client name is required"),
@@ -83,7 +84,10 @@ export async function POST(request: Request) {
       },
     });
 
-    const missingDisclosureFlags = detectMissingDisclosureFlags(extractionData);
+    const disclosureProfile = await getDisclosureProfileForWorkspace(session.user.workspaceId!);
+    const missingDisclosureFlags = detectMissingDisclosureFlags(extractionData, {
+      profile: disclosureProfile,
+    });
     if (missingDisclosureFlags.length > 0) {
       const workspaceId = session.user.workspaceId!;
       await db.flag.createMany({

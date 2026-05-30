@@ -104,6 +104,26 @@ export type IntegrationConfig = $Result.DefaultSelection<Prisma.$IntegrationConf
  */
 export type IntegrationSyncLog = $Result.DefaultSelection<Prisma.$IntegrationSyncLogPayload>
 /**
+ * Model FirmProfile
+ * 
+ */
+export type FirmProfile = $Result.DefaultSelection<Prisma.$FirmProfilePayload>
+/**
+ * Model DisclosureCategory
+ * 
+ */
+export type DisclosureCategory = $Result.DefaultSelection<Prisma.$DisclosureCategoryPayload>
+/**
+ * Model SuppressionLogEntry
+ * 
+ */
+export type SuppressionLogEntry = $Result.DefaultSelection<Prisma.$SuppressionLogEntryPayload>
+/**
+ * Model FirmProfileVersion
+ * 
+ */
+export type FirmProfileVersion = $Result.DefaultSelection<Prisma.$FirmProfileVersionPayload>
+/**
  * Model Lead
  * 
  */
@@ -196,7 +216,10 @@ export const AuditAction: {
   ADVISOR_CERTIFIED: 'ADVISOR_CERTIFIED',
   CM_REVIEW_COMPLETED: 'CM_REVIEW_COMPLETED',
   CCO_SIGNED_OFF: 'CCO_SIGNED_OFF',
-  WORKFLOW_REVERTED: 'WORKFLOW_REVERTED'
+  WORKFLOW_REVERTED: 'WORKFLOW_REVERTED',
+  DISCLOSURE_SUPPRESSION_ACTIVATED: 'DISCLOSURE_SUPPRESSION_ACTIVATED',
+  DISCLOSURE_SUPPRESSION_DEACTIVATED: 'DISCLOSURE_SUPPRESSION_DEACTIVATED',
+  FIRM_PROFILE_APPROVED: 'FIRM_PROFILE_APPROVED'
 };
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction]
@@ -317,6 +340,39 @@ export const IntegrationStatus: {
 
 export type IntegrationStatus = (typeof IntegrationStatus)[keyof typeof IntegrationStatus]
 
+
+export const DisclosureCategoryStatus: {
+  ACTIVE: 'ACTIVE',
+  SUPPRESSING: 'SUPPRESSING',
+  NEVER_SUPPRESS: 'NEVER_SUPPRESS'
+};
+
+export type DisclosureCategoryStatus = (typeof DisclosureCategoryStatus)[keyof typeof DisclosureCategoryStatus]
+
+
+export const FirmProfileStatus: {
+  DRAFT: 'DRAFT',
+  ACTIVE: 'ACTIVE'
+};
+
+export type FirmProfileStatus = (typeof FirmProfileStatus)[keyof typeof FirmProfileStatus]
+
+
+export const FirmProfileVersionType: {
+  INITIAL_SETUP: 'INITIAL_SETUP',
+  APPROVED: 'APPROVED'
+};
+
+export type FirmProfileVersionType = (typeof FirmProfileVersionType)[keyof typeof FirmProfileVersionType]
+
+
+export const SuppressionAction: {
+  ACTIVATED: 'ACTIVATED',
+  DEACTIVATED: 'DEACTIVATED'
+};
+
+export type SuppressionAction = (typeof SuppressionAction)[keyof typeof SuppressionAction]
+
 }
 
 export type BillingStatus = $Enums.BillingStatus
@@ -390,6 +446,22 @@ export const IntegrationProvider: typeof $Enums.IntegrationProvider
 export type IntegrationStatus = $Enums.IntegrationStatus
 
 export const IntegrationStatus: typeof $Enums.IntegrationStatus
+
+export type DisclosureCategoryStatus = $Enums.DisclosureCategoryStatus
+
+export const DisclosureCategoryStatus: typeof $Enums.DisclosureCategoryStatus
+
+export type FirmProfileStatus = $Enums.FirmProfileStatus
+
+export const FirmProfileStatus: typeof $Enums.FirmProfileStatus
+
+export type FirmProfileVersionType = $Enums.FirmProfileVersionType
+
+export const FirmProfileVersionType: typeof $Enums.FirmProfileVersionType
+
+export type SuppressionAction = $Enums.SuppressionAction
+
+export const SuppressionAction: typeof $Enums.SuppressionAction
 
 /**
  * ##  Prisma Client ʲˢ
@@ -688,6 +760,46 @@ export class PrismaClient<
     * ```
     */
   get integrationSyncLog(): Prisma.IntegrationSyncLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.firmProfile`: Exposes CRUD operations for the **FirmProfile** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more FirmProfiles
+    * const firmProfiles = await prisma.firmProfile.findMany()
+    * ```
+    */
+  get firmProfile(): Prisma.FirmProfileDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.disclosureCategory`: Exposes CRUD operations for the **DisclosureCategory** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DisclosureCategories
+    * const disclosureCategories = await prisma.disclosureCategory.findMany()
+    * ```
+    */
+  get disclosureCategory(): Prisma.DisclosureCategoryDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.suppressionLogEntry`: Exposes CRUD operations for the **SuppressionLogEntry** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SuppressionLogEntries
+    * const suppressionLogEntries = await prisma.suppressionLogEntry.findMany()
+    * ```
+    */
+  get suppressionLogEntry(): Prisma.SuppressionLogEntryDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.firmProfileVersion`: Exposes CRUD operations for the **FirmProfileVersion** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more FirmProfileVersions
+    * const firmProfileVersions = await prisma.firmProfileVersion.findMany()
+    * ```
+    */
+  get firmProfileVersion(): Prisma.FirmProfileVersionDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.lead`: Exposes CRUD operations for the **Lead** model.
@@ -1157,6 +1269,10 @@ export namespace Prisma {
     IntegrationCredential: 'IntegrationCredential',
     IntegrationConfig: 'IntegrationConfig',
     IntegrationSyncLog: 'IntegrationSyncLog',
+    FirmProfile: 'FirmProfile',
+    DisclosureCategory: 'DisclosureCategory',
+    SuppressionLogEntry: 'SuppressionLogEntry',
+    FirmProfileVersion: 'FirmProfileVersion',
     Lead: 'Lead'
   };
 
@@ -1176,7 +1292,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "workspace" | "userWorkspace" | "meeting" | "version" | "flag" | "resolutionRecord" | "actionItem" | "evidenceLink" | "verification" | "auditEvent" | "account" | "session" | "user" | "verificationToken" | "invitation" | "integrationCredential" | "integrationConfig" | "integrationSyncLog" | "lead"
+      modelProps: "workspace" | "userWorkspace" | "meeting" | "version" | "flag" | "resolutionRecord" | "actionItem" | "evidenceLink" | "verification" | "auditEvent" | "account" | "session" | "user" | "verificationToken" | "invitation" | "integrationCredential" | "integrationConfig" | "integrationSyncLog" | "firmProfile" | "disclosureCategory" | "suppressionLogEntry" | "firmProfileVersion" | "lead"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2512,6 +2628,302 @@ export namespace Prisma {
           }
         }
       }
+      FirmProfile: {
+        payload: Prisma.$FirmProfilePayload<ExtArgs>
+        fields: Prisma.FirmProfileFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FirmProfileFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfilePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FirmProfileFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfilePayload>
+          }
+          findFirst: {
+            args: Prisma.FirmProfileFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfilePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FirmProfileFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfilePayload>
+          }
+          findMany: {
+            args: Prisma.FirmProfileFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfilePayload>[]
+          }
+          create: {
+            args: Prisma.FirmProfileCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfilePayload>
+          }
+          createMany: {
+            args: Prisma.FirmProfileCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FirmProfileCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfilePayload>[]
+          }
+          delete: {
+            args: Prisma.FirmProfileDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfilePayload>
+          }
+          update: {
+            args: Prisma.FirmProfileUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfilePayload>
+          }
+          deleteMany: {
+            args: Prisma.FirmProfileDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FirmProfileUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.FirmProfileUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfilePayload>[]
+          }
+          upsert: {
+            args: Prisma.FirmProfileUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfilePayload>
+          }
+          aggregate: {
+            args: Prisma.FirmProfileAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFirmProfile>
+          }
+          groupBy: {
+            args: Prisma.FirmProfileGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FirmProfileGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FirmProfileCountArgs<ExtArgs>
+            result: $Utils.Optional<FirmProfileCountAggregateOutputType> | number
+          }
+        }
+      }
+      DisclosureCategory: {
+        payload: Prisma.$DisclosureCategoryPayload<ExtArgs>
+        fields: Prisma.DisclosureCategoryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DisclosureCategoryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisclosureCategoryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DisclosureCategoryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisclosureCategoryPayload>
+          }
+          findFirst: {
+            args: Prisma.DisclosureCategoryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisclosureCategoryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DisclosureCategoryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisclosureCategoryPayload>
+          }
+          findMany: {
+            args: Prisma.DisclosureCategoryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisclosureCategoryPayload>[]
+          }
+          create: {
+            args: Prisma.DisclosureCategoryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisclosureCategoryPayload>
+          }
+          createMany: {
+            args: Prisma.DisclosureCategoryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DisclosureCategoryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisclosureCategoryPayload>[]
+          }
+          delete: {
+            args: Prisma.DisclosureCategoryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisclosureCategoryPayload>
+          }
+          update: {
+            args: Prisma.DisclosureCategoryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisclosureCategoryPayload>
+          }
+          deleteMany: {
+            args: Prisma.DisclosureCategoryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DisclosureCategoryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DisclosureCategoryUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisclosureCategoryPayload>[]
+          }
+          upsert: {
+            args: Prisma.DisclosureCategoryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisclosureCategoryPayload>
+          }
+          aggregate: {
+            args: Prisma.DisclosureCategoryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDisclosureCategory>
+          }
+          groupBy: {
+            args: Prisma.DisclosureCategoryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DisclosureCategoryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DisclosureCategoryCountArgs<ExtArgs>
+            result: $Utils.Optional<DisclosureCategoryCountAggregateOutputType> | number
+          }
+        }
+      }
+      SuppressionLogEntry: {
+        payload: Prisma.$SuppressionLogEntryPayload<ExtArgs>
+        fields: Prisma.SuppressionLogEntryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SuppressionLogEntryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SuppressionLogEntryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SuppressionLogEntryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SuppressionLogEntryPayload>
+          }
+          findFirst: {
+            args: Prisma.SuppressionLogEntryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SuppressionLogEntryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SuppressionLogEntryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SuppressionLogEntryPayload>
+          }
+          findMany: {
+            args: Prisma.SuppressionLogEntryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SuppressionLogEntryPayload>[]
+          }
+          create: {
+            args: Prisma.SuppressionLogEntryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SuppressionLogEntryPayload>
+          }
+          createMany: {
+            args: Prisma.SuppressionLogEntryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SuppressionLogEntryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SuppressionLogEntryPayload>[]
+          }
+          delete: {
+            args: Prisma.SuppressionLogEntryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SuppressionLogEntryPayload>
+          }
+          update: {
+            args: Prisma.SuppressionLogEntryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SuppressionLogEntryPayload>
+          }
+          deleteMany: {
+            args: Prisma.SuppressionLogEntryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SuppressionLogEntryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SuppressionLogEntryUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SuppressionLogEntryPayload>[]
+          }
+          upsert: {
+            args: Prisma.SuppressionLogEntryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SuppressionLogEntryPayload>
+          }
+          aggregate: {
+            args: Prisma.SuppressionLogEntryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSuppressionLogEntry>
+          }
+          groupBy: {
+            args: Prisma.SuppressionLogEntryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SuppressionLogEntryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SuppressionLogEntryCountArgs<ExtArgs>
+            result: $Utils.Optional<SuppressionLogEntryCountAggregateOutputType> | number
+          }
+        }
+      }
+      FirmProfileVersion: {
+        payload: Prisma.$FirmProfileVersionPayload<ExtArgs>
+        fields: Prisma.FirmProfileVersionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FirmProfileVersionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfileVersionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FirmProfileVersionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfileVersionPayload>
+          }
+          findFirst: {
+            args: Prisma.FirmProfileVersionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfileVersionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FirmProfileVersionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfileVersionPayload>
+          }
+          findMany: {
+            args: Prisma.FirmProfileVersionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfileVersionPayload>[]
+          }
+          create: {
+            args: Prisma.FirmProfileVersionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfileVersionPayload>
+          }
+          createMany: {
+            args: Prisma.FirmProfileVersionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FirmProfileVersionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfileVersionPayload>[]
+          }
+          delete: {
+            args: Prisma.FirmProfileVersionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfileVersionPayload>
+          }
+          update: {
+            args: Prisma.FirmProfileVersionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfileVersionPayload>
+          }
+          deleteMany: {
+            args: Prisma.FirmProfileVersionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FirmProfileVersionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.FirmProfileVersionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfileVersionPayload>[]
+          }
+          upsert: {
+            args: Prisma.FirmProfileVersionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FirmProfileVersionPayload>
+          }
+          aggregate: {
+            args: Prisma.FirmProfileVersionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFirmProfileVersion>
+          }
+          groupBy: {
+            args: Prisma.FirmProfileVersionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FirmProfileVersionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FirmProfileVersionCountArgs<ExtArgs>
+            result: $Utils.Optional<FirmProfileVersionCountAggregateOutputType> | number
+          }
+        }
+      }
       Lead: {
         payload: Prisma.$LeadPayload<ExtArgs>
         fields: Prisma.LeadFieldRefs
@@ -2700,6 +3112,10 @@ export namespace Prisma {
     integrationCredential?: IntegrationCredentialOmit
     integrationConfig?: IntegrationConfigOmit
     integrationSyncLog?: IntegrationSyncLogOmit
+    firmProfile?: FirmProfileOmit
+    disclosureCategory?: DisclosureCategoryOmit
+    suppressionLogEntry?: SuppressionLogEntryOmit
+    firmProfileVersion?: FirmProfileVersionOmit
     lead?: LeadOmit
   }
 
@@ -3152,6 +3568,55 @@ export namespace Prisma {
 
 
   /**
+   * Count Type FirmProfileCountOutputType
+   */
+
+  export type FirmProfileCountOutputType = {
+    disclosureCategories: number
+    suppressionLogs: number
+    versions: number
+  }
+
+  export type FirmProfileCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    disclosureCategories?: boolean | FirmProfileCountOutputTypeCountDisclosureCategoriesArgs
+    suppressionLogs?: boolean | FirmProfileCountOutputTypeCountSuppressionLogsArgs
+    versions?: boolean | FirmProfileCountOutputTypeCountVersionsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * FirmProfileCountOutputType without action
+   */
+  export type FirmProfileCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfileCountOutputType
+     */
+    select?: FirmProfileCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * FirmProfileCountOutputType without action
+   */
+  export type FirmProfileCountOutputTypeCountDisclosureCategoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DisclosureCategoryWhereInput
+  }
+
+  /**
+   * FirmProfileCountOutputType without action
+   */
+  export type FirmProfileCountOutputTypeCountSuppressionLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SuppressionLogEntryWhereInput
+  }
+
+  /**
+   * FirmProfileCountOutputType without action
+   */
+  export type FirmProfileCountOutputTypeCountVersionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FirmProfileVersionWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -3473,6 +3938,7 @@ export namespace Prisma {
     resolutionRecords?: boolean | Workspace$resolutionRecordsArgs<ExtArgs>
     integrationCredentials?: boolean | Workspace$integrationCredentialsArgs<ExtArgs>
     integrationConfigs?: boolean | Workspace$integrationConfigsArgs<ExtArgs>
+    firmProfile?: boolean | Workspace$firmProfileArgs<ExtArgs>
     _count?: boolean | WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["workspace"]>
 
@@ -3552,6 +4018,7 @@ export namespace Prisma {
     resolutionRecords?: boolean | Workspace$resolutionRecordsArgs<ExtArgs>
     integrationCredentials?: boolean | Workspace$integrationCredentialsArgs<ExtArgs>
     integrationConfigs?: boolean | Workspace$integrationConfigsArgs<ExtArgs>
+    firmProfile?: boolean | Workspace$firmProfileArgs<ExtArgs>
     _count?: boolean | WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type WorkspaceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3568,6 +4035,7 @@ export namespace Prisma {
       resolutionRecords: Prisma.$ResolutionRecordPayload<ExtArgs>[]
       integrationCredentials: Prisma.$IntegrationCredentialPayload<ExtArgs>[]
       integrationConfigs: Prisma.$IntegrationConfigPayload<ExtArgs>[]
+      firmProfile: Prisma.$FirmProfilePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3991,6 +4459,7 @@ export namespace Prisma {
     resolutionRecords<T extends Workspace$resolutionRecordsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$resolutionRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     integrationCredentials<T extends Workspace$integrationCredentialsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$integrationCredentialsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IntegrationCredentialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     integrationConfigs<T extends Workspace$integrationConfigsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$integrationConfigsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IntegrationConfigPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    firmProfile<T extends Workspace$firmProfileArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$firmProfileArgs<ExtArgs>>): Prisma__FirmProfileClient<$Result.GetResult<Prisma.$FirmProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4616,6 +5085,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: IntegrationConfigScalarFieldEnum | IntegrationConfigScalarFieldEnum[]
+  }
+
+  /**
+   * Workspace.firmProfile
+   */
+  export type Workspace$firmProfileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfile
+     */
+    select?: FirmProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfile
+     */
+    omit?: FirmProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileInclude<ExtArgs> | null
+    where?: FirmProfileWhereInput
   }
 
   /**
@@ -24830,6 +25318,4696 @@ export namespace Prisma {
 
 
   /**
+   * Model FirmProfile
+   */
+
+  export type AggregateFirmProfile = {
+    _count: FirmProfileCountAggregateOutputType | null
+    _avg: FirmProfileAvgAggregateOutputType | null
+    _sum: FirmProfileSumAggregateOutputType | null
+    _min: FirmProfileMinAggregateOutputType | null
+    _max: FirmProfileMaxAggregateOutputType | null
+  }
+
+  export type FirmProfileAvgAggregateOutputType = {
+    aumUsd: Decimal | null
+  }
+
+  export type FirmProfileSumAggregateOutputType = {
+    aumUsd: Decimal | null
+  }
+
+  export type FirmProfileMinAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    status: $Enums.FirmProfileStatus | null
+    crdNumber: string | null
+    ccoName: string | null
+    advFilingDate: Date | null
+    aumUsd: Decimal | null
+    advDocumentUrl: string | null
+    advDocumentKey: string | null
+    setupCompletedAt: Date | null
+    approvedAt: Date | null
+    approvedByUserId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type FirmProfileMaxAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    status: $Enums.FirmProfileStatus | null
+    crdNumber: string | null
+    ccoName: string | null
+    advFilingDate: Date | null
+    aumUsd: Decimal | null
+    advDocumentUrl: string | null
+    advDocumentKey: string | null
+    setupCompletedAt: Date | null
+    approvedAt: Date | null
+    approvedByUserId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type FirmProfileCountAggregateOutputType = {
+    id: number
+    workspaceId: number
+    status: number
+    crdNumber: number
+    ccoName: number
+    advFilingDate: number
+    aumUsd: number
+    advDocumentUrl: number
+    advDocumentKey: number
+    riskFlags: number
+    setupCompletedAt: number
+    approvedAt: number
+    approvedByUserId: number
+    createdAt: number
+    updatedAt: number
+    deletedAt: number
+    _all: number
+  }
+
+
+  export type FirmProfileAvgAggregateInputType = {
+    aumUsd?: true
+  }
+
+  export type FirmProfileSumAggregateInputType = {
+    aumUsd?: true
+  }
+
+  export type FirmProfileMinAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    status?: true
+    crdNumber?: true
+    ccoName?: true
+    advFilingDate?: true
+    aumUsd?: true
+    advDocumentUrl?: true
+    advDocumentKey?: true
+    setupCompletedAt?: true
+    approvedAt?: true
+    approvedByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type FirmProfileMaxAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    status?: true
+    crdNumber?: true
+    ccoName?: true
+    advFilingDate?: true
+    aumUsd?: true
+    advDocumentUrl?: true
+    advDocumentKey?: true
+    setupCompletedAt?: true
+    approvedAt?: true
+    approvedByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type FirmProfileCountAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    status?: true
+    crdNumber?: true
+    ccoName?: true
+    advFilingDate?: true
+    aumUsd?: true
+    advDocumentUrl?: true
+    advDocumentKey?: true
+    riskFlags?: true
+    setupCompletedAt?: true
+    approvedAt?: true
+    approvedByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+    _all?: true
+  }
+
+  export type FirmProfileAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FirmProfile to aggregate.
+     */
+    where?: FirmProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FirmProfiles to fetch.
+     */
+    orderBy?: FirmProfileOrderByWithRelationInput | FirmProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FirmProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FirmProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FirmProfiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned FirmProfiles
+    **/
+    _count?: true | FirmProfileCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: FirmProfileAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: FirmProfileSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FirmProfileMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FirmProfileMaxAggregateInputType
+  }
+
+  export type GetFirmProfileAggregateType<T extends FirmProfileAggregateArgs> = {
+        [P in keyof T & keyof AggregateFirmProfile]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFirmProfile[P]>
+      : GetScalarType<T[P], AggregateFirmProfile[P]>
+  }
+
+
+
+
+  export type FirmProfileGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FirmProfileWhereInput
+    orderBy?: FirmProfileOrderByWithAggregationInput | FirmProfileOrderByWithAggregationInput[]
+    by: FirmProfileScalarFieldEnum[] | FirmProfileScalarFieldEnum
+    having?: FirmProfileScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FirmProfileCountAggregateInputType | true
+    _avg?: FirmProfileAvgAggregateInputType
+    _sum?: FirmProfileSumAggregateInputType
+    _min?: FirmProfileMinAggregateInputType
+    _max?: FirmProfileMaxAggregateInputType
+  }
+
+  export type FirmProfileGroupByOutputType = {
+    id: string
+    workspaceId: string
+    status: $Enums.FirmProfileStatus
+    crdNumber: string | null
+    ccoName: string | null
+    advFilingDate: Date | null
+    aumUsd: Decimal | null
+    advDocumentUrl: string | null
+    advDocumentKey: string | null
+    riskFlags: string[]
+    setupCompletedAt: Date | null
+    approvedAt: Date | null
+    approvedByUserId: string | null
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date | null
+    _count: FirmProfileCountAggregateOutputType | null
+    _avg: FirmProfileAvgAggregateOutputType | null
+    _sum: FirmProfileSumAggregateOutputType | null
+    _min: FirmProfileMinAggregateOutputType | null
+    _max: FirmProfileMaxAggregateOutputType | null
+  }
+
+  type GetFirmProfileGroupByPayload<T extends FirmProfileGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FirmProfileGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FirmProfileGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FirmProfileGroupByOutputType[P]>
+            : GetScalarType<T[P], FirmProfileGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FirmProfileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    status?: boolean
+    crdNumber?: boolean
+    ccoName?: boolean
+    advFilingDate?: boolean
+    aumUsd?: boolean
+    advDocumentUrl?: boolean
+    advDocumentKey?: boolean
+    riskFlags?: boolean
+    setupCompletedAt?: boolean
+    approvedAt?: boolean
+    approvedByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    disclosureCategories?: boolean | FirmProfile$disclosureCategoriesArgs<ExtArgs>
+    suppressionLogs?: boolean | FirmProfile$suppressionLogsArgs<ExtArgs>
+    versions?: boolean | FirmProfile$versionsArgs<ExtArgs>
+    _count?: boolean | FirmProfileCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["firmProfile"]>
+
+  export type FirmProfileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    status?: boolean
+    crdNumber?: boolean
+    ccoName?: boolean
+    advFilingDate?: boolean
+    aumUsd?: boolean
+    advDocumentUrl?: boolean
+    advDocumentKey?: boolean
+    riskFlags?: boolean
+    setupCompletedAt?: boolean
+    approvedAt?: boolean
+    approvedByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["firmProfile"]>
+
+  export type FirmProfileSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    status?: boolean
+    crdNumber?: boolean
+    ccoName?: boolean
+    advFilingDate?: boolean
+    aumUsd?: boolean
+    advDocumentUrl?: boolean
+    advDocumentKey?: boolean
+    riskFlags?: boolean
+    setupCompletedAt?: boolean
+    approvedAt?: boolean
+    approvedByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["firmProfile"]>
+
+  export type FirmProfileSelectScalar = {
+    id?: boolean
+    workspaceId?: boolean
+    status?: boolean
+    crdNumber?: boolean
+    ccoName?: boolean
+    advFilingDate?: boolean
+    aumUsd?: boolean
+    advDocumentUrl?: boolean
+    advDocumentKey?: boolean
+    riskFlags?: boolean
+    setupCompletedAt?: boolean
+    approvedAt?: boolean
+    approvedByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }
+
+  export type FirmProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "status" | "crdNumber" | "ccoName" | "advFilingDate" | "aumUsd" | "advDocumentUrl" | "advDocumentKey" | "riskFlags" | "setupCompletedAt" | "approvedAt" | "approvedByUserId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["firmProfile"]>
+  export type FirmProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    disclosureCategories?: boolean | FirmProfile$disclosureCategoriesArgs<ExtArgs>
+    suppressionLogs?: boolean | FirmProfile$suppressionLogsArgs<ExtArgs>
+    versions?: boolean | FirmProfile$versionsArgs<ExtArgs>
+    _count?: boolean | FirmProfileCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type FirmProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+  export type FirmProfileIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+
+  export type $FirmProfilePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "FirmProfile"
+    objects: {
+      workspace: Prisma.$WorkspacePayload<ExtArgs>
+      disclosureCategories: Prisma.$DisclosureCategoryPayload<ExtArgs>[]
+      suppressionLogs: Prisma.$SuppressionLogEntryPayload<ExtArgs>[]
+      versions: Prisma.$FirmProfileVersionPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workspaceId: string
+      status: $Enums.FirmProfileStatus
+      crdNumber: string | null
+      ccoName: string | null
+      advFilingDate: Date | null
+      aumUsd: Prisma.Decimal | null
+      advDocumentUrl: string | null
+      advDocumentKey: string | null
+      riskFlags: string[]
+      setupCompletedAt: Date | null
+      approvedAt: Date | null
+      approvedByUserId: string | null
+      createdAt: Date
+      updatedAt: Date
+      deletedAt: Date | null
+    }, ExtArgs["result"]["firmProfile"]>
+    composites: {}
+  }
+
+  type FirmProfileGetPayload<S extends boolean | null | undefined | FirmProfileDefaultArgs> = $Result.GetResult<Prisma.$FirmProfilePayload, S>
+
+  type FirmProfileCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<FirmProfileFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: FirmProfileCountAggregateInputType | true
+    }
+
+  export interface FirmProfileDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['FirmProfile'], meta: { name: 'FirmProfile' } }
+    /**
+     * Find zero or one FirmProfile that matches the filter.
+     * @param {FirmProfileFindUniqueArgs} args - Arguments to find a FirmProfile
+     * @example
+     * // Get one FirmProfile
+     * const firmProfile = await prisma.firmProfile.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FirmProfileFindUniqueArgs>(args: SelectSubset<T, FirmProfileFindUniqueArgs<ExtArgs>>): Prisma__FirmProfileClient<$Result.GetResult<Prisma.$FirmProfilePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one FirmProfile that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {FirmProfileFindUniqueOrThrowArgs} args - Arguments to find a FirmProfile
+     * @example
+     * // Get one FirmProfile
+     * const firmProfile = await prisma.firmProfile.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FirmProfileFindUniqueOrThrowArgs>(args: SelectSubset<T, FirmProfileFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FirmProfileClient<$Result.GetResult<Prisma.$FirmProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FirmProfile that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FirmProfileFindFirstArgs} args - Arguments to find a FirmProfile
+     * @example
+     * // Get one FirmProfile
+     * const firmProfile = await prisma.firmProfile.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FirmProfileFindFirstArgs>(args?: SelectSubset<T, FirmProfileFindFirstArgs<ExtArgs>>): Prisma__FirmProfileClient<$Result.GetResult<Prisma.$FirmProfilePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FirmProfile that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FirmProfileFindFirstOrThrowArgs} args - Arguments to find a FirmProfile
+     * @example
+     * // Get one FirmProfile
+     * const firmProfile = await prisma.firmProfile.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FirmProfileFindFirstOrThrowArgs>(args?: SelectSubset<T, FirmProfileFindFirstOrThrowArgs<ExtArgs>>): Prisma__FirmProfileClient<$Result.GetResult<Prisma.$FirmProfilePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more FirmProfiles that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FirmProfileFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all FirmProfiles
+     * const firmProfiles = await prisma.firmProfile.findMany()
+     * 
+     * // Get first 10 FirmProfiles
+     * const firmProfiles = await prisma.firmProfile.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const firmProfileWithIdOnly = await prisma.firmProfile.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FirmProfileFindManyArgs>(args?: SelectSubset<T, FirmProfileFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FirmProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a FirmProfile.
+     * @param {FirmProfileCreateArgs} args - Arguments to create a FirmProfile.
+     * @example
+     * // Create one FirmProfile
+     * const FirmProfile = await prisma.firmProfile.create({
+     *   data: {
+     *     // ... data to create a FirmProfile
+     *   }
+     * })
+     * 
+     */
+    create<T extends FirmProfileCreateArgs>(args: SelectSubset<T, FirmProfileCreateArgs<ExtArgs>>): Prisma__FirmProfileClient<$Result.GetResult<Prisma.$FirmProfilePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many FirmProfiles.
+     * @param {FirmProfileCreateManyArgs} args - Arguments to create many FirmProfiles.
+     * @example
+     * // Create many FirmProfiles
+     * const firmProfile = await prisma.firmProfile.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FirmProfileCreateManyArgs>(args?: SelectSubset<T, FirmProfileCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many FirmProfiles and returns the data saved in the database.
+     * @param {FirmProfileCreateManyAndReturnArgs} args - Arguments to create many FirmProfiles.
+     * @example
+     * // Create many FirmProfiles
+     * const firmProfile = await prisma.firmProfile.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many FirmProfiles and only return the `id`
+     * const firmProfileWithIdOnly = await prisma.firmProfile.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FirmProfileCreateManyAndReturnArgs>(args?: SelectSubset<T, FirmProfileCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FirmProfilePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a FirmProfile.
+     * @param {FirmProfileDeleteArgs} args - Arguments to delete one FirmProfile.
+     * @example
+     * // Delete one FirmProfile
+     * const FirmProfile = await prisma.firmProfile.delete({
+     *   where: {
+     *     // ... filter to delete one FirmProfile
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FirmProfileDeleteArgs>(args: SelectSubset<T, FirmProfileDeleteArgs<ExtArgs>>): Prisma__FirmProfileClient<$Result.GetResult<Prisma.$FirmProfilePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one FirmProfile.
+     * @param {FirmProfileUpdateArgs} args - Arguments to update one FirmProfile.
+     * @example
+     * // Update one FirmProfile
+     * const firmProfile = await prisma.firmProfile.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FirmProfileUpdateArgs>(args: SelectSubset<T, FirmProfileUpdateArgs<ExtArgs>>): Prisma__FirmProfileClient<$Result.GetResult<Prisma.$FirmProfilePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more FirmProfiles.
+     * @param {FirmProfileDeleteManyArgs} args - Arguments to filter FirmProfiles to delete.
+     * @example
+     * // Delete a few FirmProfiles
+     * const { count } = await prisma.firmProfile.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FirmProfileDeleteManyArgs>(args?: SelectSubset<T, FirmProfileDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FirmProfiles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FirmProfileUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many FirmProfiles
+     * const firmProfile = await prisma.firmProfile.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FirmProfileUpdateManyArgs>(args: SelectSubset<T, FirmProfileUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FirmProfiles and returns the data updated in the database.
+     * @param {FirmProfileUpdateManyAndReturnArgs} args - Arguments to update many FirmProfiles.
+     * @example
+     * // Update many FirmProfiles
+     * const firmProfile = await prisma.firmProfile.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more FirmProfiles and only return the `id`
+     * const firmProfileWithIdOnly = await prisma.firmProfile.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends FirmProfileUpdateManyAndReturnArgs>(args: SelectSubset<T, FirmProfileUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FirmProfilePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one FirmProfile.
+     * @param {FirmProfileUpsertArgs} args - Arguments to update or create a FirmProfile.
+     * @example
+     * // Update or create a FirmProfile
+     * const firmProfile = await prisma.firmProfile.upsert({
+     *   create: {
+     *     // ... data to create a FirmProfile
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the FirmProfile we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FirmProfileUpsertArgs>(args: SelectSubset<T, FirmProfileUpsertArgs<ExtArgs>>): Prisma__FirmProfileClient<$Result.GetResult<Prisma.$FirmProfilePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of FirmProfiles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FirmProfileCountArgs} args - Arguments to filter FirmProfiles to count.
+     * @example
+     * // Count the number of FirmProfiles
+     * const count = await prisma.firmProfile.count({
+     *   where: {
+     *     // ... the filter for the FirmProfiles we want to count
+     *   }
+     * })
+    **/
+    count<T extends FirmProfileCountArgs>(
+      args?: Subset<T, FirmProfileCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FirmProfileCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a FirmProfile.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FirmProfileAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FirmProfileAggregateArgs>(args: Subset<T, FirmProfileAggregateArgs>): Prisma.PrismaPromise<GetFirmProfileAggregateType<T>>
+
+    /**
+     * Group by FirmProfile.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FirmProfileGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FirmProfileGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FirmProfileGroupByArgs['orderBy'] }
+        : { orderBy?: FirmProfileGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FirmProfileGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFirmProfileGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the FirmProfile model
+   */
+  readonly fields: FirmProfileFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for FirmProfile.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FirmProfileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    disclosureCategories<T extends FirmProfile$disclosureCategoriesArgs<ExtArgs> = {}>(args?: Subset<T, FirmProfile$disclosureCategoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisclosureCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    suppressionLogs<T extends FirmProfile$suppressionLogsArgs<ExtArgs> = {}>(args?: Subset<T, FirmProfile$suppressionLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SuppressionLogEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    versions<T extends FirmProfile$versionsArgs<ExtArgs> = {}>(args?: Subset<T, FirmProfile$versionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FirmProfileVersionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the FirmProfile model
+   */
+  interface FirmProfileFieldRefs {
+    readonly id: FieldRef<"FirmProfile", 'String'>
+    readonly workspaceId: FieldRef<"FirmProfile", 'String'>
+    readonly status: FieldRef<"FirmProfile", 'FirmProfileStatus'>
+    readonly crdNumber: FieldRef<"FirmProfile", 'String'>
+    readonly ccoName: FieldRef<"FirmProfile", 'String'>
+    readonly advFilingDate: FieldRef<"FirmProfile", 'DateTime'>
+    readonly aumUsd: FieldRef<"FirmProfile", 'Decimal'>
+    readonly advDocumentUrl: FieldRef<"FirmProfile", 'String'>
+    readonly advDocumentKey: FieldRef<"FirmProfile", 'String'>
+    readonly riskFlags: FieldRef<"FirmProfile", 'String[]'>
+    readonly setupCompletedAt: FieldRef<"FirmProfile", 'DateTime'>
+    readonly approvedAt: FieldRef<"FirmProfile", 'DateTime'>
+    readonly approvedByUserId: FieldRef<"FirmProfile", 'String'>
+    readonly createdAt: FieldRef<"FirmProfile", 'DateTime'>
+    readonly updatedAt: FieldRef<"FirmProfile", 'DateTime'>
+    readonly deletedAt: FieldRef<"FirmProfile", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * FirmProfile findUnique
+   */
+  export type FirmProfileFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfile
+     */
+    select?: FirmProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfile
+     */
+    omit?: FirmProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which FirmProfile to fetch.
+     */
+    where: FirmProfileWhereUniqueInput
+  }
+
+  /**
+   * FirmProfile findUniqueOrThrow
+   */
+  export type FirmProfileFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfile
+     */
+    select?: FirmProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfile
+     */
+    omit?: FirmProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which FirmProfile to fetch.
+     */
+    where: FirmProfileWhereUniqueInput
+  }
+
+  /**
+   * FirmProfile findFirst
+   */
+  export type FirmProfileFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfile
+     */
+    select?: FirmProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfile
+     */
+    omit?: FirmProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which FirmProfile to fetch.
+     */
+    where?: FirmProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FirmProfiles to fetch.
+     */
+    orderBy?: FirmProfileOrderByWithRelationInput | FirmProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FirmProfiles.
+     */
+    cursor?: FirmProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FirmProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FirmProfiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FirmProfiles.
+     */
+    distinct?: FirmProfileScalarFieldEnum | FirmProfileScalarFieldEnum[]
+  }
+
+  /**
+   * FirmProfile findFirstOrThrow
+   */
+  export type FirmProfileFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfile
+     */
+    select?: FirmProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfile
+     */
+    omit?: FirmProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which FirmProfile to fetch.
+     */
+    where?: FirmProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FirmProfiles to fetch.
+     */
+    orderBy?: FirmProfileOrderByWithRelationInput | FirmProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FirmProfiles.
+     */
+    cursor?: FirmProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FirmProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FirmProfiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FirmProfiles.
+     */
+    distinct?: FirmProfileScalarFieldEnum | FirmProfileScalarFieldEnum[]
+  }
+
+  /**
+   * FirmProfile findMany
+   */
+  export type FirmProfileFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfile
+     */
+    select?: FirmProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfile
+     */
+    omit?: FirmProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which FirmProfiles to fetch.
+     */
+    where?: FirmProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FirmProfiles to fetch.
+     */
+    orderBy?: FirmProfileOrderByWithRelationInput | FirmProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing FirmProfiles.
+     */
+    cursor?: FirmProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FirmProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FirmProfiles.
+     */
+    skip?: number
+    distinct?: FirmProfileScalarFieldEnum | FirmProfileScalarFieldEnum[]
+  }
+
+  /**
+   * FirmProfile create
+   */
+  export type FirmProfileCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfile
+     */
+    select?: FirmProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfile
+     */
+    omit?: FirmProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileInclude<ExtArgs> | null
+    /**
+     * The data needed to create a FirmProfile.
+     */
+    data: XOR<FirmProfileCreateInput, FirmProfileUncheckedCreateInput>
+  }
+
+  /**
+   * FirmProfile createMany
+   */
+  export type FirmProfileCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many FirmProfiles.
+     */
+    data: FirmProfileCreateManyInput | FirmProfileCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * FirmProfile createManyAndReturn
+   */
+  export type FirmProfileCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfile
+     */
+    select?: FirmProfileSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfile
+     */
+    omit?: FirmProfileOmit<ExtArgs> | null
+    /**
+     * The data used to create many FirmProfiles.
+     */
+    data: FirmProfileCreateManyInput | FirmProfileCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FirmProfile update
+   */
+  export type FirmProfileUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfile
+     */
+    select?: FirmProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfile
+     */
+    omit?: FirmProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileInclude<ExtArgs> | null
+    /**
+     * The data needed to update a FirmProfile.
+     */
+    data: XOR<FirmProfileUpdateInput, FirmProfileUncheckedUpdateInput>
+    /**
+     * Choose, which FirmProfile to update.
+     */
+    where: FirmProfileWhereUniqueInput
+  }
+
+  /**
+   * FirmProfile updateMany
+   */
+  export type FirmProfileUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update FirmProfiles.
+     */
+    data: XOR<FirmProfileUpdateManyMutationInput, FirmProfileUncheckedUpdateManyInput>
+    /**
+     * Filter which FirmProfiles to update
+     */
+    where?: FirmProfileWhereInput
+    /**
+     * Limit how many FirmProfiles to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * FirmProfile updateManyAndReturn
+   */
+  export type FirmProfileUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfile
+     */
+    select?: FirmProfileSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfile
+     */
+    omit?: FirmProfileOmit<ExtArgs> | null
+    /**
+     * The data used to update FirmProfiles.
+     */
+    data: XOR<FirmProfileUpdateManyMutationInput, FirmProfileUncheckedUpdateManyInput>
+    /**
+     * Filter which FirmProfiles to update
+     */
+    where?: FirmProfileWhereInput
+    /**
+     * Limit how many FirmProfiles to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FirmProfile upsert
+   */
+  export type FirmProfileUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfile
+     */
+    select?: FirmProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfile
+     */
+    omit?: FirmProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileInclude<ExtArgs> | null
+    /**
+     * The filter to search for the FirmProfile to update in case it exists.
+     */
+    where: FirmProfileWhereUniqueInput
+    /**
+     * In case the FirmProfile found by the `where` argument doesn't exist, create a new FirmProfile with this data.
+     */
+    create: XOR<FirmProfileCreateInput, FirmProfileUncheckedCreateInput>
+    /**
+     * In case the FirmProfile was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FirmProfileUpdateInput, FirmProfileUncheckedUpdateInput>
+  }
+
+  /**
+   * FirmProfile delete
+   */
+  export type FirmProfileDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfile
+     */
+    select?: FirmProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfile
+     */
+    omit?: FirmProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileInclude<ExtArgs> | null
+    /**
+     * Filter which FirmProfile to delete.
+     */
+    where: FirmProfileWhereUniqueInput
+  }
+
+  /**
+   * FirmProfile deleteMany
+   */
+  export type FirmProfileDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FirmProfiles to delete
+     */
+    where?: FirmProfileWhereInput
+    /**
+     * Limit how many FirmProfiles to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * FirmProfile.disclosureCategories
+   */
+  export type FirmProfile$disclosureCategoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisclosureCategory
+     */
+    select?: DisclosureCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisclosureCategory
+     */
+    omit?: DisclosureCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisclosureCategoryInclude<ExtArgs> | null
+    where?: DisclosureCategoryWhereInput
+    orderBy?: DisclosureCategoryOrderByWithRelationInput | DisclosureCategoryOrderByWithRelationInput[]
+    cursor?: DisclosureCategoryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DisclosureCategoryScalarFieldEnum | DisclosureCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * FirmProfile.suppressionLogs
+   */
+  export type FirmProfile$suppressionLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SuppressionLogEntry
+     */
+    select?: SuppressionLogEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SuppressionLogEntry
+     */
+    omit?: SuppressionLogEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SuppressionLogEntryInclude<ExtArgs> | null
+    where?: SuppressionLogEntryWhereInput
+    orderBy?: SuppressionLogEntryOrderByWithRelationInput | SuppressionLogEntryOrderByWithRelationInput[]
+    cursor?: SuppressionLogEntryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SuppressionLogEntryScalarFieldEnum | SuppressionLogEntryScalarFieldEnum[]
+  }
+
+  /**
+   * FirmProfile.versions
+   */
+  export type FirmProfile$versionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfileVersion
+     */
+    select?: FirmProfileVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfileVersion
+     */
+    omit?: FirmProfileVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileVersionInclude<ExtArgs> | null
+    where?: FirmProfileVersionWhereInput
+    orderBy?: FirmProfileVersionOrderByWithRelationInput | FirmProfileVersionOrderByWithRelationInput[]
+    cursor?: FirmProfileVersionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FirmProfileVersionScalarFieldEnum | FirmProfileVersionScalarFieldEnum[]
+  }
+
+  /**
+   * FirmProfile without action
+   */
+  export type FirmProfileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfile
+     */
+    select?: FirmProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfile
+     */
+    omit?: FirmProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model DisclosureCategory
+   */
+
+  export type AggregateDisclosureCategory = {
+    _count: DisclosureCategoryCountAggregateOutputType | null
+    _avg: DisclosureCategoryAvgAggregateOutputType | null
+    _sum: DisclosureCategorySumAggregateOutputType | null
+    _min: DisclosureCategoryMinAggregateOutputType | null
+    _max: DisclosureCategoryMaxAggregateOutputType | null
+  }
+
+  export type DisclosureCategoryAvgAggregateOutputType = {
+    advPage: number | null
+  }
+
+  export type DisclosureCategorySumAggregateOutputType = {
+    advPage: number | null
+  }
+
+  export type DisclosureCategoryMinAggregateOutputType = {
+    id: string | null
+    firmProfileId: string | null
+    slug: string | null
+    status: $Enums.DisclosureCategoryStatus | null
+    suppressionEvidence: string | null
+    advItemRef: string | null
+    advPage: number | null
+    description: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DisclosureCategoryMaxAggregateOutputType = {
+    id: string | null
+    firmProfileId: string | null
+    slug: string | null
+    status: $Enums.DisclosureCategoryStatus | null
+    suppressionEvidence: string | null
+    advItemRef: string | null
+    advPage: number | null
+    description: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DisclosureCategoryCountAggregateOutputType = {
+    id: number
+    firmProfileId: number
+    slug: number
+    status: number
+    suppressionEvidence: number
+    advItemRef: number
+    advPage: number
+    description: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type DisclosureCategoryAvgAggregateInputType = {
+    advPage?: true
+  }
+
+  export type DisclosureCategorySumAggregateInputType = {
+    advPage?: true
+  }
+
+  export type DisclosureCategoryMinAggregateInputType = {
+    id?: true
+    firmProfileId?: true
+    slug?: true
+    status?: true
+    suppressionEvidence?: true
+    advItemRef?: true
+    advPage?: true
+    description?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DisclosureCategoryMaxAggregateInputType = {
+    id?: true
+    firmProfileId?: true
+    slug?: true
+    status?: true
+    suppressionEvidence?: true
+    advItemRef?: true
+    advPage?: true
+    description?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DisclosureCategoryCountAggregateInputType = {
+    id?: true
+    firmProfileId?: true
+    slug?: true
+    status?: true
+    suppressionEvidence?: true
+    advItemRef?: true
+    advPage?: true
+    description?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type DisclosureCategoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DisclosureCategory to aggregate.
+     */
+    where?: DisclosureCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DisclosureCategories to fetch.
+     */
+    orderBy?: DisclosureCategoryOrderByWithRelationInput | DisclosureCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DisclosureCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DisclosureCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DisclosureCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned DisclosureCategories
+    **/
+    _count?: true | DisclosureCategoryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: DisclosureCategoryAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DisclosureCategorySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DisclosureCategoryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DisclosureCategoryMaxAggregateInputType
+  }
+
+  export type GetDisclosureCategoryAggregateType<T extends DisclosureCategoryAggregateArgs> = {
+        [P in keyof T & keyof AggregateDisclosureCategory]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDisclosureCategory[P]>
+      : GetScalarType<T[P], AggregateDisclosureCategory[P]>
+  }
+
+
+
+
+  export type DisclosureCategoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DisclosureCategoryWhereInput
+    orderBy?: DisclosureCategoryOrderByWithAggregationInput | DisclosureCategoryOrderByWithAggregationInput[]
+    by: DisclosureCategoryScalarFieldEnum[] | DisclosureCategoryScalarFieldEnum
+    having?: DisclosureCategoryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DisclosureCategoryCountAggregateInputType | true
+    _avg?: DisclosureCategoryAvgAggregateInputType
+    _sum?: DisclosureCategorySumAggregateInputType
+    _min?: DisclosureCategoryMinAggregateInputType
+    _max?: DisclosureCategoryMaxAggregateInputType
+  }
+
+  export type DisclosureCategoryGroupByOutputType = {
+    id: string
+    firmProfileId: string
+    slug: string
+    status: $Enums.DisclosureCategoryStatus
+    suppressionEvidence: string | null
+    advItemRef: string | null
+    advPage: number | null
+    description: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: DisclosureCategoryCountAggregateOutputType | null
+    _avg: DisclosureCategoryAvgAggregateOutputType | null
+    _sum: DisclosureCategorySumAggregateOutputType | null
+    _min: DisclosureCategoryMinAggregateOutputType | null
+    _max: DisclosureCategoryMaxAggregateOutputType | null
+  }
+
+  type GetDisclosureCategoryGroupByPayload<T extends DisclosureCategoryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DisclosureCategoryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DisclosureCategoryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DisclosureCategoryGroupByOutputType[P]>
+            : GetScalarType<T[P], DisclosureCategoryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DisclosureCategorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    firmProfileId?: boolean
+    slug?: boolean
+    status?: boolean
+    suppressionEvidence?: boolean
+    advItemRef?: boolean
+    advPage?: boolean
+    description?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["disclosureCategory"]>
+
+  export type DisclosureCategorySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    firmProfileId?: boolean
+    slug?: boolean
+    status?: boolean
+    suppressionEvidence?: boolean
+    advItemRef?: boolean
+    advPage?: boolean
+    description?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["disclosureCategory"]>
+
+  export type DisclosureCategorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    firmProfileId?: boolean
+    slug?: boolean
+    status?: boolean
+    suppressionEvidence?: boolean
+    advItemRef?: boolean
+    advPage?: boolean
+    description?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["disclosureCategory"]>
+
+  export type DisclosureCategorySelectScalar = {
+    id?: boolean
+    firmProfileId?: boolean
+    slug?: boolean
+    status?: boolean
+    suppressionEvidence?: boolean
+    advItemRef?: boolean
+    advPage?: boolean
+    description?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type DisclosureCategoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "firmProfileId" | "slug" | "status" | "suppressionEvidence" | "advItemRef" | "advPage" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["disclosureCategory"]>
+  export type DisclosureCategoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }
+  export type DisclosureCategoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }
+  export type DisclosureCategoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }
+
+  export type $DisclosureCategoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "DisclosureCategory"
+    objects: {
+      firmProfile: Prisma.$FirmProfilePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      firmProfileId: string
+      slug: string
+      status: $Enums.DisclosureCategoryStatus
+      suppressionEvidence: string | null
+      advItemRef: string | null
+      advPage: number | null
+      description: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["disclosureCategory"]>
+    composites: {}
+  }
+
+  type DisclosureCategoryGetPayload<S extends boolean | null | undefined | DisclosureCategoryDefaultArgs> = $Result.GetResult<Prisma.$DisclosureCategoryPayload, S>
+
+  type DisclosureCategoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DisclosureCategoryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DisclosureCategoryCountAggregateInputType | true
+    }
+
+  export interface DisclosureCategoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DisclosureCategory'], meta: { name: 'DisclosureCategory' } }
+    /**
+     * Find zero or one DisclosureCategory that matches the filter.
+     * @param {DisclosureCategoryFindUniqueArgs} args - Arguments to find a DisclosureCategory
+     * @example
+     * // Get one DisclosureCategory
+     * const disclosureCategory = await prisma.disclosureCategory.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DisclosureCategoryFindUniqueArgs>(args: SelectSubset<T, DisclosureCategoryFindUniqueArgs<ExtArgs>>): Prisma__DisclosureCategoryClient<$Result.GetResult<Prisma.$DisclosureCategoryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one DisclosureCategory that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DisclosureCategoryFindUniqueOrThrowArgs} args - Arguments to find a DisclosureCategory
+     * @example
+     * // Get one DisclosureCategory
+     * const disclosureCategory = await prisma.disclosureCategory.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DisclosureCategoryFindUniqueOrThrowArgs>(args: SelectSubset<T, DisclosureCategoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DisclosureCategoryClient<$Result.GetResult<Prisma.$DisclosureCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DisclosureCategory that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisclosureCategoryFindFirstArgs} args - Arguments to find a DisclosureCategory
+     * @example
+     * // Get one DisclosureCategory
+     * const disclosureCategory = await prisma.disclosureCategory.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DisclosureCategoryFindFirstArgs>(args?: SelectSubset<T, DisclosureCategoryFindFirstArgs<ExtArgs>>): Prisma__DisclosureCategoryClient<$Result.GetResult<Prisma.$DisclosureCategoryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DisclosureCategory that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisclosureCategoryFindFirstOrThrowArgs} args - Arguments to find a DisclosureCategory
+     * @example
+     * // Get one DisclosureCategory
+     * const disclosureCategory = await prisma.disclosureCategory.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DisclosureCategoryFindFirstOrThrowArgs>(args?: SelectSubset<T, DisclosureCategoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__DisclosureCategoryClient<$Result.GetResult<Prisma.$DisclosureCategoryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more DisclosureCategories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisclosureCategoryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DisclosureCategories
+     * const disclosureCategories = await prisma.disclosureCategory.findMany()
+     * 
+     * // Get first 10 DisclosureCategories
+     * const disclosureCategories = await prisma.disclosureCategory.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const disclosureCategoryWithIdOnly = await prisma.disclosureCategory.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DisclosureCategoryFindManyArgs>(args?: SelectSubset<T, DisclosureCategoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisclosureCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a DisclosureCategory.
+     * @param {DisclosureCategoryCreateArgs} args - Arguments to create a DisclosureCategory.
+     * @example
+     * // Create one DisclosureCategory
+     * const DisclosureCategory = await prisma.disclosureCategory.create({
+     *   data: {
+     *     // ... data to create a DisclosureCategory
+     *   }
+     * })
+     * 
+     */
+    create<T extends DisclosureCategoryCreateArgs>(args: SelectSubset<T, DisclosureCategoryCreateArgs<ExtArgs>>): Prisma__DisclosureCategoryClient<$Result.GetResult<Prisma.$DisclosureCategoryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many DisclosureCategories.
+     * @param {DisclosureCategoryCreateManyArgs} args - Arguments to create many DisclosureCategories.
+     * @example
+     * // Create many DisclosureCategories
+     * const disclosureCategory = await prisma.disclosureCategory.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DisclosureCategoryCreateManyArgs>(args?: SelectSubset<T, DisclosureCategoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many DisclosureCategories and returns the data saved in the database.
+     * @param {DisclosureCategoryCreateManyAndReturnArgs} args - Arguments to create many DisclosureCategories.
+     * @example
+     * // Create many DisclosureCategories
+     * const disclosureCategory = await prisma.disclosureCategory.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many DisclosureCategories and only return the `id`
+     * const disclosureCategoryWithIdOnly = await prisma.disclosureCategory.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DisclosureCategoryCreateManyAndReturnArgs>(args?: SelectSubset<T, DisclosureCategoryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisclosureCategoryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a DisclosureCategory.
+     * @param {DisclosureCategoryDeleteArgs} args - Arguments to delete one DisclosureCategory.
+     * @example
+     * // Delete one DisclosureCategory
+     * const DisclosureCategory = await prisma.disclosureCategory.delete({
+     *   where: {
+     *     // ... filter to delete one DisclosureCategory
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DisclosureCategoryDeleteArgs>(args: SelectSubset<T, DisclosureCategoryDeleteArgs<ExtArgs>>): Prisma__DisclosureCategoryClient<$Result.GetResult<Prisma.$DisclosureCategoryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one DisclosureCategory.
+     * @param {DisclosureCategoryUpdateArgs} args - Arguments to update one DisclosureCategory.
+     * @example
+     * // Update one DisclosureCategory
+     * const disclosureCategory = await prisma.disclosureCategory.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DisclosureCategoryUpdateArgs>(args: SelectSubset<T, DisclosureCategoryUpdateArgs<ExtArgs>>): Prisma__DisclosureCategoryClient<$Result.GetResult<Prisma.$DisclosureCategoryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more DisclosureCategories.
+     * @param {DisclosureCategoryDeleteManyArgs} args - Arguments to filter DisclosureCategories to delete.
+     * @example
+     * // Delete a few DisclosureCategories
+     * const { count } = await prisma.disclosureCategory.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DisclosureCategoryDeleteManyArgs>(args?: SelectSubset<T, DisclosureCategoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DisclosureCategories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisclosureCategoryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DisclosureCategories
+     * const disclosureCategory = await prisma.disclosureCategory.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DisclosureCategoryUpdateManyArgs>(args: SelectSubset<T, DisclosureCategoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DisclosureCategories and returns the data updated in the database.
+     * @param {DisclosureCategoryUpdateManyAndReturnArgs} args - Arguments to update many DisclosureCategories.
+     * @example
+     * // Update many DisclosureCategories
+     * const disclosureCategory = await prisma.disclosureCategory.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more DisclosureCategories and only return the `id`
+     * const disclosureCategoryWithIdOnly = await prisma.disclosureCategory.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends DisclosureCategoryUpdateManyAndReturnArgs>(args: SelectSubset<T, DisclosureCategoryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisclosureCategoryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one DisclosureCategory.
+     * @param {DisclosureCategoryUpsertArgs} args - Arguments to update or create a DisclosureCategory.
+     * @example
+     * // Update or create a DisclosureCategory
+     * const disclosureCategory = await prisma.disclosureCategory.upsert({
+     *   create: {
+     *     // ... data to create a DisclosureCategory
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DisclosureCategory we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DisclosureCategoryUpsertArgs>(args: SelectSubset<T, DisclosureCategoryUpsertArgs<ExtArgs>>): Prisma__DisclosureCategoryClient<$Result.GetResult<Prisma.$DisclosureCategoryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of DisclosureCategories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisclosureCategoryCountArgs} args - Arguments to filter DisclosureCategories to count.
+     * @example
+     * // Count the number of DisclosureCategories
+     * const count = await prisma.disclosureCategory.count({
+     *   where: {
+     *     // ... the filter for the DisclosureCategories we want to count
+     *   }
+     * })
+    **/
+    count<T extends DisclosureCategoryCountArgs>(
+      args?: Subset<T, DisclosureCategoryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DisclosureCategoryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DisclosureCategory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisclosureCategoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DisclosureCategoryAggregateArgs>(args: Subset<T, DisclosureCategoryAggregateArgs>): Prisma.PrismaPromise<GetDisclosureCategoryAggregateType<T>>
+
+    /**
+     * Group by DisclosureCategory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisclosureCategoryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DisclosureCategoryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DisclosureCategoryGroupByArgs['orderBy'] }
+        : { orderBy?: DisclosureCategoryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DisclosureCategoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDisclosureCategoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the DisclosureCategory model
+   */
+  readonly fields: DisclosureCategoryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DisclosureCategory.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DisclosureCategoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    firmProfile<T extends FirmProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, FirmProfileDefaultArgs<ExtArgs>>): Prisma__FirmProfileClient<$Result.GetResult<Prisma.$FirmProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the DisclosureCategory model
+   */
+  interface DisclosureCategoryFieldRefs {
+    readonly id: FieldRef<"DisclosureCategory", 'String'>
+    readonly firmProfileId: FieldRef<"DisclosureCategory", 'String'>
+    readonly slug: FieldRef<"DisclosureCategory", 'String'>
+    readonly status: FieldRef<"DisclosureCategory", 'DisclosureCategoryStatus'>
+    readonly suppressionEvidence: FieldRef<"DisclosureCategory", 'String'>
+    readonly advItemRef: FieldRef<"DisclosureCategory", 'String'>
+    readonly advPage: FieldRef<"DisclosureCategory", 'Int'>
+    readonly description: FieldRef<"DisclosureCategory", 'String'>
+    readonly createdAt: FieldRef<"DisclosureCategory", 'DateTime'>
+    readonly updatedAt: FieldRef<"DisclosureCategory", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * DisclosureCategory findUnique
+   */
+  export type DisclosureCategoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisclosureCategory
+     */
+    select?: DisclosureCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisclosureCategory
+     */
+    omit?: DisclosureCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisclosureCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which DisclosureCategory to fetch.
+     */
+    where: DisclosureCategoryWhereUniqueInput
+  }
+
+  /**
+   * DisclosureCategory findUniqueOrThrow
+   */
+  export type DisclosureCategoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisclosureCategory
+     */
+    select?: DisclosureCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisclosureCategory
+     */
+    omit?: DisclosureCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisclosureCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which DisclosureCategory to fetch.
+     */
+    where: DisclosureCategoryWhereUniqueInput
+  }
+
+  /**
+   * DisclosureCategory findFirst
+   */
+  export type DisclosureCategoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisclosureCategory
+     */
+    select?: DisclosureCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisclosureCategory
+     */
+    omit?: DisclosureCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisclosureCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which DisclosureCategory to fetch.
+     */
+    where?: DisclosureCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DisclosureCategories to fetch.
+     */
+    orderBy?: DisclosureCategoryOrderByWithRelationInput | DisclosureCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DisclosureCategories.
+     */
+    cursor?: DisclosureCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DisclosureCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DisclosureCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DisclosureCategories.
+     */
+    distinct?: DisclosureCategoryScalarFieldEnum | DisclosureCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * DisclosureCategory findFirstOrThrow
+   */
+  export type DisclosureCategoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisclosureCategory
+     */
+    select?: DisclosureCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisclosureCategory
+     */
+    omit?: DisclosureCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisclosureCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which DisclosureCategory to fetch.
+     */
+    where?: DisclosureCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DisclosureCategories to fetch.
+     */
+    orderBy?: DisclosureCategoryOrderByWithRelationInput | DisclosureCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DisclosureCategories.
+     */
+    cursor?: DisclosureCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DisclosureCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DisclosureCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DisclosureCategories.
+     */
+    distinct?: DisclosureCategoryScalarFieldEnum | DisclosureCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * DisclosureCategory findMany
+   */
+  export type DisclosureCategoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisclosureCategory
+     */
+    select?: DisclosureCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisclosureCategory
+     */
+    omit?: DisclosureCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisclosureCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which DisclosureCategories to fetch.
+     */
+    where?: DisclosureCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DisclosureCategories to fetch.
+     */
+    orderBy?: DisclosureCategoryOrderByWithRelationInput | DisclosureCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing DisclosureCategories.
+     */
+    cursor?: DisclosureCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DisclosureCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DisclosureCategories.
+     */
+    skip?: number
+    distinct?: DisclosureCategoryScalarFieldEnum | DisclosureCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * DisclosureCategory create
+   */
+  export type DisclosureCategoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisclosureCategory
+     */
+    select?: DisclosureCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisclosureCategory
+     */
+    omit?: DisclosureCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisclosureCategoryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a DisclosureCategory.
+     */
+    data: XOR<DisclosureCategoryCreateInput, DisclosureCategoryUncheckedCreateInput>
+  }
+
+  /**
+   * DisclosureCategory createMany
+   */
+  export type DisclosureCategoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many DisclosureCategories.
+     */
+    data: DisclosureCategoryCreateManyInput | DisclosureCategoryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DisclosureCategory createManyAndReturn
+   */
+  export type DisclosureCategoryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisclosureCategory
+     */
+    select?: DisclosureCategorySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisclosureCategory
+     */
+    omit?: DisclosureCategoryOmit<ExtArgs> | null
+    /**
+     * The data used to create many DisclosureCategories.
+     */
+    data: DisclosureCategoryCreateManyInput | DisclosureCategoryCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisclosureCategoryIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DisclosureCategory update
+   */
+  export type DisclosureCategoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisclosureCategory
+     */
+    select?: DisclosureCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisclosureCategory
+     */
+    omit?: DisclosureCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisclosureCategoryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a DisclosureCategory.
+     */
+    data: XOR<DisclosureCategoryUpdateInput, DisclosureCategoryUncheckedUpdateInput>
+    /**
+     * Choose, which DisclosureCategory to update.
+     */
+    where: DisclosureCategoryWhereUniqueInput
+  }
+
+  /**
+   * DisclosureCategory updateMany
+   */
+  export type DisclosureCategoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update DisclosureCategories.
+     */
+    data: XOR<DisclosureCategoryUpdateManyMutationInput, DisclosureCategoryUncheckedUpdateManyInput>
+    /**
+     * Filter which DisclosureCategories to update
+     */
+    where?: DisclosureCategoryWhereInput
+    /**
+     * Limit how many DisclosureCategories to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DisclosureCategory updateManyAndReturn
+   */
+  export type DisclosureCategoryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisclosureCategory
+     */
+    select?: DisclosureCategorySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisclosureCategory
+     */
+    omit?: DisclosureCategoryOmit<ExtArgs> | null
+    /**
+     * The data used to update DisclosureCategories.
+     */
+    data: XOR<DisclosureCategoryUpdateManyMutationInput, DisclosureCategoryUncheckedUpdateManyInput>
+    /**
+     * Filter which DisclosureCategories to update
+     */
+    where?: DisclosureCategoryWhereInput
+    /**
+     * Limit how many DisclosureCategories to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisclosureCategoryIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DisclosureCategory upsert
+   */
+  export type DisclosureCategoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisclosureCategory
+     */
+    select?: DisclosureCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisclosureCategory
+     */
+    omit?: DisclosureCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisclosureCategoryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the DisclosureCategory to update in case it exists.
+     */
+    where: DisclosureCategoryWhereUniqueInput
+    /**
+     * In case the DisclosureCategory found by the `where` argument doesn't exist, create a new DisclosureCategory with this data.
+     */
+    create: XOR<DisclosureCategoryCreateInput, DisclosureCategoryUncheckedCreateInput>
+    /**
+     * In case the DisclosureCategory was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DisclosureCategoryUpdateInput, DisclosureCategoryUncheckedUpdateInput>
+  }
+
+  /**
+   * DisclosureCategory delete
+   */
+  export type DisclosureCategoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisclosureCategory
+     */
+    select?: DisclosureCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisclosureCategory
+     */
+    omit?: DisclosureCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisclosureCategoryInclude<ExtArgs> | null
+    /**
+     * Filter which DisclosureCategory to delete.
+     */
+    where: DisclosureCategoryWhereUniqueInput
+  }
+
+  /**
+   * DisclosureCategory deleteMany
+   */
+  export type DisclosureCategoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DisclosureCategories to delete
+     */
+    where?: DisclosureCategoryWhereInput
+    /**
+     * Limit how many DisclosureCategories to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * DisclosureCategory without action
+   */
+  export type DisclosureCategoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisclosureCategory
+     */
+    select?: DisclosureCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisclosureCategory
+     */
+    omit?: DisclosureCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisclosureCategoryInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SuppressionLogEntry
+   */
+
+  export type AggregateSuppressionLogEntry = {
+    _count: SuppressionLogEntryCountAggregateOutputType | null
+    _min: SuppressionLogEntryMinAggregateOutputType | null
+    _max: SuppressionLogEntryMaxAggregateOutputType | null
+  }
+
+  export type SuppressionLogEntryMinAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    firmProfileId: string | null
+    categorySlug: string | null
+    userId: string | null
+    meetingId: string | null
+    action: $Enums.SuppressionAction | null
+    previousStatus: $Enums.DisclosureCategoryStatus | null
+    newStatus: $Enums.DisclosureCategoryStatus | null
+    evidenceSnapshot: string | null
+    createdAt: Date | null
+  }
+
+  export type SuppressionLogEntryMaxAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    firmProfileId: string | null
+    categorySlug: string | null
+    userId: string | null
+    meetingId: string | null
+    action: $Enums.SuppressionAction | null
+    previousStatus: $Enums.DisclosureCategoryStatus | null
+    newStatus: $Enums.DisclosureCategoryStatus | null
+    evidenceSnapshot: string | null
+    createdAt: Date | null
+  }
+
+  export type SuppressionLogEntryCountAggregateOutputType = {
+    id: number
+    workspaceId: number
+    firmProfileId: number
+    categorySlug: number
+    userId: number
+    meetingId: number
+    action: number
+    previousStatus: number
+    newStatus: number
+    evidenceSnapshot: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type SuppressionLogEntryMinAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    firmProfileId?: true
+    categorySlug?: true
+    userId?: true
+    meetingId?: true
+    action?: true
+    previousStatus?: true
+    newStatus?: true
+    evidenceSnapshot?: true
+    createdAt?: true
+  }
+
+  export type SuppressionLogEntryMaxAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    firmProfileId?: true
+    categorySlug?: true
+    userId?: true
+    meetingId?: true
+    action?: true
+    previousStatus?: true
+    newStatus?: true
+    evidenceSnapshot?: true
+    createdAt?: true
+  }
+
+  export type SuppressionLogEntryCountAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    firmProfileId?: true
+    categorySlug?: true
+    userId?: true
+    meetingId?: true
+    action?: true
+    previousStatus?: true
+    newStatus?: true
+    evidenceSnapshot?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type SuppressionLogEntryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SuppressionLogEntry to aggregate.
+     */
+    where?: SuppressionLogEntryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SuppressionLogEntries to fetch.
+     */
+    orderBy?: SuppressionLogEntryOrderByWithRelationInput | SuppressionLogEntryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SuppressionLogEntryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SuppressionLogEntries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SuppressionLogEntries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SuppressionLogEntries
+    **/
+    _count?: true | SuppressionLogEntryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SuppressionLogEntryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SuppressionLogEntryMaxAggregateInputType
+  }
+
+  export type GetSuppressionLogEntryAggregateType<T extends SuppressionLogEntryAggregateArgs> = {
+        [P in keyof T & keyof AggregateSuppressionLogEntry]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSuppressionLogEntry[P]>
+      : GetScalarType<T[P], AggregateSuppressionLogEntry[P]>
+  }
+
+
+
+
+  export type SuppressionLogEntryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SuppressionLogEntryWhereInput
+    orderBy?: SuppressionLogEntryOrderByWithAggregationInput | SuppressionLogEntryOrderByWithAggregationInput[]
+    by: SuppressionLogEntryScalarFieldEnum[] | SuppressionLogEntryScalarFieldEnum
+    having?: SuppressionLogEntryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SuppressionLogEntryCountAggregateInputType | true
+    _min?: SuppressionLogEntryMinAggregateInputType
+    _max?: SuppressionLogEntryMaxAggregateInputType
+  }
+
+  export type SuppressionLogEntryGroupByOutputType = {
+    id: string
+    workspaceId: string
+    firmProfileId: string
+    categorySlug: string
+    userId: string
+    meetingId: string | null
+    action: $Enums.SuppressionAction
+    previousStatus: $Enums.DisclosureCategoryStatus | null
+    newStatus: $Enums.DisclosureCategoryStatus
+    evidenceSnapshot: string | null
+    createdAt: Date
+    _count: SuppressionLogEntryCountAggregateOutputType | null
+    _min: SuppressionLogEntryMinAggregateOutputType | null
+    _max: SuppressionLogEntryMaxAggregateOutputType | null
+  }
+
+  type GetSuppressionLogEntryGroupByPayload<T extends SuppressionLogEntryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SuppressionLogEntryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SuppressionLogEntryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SuppressionLogEntryGroupByOutputType[P]>
+            : GetScalarType<T[P], SuppressionLogEntryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SuppressionLogEntrySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    firmProfileId?: boolean
+    categorySlug?: boolean
+    userId?: boolean
+    meetingId?: boolean
+    action?: boolean
+    previousStatus?: boolean
+    newStatus?: boolean
+    evidenceSnapshot?: boolean
+    createdAt?: boolean
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["suppressionLogEntry"]>
+
+  export type SuppressionLogEntrySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    firmProfileId?: boolean
+    categorySlug?: boolean
+    userId?: boolean
+    meetingId?: boolean
+    action?: boolean
+    previousStatus?: boolean
+    newStatus?: boolean
+    evidenceSnapshot?: boolean
+    createdAt?: boolean
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["suppressionLogEntry"]>
+
+  export type SuppressionLogEntrySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    firmProfileId?: boolean
+    categorySlug?: boolean
+    userId?: boolean
+    meetingId?: boolean
+    action?: boolean
+    previousStatus?: boolean
+    newStatus?: boolean
+    evidenceSnapshot?: boolean
+    createdAt?: boolean
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["suppressionLogEntry"]>
+
+  export type SuppressionLogEntrySelectScalar = {
+    id?: boolean
+    workspaceId?: boolean
+    firmProfileId?: boolean
+    categorySlug?: boolean
+    userId?: boolean
+    meetingId?: boolean
+    action?: boolean
+    previousStatus?: boolean
+    newStatus?: boolean
+    evidenceSnapshot?: boolean
+    createdAt?: boolean
+  }
+
+  export type SuppressionLogEntryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "firmProfileId" | "categorySlug" | "userId" | "meetingId" | "action" | "previousStatus" | "newStatus" | "evidenceSnapshot" | "createdAt", ExtArgs["result"]["suppressionLogEntry"]>
+  export type SuppressionLogEntryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }
+  export type SuppressionLogEntryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }
+  export type SuppressionLogEntryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }
+
+  export type $SuppressionLogEntryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SuppressionLogEntry"
+    objects: {
+      firmProfile: Prisma.$FirmProfilePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workspaceId: string
+      firmProfileId: string
+      categorySlug: string
+      userId: string
+      meetingId: string | null
+      action: $Enums.SuppressionAction
+      previousStatus: $Enums.DisclosureCategoryStatus | null
+      newStatus: $Enums.DisclosureCategoryStatus
+      evidenceSnapshot: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["suppressionLogEntry"]>
+    composites: {}
+  }
+
+  type SuppressionLogEntryGetPayload<S extends boolean | null | undefined | SuppressionLogEntryDefaultArgs> = $Result.GetResult<Prisma.$SuppressionLogEntryPayload, S>
+
+  type SuppressionLogEntryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SuppressionLogEntryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SuppressionLogEntryCountAggregateInputType | true
+    }
+
+  export interface SuppressionLogEntryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SuppressionLogEntry'], meta: { name: 'SuppressionLogEntry' } }
+    /**
+     * Find zero or one SuppressionLogEntry that matches the filter.
+     * @param {SuppressionLogEntryFindUniqueArgs} args - Arguments to find a SuppressionLogEntry
+     * @example
+     * // Get one SuppressionLogEntry
+     * const suppressionLogEntry = await prisma.suppressionLogEntry.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SuppressionLogEntryFindUniqueArgs>(args: SelectSubset<T, SuppressionLogEntryFindUniqueArgs<ExtArgs>>): Prisma__SuppressionLogEntryClient<$Result.GetResult<Prisma.$SuppressionLogEntryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SuppressionLogEntry that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SuppressionLogEntryFindUniqueOrThrowArgs} args - Arguments to find a SuppressionLogEntry
+     * @example
+     * // Get one SuppressionLogEntry
+     * const suppressionLogEntry = await prisma.suppressionLogEntry.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SuppressionLogEntryFindUniqueOrThrowArgs>(args: SelectSubset<T, SuppressionLogEntryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SuppressionLogEntryClient<$Result.GetResult<Prisma.$SuppressionLogEntryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SuppressionLogEntry that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SuppressionLogEntryFindFirstArgs} args - Arguments to find a SuppressionLogEntry
+     * @example
+     * // Get one SuppressionLogEntry
+     * const suppressionLogEntry = await prisma.suppressionLogEntry.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SuppressionLogEntryFindFirstArgs>(args?: SelectSubset<T, SuppressionLogEntryFindFirstArgs<ExtArgs>>): Prisma__SuppressionLogEntryClient<$Result.GetResult<Prisma.$SuppressionLogEntryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SuppressionLogEntry that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SuppressionLogEntryFindFirstOrThrowArgs} args - Arguments to find a SuppressionLogEntry
+     * @example
+     * // Get one SuppressionLogEntry
+     * const suppressionLogEntry = await prisma.suppressionLogEntry.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SuppressionLogEntryFindFirstOrThrowArgs>(args?: SelectSubset<T, SuppressionLogEntryFindFirstOrThrowArgs<ExtArgs>>): Prisma__SuppressionLogEntryClient<$Result.GetResult<Prisma.$SuppressionLogEntryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SuppressionLogEntries that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SuppressionLogEntryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SuppressionLogEntries
+     * const suppressionLogEntries = await prisma.suppressionLogEntry.findMany()
+     * 
+     * // Get first 10 SuppressionLogEntries
+     * const suppressionLogEntries = await prisma.suppressionLogEntry.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const suppressionLogEntryWithIdOnly = await prisma.suppressionLogEntry.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SuppressionLogEntryFindManyArgs>(args?: SelectSubset<T, SuppressionLogEntryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SuppressionLogEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SuppressionLogEntry.
+     * @param {SuppressionLogEntryCreateArgs} args - Arguments to create a SuppressionLogEntry.
+     * @example
+     * // Create one SuppressionLogEntry
+     * const SuppressionLogEntry = await prisma.suppressionLogEntry.create({
+     *   data: {
+     *     // ... data to create a SuppressionLogEntry
+     *   }
+     * })
+     * 
+     */
+    create<T extends SuppressionLogEntryCreateArgs>(args: SelectSubset<T, SuppressionLogEntryCreateArgs<ExtArgs>>): Prisma__SuppressionLogEntryClient<$Result.GetResult<Prisma.$SuppressionLogEntryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SuppressionLogEntries.
+     * @param {SuppressionLogEntryCreateManyArgs} args - Arguments to create many SuppressionLogEntries.
+     * @example
+     * // Create many SuppressionLogEntries
+     * const suppressionLogEntry = await prisma.suppressionLogEntry.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SuppressionLogEntryCreateManyArgs>(args?: SelectSubset<T, SuppressionLogEntryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SuppressionLogEntries and returns the data saved in the database.
+     * @param {SuppressionLogEntryCreateManyAndReturnArgs} args - Arguments to create many SuppressionLogEntries.
+     * @example
+     * // Create many SuppressionLogEntries
+     * const suppressionLogEntry = await prisma.suppressionLogEntry.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SuppressionLogEntries and only return the `id`
+     * const suppressionLogEntryWithIdOnly = await prisma.suppressionLogEntry.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SuppressionLogEntryCreateManyAndReturnArgs>(args?: SelectSubset<T, SuppressionLogEntryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SuppressionLogEntryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SuppressionLogEntry.
+     * @param {SuppressionLogEntryDeleteArgs} args - Arguments to delete one SuppressionLogEntry.
+     * @example
+     * // Delete one SuppressionLogEntry
+     * const SuppressionLogEntry = await prisma.suppressionLogEntry.delete({
+     *   where: {
+     *     // ... filter to delete one SuppressionLogEntry
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SuppressionLogEntryDeleteArgs>(args: SelectSubset<T, SuppressionLogEntryDeleteArgs<ExtArgs>>): Prisma__SuppressionLogEntryClient<$Result.GetResult<Prisma.$SuppressionLogEntryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SuppressionLogEntry.
+     * @param {SuppressionLogEntryUpdateArgs} args - Arguments to update one SuppressionLogEntry.
+     * @example
+     * // Update one SuppressionLogEntry
+     * const suppressionLogEntry = await prisma.suppressionLogEntry.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SuppressionLogEntryUpdateArgs>(args: SelectSubset<T, SuppressionLogEntryUpdateArgs<ExtArgs>>): Prisma__SuppressionLogEntryClient<$Result.GetResult<Prisma.$SuppressionLogEntryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SuppressionLogEntries.
+     * @param {SuppressionLogEntryDeleteManyArgs} args - Arguments to filter SuppressionLogEntries to delete.
+     * @example
+     * // Delete a few SuppressionLogEntries
+     * const { count } = await prisma.suppressionLogEntry.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SuppressionLogEntryDeleteManyArgs>(args?: SelectSubset<T, SuppressionLogEntryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SuppressionLogEntries.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SuppressionLogEntryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SuppressionLogEntries
+     * const suppressionLogEntry = await prisma.suppressionLogEntry.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SuppressionLogEntryUpdateManyArgs>(args: SelectSubset<T, SuppressionLogEntryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SuppressionLogEntries and returns the data updated in the database.
+     * @param {SuppressionLogEntryUpdateManyAndReturnArgs} args - Arguments to update many SuppressionLogEntries.
+     * @example
+     * // Update many SuppressionLogEntries
+     * const suppressionLogEntry = await prisma.suppressionLogEntry.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SuppressionLogEntries and only return the `id`
+     * const suppressionLogEntryWithIdOnly = await prisma.suppressionLogEntry.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SuppressionLogEntryUpdateManyAndReturnArgs>(args: SelectSubset<T, SuppressionLogEntryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SuppressionLogEntryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SuppressionLogEntry.
+     * @param {SuppressionLogEntryUpsertArgs} args - Arguments to update or create a SuppressionLogEntry.
+     * @example
+     * // Update or create a SuppressionLogEntry
+     * const suppressionLogEntry = await prisma.suppressionLogEntry.upsert({
+     *   create: {
+     *     // ... data to create a SuppressionLogEntry
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SuppressionLogEntry we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SuppressionLogEntryUpsertArgs>(args: SelectSubset<T, SuppressionLogEntryUpsertArgs<ExtArgs>>): Prisma__SuppressionLogEntryClient<$Result.GetResult<Prisma.$SuppressionLogEntryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SuppressionLogEntries.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SuppressionLogEntryCountArgs} args - Arguments to filter SuppressionLogEntries to count.
+     * @example
+     * // Count the number of SuppressionLogEntries
+     * const count = await prisma.suppressionLogEntry.count({
+     *   where: {
+     *     // ... the filter for the SuppressionLogEntries we want to count
+     *   }
+     * })
+    **/
+    count<T extends SuppressionLogEntryCountArgs>(
+      args?: Subset<T, SuppressionLogEntryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SuppressionLogEntryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SuppressionLogEntry.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SuppressionLogEntryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SuppressionLogEntryAggregateArgs>(args: Subset<T, SuppressionLogEntryAggregateArgs>): Prisma.PrismaPromise<GetSuppressionLogEntryAggregateType<T>>
+
+    /**
+     * Group by SuppressionLogEntry.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SuppressionLogEntryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SuppressionLogEntryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SuppressionLogEntryGroupByArgs['orderBy'] }
+        : { orderBy?: SuppressionLogEntryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SuppressionLogEntryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSuppressionLogEntryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SuppressionLogEntry model
+   */
+  readonly fields: SuppressionLogEntryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SuppressionLogEntry.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SuppressionLogEntryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    firmProfile<T extends FirmProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, FirmProfileDefaultArgs<ExtArgs>>): Prisma__FirmProfileClient<$Result.GetResult<Prisma.$FirmProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SuppressionLogEntry model
+   */
+  interface SuppressionLogEntryFieldRefs {
+    readonly id: FieldRef<"SuppressionLogEntry", 'String'>
+    readonly workspaceId: FieldRef<"SuppressionLogEntry", 'String'>
+    readonly firmProfileId: FieldRef<"SuppressionLogEntry", 'String'>
+    readonly categorySlug: FieldRef<"SuppressionLogEntry", 'String'>
+    readonly userId: FieldRef<"SuppressionLogEntry", 'String'>
+    readonly meetingId: FieldRef<"SuppressionLogEntry", 'String'>
+    readonly action: FieldRef<"SuppressionLogEntry", 'SuppressionAction'>
+    readonly previousStatus: FieldRef<"SuppressionLogEntry", 'DisclosureCategoryStatus'>
+    readonly newStatus: FieldRef<"SuppressionLogEntry", 'DisclosureCategoryStatus'>
+    readonly evidenceSnapshot: FieldRef<"SuppressionLogEntry", 'String'>
+    readonly createdAt: FieldRef<"SuppressionLogEntry", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SuppressionLogEntry findUnique
+   */
+  export type SuppressionLogEntryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SuppressionLogEntry
+     */
+    select?: SuppressionLogEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SuppressionLogEntry
+     */
+    omit?: SuppressionLogEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SuppressionLogEntryInclude<ExtArgs> | null
+    /**
+     * Filter, which SuppressionLogEntry to fetch.
+     */
+    where: SuppressionLogEntryWhereUniqueInput
+  }
+
+  /**
+   * SuppressionLogEntry findUniqueOrThrow
+   */
+  export type SuppressionLogEntryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SuppressionLogEntry
+     */
+    select?: SuppressionLogEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SuppressionLogEntry
+     */
+    omit?: SuppressionLogEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SuppressionLogEntryInclude<ExtArgs> | null
+    /**
+     * Filter, which SuppressionLogEntry to fetch.
+     */
+    where: SuppressionLogEntryWhereUniqueInput
+  }
+
+  /**
+   * SuppressionLogEntry findFirst
+   */
+  export type SuppressionLogEntryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SuppressionLogEntry
+     */
+    select?: SuppressionLogEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SuppressionLogEntry
+     */
+    omit?: SuppressionLogEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SuppressionLogEntryInclude<ExtArgs> | null
+    /**
+     * Filter, which SuppressionLogEntry to fetch.
+     */
+    where?: SuppressionLogEntryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SuppressionLogEntries to fetch.
+     */
+    orderBy?: SuppressionLogEntryOrderByWithRelationInput | SuppressionLogEntryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SuppressionLogEntries.
+     */
+    cursor?: SuppressionLogEntryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SuppressionLogEntries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SuppressionLogEntries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SuppressionLogEntries.
+     */
+    distinct?: SuppressionLogEntryScalarFieldEnum | SuppressionLogEntryScalarFieldEnum[]
+  }
+
+  /**
+   * SuppressionLogEntry findFirstOrThrow
+   */
+  export type SuppressionLogEntryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SuppressionLogEntry
+     */
+    select?: SuppressionLogEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SuppressionLogEntry
+     */
+    omit?: SuppressionLogEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SuppressionLogEntryInclude<ExtArgs> | null
+    /**
+     * Filter, which SuppressionLogEntry to fetch.
+     */
+    where?: SuppressionLogEntryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SuppressionLogEntries to fetch.
+     */
+    orderBy?: SuppressionLogEntryOrderByWithRelationInput | SuppressionLogEntryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SuppressionLogEntries.
+     */
+    cursor?: SuppressionLogEntryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SuppressionLogEntries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SuppressionLogEntries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SuppressionLogEntries.
+     */
+    distinct?: SuppressionLogEntryScalarFieldEnum | SuppressionLogEntryScalarFieldEnum[]
+  }
+
+  /**
+   * SuppressionLogEntry findMany
+   */
+  export type SuppressionLogEntryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SuppressionLogEntry
+     */
+    select?: SuppressionLogEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SuppressionLogEntry
+     */
+    omit?: SuppressionLogEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SuppressionLogEntryInclude<ExtArgs> | null
+    /**
+     * Filter, which SuppressionLogEntries to fetch.
+     */
+    where?: SuppressionLogEntryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SuppressionLogEntries to fetch.
+     */
+    orderBy?: SuppressionLogEntryOrderByWithRelationInput | SuppressionLogEntryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SuppressionLogEntries.
+     */
+    cursor?: SuppressionLogEntryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SuppressionLogEntries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SuppressionLogEntries.
+     */
+    skip?: number
+    distinct?: SuppressionLogEntryScalarFieldEnum | SuppressionLogEntryScalarFieldEnum[]
+  }
+
+  /**
+   * SuppressionLogEntry create
+   */
+  export type SuppressionLogEntryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SuppressionLogEntry
+     */
+    select?: SuppressionLogEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SuppressionLogEntry
+     */
+    omit?: SuppressionLogEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SuppressionLogEntryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SuppressionLogEntry.
+     */
+    data: XOR<SuppressionLogEntryCreateInput, SuppressionLogEntryUncheckedCreateInput>
+  }
+
+  /**
+   * SuppressionLogEntry createMany
+   */
+  export type SuppressionLogEntryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SuppressionLogEntries.
+     */
+    data: SuppressionLogEntryCreateManyInput | SuppressionLogEntryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SuppressionLogEntry createManyAndReturn
+   */
+  export type SuppressionLogEntryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SuppressionLogEntry
+     */
+    select?: SuppressionLogEntrySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SuppressionLogEntry
+     */
+    omit?: SuppressionLogEntryOmit<ExtArgs> | null
+    /**
+     * The data used to create many SuppressionLogEntries.
+     */
+    data: SuppressionLogEntryCreateManyInput | SuppressionLogEntryCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SuppressionLogEntryIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SuppressionLogEntry update
+   */
+  export type SuppressionLogEntryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SuppressionLogEntry
+     */
+    select?: SuppressionLogEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SuppressionLogEntry
+     */
+    omit?: SuppressionLogEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SuppressionLogEntryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SuppressionLogEntry.
+     */
+    data: XOR<SuppressionLogEntryUpdateInput, SuppressionLogEntryUncheckedUpdateInput>
+    /**
+     * Choose, which SuppressionLogEntry to update.
+     */
+    where: SuppressionLogEntryWhereUniqueInput
+  }
+
+  /**
+   * SuppressionLogEntry updateMany
+   */
+  export type SuppressionLogEntryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SuppressionLogEntries.
+     */
+    data: XOR<SuppressionLogEntryUpdateManyMutationInput, SuppressionLogEntryUncheckedUpdateManyInput>
+    /**
+     * Filter which SuppressionLogEntries to update
+     */
+    where?: SuppressionLogEntryWhereInput
+    /**
+     * Limit how many SuppressionLogEntries to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SuppressionLogEntry updateManyAndReturn
+   */
+  export type SuppressionLogEntryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SuppressionLogEntry
+     */
+    select?: SuppressionLogEntrySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SuppressionLogEntry
+     */
+    omit?: SuppressionLogEntryOmit<ExtArgs> | null
+    /**
+     * The data used to update SuppressionLogEntries.
+     */
+    data: XOR<SuppressionLogEntryUpdateManyMutationInput, SuppressionLogEntryUncheckedUpdateManyInput>
+    /**
+     * Filter which SuppressionLogEntries to update
+     */
+    where?: SuppressionLogEntryWhereInput
+    /**
+     * Limit how many SuppressionLogEntries to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SuppressionLogEntryIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SuppressionLogEntry upsert
+   */
+  export type SuppressionLogEntryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SuppressionLogEntry
+     */
+    select?: SuppressionLogEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SuppressionLogEntry
+     */
+    omit?: SuppressionLogEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SuppressionLogEntryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SuppressionLogEntry to update in case it exists.
+     */
+    where: SuppressionLogEntryWhereUniqueInput
+    /**
+     * In case the SuppressionLogEntry found by the `where` argument doesn't exist, create a new SuppressionLogEntry with this data.
+     */
+    create: XOR<SuppressionLogEntryCreateInput, SuppressionLogEntryUncheckedCreateInput>
+    /**
+     * In case the SuppressionLogEntry was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SuppressionLogEntryUpdateInput, SuppressionLogEntryUncheckedUpdateInput>
+  }
+
+  /**
+   * SuppressionLogEntry delete
+   */
+  export type SuppressionLogEntryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SuppressionLogEntry
+     */
+    select?: SuppressionLogEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SuppressionLogEntry
+     */
+    omit?: SuppressionLogEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SuppressionLogEntryInclude<ExtArgs> | null
+    /**
+     * Filter which SuppressionLogEntry to delete.
+     */
+    where: SuppressionLogEntryWhereUniqueInput
+  }
+
+  /**
+   * SuppressionLogEntry deleteMany
+   */
+  export type SuppressionLogEntryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SuppressionLogEntries to delete
+     */
+    where?: SuppressionLogEntryWhereInput
+    /**
+     * Limit how many SuppressionLogEntries to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SuppressionLogEntry without action
+   */
+  export type SuppressionLogEntryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SuppressionLogEntry
+     */
+    select?: SuppressionLogEntrySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SuppressionLogEntry
+     */
+    omit?: SuppressionLogEntryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SuppressionLogEntryInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model FirmProfileVersion
+   */
+
+  export type AggregateFirmProfileVersion = {
+    _count: FirmProfileVersionCountAggregateOutputType | null
+    _min: FirmProfileVersionMinAggregateOutputType | null
+    _max: FirmProfileVersionMaxAggregateOutputType | null
+  }
+
+  export type FirmProfileVersionMinAggregateOutputType = {
+    id: string | null
+    firmProfileId: string | null
+    workspaceId: string | null
+    versionType: $Enums.FirmProfileVersionType | null
+    approvedByUserId: string | null
+    approvedAt: Date | null
+  }
+
+  export type FirmProfileVersionMaxAggregateOutputType = {
+    id: string | null
+    firmProfileId: string | null
+    workspaceId: string | null
+    versionType: $Enums.FirmProfileVersionType | null
+    approvedByUserId: string | null
+    approvedAt: Date | null
+  }
+
+  export type FirmProfileVersionCountAggregateOutputType = {
+    id: number
+    firmProfileId: number
+    workspaceId: number
+    versionType: number
+    approvedByUserId: number
+    approvedAt: number
+    snapshot: number
+    _all: number
+  }
+
+
+  export type FirmProfileVersionMinAggregateInputType = {
+    id?: true
+    firmProfileId?: true
+    workspaceId?: true
+    versionType?: true
+    approvedByUserId?: true
+    approvedAt?: true
+  }
+
+  export type FirmProfileVersionMaxAggregateInputType = {
+    id?: true
+    firmProfileId?: true
+    workspaceId?: true
+    versionType?: true
+    approvedByUserId?: true
+    approvedAt?: true
+  }
+
+  export type FirmProfileVersionCountAggregateInputType = {
+    id?: true
+    firmProfileId?: true
+    workspaceId?: true
+    versionType?: true
+    approvedByUserId?: true
+    approvedAt?: true
+    snapshot?: true
+    _all?: true
+  }
+
+  export type FirmProfileVersionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FirmProfileVersion to aggregate.
+     */
+    where?: FirmProfileVersionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FirmProfileVersions to fetch.
+     */
+    orderBy?: FirmProfileVersionOrderByWithRelationInput | FirmProfileVersionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FirmProfileVersionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FirmProfileVersions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FirmProfileVersions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned FirmProfileVersions
+    **/
+    _count?: true | FirmProfileVersionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FirmProfileVersionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FirmProfileVersionMaxAggregateInputType
+  }
+
+  export type GetFirmProfileVersionAggregateType<T extends FirmProfileVersionAggregateArgs> = {
+        [P in keyof T & keyof AggregateFirmProfileVersion]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFirmProfileVersion[P]>
+      : GetScalarType<T[P], AggregateFirmProfileVersion[P]>
+  }
+
+
+
+
+  export type FirmProfileVersionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FirmProfileVersionWhereInput
+    orderBy?: FirmProfileVersionOrderByWithAggregationInput | FirmProfileVersionOrderByWithAggregationInput[]
+    by: FirmProfileVersionScalarFieldEnum[] | FirmProfileVersionScalarFieldEnum
+    having?: FirmProfileVersionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FirmProfileVersionCountAggregateInputType | true
+    _min?: FirmProfileVersionMinAggregateInputType
+    _max?: FirmProfileVersionMaxAggregateInputType
+  }
+
+  export type FirmProfileVersionGroupByOutputType = {
+    id: string
+    firmProfileId: string
+    workspaceId: string
+    versionType: $Enums.FirmProfileVersionType
+    approvedByUserId: string | null
+    approvedAt: Date
+    snapshot: JsonValue
+    _count: FirmProfileVersionCountAggregateOutputType | null
+    _min: FirmProfileVersionMinAggregateOutputType | null
+    _max: FirmProfileVersionMaxAggregateOutputType | null
+  }
+
+  type GetFirmProfileVersionGroupByPayload<T extends FirmProfileVersionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FirmProfileVersionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FirmProfileVersionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FirmProfileVersionGroupByOutputType[P]>
+            : GetScalarType<T[P], FirmProfileVersionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FirmProfileVersionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    firmProfileId?: boolean
+    workspaceId?: boolean
+    versionType?: boolean
+    approvedByUserId?: boolean
+    approvedAt?: boolean
+    snapshot?: boolean
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["firmProfileVersion"]>
+
+  export type FirmProfileVersionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    firmProfileId?: boolean
+    workspaceId?: boolean
+    versionType?: boolean
+    approvedByUserId?: boolean
+    approvedAt?: boolean
+    snapshot?: boolean
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["firmProfileVersion"]>
+
+  export type FirmProfileVersionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    firmProfileId?: boolean
+    workspaceId?: boolean
+    versionType?: boolean
+    approvedByUserId?: boolean
+    approvedAt?: boolean
+    snapshot?: boolean
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["firmProfileVersion"]>
+
+  export type FirmProfileVersionSelectScalar = {
+    id?: boolean
+    firmProfileId?: boolean
+    workspaceId?: boolean
+    versionType?: boolean
+    approvedByUserId?: boolean
+    approvedAt?: boolean
+    snapshot?: boolean
+  }
+
+  export type FirmProfileVersionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "firmProfileId" | "workspaceId" | "versionType" | "approvedByUserId" | "approvedAt" | "snapshot", ExtArgs["result"]["firmProfileVersion"]>
+  export type FirmProfileVersionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }
+  export type FirmProfileVersionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }
+  export type FirmProfileVersionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    firmProfile?: boolean | FirmProfileDefaultArgs<ExtArgs>
+  }
+
+  export type $FirmProfileVersionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "FirmProfileVersion"
+    objects: {
+      firmProfile: Prisma.$FirmProfilePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      firmProfileId: string
+      workspaceId: string
+      versionType: $Enums.FirmProfileVersionType
+      approvedByUserId: string | null
+      approvedAt: Date
+      snapshot: Prisma.JsonValue
+    }, ExtArgs["result"]["firmProfileVersion"]>
+    composites: {}
+  }
+
+  type FirmProfileVersionGetPayload<S extends boolean | null | undefined | FirmProfileVersionDefaultArgs> = $Result.GetResult<Prisma.$FirmProfileVersionPayload, S>
+
+  type FirmProfileVersionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<FirmProfileVersionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: FirmProfileVersionCountAggregateInputType | true
+    }
+
+  export interface FirmProfileVersionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['FirmProfileVersion'], meta: { name: 'FirmProfileVersion' } }
+    /**
+     * Find zero or one FirmProfileVersion that matches the filter.
+     * @param {FirmProfileVersionFindUniqueArgs} args - Arguments to find a FirmProfileVersion
+     * @example
+     * // Get one FirmProfileVersion
+     * const firmProfileVersion = await prisma.firmProfileVersion.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FirmProfileVersionFindUniqueArgs>(args: SelectSubset<T, FirmProfileVersionFindUniqueArgs<ExtArgs>>): Prisma__FirmProfileVersionClient<$Result.GetResult<Prisma.$FirmProfileVersionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one FirmProfileVersion that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {FirmProfileVersionFindUniqueOrThrowArgs} args - Arguments to find a FirmProfileVersion
+     * @example
+     * // Get one FirmProfileVersion
+     * const firmProfileVersion = await prisma.firmProfileVersion.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FirmProfileVersionFindUniqueOrThrowArgs>(args: SelectSubset<T, FirmProfileVersionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FirmProfileVersionClient<$Result.GetResult<Prisma.$FirmProfileVersionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FirmProfileVersion that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FirmProfileVersionFindFirstArgs} args - Arguments to find a FirmProfileVersion
+     * @example
+     * // Get one FirmProfileVersion
+     * const firmProfileVersion = await prisma.firmProfileVersion.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FirmProfileVersionFindFirstArgs>(args?: SelectSubset<T, FirmProfileVersionFindFirstArgs<ExtArgs>>): Prisma__FirmProfileVersionClient<$Result.GetResult<Prisma.$FirmProfileVersionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FirmProfileVersion that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FirmProfileVersionFindFirstOrThrowArgs} args - Arguments to find a FirmProfileVersion
+     * @example
+     * // Get one FirmProfileVersion
+     * const firmProfileVersion = await prisma.firmProfileVersion.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FirmProfileVersionFindFirstOrThrowArgs>(args?: SelectSubset<T, FirmProfileVersionFindFirstOrThrowArgs<ExtArgs>>): Prisma__FirmProfileVersionClient<$Result.GetResult<Prisma.$FirmProfileVersionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more FirmProfileVersions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FirmProfileVersionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all FirmProfileVersions
+     * const firmProfileVersions = await prisma.firmProfileVersion.findMany()
+     * 
+     * // Get first 10 FirmProfileVersions
+     * const firmProfileVersions = await prisma.firmProfileVersion.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const firmProfileVersionWithIdOnly = await prisma.firmProfileVersion.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FirmProfileVersionFindManyArgs>(args?: SelectSubset<T, FirmProfileVersionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FirmProfileVersionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a FirmProfileVersion.
+     * @param {FirmProfileVersionCreateArgs} args - Arguments to create a FirmProfileVersion.
+     * @example
+     * // Create one FirmProfileVersion
+     * const FirmProfileVersion = await prisma.firmProfileVersion.create({
+     *   data: {
+     *     // ... data to create a FirmProfileVersion
+     *   }
+     * })
+     * 
+     */
+    create<T extends FirmProfileVersionCreateArgs>(args: SelectSubset<T, FirmProfileVersionCreateArgs<ExtArgs>>): Prisma__FirmProfileVersionClient<$Result.GetResult<Prisma.$FirmProfileVersionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many FirmProfileVersions.
+     * @param {FirmProfileVersionCreateManyArgs} args - Arguments to create many FirmProfileVersions.
+     * @example
+     * // Create many FirmProfileVersions
+     * const firmProfileVersion = await prisma.firmProfileVersion.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FirmProfileVersionCreateManyArgs>(args?: SelectSubset<T, FirmProfileVersionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many FirmProfileVersions and returns the data saved in the database.
+     * @param {FirmProfileVersionCreateManyAndReturnArgs} args - Arguments to create many FirmProfileVersions.
+     * @example
+     * // Create many FirmProfileVersions
+     * const firmProfileVersion = await prisma.firmProfileVersion.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many FirmProfileVersions and only return the `id`
+     * const firmProfileVersionWithIdOnly = await prisma.firmProfileVersion.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FirmProfileVersionCreateManyAndReturnArgs>(args?: SelectSubset<T, FirmProfileVersionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FirmProfileVersionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a FirmProfileVersion.
+     * @param {FirmProfileVersionDeleteArgs} args - Arguments to delete one FirmProfileVersion.
+     * @example
+     * // Delete one FirmProfileVersion
+     * const FirmProfileVersion = await prisma.firmProfileVersion.delete({
+     *   where: {
+     *     // ... filter to delete one FirmProfileVersion
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FirmProfileVersionDeleteArgs>(args: SelectSubset<T, FirmProfileVersionDeleteArgs<ExtArgs>>): Prisma__FirmProfileVersionClient<$Result.GetResult<Prisma.$FirmProfileVersionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one FirmProfileVersion.
+     * @param {FirmProfileVersionUpdateArgs} args - Arguments to update one FirmProfileVersion.
+     * @example
+     * // Update one FirmProfileVersion
+     * const firmProfileVersion = await prisma.firmProfileVersion.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FirmProfileVersionUpdateArgs>(args: SelectSubset<T, FirmProfileVersionUpdateArgs<ExtArgs>>): Prisma__FirmProfileVersionClient<$Result.GetResult<Prisma.$FirmProfileVersionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more FirmProfileVersions.
+     * @param {FirmProfileVersionDeleteManyArgs} args - Arguments to filter FirmProfileVersions to delete.
+     * @example
+     * // Delete a few FirmProfileVersions
+     * const { count } = await prisma.firmProfileVersion.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FirmProfileVersionDeleteManyArgs>(args?: SelectSubset<T, FirmProfileVersionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FirmProfileVersions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FirmProfileVersionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many FirmProfileVersions
+     * const firmProfileVersion = await prisma.firmProfileVersion.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FirmProfileVersionUpdateManyArgs>(args: SelectSubset<T, FirmProfileVersionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FirmProfileVersions and returns the data updated in the database.
+     * @param {FirmProfileVersionUpdateManyAndReturnArgs} args - Arguments to update many FirmProfileVersions.
+     * @example
+     * // Update many FirmProfileVersions
+     * const firmProfileVersion = await prisma.firmProfileVersion.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more FirmProfileVersions and only return the `id`
+     * const firmProfileVersionWithIdOnly = await prisma.firmProfileVersion.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends FirmProfileVersionUpdateManyAndReturnArgs>(args: SelectSubset<T, FirmProfileVersionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FirmProfileVersionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one FirmProfileVersion.
+     * @param {FirmProfileVersionUpsertArgs} args - Arguments to update or create a FirmProfileVersion.
+     * @example
+     * // Update or create a FirmProfileVersion
+     * const firmProfileVersion = await prisma.firmProfileVersion.upsert({
+     *   create: {
+     *     // ... data to create a FirmProfileVersion
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the FirmProfileVersion we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FirmProfileVersionUpsertArgs>(args: SelectSubset<T, FirmProfileVersionUpsertArgs<ExtArgs>>): Prisma__FirmProfileVersionClient<$Result.GetResult<Prisma.$FirmProfileVersionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of FirmProfileVersions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FirmProfileVersionCountArgs} args - Arguments to filter FirmProfileVersions to count.
+     * @example
+     * // Count the number of FirmProfileVersions
+     * const count = await prisma.firmProfileVersion.count({
+     *   where: {
+     *     // ... the filter for the FirmProfileVersions we want to count
+     *   }
+     * })
+    **/
+    count<T extends FirmProfileVersionCountArgs>(
+      args?: Subset<T, FirmProfileVersionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FirmProfileVersionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a FirmProfileVersion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FirmProfileVersionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FirmProfileVersionAggregateArgs>(args: Subset<T, FirmProfileVersionAggregateArgs>): Prisma.PrismaPromise<GetFirmProfileVersionAggregateType<T>>
+
+    /**
+     * Group by FirmProfileVersion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FirmProfileVersionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FirmProfileVersionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FirmProfileVersionGroupByArgs['orderBy'] }
+        : { orderBy?: FirmProfileVersionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FirmProfileVersionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFirmProfileVersionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the FirmProfileVersion model
+   */
+  readonly fields: FirmProfileVersionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for FirmProfileVersion.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FirmProfileVersionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    firmProfile<T extends FirmProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, FirmProfileDefaultArgs<ExtArgs>>): Prisma__FirmProfileClient<$Result.GetResult<Prisma.$FirmProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the FirmProfileVersion model
+   */
+  interface FirmProfileVersionFieldRefs {
+    readonly id: FieldRef<"FirmProfileVersion", 'String'>
+    readonly firmProfileId: FieldRef<"FirmProfileVersion", 'String'>
+    readonly workspaceId: FieldRef<"FirmProfileVersion", 'String'>
+    readonly versionType: FieldRef<"FirmProfileVersion", 'FirmProfileVersionType'>
+    readonly approvedByUserId: FieldRef<"FirmProfileVersion", 'String'>
+    readonly approvedAt: FieldRef<"FirmProfileVersion", 'DateTime'>
+    readonly snapshot: FieldRef<"FirmProfileVersion", 'Json'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * FirmProfileVersion findUnique
+   */
+  export type FirmProfileVersionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfileVersion
+     */
+    select?: FirmProfileVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfileVersion
+     */
+    omit?: FirmProfileVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileVersionInclude<ExtArgs> | null
+    /**
+     * Filter, which FirmProfileVersion to fetch.
+     */
+    where: FirmProfileVersionWhereUniqueInput
+  }
+
+  /**
+   * FirmProfileVersion findUniqueOrThrow
+   */
+  export type FirmProfileVersionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfileVersion
+     */
+    select?: FirmProfileVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfileVersion
+     */
+    omit?: FirmProfileVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileVersionInclude<ExtArgs> | null
+    /**
+     * Filter, which FirmProfileVersion to fetch.
+     */
+    where: FirmProfileVersionWhereUniqueInput
+  }
+
+  /**
+   * FirmProfileVersion findFirst
+   */
+  export type FirmProfileVersionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfileVersion
+     */
+    select?: FirmProfileVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfileVersion
+     */
+    omit?: FirmProfileVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileVersionInclude<ExtArgs> | null
+    /**
+     * Filter, which FirmProfileVersion to fetch.
+     */
+    where?: FirmProfileVersionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FirmProfileVersions to fetch.
+     */
+    orderBy?: FirmProfileVersionOrderByWithRelationInput | FirmProfileVersionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FirmProfileVersions.
+     */
+    cursor?: FirmProfileVersionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FirmProfileVersions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FirmProfileVersions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FirmProfileVersions.
+     */
+    distinct?: FirmProfileVersionScalarFieldEnum | FirmProfileVersionScalarFieldEnum[]
+  }
+
+  /**
+   * FirmProfileVersion findFirstOrThrow
+   */
+  export type FirmProfileVersionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfileVersion
+     */
+    select?: FirmProfileVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfileVersion
+     */
+    omit?: FirmProfileVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileVersionInclude<ExtArgs> | null
+    /**
+     * Filter, which FirmProfileVersion to fetch.
+     */
+    where?: FirmProfileVersionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FirmProfileVersions to fetch.
+     */
+    orderBy?: FirmProfileVersionOrderByWithRelationInput | FirmProfileVersionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FirmProfileVersions.
+     */
+    cursor?: FirmProfileVersionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FirmProfileVersions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FirmProfileVersions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FirmProfileVersions.
+     */
+    distinct?: FirmProfileVersionScalarFieldEnum | FirmProfileVersionScalarFieldEnum[]
+  }
+
+  /**
+   * FirmProfileVersion findMany
+   */
+  export type FirmProfileVersionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfileVersion
+     */
+    select?: FirmProfileVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfileVersion
+     */
+    omit?: FirmProfileVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileVersionInclude<ExtArgs> | null
+    /**
+     * Filter, which FirmProfileVersions to fetch.
+     */
+    where?: FirmProfileVersionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FirmProfileVersions to fetch.
+     */
+    orderBy?: FirmProfileVersionOrderByWithRelationInput | FirmProfileVersionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing FirmProfileVersions.
+     */
+    cursor?: FirmProfileVersionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FirmProfileVersions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FirmProfileVersions.
+     */
+    skip?: number
+    distinct?: FirmProfileVersionScalarFieldEnum | FirmProfileVersionScalarFieldEnum[]
+  }
+
+  /**
+   * FirmProfileVersion create
+   */
+  export type FirmProfileVersionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfileVersion
+     */
+    select?: FirmProfileVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfileVersion
+     */
+    omit?: FirmProfileVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileVersionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a FirmProfileVersion.
+     */
+    data: XOR<FirmProfileVersionCreateInput, FirmProfileVersionUncheckedCreateInput>
+  }
+
+  /**
+   * FirmProfileVersion createMany
+   */
+  export type FirmProfileVersionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many FirmProfileVersions.
+     */
+    data: FirmProfileVersionCreateManyInput | FirmProfileVersionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * FirmProfileVersion createManyAndReturn
+   */
+  export type FirmProfileVersionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfileVersion
+     */
+    select?: FirmProfileVersionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfileVersion
+     */
+    omit?: FirmProfileVersionOmit<ExtArgs> | null
+    /**
+     * The data used to create many FirmProfileVersions.
+     */
+    data: FirmProfileVersionCreateManyInput | FirmProfileVersionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileVersionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FirmProfileVersion update
+   */
+  export type FirmProfileVersionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfileVersion
+     */
+    select?: FirmProfileVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfileVersion
+     */
+    omit?: FirmProfileVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileVersionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a FirmProfileVersion.
+     */
+    data: XOR<FirmProfileVersionUpdateInput, FirmProfileVersionUncheckedUpdateInput>
+    /**
+     * Choose, which FirmProfileVersion to update.
+     */
+    where: FirmProfileVersionWhereUniqueInput
+  }
+
+  /**
+   * FirmProfileVersion updateMany
+   */
+  export type FirmProfileVersionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update FirmProfileVersions.
+     */
+    data: XOR<FirmProfileVersionUpdateManyMutationInput, FirmProfileVersionUncheckedUpdateManyInput>
+    /**
+     * Filter which FirmProfileVersions to update
+     */
+    where?: FirmProfileVersionWhereInput
+    /**
+     * Limit how many FirmProfileVersions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * FirmProfileVersion updateManyAndReturn
+   */
+  export type FirmProfileVersionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfileVersion
+     */
+    select?: FirmProfileVersionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfileVersion
+     */
+    omit?: FirmProfileVersionOmit<ExtArgs> | null
+    /**
+     * The data used to update FirmProfileVersions.
+     */
+    data: XOR<FirmProfileVersionUpdateManyMutationInput, FirmProfileVersionUncheckedUpdateManyInput>
+    /**
+     * Filter which FirmProfileVersions to update
+     */
+    where?: FirmProfileVersionWhereInput
+    /**
+     * Limit how many FirmProfileVersions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileVersionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FirmProfileVersion upsert
+   */
+  export type FirmProfileVersionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfileVersion
+     */
+    select?: FirmProfileVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfileVersion
+     */
+    omit?: FirmProfileVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileVersionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the FirmProfileVersion to update in case it exists.
+     */
+    where: FirmProfileVersionWhereUniqueInput
+    /**
+     * In case the FirmProfileVersion found by the `where` argument doesn't exist, create a new FirmProfileVersion with this data.
+     */
+    create: XOR<FirmProfileVersionCreateInput, FirmProfileVersionUncheckedCreateInput>
+    /**
+     * In case the FirmProfileVersion was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FirmProfileVersionUpdateInput, FirmProfileVersionUncheckedUpdateInput>
+  }
+
+  /**
+   * FirmProfileVersion delete
+   */
+  export type FirmProfileVersionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfileVersion
+     */
+    select?: FirmProfileVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfileVersion
+     */
+    omit?: FirmProfileVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileVersionInclude<ExtArgs> | null
+    /**
+     * Filter which FirmProfileVersion to delete.
+     */
+    where: FirmProfileVersionWhereUniqueInput
+  }
+
+  /**
+   * FirmProfileVersion deleteMany
+   */
+  export type FirmProfileVersionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FirmProfileVersions to delete
+     */
+    where?: FirmProfileVersionWhereInput
+    /**
+     * Limit how many FirmProfileVersions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * FirmProfileVersion without action
+   */
+  export type FirmProfileVersionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FirmProfileVersion
+     */
+    select?: FirmProfileVersionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FirmProfileVersion
+     */
+    omit?: FirmProfileVersionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FirmProfileVersionInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Lead
    */
 
@@ -26176,6 +31354,74 @@ export namespace Prisma {
   export type IntegrationSyncLogScalarFieldEnum = (typeof IntegrationSyncLogScalarFieldEnum)[keyof typeof IntegrationSyncLogScalarFieldEnum]
 
 
+  export const FirmProfileScalarFieldEnum: {
+    id: 'id',
+    workspaceId: 'workspaceId',
+    status: 'status',
+    crdNumber: 'crdNumber',
+    ccoName: 'ccoName',
+    advFilingDate: 'advFilingDate',
+    aumUsd: 'aumUsd',
+    advDocumentUrl: 'advDocumentUrl',
+    advDocumentKey: 'advDocumentKey',
+    riskFlags: 'riskFlags',
+    setupCompletedAt: 'setupCompletedAt',
+    approvedAt: 'approvedAt',
+    approvedByUserId: 'approvedByUserId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    deletedAt: 'deletedAt'
+  };
+
+  export type FirmProfileScalarFieldEnum = (typeof FirmProfileScalarFieldEnum)[keyof typeof FirmProfileScalarFieldEnum]
+
+
+  export const DisclosureCategoryScalarFieldEnum: {
+    id: 'id',
+    firmProfileId: 'firmProfileId',
+    slug: 'slug',
+    status: 'status',
+    suppressionEvidence: 'suppressionEvidence',
+    advItemRef: 'advItemRef',
+    advPage: 'advPage',
+    description: 'description',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type DisclosureCategoryScalarFieldEnum = (typeof DisclosureCategoryScalarFieldEnum)[keyof typeof DisclosureCategoryScalarFieldEnum]
+
+
+  export const SuppressionLogEntryScalarFieldEnum: {
+    id: 'id',
+    workspaceId: 'workspaceId',
+    firmProfileId: 'firmProfileId',
+    categorySlug: 'categorySlug',
+    userId: 'userId',
+    meetingId: 'meetingId',
+    action: 'action',
+    previousStatus: 'previousStatus',
+    newStatus: 'newStatus',
+    evidenceSnapshot: 'evidenceSnapshot',
+    createdAt: 'createdAt'
+  };
+
+  export type SuppressionLogEntryScalarFieldEnum = (typeof SuppressionLogEntryScalarFieldEnum)[keyof typeof SuppressionLogEntryScalarFieldEnum]
+
+
+  export const FirmProfileVersionScalarFieldEnum: {
+    id: 'id',
+    firmProfileId: 'firmProfileId',
+    workspaceId: 'workspaceId',
+    versionType: 'versionType',
+    approvedByUserId: 'approvedByUserId',
+    approvedAt: 'approvedAt',
+    snapshot: 'snapshot'
+  };
+
+  export type FirmProfileVersionScalarFieldEnum = (typeof FirmProfileVersionScalarFieldEnum)[keyof typeof FirmProfileVersionScalarFieldEnum]
+
+
   export const LeadScalarFieldEnum: {
     id: 'id',
     email: 'email',
@@ -26558,6 +31804,76 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'FirmProfileStatus'
+   */
+  export type EnumFirmProfileStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FirmProfileStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'FirmProfileStatus[]'
+   */
+  export type ListEnumFirmProfileStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FirmProfileStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Decimal'
+   */
+  export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+  /**
+   * Reference to a field of type 'Decimal[]'
+   */
+  export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'DisclosureCategoryStatus'
+   */
+  export type EnumDisclosureCategoryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DisclosureCategoryStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'DisclosureCategoryStatus[]'
+   */
+  export type ListEnumDisclosureCategoryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DisclosureCategoryStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'SuppressionAction'
+   */
+  export type EnumSuppressionActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SuppressionAction'>
+    
+
+
+  /**
+   * Reference to a field of type 'SuppressionAction[]'
+   */
+  export type ListEnumSuppressionActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SuppressionAction[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'FirmProfileVersionType'
+   */
+  export type EnumFirmProfileVersionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FirmProfileVersionType'>
+    
+
+
+  /**
+   * Reference to a field of type 'FirmProfileVersionType[]'
+   */
+  export type ListEnumFirmProfileVersionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FirmProfileVersionType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -26605,6 +31921,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordListRelationFilter
     integrationCredentials?: IntegrationCredentialListRelationFilter
     integrationConfigs?: IntegrationConfigListRelationFilter
+    firmProfile?: XOR<FirmProfileNullableScalarRelationFilter, FirmProfileWhereInput> | null
   }
 
   export type WorkspaceOrderByWithRelationInput = {
@@ -26635,6 +31952,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordOrderByRelationAggregateInput
     integrationCredentials?: IntegrationCredentialOrderByRelationAggregateInput
     integrationConfigs?: IntegrationConfigOrderByRelationAggregateInput
+    firmProfile?: FirmProfileOrderByWithRelationInput
   }
 
   export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
@@ -26668,6 +31986,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordListRelationFilter
     integrationCredentials?: IntegrationCredentialListRelationFilter
     integrationConfigs?: IntegrationConfigListRelationFilter
+    firmProfile?: XOR<FirmProfileNullableScalarRelationFilter, FirmProfileWhereInput> | null
   }, "id">
 
   export type WorkspaceOrderByWithAggregationInput = {
@@ -28264,6 +33583,360 @@ export namespace Prisma {
     completedAt?: DateTimeNullableWithAggregatesFilter<"IntegrationSyncLog"> | Date | string | null
   }
 
+  export type FirmProfileWhereInput = {
+    AND?: FirmProfileWhereInput | FirmProfileWhereInput[]
+    OR?: FirmProfileWhereInput[]
+    NOT?: FirmProfileWhereInput | FirmProfileWhereInput[]
+    id?: StringFilter<"FirmProfile"> | string
+    workspaceId?: StringFilter<"FirmProfile"> | string
+    status?: EnumFirmProfileStatusFilter<"FirmProfile"> | $Enums.FirmProfileStatus
+    crdNumber?: StringNullableFilter<"FirmProfile"> | string | null
+    ccoName?: StringNullableFilter<"FirmProfile"> | string | null
+    advFilingDate?: DateTimeNullableFilter<"FirmProfile"> | Date | string | null
+    aumUsd?: DecimalNullableFilter<"FirmProfile"> | Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: StringNullableFilter<"FirmProfile"> | string | null
+    advDocumentKey?: StringNullableFilter<"FirmProfile"> | string | null
+    riskFlags?: StringNullableListFilter<"FirmProfile">
+    setupCompletedAt?: DateTimeNullableFilter<"FirmProfile"> | Date | string | null
+    approvedAt?: DateTimeNullableFilter<"FirmProfile"> | Date | string | null
+    approvedByUserId?: StringNullableFilter<"FirmProfile"> | string | null
+    createdAt?: DateTimeFilter<"FirmProfile"> | Date | string
+    updatedAt?: DateTimeFilter<"FirmProfile"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"FirmProfile"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    disclosureCategories?: DisclosureCategoryListRelationFilter
+    suppressionLogs?: SuppressionLogEntryListRelationFilter
+    versions?: FirmProfileVersionListRelationFilter
+  }
+
+  export type FirmProfileOrderByWithRelationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    status?: SortOrder
+    crdNumber?: SortOrderInput | SortOrder
+    ccoName?: SortOrderInput | SortOrder
+    advFilingDate?: SortOrderInput | SortOrder
+    aumUsd?: SortOrderInput | SortOrder
+    advDocumentUrl?: SortOrderInput | SortOrder
+    advDocumentKey?: SortOrderInput | SortOrder
+    riskFlags?: SortOrder
+    setupCompletedAt?: SortOrderInput | SortOrder
+    approvedAt?: SortOrderInput | SortOrder
+    approvedByUserId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    workspace?: WorkspaceOrderByWithRelationInput
+    disclosureCategories?: DisclosureCategoryOrderByRelationAggregateInput
+    suppressionLogs?: SuppressionLogEntryOrderByRelationAggregateInput
+    versions?: FirmProfileVersionOrderByRelationAggregateInput
+  }
+
+  export type FirmProfileWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    workspaceId?: string
+    AND?: FirmProfileWhereInput | FirmProfileWhereInput[]
+    OR?: FirmProfileWhereInput[]
+    NOT?: FirmProfileWhereInput | FirmProfileWhereInput[]
+    status?: EnumFirmProfileStatusFilter<"FirmProfile"> | $Enums.FirmProfileStatus
+    crdNumber?: StringNullableFilter<"FirmProfile"> | string | null
+    ccoName?: StringNullableFilter<"FirmProfile"> | string | null
+    advFilingDate?: DateTimeNullableFilter<"FirmProfile"> | Date | string | null
+    aumUsd?: DecimalNullableFilter<"FirmProfile"> | Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: StringNullableFilter<"FirmProfile"> | string | null
+    advDocumentKey?: StringNullableFilter<"FirmProfile"> | string | null
+    riskFlags?: StringNullableListFilter<"FirmProfile">
+    setupCompletedAt?: DateTimeNullableFilter<"FirmProfile"> | Date | string | null
+    approvedAt?: DateTimeNullableFilter<"FirmProfile"> | Date | string | null
+    approvedByUserId?: StringNullableFilter<"FirmProfile"> | string | null
+    createdAt?: DateTimeFilter<"FirmProfile"> | Date | string
+    updatedAt?: DateTimeFilter<"FirmProfile"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"FirmProfile"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    disclosureCategories?: DisclosureCategoryListRelationFilter
+    suppressionLogs?: SuppressionLogEntryListRelationFilter
+    versions?: FirmProfileVersionListRelationFilter
+  }, "id" | "workspaceId">
+
+  export type FirmProfileOrderByWithAggregationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    status?: SortOrder
+    crdNumber?: SortOrderInput | SortOrder
+    ccoName?: SortOrderInput | SortOrder
+    advFilingDate?: SortOrderInput | SortOrder
+    aumUsd?: SortOrderInput | SortOrder
+    advDocumentUrl?: SortOrderInput | SortOrder
+    advDocumentKey?: SortOrderInput | SortOrder
+    riskFlags?: SortOrder
+    setupCompletedAt?: SortOrderInput | SortOrder
+    approvedAt?: SortOrderInput | SortOrder
+    approvedByUserId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    _count?: FirmProfileCountOrderByAggregateInput
+    _avg?: FirmProfileAvgOrderByAggregateInput
+    _max?: FirmProfileMaxOrderByAggregateInput
+    _min?: FirmProfileMinOrderByAggregateInput
+    _sum?: FirmProfileSumOrderByAggregateInput
+  }
+
+  export type FirmProfileScalarWhereWithAggregatesInput = {
+    AND?: FirmProfileScalarWhereWithAggregatesInput | FirmProfileScalarWhereWithAggregatesInput[]
+    OR?: FirmProfileScalarWhereWithAggregatesInput[]
+    NOT?: FirmProfileScalarWhereWithAggregatesInput | FirmProfileScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"FirmProfile"> | string
+    workspaceId?: StringWithAggregatesFilter<"FirmProfile"> | string
+    status?: EnumFirmProfileStatusWithAggregatesFilter<"FirmProfile"> | $Enums.FirmProfileStatus
+    crdNumber?: StringNullableWithAggregatesFilter<"FirmProfile"> | string | null
+    ccoName?: StringNullableWithAggregatesFilter<"FirmProfile"> | string | null
+    advFilingDate?: DateTimeNullableWithAggregatesFilter<"FirmProfile"> | Date | string | null
+    aumUsd?: DecimalNullableWithAggregatesFilter<"FirmProfile"> | Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: StringNullableWithAggregatesFilter<"FirmProfile"> | string | null
+    advDocumentKey?: StringNullableWithAggregatesFilter<"FirmProfile"> | string | null
+    riskFlags?: StringNullableListFilter<"FirmProfile">
+    setupCompletedAt?: DateTimeNullableWithAggregatesFilter<"FirmProfile"> | Date | string | null
+    approvedAt?: DateTimeNullableWithAggregatesFilter<"FirmProfile"> | Date | string | null
+    approvedByUserId?: StringNullableWithAggregatesFilter<"FirmProfile"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"FirmProfile"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"FirmProfile"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"FirmProfile"> | Date | string | null
+  }
+
+  export type DisclosureCategoryWhereInput = {
+    AND?: DisclosureCategoryWhereInput | DisclosureCategoryWhereInput[]
+    OR?: DisclosureCategoryWhereInput[]
+    NOT?: DisclosureCategoryWhereInput | DisclosureCategoryWhereInput[]
+    id?: StringFilter<"DisclosureCategory"> | string
+    firmProfileId?: StringFilter<"DisclosureCategory"> | string
+    slug?: StringFilter<"DisclosureCategory"> | string
+    status?: EnumDisclosureCategoryStatusFilter<"DisclosureCategory"> | $Enums.DisclosureCategoryStatus
+    suppressionEvidence?: StringNullableFilter<"DisclosureCategory"> | string | null
+    advItemRef?: StringNullableFilter<"DisclosureCategory"> | string | null
+    advPage?: IntNullableFilter<"DisclosureCategory"> | number | null
+    description?: StringNullableFilter<"DisclosureCategory"> | string | null
+    createdAt?: DateTimeFilter<"DisclosureCategory"> | Date | string
+    updatedAt?: DateTimeFilter<"DisclosureCategory"> | Date | string
+    firmProfile?: XOR<FirmProfileScalarRelationFilter, FirmProfileWhereInput>
+  }
+
+  export type DisclosureCategoryOrderByWithRelationInput = {
+    id?: SortOrder
+    firmProfileId?: SortOrder
+    slug?: SortOrder
+    status?: SortOrder
+    suppressionEvidence?: SortOrderInput | SortOrder
+    advItemRef?: SortOrderInput | SortOrder
+    advPage?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    firmProfile?: FirmProfileOrderByWithRelationInput
+  }
+
+  export type DisclosureCategoryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    firmProfileId_slug?: DisclosureCategoryFirmProfileIdSlugCompoundUniqueInput
+    AND?: DisclosureCategoryWhereInput | DisclosureCategoryWhereInput[]
+    OR?: DisclosureCategoryWhereInput[]
+    NOT?: DisclosureCategoryWhereInput | DisclosureCategoryWhereInput[]
+    firmProfileId?: StringFilter<"DisclosureCategory"> | string
+    slug?: StringFilter<"DisclosureCategory"> | string
+    status?: EnumDisclosureCategoryStatusFilter<"DisclosureCategory"> | $Enums.DisclosureCategoryStatus
+    suppressionEvidence?: StringNullableFilter<"DisclosureCategory"> | string | null
+    advItemRef?: StringNullableFilter<"DisclosureCategory"> | string | null
+    advPage?: IntNullableFilter<"DisclosureCategory"> | number | null
+    description?: StringNullableFilter<"DisclosureCategory"> | string | null
+    createdAt?: DateTimeFilter<"DisclosureCategory"> | Date | string
+    updatedAt?: DateTimeFilter<"DisclosureCategory"> | Date | string
+    firmProfile?: XOR<FirmProfileScalarRelationFilter, FirmProfileWhereInput>
+  }, "id" | "firmProfileId_slug">
+
+  export type DisclosureCategoryOrderByWithAggregationInput = {
+    id?: SortOrder
+    firmProfileId?: SortOrder
+    slug?: SortOrder
+    status?: SortOrder
+    suppressionEvidence?: SortOrderInput | SortOrder
+    advItemRef?: SortOrderInput | SortOrder
+    advPage?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: DisclosureCategoryCountOrderByAggregateInput
+    _avg?: DisclosureCategoryAvgOrderByAggregateInput
+    _max?: DisclosureCategoryMaxOrderByAggregateInput
+    _min?: DisclosureCategoryMinOrderByAggregateInput
+    _sum?: DisclosureCategorySumOrderByAggregateInput
+  }
+
+  export type DisclosureCategoryScalarWhereWithAggregatesInput = {
+    AND?: DisclosureCategoryScalarWhereWithAggregatesInput | DisclosureCategoryScalarWhereWithAggregatesInput[]
+    OR?: DisclosureCategoryScalarWhereWithAggregatesInput[]
+    NOT?: DisclosureCategoryScalarWhereWithAggregatesInput | DisclosureCategoryScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"DisclosureCategory"> | string
+    firmProfileId?: StringWithAggregatesFilter<"DisclosureCategory"> | string
+    slug?: StringWithAggregatesFilter<"DisclosureCategory"> | string
+    status?: EnumDisclosureCategoryStatusWithAggregatesFilter<"DisclosureCategory"> | $Enums.DisclosureCategoryStatus
+    suppressionEvidence?: StringNullableWithAggregatesFilter<"DisclosureCategory"> | string | null
+    advItemRef?: StringNullableWithAggregatesFilter<"DisclosureCategory"> | string | null
+    advPage?: IntNullableWithAggregatesFilter<"DisclosureCategory"> | number | null
+    description?: StringNullableWithAggregatesFilter<"DisclosureCategory"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"DisclosureCategory"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"DisclosureCategory"> | Date | string
+  }
+
+  export type SuppressionLogEntryWhereInput = {
+    AND?: SuppressionLogEntryWhereInput | SuppressionLogEntryWhereInput[]
+    OR?: SuppressionLogEntryWhereInput[]
+    NOT?: SuppressionLogEntryWhereInput | SuppressionLogEntryWhereInput[]
+    id?: StringFilter<"SuppressionLogEntry"> | string
+    workspaceId?: StringFilter<"SuppressionLogEntry"> | string
+    firmProfileId?: StringFilter<"SuppressionLogEntry"> | string
+    categorySlug?: StringFilter<"SuppressionLogEntry"> | string
+    userId?: StringFilter<"SuppressionLogEntry"> | string
+    meetingId?: StringNullableFilter<"SuppressionLogEntry"> | string | null
+    action?: EnumSuppressionActionFilter<"SuppressionLogEntry"> | $Enums.SuppressionAction
+    previousStatus?: EnumDisclosureCategoryStatusNullableFilter<"SuppressionLogEntry"> | $Enums.DisclosureCategoryStatus | null
+    newStatus?: EnumDisclosureCategoryStatusFilter<"SuppressionLogEntry"> | $Enums.DisclosureCategoryStatus
+    evidenceSnapshot?: StringNullableFilter<"SuppressionLogEntry"> | string | null
+    createdAt?: DateTimeFilter<"SuppressionLogEntry"> | Date | string
+    firmProfile?: XOR<FirmProfileScalarRelationFilter, FirmProfileWhereInput>
+  }
+
+  export type SuppressionLogEntryOrderByWithRelationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    firmProfileId?: SortOrder
+    categorySlug?: SortOrder
+    userId?: SortOrder
+    meetingId?: SortOrderInput | SortOrder
+    action?: SortOrder
+    previousStatus?: SortOrderInput | SortOrder
+    newStatus?: SortOrder
+    evidenceSnapshot?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    firmProfile?: FirmProfileOrderByWithRelationInput
+  }
+
+  export type SuppressionLogEntryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: SuppressionLogEntryWhereInput | SuppressionLogEntryWhereInput[]
+    OR?: SuppressionLogEntryWhereInput[]
+    NOT?: SuppressionLogEntryWhereInput | SuppressionLogEntryWhereInput[]
+    workspaceId?: StringFilter<"SuppressionLogEntry"> | string
+    firmProfileId?: StringFilter<"SuppressionLogEntry"> | string
+    categorySlug?: StringFilter<"SuppressionLogEntry"> | string
+    userId?: StringFilter<"SuppressionLogEntry"> | string
+    meetingId?: StringNullableFilter<"SuppressionLogEntry"> | string | null
+    action?: EnumSuppressionActionFilter<"SuppressionLogEntry"> | $Enums.SuppressionAction
+    previousStatus?: EnumDisclosureCategoryStatusNullableFilter<"SuppressionLogEntry"> | $Enums.DisclosureCategoryStatus | null
+    newStatus?: EnumDisclosureCategoryStatusFilter<"SuppressionLogEntry"> | $Enums.DisclosureCategoryStatus
+    evidenceSnapshot?: StringNullableFilter<"SuppressionLogEntry"> | string | null
+    createdAt?: DateTimeFilter<"SuppressionLogEntry"> | Date | string
+    firmProfile?: XOR<FirmProfileScalarRelationFilter, FirmProfileWhereInput>
+  }, "id">
+
+  export type SuppressionLogEntryOrderByWithAggregationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    firmProfileId?: SortOrder
+    categorySlug?: SortOrder
+    userId?: SortOrder
+    meetingId?: SortOrderInput | SortOrder
+    action?: SortOrder
+    previousStatus?: SortOrderInput | SortOrder
+    newStatus?: SortOrder
+    evidenceSnapshot?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: SuppressionLogEntryCountOrderByAggregateInput
+    _max?: SuppressionLogEntryMaxOrderByAggregateInput
+    _min?: SuppressionLogEntryMinOrderByAggregateInput
+  }
+
+  export type SuppressionLogEntryScalarWhereWithAggregatesInput = {
+    AND?: SuppressionLogEntryScalarWhereWithAggregatesInput | SuppressionLogEntryScalarWhereWithAggregatesInput[]
+    OR?: SuppressionLogEntryScalarWhereWithAggregatesInput[]
+    NOT?: SuppressionLogEntryScalarWhereWithAggregatesInput | SuppressionLogEntryScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SuppressionLogEntry"> | string
+    workspaceId?: StringWithAggregatesFilter<"SuppressionLogEntry"> | string
+    firmProfileId?: StringWithAggregatesFilter<"SuppressionLogEntry"> | string
+    categorySlug?: StringWithAggregatesFilter<"SuppressionLogEntry"> | string
+    userId?: StringWithAggregatesFilter<"SuppressionLogEntry"> | string
+    meetingId?: StringNullableWithAggregatesFilter<"SuppressionLogEntry"> | string | null
+    action?: EnumSuppressionActionWithAggregatesFilter<"SuppressionLogEntry"> | $Enums.SuppressionAction
+    previousStatus?: EnumDisclosureCategoryStatusNullableWithAggregatesFilter<"SuppressionLogEntry"> | $Enums.DisclosureCategoryStatus | null
+    newStatus?: EnumDisclosureCategoryStatusWithAggregatesFilter<"SuppressionLogEntry"> | $Enums.DisclosureCategoryStatus
+    evidenceSnapshot?: StringNullableWithAggregatesFilter<"SuppressionLogEntry"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"SuppressionLogEntry"> | Date | string
+  }
+
+  export type FirmProfileVersionWhereInput = {
+    AND?: FirmProfileVersionWhereInput | FirmProfileVersionWhereInput[]
+    OR?: FirmProfileVersionWhereInput[]
+    NOT?: FirmProfileVersionWhereInput | FirmProfileVersionWhereInput[]
+    id?: StringFilter<"FirmProfileVersion"> | string
+    firmProfileId?: StringFilter<"FirmProfileVersion"> | string
+    workspaceId?: StringFilter<"FirmProfileVersion"> | string
+    versionType?: EnumFirmProfileVersionTypeFilter<"FirmProfileVersion"> | $Enums.FirmProfileVersionType
+    approvedByUserId?: StringNullableFilter<"FirmProfileVersion"> | string | null
+    approvedAt?: DateTimeFilter<"FirmProfileVersion"> | Date | string
+    snapshot?: JsonFilter<"FirmProfileVersion">
+    firmProfile?: XOR<FirmProfileScalarRelationFilter, FirmProfileWhereInput>
+  }
+
+  export type FirmProfileVersionOrderByWithRelationInput = {
+    id?: SortOrder
+    firmProfileId?: SortOrder
+    workspaceId?: SortOrder
+    versionType?: SortOrder
+    approvedByUserId?: SortOrderInput | SortOrder
+    approvedAt?: SortOrder
+    snapshot?: SortOrder
+    firmProfile?: FirmProfileOrderByWithRelationInput
+  }
+
+  export type FirmProfileVersionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: FirmProfileVersionWhereInput | FirmProfileVersionWhereInput[]
+    OR?: FirmProfileVersionWhereInput[]
+    NOT?: FirmProfileVersionWhereInput | FirmProfileVersionWhereInput[]
+    firmProfileId?: StringFilter<"FirmProfileVersion"> | string
+    workspaceId?: StringFilter<"FirmProfileVersion"> | string
+    versionType?: EnumFirmProfileVersionTypeFilter<"FirmProfileVersion"> | $Enums.FirmProfileVersionType
+    approvedByUserId?: StringNullableFilter<"FirmProfileVersion"> | string | null
+    approvedAt?: DateTimeFilter<"FirmProfileVersion"> | Date | string
+    snapshot?: JsonFilter<"FirmProfileVersion">
+    firmProfile?: XOR<FirmProfileScalarRelationFilter, FirmProfileWhereInput>
+  }, "id">
+
+  export type FirmProfileVersionOrderByWithAggregationInput = {
+    id?: SortOrder
+    firmProfileId?: SortOrder
+    workspaceId?: SortOrder
+    versionType?: SortOrder
+    approvedByUserId?: SortOrderInput | SortOrder
+    approvedAt?: SortOrder
+    snapshot?: SortOrder
+    _count?: FirmProfileVersionCountOrderByAggregateInput
+    _max?: FirmProfileVersionMaxOrderByAggregateInput
+    _min?: FirmProfileVersionMinOrderByAggregateInput
+  }
+
+  export type FirmProfileVersionScalarWhereWithAggregatesInput = {
+    AND?: FirmProfileVersionScalarWhereWithAggregatesInput | FirmProfileVersionScalarWhereWithAggregatesInput[]
+    OR?: FirmProfileVersionScalarWhereWithAggregatesInput[]
+    NOT?: FirmProfileVersionScalarWhereWithAggregatesInput | FirmProfileVersionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"FirmProfileVersion"> | string
+    firmProfileId?: StringWithAggregatesFilter<"FirmProfileVersion"> | string
+    workspaceId?: StringWithAggregatesFilter<"FirmProfileVersion"> | string
+    versionType?: EnumFirmProfileVersionTypeWithAggregatesFilter<"FirmProfileVersion"> | $Enums.FirmProfileVersionType
+    approvedByUserId?: StringNullableWithAggregatesFilter<"FirmProfileVersion"> | string | null
+    approvedAt?: DateTimeWithAggregatesFilter<"FirmProfileVersion"> | Date | string
+    snapshot?: JsonWithAggregatesFilter<"FirmProfileVersion">
+  }
+
   export type LeadWhereInput = {
     AND?: LeadWhereInput | LeadWhereInput[]
     OR?: LeadWhereInput[]
@@ -28354,6 +34027,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateInput = {
@@ -28384,6 +34058,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUpdateInput = {
@@ -28414,6 +34089,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateInput = {
@@ -28444,6 +34120,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateManyInput = {
@@ -30216,6 +35893,406 @@ export namespace Prisma {
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type FirmProfileCreateInput = {
+    id?: string
+    status?: $Enums.FirmProfileStatus
+    crdNumber?: string | null
+    ccoName?: string | null
+    advFilingDate?: Date | string | null
+    aumUsd?: Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: string | null
+    advDocumentKey?: string | null
+    riskFlags?: FirmProfileCreateriskFlagsInput | string[]
+    setupCompletedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    approvedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutFirmProfileInput
+    disclosureCategories?: DisclosureCategoryCreateNestedManyWithoutFirmProfileInput
+    suppressionLogs?: SuppressionLogEntryCreateNestedManyWithoutFirmProfileInput
+    versions?: FirmProfileVersionCreateNestedManyWithoutFirmProfileInput
+  }
+
+  export type FirmProfileUncheckedCreateInput = {
+    id?: string
+    workspaceId: string
+    status?: $Enums.FirmProfileStatus
+    crdNumber?: string | null
+    ccoName?: string | null
+    advFilingDate?: Date | string | null
+    aumUsd?: Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: string | null
+    advDocumentKey?: string | null
+    riskFlags?: FirmProfileCreateriskFlagsInput | string[]
+    setupCompletedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    approvedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    disclosureCategories?: DisclosureCategoryUncheckedCreateNestedManyWithoutFirmProfileInput
+    suppressionLogs?: SuppressionLogEntryUncheckedCreateNestedManyWithoutFirmProfileInput
+    versions?: FirmProfileVersionUncheckedCreateNestedManyWithoutFirmProfileInput
+  }
+
+  export type FirmProfileUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumFirmProfileStatusFieldUpdateOperationsInput | $Enums.FirmProfileStatus
+    crdNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoName?: NullableStringFieldUpdateOperationsInput | string | null
+    advFilingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aumUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    advDocumentKey?: NullableStringFieldUpdateOperationsInput | string | null
+    riskFlags?: FirmProfileUpdateriskFlagsInput | string[]
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutFirmProfileNestedInput
+    disclosureCategories?: DisclosureCategoryUpdateManyWithoutFirmProfileNestedInput
+    suppressionLogs?: SuppressionLogEntryUpdateManyWithoutFirmProfileNestedInput
+    versions?: FirmProfileVersionUpdateManyWithoutFirmProfileNestedInput
+  }
+
+  export type FirmProfileUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    status?: EnumFirmProfileStatusFieldUpdateOperationsInput | $Enums.FirmProfileStatus
+    crdNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoName?: NullableStringFieldUpdateOperationsInput | string | null
+    advFilingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aumUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    advDocumentKey?: NullableStringFieldUpdateOperationsInput | string | null
+    riskFlags?: FirmProfileUpdateriskFlagsInput | string[]
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    disclosureCategories?: DisclosureCategoryUncheckedUpdateManyWithoutFirmProfileNestedInput
+    suppressionLogs?: SuppressionLogEntryUncheckedUpdateManyWithoutFirmProfileNestedInput
+    versions?: FirmProfileVersionUncheckedUpdateManyWithoutFirmProfileNestedInput
+  }
+
+  export type FirmProfileCreateManyInput = {
+    id?: string
+    workspaceId: string
+    status?: $Enums.FirmProfileStatus
+    crdNumber?: string | null
+    ccoName?: string | null
+    advFilingDate?: Date | string | null
+    aumUsd?: Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: string | null
+    advDocumentKey?: string | null
+    riskFlags?: FirmProfileCreateriskFlagsInput | string[]
+    setupCompletedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    approvedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type FirmProfileUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumFirmProfileStatusFieldUpdateOperationsInput | $Enums.FirmProfileStatus
+    crdNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoName?: NullableStringFieldUpdateOperationsInput | string | null
+    advFilingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aumUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    advDocumentKey?: NullableStringFieldUpdateOperationsInput | string | null
+    riskFlags?: FirmProfileUpdateriskFlagsInput | string[]
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type FirmProfileUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    status?: EnumFirmProfileStatusFieldUpdateOperationsInput | $Enums.FirmProfileStatus
+    crdNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoName?: NullableStringFieldUpdateOperationsInput | string | null
+    advFilingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aumUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    advDocumentKey?: NullableStringFieldUpdateOperationsInput | string | null
+    riskFlags?: FirmProfileUpdateriskFlagsInput | string[]
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type DisclosureCategoryCreateInput = {
+    id?: string
+    slug: string
+    status?: $Enums.DisclosureCategoryStatus
+    suppressionEvidence?: string | null
+    advItemRef?: string | null
+    advPage?: number | null
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    firmProfile: FirmProfileCreateNestedOneWithoutDisclosureCategoriesInput
+  }
+
+  export type DisclosureCategoryUncheckedCreateInput = {
+    id?: string
+    firmProfileId: string
+    slug: string
+    status?: $Enums.DisclosureCategoryStatus
+    suppressionEvidence?: string | null
+    advItemRef?: string | null
+    advPage?: number | null
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DisclosureCategoryUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    status?: EnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus
+    suppressionEvidence?: NullableStringFieldUpdateOperationsInput | string | null
+    advItemRef?: NullableStringFieldUpdateOperationsInput | string | null
+    advPage?: NullableIntFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    firmProfile?: FirmProfileUpdateOneRequiredWithoutDisclosureCategoriesNestedInput
+  }
+
+  export type DisclosureCategoryUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firmProfileId?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    status?: EnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus
+    suppressionEvidence?: NullableStringFieldUpdateOperationsInput | string | null
+    advItemRef?: NullableStringFieldUpdateOperationsInput | string | null
+    advPage?: NullableIntFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisclosureCategoryCreateManyInput = {
+    id?: string
+    firmProfileId: string
+    slug: string
+    status?: $Enums.DisclosureCategoryStatus
+    suppressionEvidence?: string | null
+    advItemRef?: string | null
+    advPage?: number | null
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DisclosureCategoryUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    status?: EnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus
+    suppressionEvidence?: NullableStringFieldUpdateOperationsInput | string | null
+    advItemRef?: NullableStringFieldUpdateOperationsInput | string | null
+    advPage?: NullableIntFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisclosureCategoryUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firmProfileId?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    status?: EnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus
+    suppressionEvidence?: NullableStringFieldUpdateOperationsInput | string | null
+    advItemRef?: NullableStringFieldUpdateOperationsInput | string | null
+    advPage?: NullableIntFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SuppressionLogEntryCreateInput = {
+    id?: string
+    workspaceId: string
+    categorySlug: string
+    userId: string
+    meetingId?: string | null
+    action: $Enums.SuppressionAction
+    previousStatus?: $Enums.DisclosureCategoryStatus | null
+    newStatus: $Enums.DisclosureCategoryStatus
+    evidenceSnapshot?: string | null
+    createdAt?: Date | string
+    firmProfile: FirmProfileCreateNestedOneWithoutSuppressionLogsInput
+  }
+
+  export type SuppressionLogEntryUncheckedCreateInput = {
+    id?: string
+    workspaceId: string
+    firmProfileId: string
+    categorySlug: string
+    userId: string
+    meetingId?: string | null
+    action: $Enums.SuppressionAction
+    previousStatus?: $Enums.DisclosureCategoryStatus | null
+    newStatus: $Enums.DisclosureCategoryStatus
+    evidenceSnapshot?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SuppressionLogEntryUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    categorySlug?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    meetingId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumSuppressionActionFieldUpdateOperationsInput | $Enums.SuppressionAction
+    previousStatus?: NullableEnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus | null
+    newStatus?: EnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus
+    evidenceSnapshot?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    firmProfile?: FirmProfileUpdateOneRequiredWithoutSuppressionLogsNestedInput
+  }
+
+  export type SuppressionLogEntryUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    firmProfileId?: StringFieldUpdateOperationsInput | string
+    categorySlug?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    meetingId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumSuppressionActionFieldUpdateOperationsInput | $Enums.SuppressionAction
+    previousStatus?: NullableEnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus | null
+    newStatus?: EnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus
+    evidenceSnapshot?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SuppressionLogEntryCreateManyInput = {
+    id?: string
+    workspaceId: string
+    firmProfileId: string
+    categorySlug: string
+    userId: string
+    meetingId?: string | null
+    action: $Enums.SuppressionAction
+    previousStatus?: $Enums.DisclosureCategoryStatus | null
+    newStatus: $Enums.DisclosureCategoryStatus
+    evidenceSnapshot?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SuppressionLogEntryUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    categorySlug?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    meetingId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumSuppressionActionFieldUpdateOperationsInput | $Enums.SuppressionAction
+    previousStatus?: NullableEnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus | null
+    newStatus?: EnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus
+    evidenceSnapshot?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SuppressionLogEntryUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    firmProfileId?: StringFieldUpdateOperationsInput | string
+    categorySlug?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    meetingId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumSuppressionActionFieldUpdateOperationsInput | $Enums.SuppressionAction
+    previousStatus?: NullableEnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus | null
+    newStatus?: EnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus
+    evidenceSnapshot?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FirmProfileVersionCreateInput = {
+    id?: string
+    workspaceId: string
+    versionType: $Enums.FirmProfileVersionType
+    approvedByUserId?: string | null
+    approvedAt?: Date | string
+    snapshot: JsonNullValueInput | InputJsonValue
+    firmProfile: FirmProfileCreateNestedOneWithoutVersionsInput
+  }
+
+  export type FirmProfileVersionUncheckedCreateInput = {
+    id?: string
+    firmProfileId: string
+    workspaceId: string
+    versionType: $Enums.FirmProfileVersionType
+    approvedByUserId?: string | null
+    approvedAt?: Date | string
+    snapshot: JsonNullValueInput | InputJsonValue
+  }
+
+  export type FirmProfileVersionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    versionType?: EnumFirmProfileVersionTypeFieldUpdateOperationsInput | $Enums.FirmProfileVersionType
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    snapshot?: JsonNullValueInput | InputJsonValue
+    firmProfile?: FirmProfileUpdateOneRequiredWithoutVersionsNestedInput
+  }
+
+  export type FirmProfileVersionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firmProfileId?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    versionType?: EnumFirmProfileVersionTypeFieldUpdateOperationsInput | $Enums.FirmProfileVersionType
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    snapshot?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type FirmProfileVersionCreateManyInput = {
+    id?: string
+    firmProfileId: string
+    workspaceId: string
+    versionType: $Enums.FirmProfileVersionType
+    approvedByUserId?: string | null
+    approvedAt?: Date | string
+    snapshot: JsonNullValueInput | InputJsonValue
+  }
+
+  export type FirmProfileVersionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    versionType?: EnumFirmProfileVersionTypeFieldUpdateOperationsInput | $Enums.FirmProfileVersionType
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    snapshot?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type FirmProfileVersionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firmProfileId?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    versionType?: EnumFirmProfileVersionTypeFieldUpdateOperationsInput | $Enums.FirmProfileVersionType
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    snapshot?: JsonNullValueInput | InputJsonValue
+  }
+
   export type LeadCreateInput = {
     id?: string
     email: string
@@ -30421,6 +36498,11 @@ export namespace Prisma {
     every?: IntegrationConfigWhereInput
     some?: IntegrationConfigWhereInput
     none?: IntegrationConfigWhereInput
+  }
+
+  export type FirmProfileNullableScalarRelationFilter = {
+    is?: FirmProfileWhereInput | null
+    isNot?: FirmProfileWhereInput | null
   }
 
   export type SortOrderInput = {
@@ -31929,6 +38011,346 @@ export namespace Prisma {
     attempts?: SortOrder
   }
 
+  export type EnumFirmProfileStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.FirmProfileStatus | EnumFirmProfileStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.FirmProfileStatus[] | ListEnumFirmProfileStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FirmProfileStatus[] | ListEnumFirmProfileStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumFirmProfileStatusFilter<$PrismaModel> | $Enums.FirmProfileStatus
+  }
+
+  export type DecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type DisclosureCategoryListRelationFilter = {
+    every?: DisclosureCategoryWhereInput
+    some?: DisclosureCategoryWhereInput
+    none?: DisclosureCategoryWhereInput
+  }
+
+  export type SuppressionLogEntryListRelationFilter = {
+    every?: SuppressionLogEntryWhereInput
+    some?: SuppressionLogEntryWhereInput
+    none?: SuppressionLogEntryWhereInput
+  }
+
+  export type FirmProfileVersionListRelationFilter = {
+    every?: FirmProfileVersionWhereInput
+    some?: FirmProfileVersionWhereInput
+    none?: FirmProfileVersionWhereInput
+  }
+
+  export type DisclosureCategoryOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SuppressionLogEntryOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type FirmProfileVersionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type FirmProfileCountOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    status?: SortOrder
+    crdNumber?: SortOrder
+    ccoName?: SortOrder
+    advFilingDate?: SortOrder
+    aumUsd?: SortOrder
+    advDocumentUrl?: SortOrder
+    advDocumentKey?: SortOrder
+    riskFlags?: SortOrder
+    setupCompletedAt?: SortOrder
+    approvedAt?: SortOrder
+    approvedByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type FirmProfileAvgOrderByAggregateInput = {
+    aumUsd?: SortOrder
+  }
+
+  export type FirmProfileMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    status?: SortOrder
+    crdNumber?: SortOrder
+    ccoName?: SortOrder
+    advFilingDate?: SortOrder
+    aumUsd?: SortOrder
+    advDocumentUrl?: SortOrder
+    advDocumentKey?: SortOrder
+    setupCompletedAt?: SortOrder
+    approvedAt?: SortOrder
+    approvedByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type FirmProfileMinOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    status?: SortOrder
+    crdNumber?: SortOrder
+    ccoName?: SortOrder
+    advFilingDate?: SortOrder
+    aumUsd?: SortOrder
+    advDocumentUrl?: SortOrder
+    advDocumentKey?: SortOrder
+    setupCompletedAt?: SortOrder
+    approvedAt?: SortOrder
+    approvedByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type FirmProfileSumOrderByAggregateInput = {
+    aumUsd?: SortOrder
+  }
+
+  export type EnumFirmProfileStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FirmProfileStatus | EnumFirmProfileStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.FirmProfileStatus[] | ListEnumFirmProfileStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FirmProfileStatus[] | ListEnumFirmProfileStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumFirmProfileStatusWithAggregatesFilter<$PrismaModel> | $Enums.FirmProfileStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFirmProfileStatusFilter<$PrismaModel>
+    _max?: NestedEnumFirmProfileStatusFilter<$PrismaModel>
+  }
+
+  export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
+  }
+
+  export type EnumDisclosureCategoryStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.DisclosureCategoryStatus | EnumDisclosureCategoryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DisclosureCategoryStatus[] | ListEnumDisclosureCategoryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DisclosureCategoryStatus[] | ListEnumDisclosureCategoryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDisclosureCategoryStatusFilter<$PrismaModel> | $Enums.DisclosureCategoryStatus
+  }
+
+  export type FirmProfileScalarRelationFilter = {
+    is?: FirmProfileWhereInput
+    isNot?: FirmProfileWhereInput
+  }
+
+  export type DisclosureCategoryFirmProfileIdSlugCompoundUniqueInput = {
+    firmProfileId: string
+    slug: string
+  }
+
+  export type DisclosureCategoryCountOrderByAggregateInput = {
+    id?: SortOrder
+    firmProfileId?: SortOrder
+    slug?: SortOrder
+    status?: SortOrder
+    suppressionEvidence?: SortOrder
+    advItemRef?: SortOrder
+    advPage?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DisclosureCategoryAvgOrderByAggregateInput = {
+    advPage?: SortOrder
+  }
+
+  export type DisclosureCategoryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    firmProfileId?: SortOrder
+    slug?: SortOrder
+    status?: SortOrder
+    suppressionEvidence?: SortOrder
+    advItemRef?: SortOrder
+    advPage?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DisclosureCategoryMinOrderByAggregateInput = {
+    id?: SortOrder
+    firmProfileId?: SortOrder
+    slug?: SortOrder
+    status?: SortOrder
+    suppressionEvidence?: SortOrder
+    advItemRef?: SortOrder
+    advPage?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DisclosureCategorySumOrderByAggregateInput = {
+    advPage?: SortOrder
+  }
+
+  export type EnumDisclosureCategoryStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DisclosureCategoryStatus | EnumDisclosureCategoryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DisclosureCategoryStatus[] | ListEnumDisclosureCategoryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DisclosureCategoryStatus[] | ListEnumDisclosureCategoryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDisclosureCategoryStatusWithAggregatesFilter<$PrismaModel> | $Enums.DisclosureCategoryStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDisclosureCategoryStatusFilter<$PrismaModel>
+    _max?: NestedEnumDisclosureCategoryStatusFilter<$PrismaModel>
+  }
+
+  export type EnumSuppressionActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.SuppressionAction | EnumSuppressionActionFieldRefInput<$PrismaModel>
+    in?: $Enums.SuppressionAction[] | ListEnumSuppressionActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SuppressionAction[] | ListEnumSuppressionActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumSuppressionActionFilter<$PrismaModel> | $Enums.SuppressionAction
+  }
+
+  export type EnumDisclosureCategoryStatusNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.DisclosureCategoryStatus | EnumDisclosureCategoryStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.DisclosureCategoryStatus[] | ListEnumDisclosureCategoryStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.DisclosureCategoryStatus[] | ListEnumDisclosureCategoryStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumDisclosureCategoryStatusNullableFilter<$PrismaModel> | $Enums.DisclosureCategoryStatus | null
+  }
+
+  export type SuppressionLogEntryCountOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    firmProfileId?: SortOrder
+    categorySlug?: SortOrder
+    userId?: SortOrder
+    meetingId?: SortOrder
+    action?: SortOrder
+    previousStatus?: SortOrder
+    newStatus?: SortOrder
+    evidenceSnapshot?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SuppressionLogEntryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    firmProfileId?: SortOrder
+    categorySlug?: SortOrder
+    userId?: SortOrder
+    meetingId?: SortOrder
+    action?: SortOrder
+    previousStatus?: SortOrder
+    newStatus?: SortOrder
+    evidenceSnapshot?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SuppressionLogEntryMinOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    firmProfileId?: SortOrder
+    categorySlug?: SortOrder
+    userId?: SortOrder
+    meetingId?: SortOrder
+    action?: SortOrder
+    previousStatus?: SortOrder
+    newStatus?: SortOrder
+    evidenceSnapshot?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EnumSuppressionActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SuppressionAction | EnumSuppressionActionFieldRefInput<$PrismaModel>
+    in?: $Enums.SuppressionAction[] | ListEnumSuppressionActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SuppressionAction[] | ListEnumSuppressionActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumSuppressionActionWithAggregatesFilter<$PrismaModel> | $Enums.SuppressionAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSuppressionActionFilter<$PrismaModel>
+    _max?: NestedEnumSuppressionActionFilter<$PrismaModel>
+  }
+
+  export type EnumDisclosureCategoryStatusNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DisclosureCategoryStatus | EnumDisclosureCategoryStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.DisclosureCategoryStatus[] | ListEnumDisclosureCategoryStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.DisclosureCategoryStatus[] | ListEnumDisclosureCategoryStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumDisclosureCategoryStatusNullableWithAggregatesFilter<$PrismaModel> | $Enums.DisclosureCategoryStatus | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumDisclosureCategoryStatusNullableFilter<$PrismaModel>
+    _max?: NestedEnumDisclosureCategoryStatusNullableFilter<$PrismaModel>
+  }
+
+  export type EnumFirmProfileVersionTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.FirmProfileVersionType | EnumFirmProfileVersionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FirmProfileVersionType[] | ListEnumFirmProfileVersionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FirmProfileVersionType[] | ListEnumFirmProfileVersionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFirmProfileVersionTypeFilter<$PrismaModel> | $Enums.FirmProfileVersionType
+  }
+
+  export type FirmProfileVersionCountOrderByAggregateInput = {
+    id?: SortOrder
+    firmProfileId?: SortOrder
+    workspaceId?: SortOrder
+    versionType?: SortOrder
+    approvedByUserId?: SortOrder
+    approvedAt?: SortOrder
+    snapshot?: SortOrder
+  }
+
+  export type FirmProfileVersionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    firmProfileId?: SortOrder
+    workspaceId?: SortOrder
+    versionType?: SortOrder
+    approvedByUserId?: SortOrder
+    approvedAt?: SortOrder
+  }
+
+  export type FirmProfileVersionMinOrderByAggregateInput = {
+    id?: SortOrder
+    firmProfileId?: SortOrder
+    workspaceId?: SortOrder
+    versionType?: SortOrder
+    approvedByUserId?: SortOrder
+    approvedAt?: SortOrder
+  }
+
+  export type EnumFirmProfileVersionTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FirmProfileVersionType | EnumFirmProfileVersionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FirmProfileVersionType[] | ListEnumFirmProfileVersionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FirmProfileVersionType[] | ListEnumFirmProfileVersionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFirmProfileVersionTypeWithAggregatesFilter<$PrismaModel> | $Enums.FirmProfileVersionType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFirmProfileVersionTypeFilter<$PrismaModel>
+    _max?: NestedEnumFirmProfileVersionTypeFilter<$PrismaModel>
+  }
+
   export type LeadCountOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
@@ -32015,6 +38437,12 @@ export namespace Prisma {
     connect?: IntegrationConfigWhereUniqueInput | IntegrationConfigWhereUniqueInput[]
   }
 
+  export type FirmProfileCreateNestedOneWithoutWorkspaceInput = {
+    create?: XOR<FirmProfileCreateWithoutWorkspaceInput, FirmProfileUncheckedCreateWithoutWorkspaceInput>
+    connectOrCreate?: FirmProfileCreateOrConnectWithoutWorkspaceInput
+    connect?: FirmProfileWhereUniqueInput
+  }
+
   export type UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput = {
     create?: XOR<UserWorkspaceCreateWithoutWorkspaceInput, UserWorkspaceUncheckedCreateWithoutWorkspaceInput> | UserWorkspaceCreateWithoutWorkspaceInput[] | UserWorkspaceUncheckedCreateWithoutWorkspaceInput[]
     connectOrCreate?: UserWorkspaceCreateOrConnectWithoutWorkspaceInput | UserWorkspaceCreateOrConnectWithoutWorkspaceInput[]
@@ -32069,6 +38497,12 @@ export namespace Prisma {
     connectOrCreate?: IntegrationConfigCreateOrConnectWithoutWorkspaceInput | IntegrationConfigCreateOrConnectWithoutWorkspaceInput[]
     createMany?: IntegrationConfigCreateManyWorkspaceInputEnvelope
     connect?: IntegrationConfigWhereUniqueInput | IntegrationConfigWhereUniqueInput[]
+  }
+
+  export type FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput = {
+    create?: XOR<FirmProfileCreateWithoutWorkspaceInput, FirmProfileUncheckedCreateWithoutWorkspaceInput>
+    connectOrCreate?: FirmProfileCreateOrConnectWithoutWorkspaceInput
+    connect?: FirmProfileWhereUniqueInput
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -32223,6 +38657,16 @@ export namespace Prisma {
     deleteMany?: IntegrationConfigScalarWhereInput | IntegrationConfigScalarWhereInput[]
   }
 
+  export type FirmProfileUpdateOneWithoutWorkspaceNestedInput = {
+    create?: XOR<FirmProfileCreateWithoutWorkspaceInput, FirmProfileUncheckedCreateWithoutWorkspaceInput>
+    connectOrCreate?: FirmProfileCreateOrConnectWithoutWorkspaceInput
+    upsert?: FirmProfileUpsertWithoutWorkspaceInput
+    disconnect?: FirmProfileWhereInput | boolean
+    delete?: FirmProfileWhereInput | boolean
+    connect?: FirmProfileWhereUniqueInput
+    update?: XOR<XOR<FirmProfileUpdateToOneWithWhereWithoutWorkspaceInput, FirmProfileUpdateWithoutWorkspaceInput>, FirmProfileUncheckedUpdateWithoutWorkspaceInput>
+  }
+
   export type UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput = {
     create?: XOR<UserWorkspaceCreateWithoutWorkspaceInput, UserWorkspaceUncheckedCreateWithoutWorkspaceInput> | UserWorkspaceCreateWithoutWorkspaceInput[] | UserWorkspaceUncheckedCreateWithoutWorkspaceInput[]
     connectOrCreate?: UserWorkspaceCreateOrConnectWithoutWorkspaceInput | UserWorkspaceCreateOrConnectWithoutWorkspaceInput[]
@@ -32333,6 +38777,16 @@ export namespace Prisma {
     update?: IntegrationConfigUpdateWithWhereUniqueWithoutWorkspaceInput | IntegrationConfigUpdateWithWhereUniqueWithoutWorkspaceInput[]
     updateMany?: IntegrationConfigUpdateManyWithWhereWithoutWorkspaceInput | IntegrationConfigUpdateManyWithWhereWithoutWorkspaceInput[]
     deleteMany?: IntegrationConfigScalarWhereInput | IntegrationConfigScalarWhereInput[]
+  }
+
+  export type FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput = {
+    create?: XOR<FirmProfileCreateWithoutWorkspaceInput, FirmProfileUncheckedCreateWithoutWorkspaceInput>
+    connectOrCreate?: FirmProfileCreateOrConnectWithoutWorkspaceInput
+    upsert?: FirmProfileUpsertWithoutWorkspaceInput
+    disconnect?: FirmProfileWhereInput | boolean
+    delete?: FirmProfileWhereInput | boolean
+    connect?: FirmProfileWhereUniqueInput
+    update?: XOR<XOR<FirmProfileUpdateToOneWithWhereWithoutWorkspaceInput, FirmProfileUpdateWithoutWorkspaceInput>, FirmProfileUncheckedUpdateWithoutWorkspaceInput>
   }
 
   export type UserCreateNestedOneWithoutWorkspacesInput = {
@@ -33649,6 +40103,225 @@ export namespace Prisma {
     update?: XOR<XOR<MeetingUpdateToOneWithWhereWithoutIntegrationSyncLogsInput, MeetingUpdateWithoutIntegrationSyncLogsInput>, MeetingUncheckedUpdateWithoutIntegrationSyncLogsInput>
   }
 
+  export type FirmProfileCreateriskFlagsInput = {
+    set: string[]
+  }
+
+  export type WorkspaceCreateNestedOneWithoutFirmProfileInput = {
+    create?: XOR<WorkspaceCreateWithoutFirmProfileInput, WorkspaceUncheckedCreateWithoutFirmProfileInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutFirmProfileInput
+    connect?: WorkspaceWhereUniqueInput
+  }
+
+  export type DisclosureCategoryCreateNestedManyWithoutFirmProfileInput = {
+    create?: XOR<DisclosureCategoryCreateWithoutFirmProfileInput, DisclosureCategoryUncheckedCreateWithoutFirmProfileInput> | DisclosureCategoryCreateWithoutFirmProfileInput[] | DisclosureCategoryUncheckedCreateWithoutFirmProfileInput[]
+    connectOrCreate?: DisclosureCategoryCreateOrConnectWithoutFirmProfileInput | DisclosureCategoryCreateOrConnectWithoutFirmProfileInput[]
+    createMany?: DisclosureCategoryCreateManyFirmProfileInputEnvelope
+    connect?: DisclosureCategoryWhereUniqueInput | DisclosureCategoryWhereUniqueInput[]
+  }
+
+  export type SuppressionLogEntryCreateNestedManyWithoutFirmProfileInput = {
+    create?: XOR<SuppressionLogEntryCreateWithoutFirmProfileInput, SuppressionLogEntryUncheckedCreateWithoutFirmProfileInput> | SuppressionLogEntryCreateWithoutFirmProfileInput[] | SuppressionLogEntryUncheckedCreateWithoutFirmProfileInput[]
+    connectOrCreate?: SuppressionLogEntryCreateOrConnectWithoutFirmProfileInput | SuppressionLogEntryCreateOrConnectWithoutFirmProfileInput[]
+    createMany?: SuppressionLogEntryCreateManyFirmProfileInputEnvelope
+    connect?: SuppressionLogEntryWhereUniqueInput | SuppressionLogEntryWhereUniqueInput[]
+  }
+
+  export type FirmProfileVersionCreateNestedManyWithoutFirmProfileInput = {
+    create?: XOR<FirmProfileVersionCreateWithoutFirmProfileInput, FirmProfileVersionUncheckedCreateWithoutFirmProfileInput> | FirmProfileVersionCreateWithoutFirmProfileInput[] | FirmProfileVersionUncheckedCreateWithoutFirmProfileInput[]
+    connectOrCreate?: FirmProfileVersionCreateOrConnectWithoutFirmProfileInput | FirmProfileVersionCreateOrConnectWithoutFirmProfileInput[]
+    createMany?: FirmProfileVersionCreateManyFirmProfileInputEnvelope
+    connect?: FirmProfileVersionWhereUniqueInput | FirmProfileVersionWhereUniqueInput[]
+  }
+
+  export type DisclosureCategoryUncheckedCreateNestedManyWithoutFirmProfileInput = {
+    create?: XOR<DisclosureCategoryCreateWithoutFirmProfileInput, DisclosureCategoryUncheckedCreateWithoutFirmProfileInput> | DisclosureCategoryCreateWithoutFirmProfileInput[] | DisclosureCategoryUncheckedCreateWithoutFirmProfileInput[]
+    connectOrCreate?: DisclosureCategoryCreateOrConnectWithoutFirmProfileInput | DisclosureCategoryCreateOrConnectWithoutFirmProfileInput[]
+    createMany?: DisclosureCategoryCreateManyFirmProfileInputEnvelope
+    connect?: DisclosureCategoryWhereUniqueInput | DisclosureCategoryWhereUniqueInput[]
+  }
+
+  export type SuppressionLogEntryUncheckedCreateNestedManyWithoutFirmProfileInput = {
+    create?: XOR<SuppressionLogEntryCreateWithoutFirmProfileInput, SuppressionLogEntryUncheckedCreateWithoutFirmProfileInput> | SuppressionLogEntryCreateWithoutFirmProfileInput[] | SuppressionLogEntryUncheckedCreateWithoutFirmProfileInput[]
+    connectOrCreate?: SuppressionLogEntryCreateOrConnectWithoutFirmProfileInput | SuppressionLogEntryCreateOrConnectWithoutFirmProfileInput[]
+    createMany?: SuppressionLogEntryCreateManyFirmProfileInputEnvelope
+    connect?: SuppressionLogEntryWhereUniqueInput | SuppressionLogEntryWhereUniqueInput[]
+  }
+
+  export type FirmProfileVersionUncheckedCreateNestedManyWithoutFirmProfileInput = {
+    create?: XOR<FirmProfileVersionCreateWithoutFirmProfileInput, FirmProfileVersionUncheckedCreateWithoutFirmProfileInput> | FirmProfileVersionCreateWithoutFirmProfileInput[] | FirmProfileVersionUncheckedCreateWithoutFirmProfileInput[]
+    connectOrCreate?: FirmProfileVersionCreateOrConnectWithoutFirmProfileInput | FirmProfileVersionCreateOrConnectWithoutFirmProfileInput[]
+    createMany?: FirmProfileVersionCreateManyFirmProfileInputEnvelope
+    connect?: FirmProfileVersionWhereUniqueInput | FirmProfileVersionWhereUniqueInput[]
+  }
+
+  export type EnumFirmProfileStatusFieldUpdateOperationsInput = {
+    set?: $Enums.FirmProfileStatus
+  }
+
+  export type NullableDecimalFieldUpdateOperationsInput = {
+    set?: Decimal | DecimalJsLike | number | string | null
+    increment?: Decimal | DecimalJsLike | number | string
+    decrement?: Decimal | DecimalJsLike | number | string
+    multiply?: Decimal | DecimalJsLike | number | string
+    divide?: Decimal | DecimalJsLike | number | string
+  }
+
+  export type FirmProfileUpdateriskFlagsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type WorkspaceUpdateOneRequiredWithoutFirmProfileNestedInput = {
+    create?: XOR<WorkspaceCreateWithoutFirmProfileInput, WorkspaceUncheckedCreateWithoutFirmProfileInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutFirmProfileInput
+    upsert?: WorkspaceUpsertWithoutFirmProfileInput
+    connect?: WorkspaceWhereUniqueInput
+    update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutFirmProfileInput, WorkspaceUpdateWithoutFirmProfileInput>, WorkspaceUncheckedUpdateWithoutFirmProfileInput>
+  }
+
+  export type DisclosureCategoryUpdateManyWithoutFirmProfileNestedInput = {
+    create?: XOR<DisclosureCategoryCreateWithoutFirmProfileInput, DisclosureCategoryUncheckedCreateWithoutFirmProfileInput> | DisclosureCategoryCreateWithoutFirmProfileInput[] | DisclosureCategoryUncheckedCreateWithoutFirmProfileInput[]
+    connectOrCreate?: DisclosureCategoryCreateOrConnectWithoutFirmProfileInput | DisclosureCategoryCreateOrConnectWithoutFirmProfileInput[]
+    upsert?: DisclosureCategoryUpsertWithWhereUniqueWithoutFirmProfileInput | DisclosureCategoryUpsertWithWhereUniqueWithoutFirmProfileInput[]
+    createMany?: DisclosureCategoryCreateManyFirmProfileInputEnvelope
+    set?: DisclosureCategoryWhereUniqueInput | DisclosureCategoryWhereUniqueInput[]
+    disconnect?: DisclosureCategoryWhereUniqueInput | DisclosureCategoryWhereUniqueInput[]
+    delete?: DisclosureCategoryWhereUniqueInput | DisclosureCategoryWhereUniqueInput[]
+    connect?: DisclosureCategoryWhereUniqueInput | DisclosureCategoryWhereUniqueInput[]
+    update?: DisclosureCategoryUpdateWithWhereUniqueWithoutFirmProfileInput | DisclosureCategoryUpdateWithWhereUniqueWithoutFirmProfileInput[]
+    updateMany?: DisclosureCategoryUpdateManyWithWhereWithoutFirmProfileInput | DisclosureCategoryUpdateManyWithWhereWithoutFirmProfileInput[]
+    deleteMany?: DisclosureCategoryScalarWhereInput | DisclosureCategoryScalarWhereInput[]
+  }
+
+  export type SuppressionLogEntryUpdateManyWithoutFirmProfileNestedInput = {
+    create?: XOR<SuppressionLogEntryCreateWithoutFirmProfileInput, SuppressionLogEntryUncheckedCreateWithoutFirmProfileInput> | SuppressionLogEntryCreateWithoutFirmProfileInput[] | SuppressionLogEntryUncheckedCreateWithoutFirmProfileInput[]
+    connectOrCreate?: SuppressionLogEntryCreateOrConnectWithoutFirmProfileInput | SuppressionLogEntryCreateOrConnectWithoutFirmProfileInput[]
+    upsert?: SuppressionLogEntryUpsertWithWhereUniqueWithoutFirmProfileInput | SuppressionLogEntryUpsertWithWhereUniqueWithoutFirmProfileInput[]
+    createMany?: SuppressionLogEntryCreateManyFirmProfileInputEnvelope
+    set?: SuppressionLogEntryWhereUniqueInput | SuppressionLogEntryWhereUniqueInput[]
+    disconnect?: SuppressionLogEntryWhereUniqueInput | SuppressionLogEntryWhereUniqueInput[]
+    delete?: SuppressionLogEntryWhereUniqueInput | SuppressionLogEntryWhereUniqueInput[]
+    connect?: SuppressionLogEntryWhereUniqueInput | SuppressionLogEntryWhereUniqueInput[]
+    update?: SuppressionLogEntryUpdateWithWhereUniqueWithoutFirmProfileInput | SuppressionLogEntryUpdateWithWhereUniqueWithoutFirmProfileInput[]
+    updateMany?: SuppressionLogEntryUpdateManyWithWhereWithoutFirmProfileInput | SuppressionLogEntryUpdateManyWithWhereWithoutFirmProfileInput[]
+    deleteMany?: SuppressionLogEntryScalarWhereInput | SuppressionLogEntryScalarWhereInput[]
+  }
+
+  export type FirmProfileVersionUpdateManyWithoutFirmProfileNestedInput = {
+    create?: XOR<FirmProfileVersionCreateWithoutFirmProfileInput, FirmProfileVersionUncheckedCreateWithoutFirmProfileInput> | FirmProfileVersionCreateWithoutFirmProfileInput[] | FirmProfileVersionUncheckedCreateWithoutFirmProfileInput[]
+    connectOrCreate?: FirmProfileVersionCreateOrConnectWithoutFirmProfileInput | FirmProfileVersionCreateOrConnectWithoutFirmProfileInput[]
+    upsert?: FirmProfileVersionUpsertWithWhereUniqueWithoutFirmProfileInput | FirmProfileVersionUpsertWithWhereUniqueWithoutFirmProfileInput[]
+    createMany?: FirmProfileVersionCreateManyFirmProfileInputEnvelope
+    set?: FirmProfileVersionWhereUniqueInput | FirmProfileVersionWhereUniqueInput[]
+    disconnect?: FirmProfileVersionWhereUniqueInput | FirmProfileVersionWhereUniqueInput[]
+    delete?: FirmProfileVersionWhereUniqueInput | FirmProfileVersionWhereUniqueInput[]
+    connect?: FirmProfileVersionWhereUniqueInput | FirmProfileVersionWhereUniqueInput[]
+    update?: FirmProfileVersionUpdateWithWhereUniqueWithoutFirmProfileInput | FirmProfileVersionUpdateWithWhereUniqueWithoutFirmProfileInput[]
+    updateMany?: FirmProfileVersionUpdateManyWithWhereWithoutFirmProfileInput | FirmProfileVersionUpdateManyWithWhereWithoutFirmProfileInput[]
+    deleteMany?: FirmProfileVersionScalarWhereInput | FirmProfileVersionScalarWhereInput[]
+  }
+
+  export type DisclosureCategoryUncheckedUpdateManyWithoutFirmProfileNestedInput = {
+    create?: XOR<DisclosureCategoryCreateWithoutFirmProfileInput, DisclosureCategoryUncheckedCreateWithoutFirmProfileInput> | DisclosureCategoryCreateWithoutFirmProfileInput[] | DisclosureCategoryUncheckedCreateWithoutFirmProfileInput[]
+    connectOrCreate?: DisclosureCategoryCreateOrConnectWithoutFirmProfileInput | DisclosureCategoryCreateOrConnectWithoutFirmProfileInput[]
+    upsert?: DisclosureCategoryUpsertWithWhereUniqueWithoutFirmProfileInput | DisclosureCategoryUpsertWithWhereUniqueWithoutFirmProfileInput[]
+    createMany?: DisclosureCategoryCreateManyFirmProfileInputEnvelope
+    set?: DisclosureCategoryWhereUniqueInput | DisclosureCategoryWhereUniqueInput[]
+    disconnect?: DisclosureCategoryWhereUniqueInput | DisclosureCategoryWhereUniqueInput[]
+    delete?: DisclosureCategoryWhereUniqueInput | DisclosureCategoryWhereUniqueInput[]
+    connect?: DisclosureCategoryWhereUniqueInput | DisclosureCategoryWhereUniqueInput[]
+    update?: DisclosureCategoryUpdateWithWhereUniqueWithoutFirmProfileInput | DisclosureCategoryUpdateWithWhereUniqueWithoutFirmProfileInput[]
+    updateMany?: DisclosureCategoryUpdateManyWithWhereWithoutFirmProfileInput | DisclosureCategoryUpdateManyWithWhereWithoutFirmProfileInput[]
+    deleteMany?: DisclosureCategoryScalarWhereInput | DisclosureCategoryScalarWhereInput[]
+  }
+
+  export type SuppressionLogEntryUncheckedUpdateManyWithoutFirmProfileNestedInput = {
+    create?: XOR<SuppressionLogEntryCreateWithoutFirmProfileInput, SuppressionLogEntryUncheckedCreateWithoutFirmProfileInput> | SuppressionLogEntryCreateWithoutFirmProfileInput[] | SuppressionLogEntryUncheckedCreateWithoutFirmProfileInput[]
+    connectOrCreate?: SuppressionLogEntryCreateOrConnectWithoutFirmProfileInput | SuppressionLogEntryCreateOrConnectWithoutFirmProfileInput[]
+    upsert?: SuppressionLogEntryUpsertWithWhereUniqueWithoutFirmProfileInput | SuppressionLogEntryUpsertWithWhereUniqueWithoutFirmProfileInput[]
+    createMany?: SuppressionLogEntryCreateManyFirmProfileInputEnvelope
+    set?: SuppressionLogEntryWhereUniqueInput | SuppressionLogEntryWhereUniqueInput[]
+    disconnect?: SuppressionLogEntryWhereUniqueInput | SuppressionLogEntryWhereUniqueInput[]
+    delete?: SuppressionLogEntryWhereUniqueInput | SuppressionLogEntryWhereUniqueInput[]
+    connect?: SuppressionLogEntryWhereUniqueInput | SuppressionLogEntryWhereUniqueInput[]
+    update?: SuppressionLogEntryUpdateWithWhereUniqueWithoutFirmProfileInput | SuppressionLogEntryUpdateWithWhereUniqueWithoutFirmProfileInput[]
+    updateMany?: SuppressionLogEntryUpdateManyWithWhereWithoutFirmProfileInput | SuppressionLogEntryUpdateManyWithWhereWithoutFirmProfileInput[]
+    deleteMany?: SuppressionLogEntryScalarWhereInput | SuppressionLogEntryScalarWhereInput[]
+  }
+
+  export type FirmProfileVersionUncheckedUpdateManyWithoutFirmProfileNestedInput = {
+    create?: XOR<FirmProfileVersionCreateWithoutFirmProfileInput, FirmProfileVersionUncheckedCreateWithoutFirmProfileInput> | FirmProfileVersionCreateWithoutFirmProfileInput[] | FirmProfileVersionUncheckedCreateWithoutFirmProfileInput[]
+    connectOrCreate?: FirmProfileVersionCreateOrConnectWithoutFirmProfileInput | FirmProfileVersionCreateOrConnectWithoutFirmProfileInput[]
+    upsert?: FirmProfileVersionUpsertWithWhereUniqueWithoutFirmProfileInput | FirmProfileVersionUpsertWithWhereUniqueWithoutFirmProfileInput[]
+    createMany?: FirmProfileVersionCreateManyFirmProfileInputEnvelope
+    set?: FirmProfileVersionWhereUniqueInput | FirmProfileVersionWhereUniqueInput[]
+    disconnect?: FirmProfileVersionWhereUniqueInput | FirmProfileVersionWhereUniqueInput[]
+    delete?: FirmProfileVersionWhereUniqueInput | FirmProfileVersionWhereUniqueInput[]
+    connect?: FirmProfileVersionWhereUniqueInput | FirmProfileVersionWhereUniqueInput[]
+    update?: FirmProfileVersionUpdateWithWhereUniqueWithoutFirmProfileInput | FirmProfileVersionUpdateWithWhereUniqueWithoutFirmProfileInput[]
+    updateMany?: FirmProfileVersionUpdateManyWithWhereWithoutFirmProfileInput | FirmProfileVersionUpdateManyWithWhereWithoutFirmProfileInput[]
+    deleteMany?: FirmProfileVersionScalarWhereInput | FirmProfileVersionScalarWhereInput[]
+  }
+
+  export type FirmProfileCreateNestedOneWithoutDisclosureCategoriesInput = {
+    create?: XOR<FirmProfileCreateWithoutDisclosureCategoriesInput, FirmProfileUncheckedCreateWithoutDisclosureCategoriesInput>
+    connectOrCreate?: FirmProfileCreateOrConnectWithoutDisclosureCategoriesInput
+    connect?: FirmProfileWhereUniqueInput
+  }
+
+  export type EnumDisclosureCategoryStatusFieldUpdateOperationsInput = {
+    set?: $Enums.DisclosureCategoryStatus
+  }
+
+  export type FirmProfileUpdateOneRequiredWithoutDisclosureCategoriesNestedInput = {
+    create?: XOR<FirmProfileCreateWithoutDisclosureCategoriesInput, FirmProfileUncheckedCreateWithoutDisclosureCategoriesInput>
+    connectOrCreate?: FirmProfileCreateOrConnectWithoutDisclosureCategoriesInput
+    upsert?: FirmProfileUpsertWithoutDisclosureCategoriesInput
+    connect?: FirmProfileWhereUniqueInput
+    update?: XOR<XOR<FirmProfileUpdateToOneWithWhereWithoutDisclosureCategoriesInput, FirmProfileUpdateWithoutDisclosureCategoriesInput>, FirmProfileUncheckedUpdateWithoutDisclosureCategoriesInput>
+  }
+
+  export type FirmProfileCreateNestedOneWithoutSuppressionLogsInput = {
+    create?: XOR<FirmProfileCreateWithoutSuppressionLogsInput, FirmProfileUncheckedCreateWithoutSuppressionLogsInput>
+    connectOrCreate?: FirmProfileCreateOrConnectWithoutSuppressionLogsInput
+    connect?: FirmProfileWhereUniqueInput
+  }
+
+  export type EnumSuppressionActionFieldUpdateOperationsInput = {
+    set?: $Enums.SuppressionAction
+  }
+
+  export type NullableEnumDisclosureCategoryStatusFieldUpdateOperationsInput = {
+    set?: $Enums.DisclosureCategoryStatus | null
+  }
+
+  export type FirmProfileUpdateOneRequiredWithoutSuppressionLogsNestedInput = {
+    create?: XOR<FirmProfileCreateWithoutSuppressionLogsInput, FirmProfileUncheckedCreateWithoutSuppressionLogsInput>
+    connectOrCreate?: FirmProfileCreateOrConnectWithoutSuppressionLogsInput
+    upsert?: FirmProfileUpsertWithoutSuppressionLogsInput
+    connect?: FirmProfileWhereUniqueInput
+    update?: XOR<XOR<FirmProfileUpdateToOneWithWhereWithoutSuppressionLogsInput, FirmProfileUpdateWithoutSuppressionLogsInput>, FirmProfileUncheckedUpdateWithoutSuppressionLogsInput>
+  }
+
+  export type FirmProfileCreateNestedOneWithoutVersionsInput = {
+    create?: XOR<FirmProfileCreateWithoutVersionsInput, FirmProfileUncheckedCreateWithoutVersionsInput>
+    connectOrCreate?: FirmProfileCreateOrConnectWithoutVersionsInput
+    connect?: FirmProfileWhereUniqueInput
+  }
+
+  export type EnumFirmProfileVersionTypeFieldUpdateOperationsInput = {
+    set?: $Enums.FirmProfileVersionType
+  }
+
+  export type FirmProfileUpdateOneRequiredWithoutVersionsNestedInput = {
+    create?: XOR<FirmProfileCreateWithoutVersionsInput, FirmProfileUncheckedCreateWithoutVersionsInput>
+    connectOrCreate?: FirmProfileCreateOrConnectWithoutVersionsInput
+    upsert?: FirmProfileUpsertWithoutVersionsInput
+    connect?: FirmProfileWhereUniqueInput
+    update?: XOR<XOR<FirmProfileUpdateToOneWithWhereWithoutVersionsInput, FirmProfileUpdateWithoutVersionsInput>, FirmProfileUncheckedUpdateWithoutVersionsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -34219,6 +40892,118 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type NestedEnumFirmProfileStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.FirmProfileStatus | EnumFirmProfileStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.FirmProfileStatus[] | ListEnumFirmProfileStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FirmProfileStatus[] | ListEnumFirmProfileStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumFirmProfileStatusFilter<$PrismaModel> | $Enums.FirmProfileStatus
+  }
+
+  export type NestedDecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type NestedEnumFirmProfileStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FirmProfileStatus | EnumFirmProfileStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.FirmProfileStatus[] | ListEnumFirmProfileStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FirmProfileStatus[] | ListEnumFirmProfileStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumFirmProfileStatusWithAggregatesFilter<$PrismaModel> | $Enums.FirmProfileStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFirmProfileStatusFilter<$PrismaModel>
+    _max?: NestedEnumFirmProfileStatusFilter<$PrismaModel>
+  }
+
+  export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumDisclosureCategoryStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.DisclosureCategoryStatus | EnumDisclosureCategoryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DisclosureCategoryStatus[] | ListEnumDisclosureCategoryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DisclosureCategoryStatus[] | ListEnumDisclosureCategoryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDisclosureCategoryStatusFilter<$PrismaModel> | $Enums.DisclosureCategoryStatus
+  }
+
+  export type NestedEnumDisclosureCategoryStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DisclosureCategoryStatus | EnumDisclosureCategoryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DisclosureCategoryStatus[] | ListEnumDisclosureCategoryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DisclosureCategoryStatus[] | ListEnumDisclosureCategoryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDisclosureCategoryStatusWithAggregatesFilter<$PrismaModel> | $Enums.DisclosureCategoryStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDisclosureCategoryStatusFilter<$PrismaModel>
+    _max?: NestedEnumDisclosureCategoryStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSuppressionActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.SuppressionAction | EnumSuppressionActionFieldRefInput<$PrismaModel>
+    in?: $Enums.SuppressionAction[] | ListEnumSuppressionActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SuppressionAction[] | ListEnumSuppressionActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumSuppressionActionFilter<$PrismaModel> | $Enums.SuppressionAction
+  }
+
+  export type NestedEnumDisclosureCategoryStatusNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.DisclosureCategoryStatus | EnumDisclosureCategoryStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.DisclosureCategoryStatus[] | ListEnumDisclosureCategoryStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.DisclosureCategoryStatus[] | ListEnumDisclosureCategoryStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumDisclosureCategoryStatusNullableFilter<$PrismaModel> | $Enums.DisclosureCategoryStatus | null
+  }
+
+  export type NestedEnumSuppressionActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SuppressionAction | EnumSuppressionActionFieldRefInput<$PrismaModel>
+    in?: $Enums.SuppressionAction[] | ListEnumSuppressionActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SuppressionAction[] | ListEnumSuppressionActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumSuppressionActionWithAggregatesFilter<$PrismaModel> | $Enums.SuppressionAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSuppressionActionFilter<$PrismaModel>
+    _max?: NestedEnumSuppressionActionFilter<$PrismaModel>
+  }
+
+  export type NestedEnumDisclosureCategoryStatusNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DisclosureCategoryStatus | EnumDisclosureCategoryStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.DisclosureCategoryStatus[] | ListEnumDisclosureCategoryStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.DisclosureCategoryStatus[] | ListEnumDisclosureCategoryStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumDisclosureCategoryStatusNullableWithAggregatesFilter<$PrismaModel> | $Enums.DisclosureCategoryStatus | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumDisclosureCategoryStatusNullableFilter<$PrismaModel>
+    _max?: NestedEnumDisclosureCategoryStatusNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumFirmProfileVersionTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.FirmProfileVersionType | EnumFirmProfileVersionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FirmProfileVersionType[] | ListEnumFirmProfileVersionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FirmProfileVersionType[] | ListEnumFirmProfileVersionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFirmProfileVersionTypeFilter<$PrismaModel> | $Enums.FirmProfileVersionType
+  }
+
+  export type NestedEnumFirmProfileVersionTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FirmProfileVersionType | EnumFirmProfileVersionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FirmProfileVersionType[] | ListEnumFirmProfileVersionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FirmProfileVersionType[] | ListEnumFirmProfileVersionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFirmProfileVersionTypeWithAggregatesFilter<$PrismaModel> | $Enums.FirmProfileVersionType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFirmProfileVersionTypeFilter<$PrismaModel>
+    _max?: NestedEnumFirmProfileVersionTypeFilter<$PrismaModel>
+  }
+
   export type UserWorkspaceCreateWithoutWorkspaceInput = {
     role: $Enums.WorkspaceRole
     onboardingDismissedAt?: Date | string | null
@@ -34585,6 +41370,53 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type FirmProfileCreateWithoutWorkspaceInput = {
+    id?: string
+    status?: $Enums.FirmProfileStatus
+    crdNumber?: string | null
+    ccoName?: string | null
+    advFilingDate?: Date | string | null
+    aumUsd?: Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: string | null
+    advDocumentKey?: string | null
+    riskFlags?: FirmProfileCreateriskFlagsInput | string[]
+    setupCompletedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    approvedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    disclosureCategories?: DisclosureCategoryCreateNestedManyWithoutFirmProfileInput
+    suppressionLogs?: SuppressionLogEntryCreateNestedManyWithoutFirmProfileInput
+    versions?: FirmProfileVersionCreateNestedManyWithoutFirmProfileInput
+  }
+
+  export type FirmProfileUncheckedCreateWithoutWorkspaceInput = {
+    id?: string
+    status?: $Enums.FirmProfileStatus
+    crdNumber?: string | null
+    ccoName?: string | null
+    advFilingDate?: Date | string | null
+    aumUsd?: Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: string | null
+    advDocumentKey?: string | null
+    riskFlags?: FirmProfileCreateriskFlagsInput | string[]
+    setupCompletedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    approvedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    disclosureCategories?: DisclosureCategoryUncheckedCreateNestedManyWithoutFirmProfileInput
+    suppressionLogs?: SuppressionLogEntryUncheckedCreateNestedManyWithoutFirmProfileInput
+    versions?: FirmProfileVersionUncheckedCreateNestedManyWithoutFirmProfileInput
+  }
+
+  export type FirmProfileCreateOrConnectWithoutWorkspaceInput = {
+    where: FirmProfileWhereUniqueInput
+    create: XOR<FirmProfileCreateWithoutWorkspaceInput, FirmProfileUncheckedCreateWithoutWorkspaceInput>
+  }
+
   export type UserWorkspaceUpsertWithWhereUniqueWithoutWorkspaceInput = {
     where: UserWorkspaceWhereUniqueInput
     update: XOR<UserWorkspaceUpdateWithoutWorkspaceInput, UserWorkspaceUncheckedUpdateWithoutWorkspaceInput>
@@ -34878,6 +41710,59 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"IntegrationConfig"> | Date | string
   }
 
+  export type FirmProfileUpsertWithoutWorkspaceInput = {
+    update: XOR<FirmProfileUpdateWithoutWorkspaceInput, FirmProfileUncheckedUpdateWithoutWorkspaceInput>
+    create: XOR<FirmProfileCreateWithoutWorkspaceInput, FirmProfileUncheckedCreateWithoutWorkspaceInput>
+    where?: FirmProfileWhereInput
+  }
+
+  export type FirmProfileUpdateToOneWithWhereWithoutWorkspaceInput = {
+    where?: FirmProfileWhereInput
+    data: XOR<FirmProfileUpdateWithoutWorkspaceInput, FirmProfileUncheckedUpdateWithoutWorkspaceInput>
+  }
+
+  export type FirmProfileUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumFirmProfileStatusFieldUpdateOperationsInput | $Enums.FirmProfileStatus
+    crdNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoName?: NullableStringFieldUpdateOperationsInput | string | null
+    advFilingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aumUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    advDocumentKey?: NullableStringFieldUpdateOperationsInput | string | null
+    riskFlags?: FirmProfileUpdateriskFlagsInput | string[]
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    disclosureCategories?: DisclosureCategoryUpdateManyWithoutFirmProfileNestedInput
+    suppressionLogs?: SuppressionLogEntryUpdateManyWithoutFirmProfileNestedInput
+    versions?: FirmProfileVersionUpdateManyWithoutFirmProfileNestedInput
+  }
+
+  export type FirmProfileUncheckedUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumFirmProfileStatusFieldUpdateOperationsInput | $Enums.FirmProfileStatus
+    crdNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoName?: NullableStringFieldUpdateOperationsInput | string | null
+    advFilingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aumUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    advDocumentKey?: NullableStringFieldUpdateOperationsInput | string | null
+    riskFlags?: FirmProfileUpdateriskFlagsInput | string[]
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    disclosureCategories?: DisclosureCategoryUncheckedUpdateManyWithoutFirmProfileNestedInput
+    suppressionLogs?: SuppressionLogEntryUncheckedUpdateManyWithoutFirmProfileNestedInput
+    versions?: FirmProfileVersionUncheckedUpdateManyWithoutFirmProfileNestedInput
+  }
+
   export type UserCreateWithoutWorkspacesInput = {
     id?: string
     name?: string | null
@@ -34942,6 +41827,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutUsersInput = {
@@ -34971,6 +41857,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutUsersInput = {
@@ -35096,6 +41983,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutUsersInput = {
@@ -35125,6 +42013,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type UserUpsertWithoutRemovedWorkspaceMembershipsInput = {
@@ -35197,6 +42086,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutMeetingsInput = {
@@ -35226,6 +42116,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutMeetingsInput = {
@@ -35582,6 +42473,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutMeetingsInput = {
@@ -35611,6 +42503,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type VersionUpsertWithWhereUniqueWithoutMeetingInput = {
@@ -36169,6 +43062,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutFlagsInput = {
@@ -36198,6 +43092,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutFlagsInput = {
@@ -36426,6 +43321,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutFlagsInput = {
@@ -36455,6 +43351,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type ResolutionRecordUpsertWithoutFlagInput = {
@@ -36724,6 +43621,7 @@ export namespace Prisma {
     flags?: FlagCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutResolutionRecordsInput = {
@@ -36753,6 +43651,7 @@ export namespace Prisma {
     flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutResolutionRecordsInput = {
@@ -37052,6 +43951,7 @@ export namespace Prisma {
     flags?: FlagUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutResolutionRecordsInput = {
@@ -37081,6 +43981,7 @@ export namespace Prisma {
     flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type ActionItemUpsertWithWhereUniqueWithoutResolutionInput = {
@@ -37610,6 +44511,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutAuditEventsInput = {
@@ -37639,6 +44541,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutAuditEventsInput = {
@@ -37779,6 +44682,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutAuditEventsInput = {
@@ -37808,6 +44712,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type MeetingUpsertWithoutAuditEventsInput = {
@@ -38775,6 +45680,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutInvitationsInput = {
@@ -38804,6 +45710,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutInvitationsInput = {
@@ -38886,6 +45793,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutInvitationsInput = {
@@ -38915,6 +45823,7 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type UserUpsertWithoutInvitationsSentInput = {
@@ -38987,6 +45896,7 @@ export namespace Prisma {
     flags?: FlagCreateNestedManyWithoutWorkspaceInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutIntegrationCredentialsInput = {
@@ -39016,6 +45926,7 @@ export namespace Prisma {
     flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutIntegrationCredentialsInput = {
@@ -39061,6 +45972,7 @@ export namespace Prisma {
     flags?: FlagUpdateManyWithoutWorkspaceNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutIntegrationCredentialsInput = {
@@ -39090,6 +46002,7 @@ export namespace Prisma {
     flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateWithoutIntegrationConfigsInput = {
@@ -39119,6 +46032,7 @@ export namespace Prisma {
     flags?: FlagCreateNestedManyWithoutWorkspaceInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutIntegrationConfigsInput = {
@@ -39148,6 +46062,7 @@ export namespace Prisma {
     flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutIntegrationConfigsInput = {
@@ -39227,6 +46142,7 @@ export namespace Prisma {
     flags?: FlagUpdateManyWithoutWorkspaceNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutIntegrationConfigsInput = {
@@ -39256,6 +46172,7 @@ export namespace Prisma {
     flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type IntegrationSyncLogUpsertWithWhereUniqueWithoutIntegrationConfigInput = {
@@ -39532,6 +46449,634 @@ export namespace Prisma {
     auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
     flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
+  }
+
+  export type WorkspaceCreateWithoutFirmProfileInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceUncheckedCreateWithoutFirmProfileInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceCreateOrConnectWithoutFirmProfileInput = {
+    where: WorkspaceWhereUniqueInput
+    create: XOR<WorkspaceCreateWithoutFirmProfileInput, WorkspaceUncheckedCreateWithoutFirmProfileInput>
+  }
+
+  export type DisclosureCategoryCreateWithoutFirmProfileInput = {
+    id?: string
+    slug: string
+    status?: $Enums.DisclosureCategoryStatus
+    suppressionEvidence?: string | null
+    advItemRef?: string | null
+    advPage?: number | null
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DisclosureCategoryUncheckedCreateWithoutFirmProfileInput = {
+    id?: string
+    slug: string
+    status?: $Enums.DisclosureCategoryStatus
+    suppressionEvidence?: string | null
+    advItemRef?: string | null
+    advPage?: number | null
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DisclosureCategoryCreateOrConnectWithoutFirmProfileInput = {
+    where: DisclosureCategoryWhereUniqueInput
+    create: XOR<DisclosureCategoryCreateWithoutFirmProfileInput, DisclosureCategoryUncheckedCreateWithoutFirmProfileInput>
+  }
+
+  export type DisclosureCategoryCreateManyFirmProfileInputEnvelope = {
+    data: DisclosureCategoryCreateManyFirmProfileInput | DisclosureCategoryCreateManyFirmProfileInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SuppressionLogEntryCreateWithoutFirmProfileInput = {
+    id?: string
+    workspaceId: string
+    categorySlug: string
+    userId: string
+    meetingId?: string | null
+    action: $Enums.SuppressionAction
+    previousStatus?: $Enums.DisclosureCategoryStatus | null
+    newStatus: $Enums.DisclosureCategoryStatus
+    evidenceSnapshot?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SuppressionLogEntryUncheckedCreateWithoutFirmProfileInput = {
+    id?: string
+    workspaceId: string
+    categorySlug: string
+    userId: string
+    meetingId?: string | null
+    action: $Enums.SuppressionAction
+    previousStatus?: $Enums.DisclosureCategoryStatus | null
+    newStatus: $Enums.DisclosureCategoryStatus
+    evidenceSnapshot?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SuppressionLogEntryCreateOrConnectWithoutFirmProfileInput = {
+    where: SuppressionLogEntryWhereUniqueInput
+    create: XOR<SuppressionLogEntryCreateWithoutFirmProfileInput, SuppressionLogEntryUncheckedCreateWithoutFirmProfileInput>
+  }
+
+  export type SuppressionLogEntryCreateManyFirmProfileInputEnvelope = {
+    data: SuppressionLogEntryCreateManyFirmProfileInput | SuppressionLogEntryCreateManyFirmProfileInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type FirmProfileVersionCreateWithoutFirmProfileInput = {
+    id?: string
+    workspaceId: string
+    versionType: $Enums.FirmProfileVersionType
+    approvedByUserId?: string | null
+    approvedAt?: Date | string
+    snapshot: JsonNullValueInput | InputJsonValue
+  }
+
+  export type FirmProfileVersionUncheckedCreateWithoutFirmProfileInput = {
+    id?: string
+    workspaceId: string
+    versionType: $Enums.FirmProfileVersionType
+    approvedByUserId?: string | null
+    approvedAt?: Date | string
+    snapshot: JsonNullValueInput | InputJsonValue
+  }
+
+  export type FirmProfileVersionCreateOrConnectWithoutFirmProfileInput = {
+    where: FirmProfileVersionWhereUniqueInput
+    create: XOR<FirmProfileVersionCreateWithoutFirmProfileInput, FirmProfileVersionUncheckedCreateWithoutFirmProfileInput>
+  }
+
+  export type FirmProfileVersionCreateManyFirmProfileInputEnvelope = {
+    data: FirmProfileVersionCreateManyFirmProfileInput | FirmProfileVersionCreateManyFirmProfileInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type WorkspaceUpsertWithoutFirmProfileInput = {
+    update: XOR<WorkspaceUpdateWithoutFirmProfileInput, WorkspaceUncheckedUpdateWithoutFirmProfileInput>
+    create: XOR<WorkspaceCreateWithoutFirmProfileInput, WorkspaceUncheckedCreateWithoutFirmProfileInput>
+    where?: WorkspaceWhereInput
+  }
+
+  export type WorkspaceUpdateToOneWithWhereWithoutFirmProfileInput = {
+    where?: WorkspaceWhereInput
+    data: XOR<WorkspaceUpdateWithoutFirmProfileInput, WorkspaceUncheckedUpdateWithoutFirmProfileInput>
+  }
+
+  export type WorkspaceUpdateWithoutFirmProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type WorkspaceUncheckedUpdateWithoutFirmProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type DisclosureCategoryUpsertWithWhereUniqueWithoutFirmProfileInput = {
+    where: DisclosureCategoryWhereUniqueInput
+    update: XOR<DisclosureCategoryUpdateWithoutFirmProfileInput, DisclosureCategoryUncheckedUpdateWithoutFirmProfileInput>
+    create: XOR<DisclosureCategoryCreateWithoutFirmProfileInput, DisclosureCategoryUncheckedCreateWithoutFirmProfileInput>
+  }
+
+  export type DisclosureCategoryUpdateWithWhereUniqueWithoutFirmProfileInput = {
+    where: DisclosureCategoryWhereUniqueInput
+    data: XOR<DisclosureCategoryUpdateWithoutFirmProfileInput, DisclosureCategoryUncheckedUpdateWithoutFirmProfileInput>
+  }
+
+  export type DisclosureCategoryUpdateManyWithWhereWithoutFirmProfileInput = {
+    where: DisclosureCategoryScalarWhereInput
+    data: XOR<DisclosureCategoryUpdateManyMutationInput, DisclosureCategoryUncheckedUpdateManyWithoutFirmProfileInput>
+  }
+
+  export type DisclosureCategoryScalarWhereInput = {
+    AND?: DisclosureCategoryScalarWhereInput | DisclosureCategoryScalarWhereInput[]
+    OR?: DisclosureCategoryScalarWhereInput[]
+    NOT?: DisclosureCategoryScalarWhereInput | DisclosureCategoryScalarWhereInput[]
+    id?: StringFilter<"DisclosureCategory"> | string
+    firmProfileId?: StringFilter<"DisclosureCategory"> | string
+    slug?: StringFilter<"DisclosureCategory"> | string
+    status?: EnumDisclosureCategoryStatusFilter<"DisclosureCategory"> | $Enums.DisclosureCategoryStatus
+    suppressionEvidence?: StringNullableFilter<"DisclosureCategory"> | string | null
+    advItemRef?: StringNullableFilter<"DisclosureCategory"> | string | null
+    advPage?: IntNullableFilter<"DisclosureCategory"> | number | null
+    description?: StringNullableFilter<"DisclosureCategory"> | string | null
+    createdAt?: DateTimeFilter<"DisclosureCategory"> | Date | string
+    updatedAt?: DateTimeFilter<"DisclosureCategory"> | Date | string
+  }
+
+  export type SuppressionLogEntryUpsertWithWhereUniqueWithoutFirmProfileInput = {
+    where: SuppressionLogEntryWhereUniqueInput
+    update: XOR<SuppressionLogEntryUpdateWithoutFirmProfileInput, SuppressionLogEntryUncheckedUpdateWithoutFirmProfileInput>
+    create: XOR<SuppressionLogEntryCreateWithoutFirmProfileInput, SuppressionLogEntryUncheckedCreateWithoutFirmProfileInput>
+  }
+
+  export type SuppressionLogEntryUpdateWithWhereUniqueWithoutFirmProfileInput = {
+    where: SuppressionLogEntryWhereUniqueInput
+    data: XOR<SuppressionLogEntryUpdateWithoutFirmProfileInput, SuppressionLogEntryUncheckedUpdateWithoutFirmProfileInput>
+  }
+
+  export type SuppressionLogEntryUpdateManyWithWhereWithoutFirmProfileInput = {
+    where: SuppressionLogEntryScalarWhereInput
+    data: XOR<SuppressionLogEntryUpdateManyMutationInput, SuppressionLogEntryUncheckedUpdateManyWithoutFirmProfileInput>
+  }
+
+  export type SuppressionLogEntryScalarWhereInput = {
+    AND?: SuppressionLogEntryScalarWhereInput | SuppressionLogEntryScalarWhereInput[]
+    OR?: SuppressionLogEntryScalarWhereInput[]
+    NOT?: SuppressionLogEntryScalarWhereInput | SuppressionLogEntryScalarWhereInput[]
+    id?: StringFilter<"SuppressionLogEntry"> | string
+    workspaceId?: StringFilter<"SuppressionLogEntry"> | string
+    firmProfileId?: StringFilter<"SuppressionLogEntry"> | string
+    categorySlug?: StringFilter<"SuppressionLogEntry"> | string
+    userId?: StringFilter<"SuppressionLogEntry"> | string
+    meetingId?: StringNullableFilter<"SuppressionLogEntry"> | string | null
+    action?: EnumSuppressionActionFilter<"SuppressionLogEntry"> | $Enums.SuppressionAction
+    previousStatus?: EnumDisclosureCategoryStatusNullableFilter<"SuppressionLogEntry"> | $Enums.DisclosureCategoryStatus | null
+    newStatus?: EnumDisclosureCategoryStatusFilter<"SuppressionLogEntry"> | $Enums.DisclosureCategoryStatus
+    evidenceSnapshot?: StringNullableFilter<"SuppressionLogEntry"> | string | null
+    createdAt?: DateTimeFilter<"SuppressionLogEntry"> | Date | string
+  }
+
+  export type FirmProfileVersionUpsertWithWhereUniqueWithoutFirmProfileInput = {
+    where: FirmProfileVersionWhereUniqueInput
+    update: XOR<FirmProfileVersionUpdateWithoutFirmProfileInput, FirmProfileVersionUncheckedUpdateWithoutFirmProfileInput>
+    create: XOR<FirmProfileVersionCreateWithoutFirmProfileInput, FirmProfileVersionUncheckedCreateWithoutFirmProfileInput>
+  }
+
+  export type FirmProfileVersionUpdateWithWhereUniqueWithoutFirmProfileInput = {
+    where: FirmProfileVersionWhereUniqueInput
+    data: XOR<FirmProfileVersionUpdateWithoutFirmProfileInput, FirmProfileVersionUncheckedUpdateWithoutFirmProfileInput>
+  }
+
+  export type FirmProfileVersionUpdateManyWithWhereWithoutFirmProfileInput = {
+    where: FirmProfileVersionScalarWhereInput
+    data: XOR<FirmProfileVersionUpdateManyMutationInput, FirmProfileVersionUncheckedUpdateManyWithoutFirmProfileInput>
+  }
+
+  export type FirmProfileVersionScalarWhereInput = {
+    AND?: FirmProfileVersionScalarWhereInput | FirmProfileVersionScalarWhereInput[]
+    OR?: FirmProfileVersionScalarWhereInput[]
+    NOT?: FirmProfileVersionScalarWhereInput | FirmProfileVersionScalarWhereInput[]
+    id?: StringFilter<"FirmProfileVersion"> | string
+    firmProfileId?: StringFilter<"FirmProfileVersion"> | string
+    workspaceId?: StringFilter<"FirmProfileVersion"> | string
+    versionType?: EnumFirmProfileVersionTypeFilter<"FirmProfileVersion"> | $Enums.FirmProfileVersionType
+    approvedByUserId?: StringNullableFilter<"FirmProfileVersion"> | string | null
+    approvedAt?: DateTimeFilter<"FirmProfileVersion"> | Date | string
+    snapshot?: JsonFilter<"FirmProfileVersion">
+  }
+
+  export type FirmProfileCreateWithoutDisclosureCategoriesInput = {
+    id?: string
+    status?: $Enums.FirmProfileStatus
+    crdNumber?: string | null
+    ccoName?: string | null
+    advFilingDate?: Date | string | null
+    aumUsd?: Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: string | null
+    advDocumentKey?: string | null
+    riskFlags?: FirmProfileCreateriskFlagsInput | string[]
+    setupCompletedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    approvedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutFirmProfileInput
+    suppressionLogs?: SuppressionLogEntryCreateNestedManyWithoutFirmProfileInput
+    versions?: FirmProfileVersionCreateNestedManyWithoutFirmProfileInput
+  }
+
+  export type FirmProfileUncheckedCreateWithoutDisclosureCategoriesInput = {
+    id?: string
+    workspaceId: string
+    status?: $Enums.FirmProfileStatus
+    crdNumber?: string | null
+    ccoName?: string | null
+    advFilingDate?: Date | string | null
+    aumUsd?: Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: string | null
+    advDocumentKey?: string | null
+    riskFlags?: FirmProfileCreateriskFlagsInput | string[]
+    setupCompletedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    approvedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    suppressionLogs?: SuppressionLogEntryUncheckedCreateNestedManyWithoutFirmProfileInput
+    versions?: FirmProfileVersionUncheckedCreateNestedManyWithoutFirmProfileInput
+  }
+
+  export type FirmProfileCreateOrConnectWithoutDisclosureCategoriesInput = {
+    where: FirmProfileWhereUniqueInput
+    create: XOR<FirmProfileCreateWithoutDisclosureCategoriesInput, FirmProfileUncheckedCreateWithoutDisclosureCategoriesInput>
+  }
+
+  export type FirmProfileUpsertWithoutDisclosureCategoriesInput = {
+    update: XOR<FirmProfileUpdateWithoutDisclosureCategoriesInput, FirmProfileUncheckedUpdateWithoutDisclosureCategoriesInput>
+    create: XOR<FirmProfileCreateWithoutDisclosureCategoriesInput, FirmProfileUncheckedCreateWithoutDisclosureCategoriesInput>
+    where?: FirmProfileWhereInput
+  }
+
+  export type FirmProfileUpdateToOneWithWhereWithoutDisclosureCategoriesInput = {
+    where?: FirmProfileWhereInput
+    data: XOR<FirmProfileUpdateWithoutDisclosureCategoriesInput, FirmProfileUncheckedUpdateWithoutDisclosureCategoriesInput>
+  }
+
+  export type FirmProfileUpdateWithoutDisclosureCategoriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumFirmProfileStatusFieldUpdateOperationsInput | $Enums.FirmProfileStatus
+    crdNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoName?: NullableStringFieldUpdateOperationsInput | string | null
+    advFilingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aumUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    advDocumentKey?: NullableStringFieldUpdateOperationsInput | string | null
+    riskFlags?: FirmProfileUpdateriskFlagsInput | string[]
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutFirmProfileNestedInput
+    suppressionLogs?: SuppressionLogEntryUpdateManyWithoutFirmProfileNestedInput
+    versions?: FirmProfileVersionUpdateManyWithoutFirmProfileNestedInput
+  }
+
+  export type FirmProfileUncheckedUpdateWithoutDisclosureCategoriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    status?: EnumFirmProfileStatusFieldUpdateOperationsInput | $Enums.FirmProfileStatus
+    crdNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoName?: NullableStringFieldUpdateOperationsInput | string | null
+    advFilingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aumUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    advDocumentKey?: NullableStringFieldUpdateOperationsInput | string | null
+    riskFlags?: FirmProfileUpdateriskFlagsInput | string[]
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    suppressionLogs?: SuppressionLogEntryUncheckedUpdateManyWithoutFirmProfileNestedInput
+    versions?: FirmProfileVersionUncheckedUpdateManyWithoutFirmProfileNestedInput
+  }
+
+  export type FirmProfileCreateWithoutSuppressionLogsInput = {
+    id?: string
+    status?: $Enums.FirmProfileStatus
+    crdNumber?: string | null
+    ccoName?: string | null
+    advFilingDate?: Date | string | null
+    aumUsd?: Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: string | null
+    advDocumentKey?: string | null
+    riskFlags?: FirmProfileCreateriskFlagsInput | string[]
+    setupCompletedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    approvedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutFirmProfileInput
+    disclosureCategories?: DisclosureCategoryCreateNestedManyWithoutFirmProfileInput
+    versions?: FirmProfileVersionCreateNestedManyWithoutFirmProfileInput
+  }
+
+  export type FirmProfileUncheckedCreateWithoutSuppressionLogsInput = {
+    id?: string
+    workspaceId: string
+    status?: $Enums.FirmProfileStatus
+    crdNumber?: string | null
+    ccoName?: string | null
+    advFilingDate?: Date | string | null
+    aumUsd?: Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: string | null
+    advDocumentKey?: string | null
+    riskFlags?: FirmProfileCreateriskFlagsInput | string[]
+    setupCompletedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    approvedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    disclosureCategories?: DisclosureCategoryUncheckedCreateNestedManyWithoutFirmProfileInput
+    versions?: FirmProfileVersionUncheckedCreateNestedManyWithoutFirmProfileInput
+  }
+
+  export type FirmProfileCreateOrConnectWithoutSuppressionLogsInput = {
+    where: FirmProfileWhereUniqueInput
+    create: XOR<FirmProfileCreateWithoutSuppressionLogsInput, FirmProfileUncheckedCreateWithoutSuppressionLogsInput>
+  }
+
+  export type FirmProfileUpsertWithoutSuppressionLogsInput = {
+    update: XOR<FirmProfileUpdateWithoutSuppressionLogsInput, FirmProfileUncheckedUpdateWithoutSuppressionLogsInput>
+    create: XOR<FirmProfileCreateWithoutSuppressionLogsInput, FirmProfileUncheckedCreateWithoutSuppressionLogsInput>
+    where?: FirmProfileWhereInput
+  }
+
+  export type FirmProfileUpdateToOneWithWhereWithoutSuppressionLogsInput = {
+    where?: FirmProfileWhereInput
+    data: XOR<FirmProfileUpdateWithoutSuppressionLogsInput, FirmProfileUncheckedUpdateWithoutSuppressionLogsInput>
+  }
+
+  export type FirmProfileUpdateWithoutSuppressionLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumFirmProfileStatusFieldUpdateOperationsInput | $Enums.FirmProfileStatus
+    crdNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoName?: NullableStringFieldUpdateOperationsInput | string | null
+    advFilingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aumUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    advDocumentKey?: NullableStringFieldUpdateOperationsInput | string | null
+    riskFlags?: FirmProfileUpdateriskFlagsInput | string[]
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutFirmProfileNestedInput
+    disclosureCategories?: DisclosureCategoryUpdateManyWithoutFirmProfileNestedInput
+    versions?: FirmProfileVersionUpdateManyWithoutFirmProfileNestedInput
+  }
+
+  export type FirmProfileUncheckedUpdateWithoutSuppressionLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    status?: EnumFirmProfileStatusFieldUpdateOperationsInput | $Enums.FirmProfileStatus
+    crdNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoName?: NullableStringFieldUpdateOperationsInput | string | null
+    advFilingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aumUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    advDocumentKey?: NullableStringFieldUpdateOperationsInput | string | null
+    riskFlags?: FirmProfileUpdateriskFlagsInput | string[]
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    disclosureCategories?: DisclosureCategoryUncheckedUpdateManyWithoutFirmProfileNestedInput
+    versions?: FirmProfileVersionUncheckedUpdateManyWithoutFirmProfileNestedInput
+  }
+
+  export type FirmProfileCreateWithoutVersionsInput = {
+    id?: string
+    status?: $Enums.FirmProfileStatus
+    crdNumber?: string | null
+    ccoName?: string | null
+    advFilingDate?: Date | string | null
+    aumUsd?: Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: string | null
+    advDocumentKey?: string | null
+    riskFlags?: FirmProfileCreateriskFlagsInput | string[]
+    setupCompletedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    approvedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutFirmProfileInput
+    disclosureCategories?: DisclosureCategoryCreateNestedManyWithoutFirmProfileInput
+    suppressionLogs?: SuppressionLogEntryCreateNestedManyWithoutFirmProfileInput
+  }
+
+  export type FirmProfileUncheckedCreateWithoutVersionsInput = {
+    id?: string
+    workspaceId: string
+    status?: $Enums.FirmProfileStatus
+    crdNumber?: string | null
+    ccoName?: string | null
+    advFilingDate?: Date | string | null
+    aumUsd?: Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: string | null
+    advDocumentKey?: string | null
+    riskFlags?: FirmProfileCreateriskFlagsInput | string[]
+    setupCompletedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    approvedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    disclosureCategories?: DisclosureCategoryUncheckedCreateNestedManyWithoutFirmProfileInput
+    suppressionLogs?: SuppressionLogEntryUncheckedCreateNestedManyWithoutFirmProfileInput
+  }
+
+  export type FirmProfileCreateOrConnectWithoutVersionsInput = {
+    where: FirmProfileWhereUniqueInput
+    create: XOR<FirmProfileCreateWithoutVersionsInput, FirmProfileUncheckedCreateWithoutVersionsInput>
+  }
+
+  export type FirmProfileUpsertWithoutVersionsInput = {
+    update: XOR<FirmProfileUpdateWithoutVersionsInput, FirmProfileUncheckedUpdateWithoutVersionsInput>
+    create: XOR<FirmProfileCreateWithoutVersionsInput, FirmProfileUncheckedCreateWithoutVersionsInput>
+    where?: FirmProfileWhereInput
+  }
+
+  export type FirmProfileUpdateToOneWithWhereWithoutVersionsInput = {
+    where?: FirmProfileWhereInput
+    data: XOR<FirmProfileUpdateWithoutVersionsInput, FirmProfileUncheckedUpdateWithoutVersionsInput>
+  }
+
+  export type FirmProfileUpdateWithoutVersionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumFirmProfileStatusFieldUpdateOperationsInput | $Enums.FirmProfileStatus
+    crdNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoName?: NullableStringFieldUpdateOperationsInput | string | null
+    advFilingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aumUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    advDocumentKey?: NullableStringFieldUpdateOperationsInput | string | null
+    riskFlags?: FirmProfileUpdateriskFlagsInput | string[]
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutFirmProfileNestedInput
+    disclosureCategories?: DisclosureCategoryUpdateManyWithoutFirmProfileNestedInput
+    suppressionLogs?: SuppressionLogEntryUpdateManyWithoutFirmProfileNestedInput
+  }
+
+  export type FirmProfileUncheckedUpdateWithoutVersionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    status?: EnumFirmProfileStatusFieldUpdateOperationsInput | $Enums.FirmProfileStatus
+    crdNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoName?: NullableStringFieldUpdateOperationsInput | string | null
+    advFilingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    aumUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    advDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    advDocumentKey?: NullableStringFieldUpdateOperationsInput | string | null
+    riskFlags?: FirmProfileUpdateriskFlagsInput | string[]
+    setupCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    disclosureCategories?: DisclosureCategoryUncheckedUpdateManyWithoutFirmProfileNestedInput
+    suppressionLogs?: SuppressionLogEntryUncheckedUpdateManyWithoutFirmProfileNestedInput
   }
 
   export type UserWorkspaceCreateManyWorkspaceInput = {
@@ -41394,6 +48939,142 @@ export namespace Prisma {
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type DisclosureCategoryCreateManyFirmProfileInput = {
+    id?: string
+    slug: string
+    status?: $Enums.DisclosureCategoryStatus
+    suppressionEvidence?: string | null
+    advItemRef?: string | null
+    advPage?: number | null
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SuppressionLogEntryCreateManyFirmProfileInput = {
+    id?: string
+    workspaceId: string
+    categorySlug: string
+    userId: string
+    meetingId?: string | null
+    action: $Enums.SuppressionAction
+    previousStatus?: $Enums.DisclosureCategoryStatus | null
+    newStatus: $Enums.DisclosureCategoryStatus
+    evidenceSnapshot?: string | null
+    createdAt?: Date | string
+  }
+
+  export type FirmProfileVersionCreateManyFirmProfileInput = {
+    id?: string
+    workspaceId: string
+    versionType: $Enums.FirmProfileVersionType
+    approvedByUserId?: string | null
+    approvedAt?: Date | string
+    snapshot: JsonNullValueInput | InputJsonValue
+  }
+
+  export type DisclosureCategoryUpdateWithoutFirmProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    status?: EnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus
+    suppressionEvidence?: NullableStringFieldUpdateOperationsInput | string | null
+    advItemRef?: NullableStringFieldUpdateOperationsInput | string | null
+    advPage?: NullableIntFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisclosureCategoryUncheckedUpdateWithoutFirmProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    status?: EnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus
+    suppressionEvidence?: NullableStringFieldUpdateOperationsInput | string | null
+    advItemRef?: NullableStringFieldUpdateOperationsInput | string | null
+    advPage?: NullableIntFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisclosureCategoryUncheckedUpdateManyWithoutFirmProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    status?: EnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus
+    suppressionEvidence?: NullableStringFieldUpdateOperationsInput | string | null
+    advItemRef?: NullableStringFieldUpdateOperationsInput | string | null
+    advPage?: NullableIntFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SuppressionLogEntryUpdateWithoutFirmProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    categorySlug?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    meetingId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumSuppressionActionFieldUpdateOperationsInput | $Enums.SuppressionAction
+    previousStatus?: NullableEnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus | null
+    newStatus?: EnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus
+    evidenceSnapshot?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SuppressionLogEntryUncheckedUpdateWithoutFirmProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    categorySlug?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    meetingId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumSuppressionActionFieldUpdateOperationsInput | $Enums.SuppressionAction
+    previousStatus?: NullableEnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus | null
+    newStatus?: EnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus
+    evidenceSnapshot?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SuppressionLogEntryUncheckedUpdateManyWithoutFirmProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    categorySlug?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    meetingId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: EnumSuppressionActionFieldUpdateOperationsInput | $Enums.SuppressionAction
+    previousStatus?: NullableEnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus | null
+    newStatus?: EnumDisclosureCategoryStatusFieldUpdateOperationsInput | $Enums.DisclosureCategoryStatus
+    evidenceSnapshot?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FirmProfileVersionUpdateWithoutFirmProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    versionType?: EnumFirmProfileVersionTypeFieldUpdateOperationsInput | $Enums.FirmProfileVersionType
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    snapshot?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type FirmProfileVersionUncheckedUpdateWithoutFirmProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    versionType?: EnumFirmProfileVersionTypeFieldUpdateOperationsInput | $Enums.FirmProfileVersionType
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    snapshot?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type FirmProfileVersionUncheckedUpdateManyWithoutFirmProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    versionType?: EnumFirmProfileVersionTypeFieldUpdateOperationsInput | $Enums.FirmProfileVersionType
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    snapshot?: JsonNullValueInput | InputJsonValue
   }
 
 

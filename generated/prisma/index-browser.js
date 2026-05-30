@@ -379,6 +379,62 @@ exports.Prisma.IntegrationSyncLogScalarFieldEnum = {
   completedAt: 'completedAt'
 };
 
+exports.Prisma.FirmProfileScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  status: 'status',
+  crdNumber: 'crdNumber',
+  ccoName: 'ccoName',
+  advFilingDate: 'advFilingDate',
+  aumUsd: 'aumUsd',
+  advDocumentUrl: 'advDocumentUrl',
+  advDocumentKey: 'advDocumentKey',
+  riskFlags: 'riskFlags',
+  setupCompletedAt: 'setupCompletedAt',
+  approvedAt: 'approvedAt',
+  approvedByUserId: 'approvedByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.DisclosureCategoryScalarFieldEnum = {
+  id: 'id',
+  firmProfileId: 'firmProfileId',
+  slug: 'slug',
+  status: 'status',
+  suppressionEvidence: 'suppressionEvidence',
+  advItemRef: 'advItemRef',
+  advPage: 'advPage',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SuppressionLogEntryScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  firmProfileId: 'firmProfileId',
+  categorySlug: 'categorySlug',
+  userId: 'userId',
+  meetingId: 'meetingId',
+  action: 'action',
+  previousStatus: 'previousStatus',
+  newStatus: 'newStatus',
+  evidenceSnapshot: 'evidenceSnapshot',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FirmProfileVersionScalarFieldEnum = {
+  id: 'id',
+  firmProfileId: 'firmProfileId',
+  workspaceId: 'workspaceId',
+  versionType: 'versionType',
+  approvedByUserId: 'approvedByUserId',
+  approvedAt: 'approvedAt',
+  snapshot: 'snapshot'
+};
+
 exports.Prisma.LeadScalarFieldEnum = {
   id: 'id',
   email: 'email',
@@ -542,7 +598,10 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   ADVISOR_CERTIFIED: 'ADVISOR_CERTIFIED',
   CM_REVIEW_COMPLETED: 'CM_REVIEW_COMPLETED',
   CCO_SIGNED_OFF: 'CCO_SIGNED_OFF',
-  WORKFLOW_REVERTED: 'WORKFLOW_REVERTED'
+  WORKFLOW_REVERTED: 'WORKFLOW_REVERTED',
+  DISCLOSURE_SUPPRESSION_ACTIVATED: 'DISCLOSURE_SUPPRESSION_ACTIVATED',
+  DISCLOSURE_SUPPRESSION_DEACTIVATED: 'DISCLOSURE_SUPPRESSION_DEACTIVATED',
+  FIRM_PROFILE_APPROVED: 'FIRM_PROFILE_APPROVED'
 };
 
 exports.IntegrationProvider = exports.$Enums.IntegrationProvider = {
@@ -569,6 +628,27 @@ exports.IntegrationStatus = exports.$Enums.IntegrationStatus = {
   NOT_CONNECTED: 'NOT_CONNECTED'
 };
 
+exports.FirmProfileStatus = exports.$Enums.FirmProfileStatus = {
+  DRAFT: 'DRAFT',
+  ACTIVE: 'ACTIVE'
+};
+
+exports.DisclosureCategoryStatus = exports.$Enums.DisclosureCategoryStatus = {
+  ACTIVE: 'ACTIVE',
+  SUPPRESSING: 'SUPPRESSING',
+  NEVER_SUPPRESS: 'NEVER_SUPPRESS'
+};
+
+exports.SuppressionAction = exports.$Enums.SuppressionAction = {
+  ACTIVATED: 'ACTIVATED',
+  DEACTIVATED: 'DEACTIVATED'
+};
+
+exports.FirmProfileVersionType = exports.$Enums.FirmProfileVersionType = {
+  INITIAL_SETUP: 'INITIAL_SETUP',
+  APPROVED: 'APPROVED'
+};
+
 exports.Prisma.ModelName = {
   Workspace: 'Workspace',
   UserWorkspace: 'UserWorkspace',
@@ -588,6 +668,10 @@ exports.Prisma.ModelName = {
   IntegrationCredential: 'IntegrationCredential',
   IntegrationConfig: 'IntegrationConfig',
   IntegrationSyncLog: 'IntegrationSyncLog',
+  FirmProfile: 'FirmProfile',
+  DisclosureCategory: 'DisclosureCategory',
+  SuppressionLogEntry: 'SuppressionLogEntry',
+  FirmProfileVersion: 'FirmProfileVersion',
   Lead: 'Lead'
 };
 

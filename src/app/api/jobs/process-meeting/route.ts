@@ -7,6 +7,7 @@ import { sendDraftReadyEmail } from "~/server/email";
 import { extractFields } from "~/server/extraction";
 import { toExtractionData, validateEvidenceCoverage } from "~/server/extraction/evidence";
 import { detectMissingDisclosureFlags } from "~/server/flags";
+import { getDisclosureProfileForWorkspace } from "~/server/firm-profile/get-disclosure-profile-for-workspace";
 import { generateSearchableText } from "~/server/search/index";
 import { createErrorResponse, AppError, ErrorMessages } from "~/server/errors";
 import type { Transcript } from "~/server/transcription/types";
@@ -192,12 +193,16 @@ async function handler(request: Request) {
         },
       });
 
-      // Step 9: Generate missing disclosure flags
-      const missingDisclosureFlags = detectMissingDisclosureFlags(extractionData);
+      // Step 9: Generate missing disclosure flags (profile-aware)
+      const disclosureProfile = await getDisclosureProfileForWorkspace(workspaceId);
+      const missingDisclosureFlags = detectMissingDisclosureFlags(extractionData, {
+        profile: disclosureProfile,
+      });
       await db.flag.deleteMany({
         where: {
           meetingId,
           type: "MISSING_DISCLOSURE",
+          resolvedAt: null,
         },
       });
       if (missingDisclosureFlags.length > 0) {

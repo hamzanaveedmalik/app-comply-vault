@@ -240,7 +240,13 @@ async function handler(request: Request) {
           },
         });
 
-        const missingDisclosureFlags = detectMissingDisclosureFlags(extractionData);
+        const { getDisclosureProfileForWorkspace } = await import(
+          "~/server/firm-profile/get-disclosure-profile-for-workspace"
+        );
+        const disclosureProfile = await getDisclosureProfileForWorkspace(workspaceId);
+        const missingDisclosureFlags = detectMissingDisclosureFlags(extractionData, {
+          profile: disclosureProfile,
+        });
         if (missingDisclosureFlags.length > 0) {
           await db.flag.createMany({
             data: missingDisclosureFlags.map((flag) => ({

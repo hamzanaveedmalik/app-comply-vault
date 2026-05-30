@@ -6,6 +6,7 @@ import { generateComplianceNotePDF } from "./pdf";
 import { generateEvidenceMapCSV, generateVersionHistoryCSV } from "./csv";
 import { generateTranscriptTXT } from "./txt";
 import { buildExportPayload } from "./export-payload";
+import { getFirmProfileSummaryForExport } from "~/server/firm-profile/get-firm-profile-summary-for-export";
 
 export interface ExportFlag {
   type: string;
@@ -70,6 +71,7 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
         };
 
         // 1. Generate branded PDF (PDFKit)
+        const firmDisclosureProfile = await getFirmProfileSummaryForExport(workspace.id);
         const payload = buildExportPayload(
           meeting,
           extraction,
@@ -78,7 +80,7 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
           workspace,
           flags,
           watermarked,
-          { exportingUserName }
+          { exportingUserName, firmDisclosureProfile },
         );
         const pdfBuffer = await generateComplianceNotePDF(payload);
         archive.append(pdfBuffer, { name: "01_Compliance_Note.pdf" });

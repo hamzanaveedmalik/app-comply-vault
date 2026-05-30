@@ -50,6 +50,7 @@ model Workspace {
   resolutionRecords      ResolutionRecord[]
   integrationCredentials IntegrationCredential[]
   integrationConfigs     IntegrationConfig[]
+  firmProfile            FirmProfile?
 
   @@index([createdAt])
 }
@@ -225,6 +226,9 @@ enum AuditAction {
   CM_REVIEW_COMPLETED
   CCO_SIGNED_OFF
   WORKFLOW_REVERTED
+  DISCLOSURE_SUPPRESSION_ACTIVATED
+  DISCLOSURE_SUPPRESSION_DEACTIVATED
+  FIRM_PROFILE_APPROVED
 }
 
 enum FlagType {
@@ -590,6 +594,109 @@ model IntegrationSyncLog {
   @@index([meetingId])
   @@index([provider, status])
   @@index([createdAt])
+}
+
+// ============================================
+// Compliance Cockpit — Firm Disclosure Profile (Epic 8.0)
+// ============================================
+
+enum DisclosureCategoryStatus {
+  ACTIVE
+  SUPPRESSING
+  NEVER_SUPPRESS
+}
+
+enum FirmProfileStatus {
+  DRAFT
+  ACTIVE
+}
+
+enum FirmProfileVersionType {
+  INITIAL_SETUP
+  APPROVED
+}
+
+enum SuppressionAction {
+  ACTIVATED
+  DEACTIVATED
+}
+
+model FirmProfile {
+  id               String            @id @default(cuid())
+  workspaceId      String            @unique
+  status           FirmProfileStatus @default(DRAFT)
+  crdNumber        String?
+  ccoName          String?
+  advFilingDate    DateTime?
+  aumUsd           Decimal?
+  advDocumentUrl   String?
+  advDocumentKey   String?
+  riskFlags        String[]
+  setupCompletedAt DateTime?
+  approvedAt       DateTime?
+  approvedByUserId String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  deletedAt        DateTime?
+
+  workspace            Workspace             @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  disclosureCategories DisclosureCategory[]
+  suppressionLogs      SuppressionLogEntry[]
+  versions             FirmProfileVersion[]
+
+  @@index([workspaceId])
+}
+
+model DisclosureCategory {
+  id                  String                   @id @default(cuid())
+  firmProfileId       String
+  slug                String
+  status              DisclosureCategoryStatus @default(ACTIVE)
+  suppressionEvidence String?
+  advItemRef          String?
+  advPage             Int?
+  description         String?
+  createdAt           DateTime                 @default(now())
+  updatedAt           DateTime                 @updatedAt
+
+  firmProfile FirmProfile @relation(fields: [firmProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([firmProfileId, slug])
+  @@index([firmProfileId])
+}
+
+model SuppressionLogEntry {
+  id               String                    @id @default(cuid())
+  workspaceId      String
+  firmProfileId    String
+  categorySlug     String
+  userId           String
+  meetingId        String?
+  action           SuppressionAction
+  previousStatus   DisclosureCategoryStatus?
+  newStatus        DisclosureCategoryStatus
+  evidenceSnapshot String?
+  createdAt        DateTime                  @default(now())
+
+  firmProfile FirmProfile @relation(fields: [firmProfileId], references: [id], onDelete: Cascade)
+
+  @@index([firmProfileId, createdAt])
+  @@index([workspaceId, createdAt])
+}
+
+model FirmProfileVersion {
+  id               String                 @id @default(cuid())
+  firmProfileId    String
+  workspaceId      String
+  versionType      FirmProfileVersionType
+  approvedByUserId String?
+  approvedAt       DateTime               @default(now())
+  snapshot         Json
+
+  firmProfile FirmProfile @relation(fields: [firmProfileId], references: [id], onDelete: Cascade)
+
+  @@index([firmProfileId, approvedAt])
+  @@index([workspaceId])
 }
 
 // ============================================

@@ -4,6 +4,7 @@ import { z } from "zod";
 import { extractFields } from "~/server/extraction";
 import { toExtractionData, validateEvidenceCoverage } from "~/server/extraction/evidence";
 import { detectMissingDisclosureFlags } from "~/server/flags";
+import { getDisclosureProfileForWorkspace } from "~/server/firm-profile/get-disclosure-profile-for-workspace";
 import { generateSearchableText } from "~/server/search/index";
 import type { Transcript } from "~/server/transcription/types";
 
@@ -120,12 +121,18 @@ export async function POST(
         },
       });
 
-      // Generate missing disclosure flags
-      const missingDisclosureFlags = detectMissingDisclosureFlags(extractionData);
+      // Generate missing disclosure flags (profile-aware)
+      const disclosureProfile = await getDisclosureProfileForWorkspace(
+        session.user.workspaceId!,
+      );
+      const missingDisclosureFlags = detectMissingDisclosureFlags(extractionData, {
+        profile: disclosureProfile,
+      });
       await db.flag.deleteMany({
         where: {
           meetingId: meeting.id,
           type: "MISSING_DISCLOSURE",
+          resolvedAt: null,
         },
       });
       if (missingDisclosureFlags.length > 0) {

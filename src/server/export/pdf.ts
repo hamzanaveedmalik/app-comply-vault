@@ -282,6 +282,53 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
     }
     y += 14;
 
+    const firmProfile = payload.firm_disclosure_profile;
+    if (firmProfile?.include) {
+      doc.fillColor(COLORS.DARK_GREEN).fontSize(11.5).font("Helvetica-Bold");
+      doc.text("FIRM DISCLOSURE PROFILE", LEFT, y);
+      y += 16;
+      doc.moveTo(LEFT, y).lineTo(LEFT + USABLE, y).strokeColor(COLORS.ACCENT_GREEN).lineWidth(0.5).stroke();
+      y += 8;
+      doc.fillColor(COLORS.DARK_TEXT).fontSize(8.5).font("Helvetica");
+      doc.text(firmProfile.statement, LEFT, y, { width: USABLE });
+      y += 28;
+      if (firmProfile.warning) {
+        drawRect(doc, LEFT, y, USABLE, 36, COLORS.AMBER_BG, COLORS.AMBER_BORDER);
+        doc.fillColor(COLORS.AMBER_TEXT).fontSize(8).font("Helvetica-Bold");
+        doc.text(firmProfile.warning, LEFT + 8, y + 10, { width: USABLE - 16 });
+        y += 44;
+      }
+      if (firmProfile.versionReference) {
+        doc.fillColor(COLORS.GRAY).fontSize(7.5).font("Helvetica");
+        const versionLine = [
+          `Version: ${firmProfile.versionReference}`,
+          firmProfile.versionApprovedAt
+            ? `Approved: ${firmProfile.versionApprovedAt.slice(0, 10)}`
+            : null,
+          firmProfile.approvingCcoName ? `CCO: ${firmProfile.approvingCcoName}` : null,
+        ]
+          .filter(Boolean)
+          .join(" · ");
+        doc.text(versionLine, LEFT, y, { width: USABLE });
+        y += 18;
+      }
+      if (firmProfile.suppressedCategories.length > 0) {
+        firmProfile.suppressedCategories.forEach((cat, i) => {
+          const bg = i % 2 === 0 ? COLORS.LIGHT_GREEN : COLORS.WHITE;
+          drawRect(doc, LEFT, y, USABLE, 32, bg, COLORS.GRID);
+          doc.fillColor(COLORS.DARK_TEXT).fontSize(8).font("Helvetica-Bold");
+          doc.text(cat.displayName, LEFT + 8, y + 8);
+          doc.font("Helvetica").fillColor(COLORS.GRAY);
+          doc.text(cat.evidence.slice(0, 200), LEFT + 8, y + 20, { width: USABLE - 16 });
+          y += 32;
+        });
+      } else {
+        doc.fillColor(COLORS.GRAY).fontSize(8).text("No categories currently suppressed.", LEFT, y);
+        y += 16;
+      }
+      y += 10;
+    }
+
     // 5. ACTION ITEMS
     doc.fillColor(COLORS.DARK_GREEN).fontSize(11.5).font("Helvetica-Bold");
     doc.text("ACTION ITEMS", LEFT, y);

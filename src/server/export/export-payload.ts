@@ -7,6 +7,7 @@ import type { Meeting, User, Version, Workspace } from "./types";
 import type { ExtractionData } from "../extraction/types";
 import { normalizeTopic } from "~/lib/topics";
 import type { TranscriptSegment } from "../transcription/types";
+import type { FirmProfileExportSectionDto } from "~/lib/firm-profile-types";
 
 export interface ExportPayload {
   client_name: string;
@@ -38,6 +39,7 @@ export interface ExportPayload {
   date_signed?: string;
   watermarked?: boolean;
   _transcript_segments?: TranscriptSegment[];
+  firm_disclosure_profile?: FirmProfileExportSectionDto;
 }
 
 function getSpeakerAtTime(
@@ -86,7 +88,10 @@ export function buildExportPayload(
     evidence?: unknown;
   }>,
   watermarked: boolean,
-  options?: { exportingUserName?: string }
+  options?: {
+    exportingUserName?: string;
+    firmDisclosureProfile?: FirmProfileExportSectionDto;
+  },
 ): ExportPayload {
   const segments = transcript?.segments ?? [];
   const dateStr: string = meeting.meetingDate
@@ -263,5 +268,6 @@ export function buildExportPayload(
       : undefined,
     watermarked,
     _transcript_segments: segments,
+    firm_disclosure_profile: options?.firmDisclosureProfile,
   };
 }

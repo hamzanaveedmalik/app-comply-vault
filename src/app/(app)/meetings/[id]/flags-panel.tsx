@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
+import { getCategoryBySlug } from "~/lib/disclosure-categories";
 
 interface TaskItem {
   id: string;
@@ -92,6 +93,37 @@ const getSeverityVariant = (severity: string): "default" | "secondary" | "destru
       return "secondary";
   }
 };
+
+function MissingDisclosureCategoryNote({ evidence }: { evidence: Record<string, unknown> }): ReactNode {
+  const matched = evidence.matchedCategories as string[] | undefined;
+  if (!matched?.length) return null;
+
+  const active = (evidence.activeCategories as string[] | undefined) ?? [];
+  const suppressed = (evidence.suppressedCategories as string[] | undefined) ?? [];
+  const primarySlug = active[0] ?? matched.find((s) => {
+    const def = getCategoryBySlug(s);
+    return def && !suppressed.includes(s);
+  }) ?? matched[0];
+  const primaryName = primarySlug ? (getCategoryBySlug(primarySlug)?.displayName ?? primarySlug) : null;
+
+  return (
+    <div className="space-y-1 text-xs text-muted-foreground">
+      {primaryName ? (
+        <div>
+          <span className="font-medium text-foreground">Category:</span> {primaryName}
+        </div>
+      ) : null}
+      {suppressed.map((slug) => {
+        const name = getCategoryBySlug(slug)?.displayName ?? slug;
+        return (
+          <div key={slug} className="italic">
+            {name} suppressed per firm profile.
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
   switch (status) {
@@ -590,6 +622,9 @@ export default function FlagsPanel({
               <div className="text-xs text-muted-foreground">
                 “{flag.evidence.recommendation.snippet}”
               </div>
+            ) : null}
+            {flag.type === "MISSING_DISCLOSURE" && flag.evidence?.matchedCategories ? (
+              <MissingDisclosureCategoryNote evidence={flag.evidence} />
             ) : null}
               <div className="grid gap-2 text-xs text-muted-foreground sm:grid-cols-3">
                 <div>

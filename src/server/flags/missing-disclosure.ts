@@ -1,4 +1,11 @@
+import type { DisclosureCategoryStatus } from "../../../generated/prisma";
 import type { ExtractionData, ExtractedRecommendation, ExtractedDisclosure } from "~/server/extraction/types";
+import {
+  getImplicatedCategorySlugs,
+  getSuppressedSlugsFromMixed,
+  resolveProfileSkip,
+} from "./category-mapping";
+import { DISCLOSURE_CATEGORY_CATALOG } from "~/lib/disclosure-categories";
 
 const DISCLOSURE_PATTERNS: RegExp[] = [
   /risk/i,
@@ -15,6 +22,11 @@ const DISCLOSURE_PATTERNS: RegExp[] = [
 ];
 
 const DEFAULT_TIME_WINDOW_SECONDS = 180;
+
+export type DisclosureProfileInput = {
+  statusBySlug: Map<string, DisclosureCategoryStatus>;
+  suppressionEvidenceBySlug: Map<string, string>;
+};
 
 export interface MissingDisclosureFlagEvidence {
   recommendation: {
@@ -34,6 +46,11 @@ export interface MissingDisclosureFlagEvidence {
     timeWindowSeconds: number;
     disclosurePatterns: string[];
   };
+  recommendationText?: string;
+  matchedCategories?: string[];
+  suppressedCategories?: string[];
+  activeCategories?: string[];
+  suppressionEvidence?: Record<string, string>;
 }
 
 export interface MissingDisclosureFlag {
@@ -53,7 +70,7 @@ function matchesDisclosurePatterns(disclosure: ExtractedDisclosure): boolean {
 function findRelevantDisclosure(
   recommendation: ExtractedRecommendation,
   disclosures: ExtractedDisclosure[],
-  timeWindowSeconds: number
+  timeWindowSeconds: number,
 ): ExtractedDisclosure | null {
   if (!disclosures.length) {
     return null;
@@ -75,15 +92,47 @@ function findRelevantDisclosure(
   return candidates.find(matchesDisclosurePatterns) ?? candidates[0] ?? null;
 }
 
+function buildBaseEvidence(
+  rec: ExtractedRecommendation,
+  matchedDisclosure: ExtractedDisclosure | null,
+  timeWindowSeconds: number,
+): MissingDisclosureFlagEvidence {
+  return {
+    recommendation: {
+      text: rec.text!,
+      startTime: rec.startTime!,
+      endTime: rec.endTime!,
+      snippet: rec.snippet ?? "",
+      confidence: rec.confidence,
+    },
+    matchedDisclosure: matchedDisclosure
+      ? {
+          text: matchedDisclosure.text ?? "",
+          startTime: matchedDisclosure.startTime ?? 0,
+          endTime: matchedDisclosure.endTime ?? 0,
+          snippet: matchedDisclosure.snippet ?? "",
+        }
+      : undefined,
+    rule: {
+      timeWindowSeconds,
+      disclosurePatterns: DISCLOSURE_PATTERNS.map((pattern) => pattern.source),
+    },
+    recommendationText: rec.text,
+  };
+}
+
 export function detectMissingDisclosureFlags(
   extraction: ExtractionData,
   options?: {
     timeWindowSeconds?: number;
-  }
+    profile?: DisclosureProfileInput | null;
+  },
 ): MissingDisclosureFlag[] {
   const recommendations = extraction.recommendations ?? [];
   const disclosures = extraction.disclosures ?? [];
   const timeWindowSeconds = options?.timeWindowSeconds ?? DEFAULT_TIME_WINDOW_SECONDS;
+  const profileMap = options?.profile?.statusBySlug ?? null;
+  const evidenceMap = options?.profile?.suppressionEvidenceBySlug ?? new Map<string, string>();
 
   if (recommendations.length === 0) {
     return [];
@@ -92,36 +141,55 @@ export function detectMissingDisclosureFlags(
   const flags: MissingDisclosureFlag[] = [];
   for (const rec of recommendations) {
     if (!rec.text || typeof rec.startTime !== "number" || typeof rec.endTime !== "number") continue;
+
     const matchedDisclosure = findRelevantDisclosure(rec, disclosures, timeWindowSeconds);
     const disclosureIsValid = matchedDisclosure ? matchesDisclosurePatterns(matchedDisclosure) : false;
 
     if (matchedDisclosure && disclosureIsValid) continue;
 
+    const implicatedSlugs = getImplicatedCategorySlugs(rec.text);
+    const decision = resolveProfileSkip(implicatedSlugs, profileMap);
+
+    if (decision === "skip") {
+      continue;
+    }
+
+    const evidence = buildBaseEvidence(rec, matchedDisclosure, timeWindowSeconds);
+
+    if (decision === "raise-mixed" && implicatedSlugs.length > 0) {
+      const suppressed = getSuppressedSlugsFromMixed(implicatedSlugs, profileMap);
+      const active = implicatedSlugs.filter((slug) => {
+        const status = profileMap?.get(slug) ?? "ACTIVE";
+        return status === "ACTIVE" || status === "NEVER_SUPPRESS";
+      });
+      const suppressionEvidence: Record<string, string> = {};
+      for (const slug of suppressed) {
+        const ev = evidenceMap.get(slug);
+        if (ev) suppressionEvidence[slug] = ev;
+      }
+      evidence.matchedCategories = implicatedSlugs;
+      evidence.suppressedCategories = suppressed;
+      evidence.activeCategories = active;
+      if (Object.keys(suppressionEvidence).length > 0) {
+        evidence.suppressionEvidence = suppressionEvidence;
+      }
+    }
+
     flags.push({
       type: "MISSING_DISCLOSURE",
       severity: "CRITICAL",
-      evidence: {
-        recommendation: {
-          text: rec.text,
-          startTime: rec.startTime,
-          endTime: rec.endTime,
-          snippet: rec.snippet ?? "",
-          confidence: rec.confidence,
-        },
-        matchedDisclosure: matchedDisclosure
-          ? {
-              text: matchedDisclosure.text ?? "",
-              startTime: matchedDisclosure.startTime ?? 0,
-              endTime: matchedDisclosure.endTime ?? 0,
-              snippet: matchedDisclosure.snippet ?? "",
-            }
-          : undefined,
-        rule: {
-          timeWindowSeconds,
-          disclosurePatterns: DISCLOSURE_PATTERNS.map((pattern) => pattern.source),
-        },
-      },
+      evidence,
     });
   }
   return flags;
+}
+
+/** Generic patterns used in stage-1 disclosure gate (exported for tests). */
+export function getGenericDisclosurePatterns(): RegExp[] {
+  return DISCLOSURE_PATTERNS;
+}
+
+/** Catalog slug count for posture ring. */
+export function getDisclosureCategoryCount(): number {
+  return DISCLOSURE_CATEGORY_CATALOG.length;
 }

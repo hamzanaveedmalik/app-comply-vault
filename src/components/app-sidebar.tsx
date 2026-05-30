@@ -14,6 +14,7 @@ import {
   Menu,
   Settings,
   Shield,
+  SlidersHorizontal,
   Upload,
 } from "lucide-react";
 import { ROLE_CONFIG, type WorkspaceRoleKey } from "~/lib/role-config";
@@ -103,6 +104,9 @@ function AppSidebarPanel({
       badge: reviewQueueCount > 0 ? reviewQueueCount : undefined,
     },
     { href: "/upload", label: "Upload", icon: Upload },
+    ...(userRole === "OWNER_CCO" || userRole === "MEMBER"
+      ? [{ href: "/compliance-cockpit", label: "Compliance Cockpit", icon: SlidersHorizontal }]
+      : []),
     ...(userRole === "OWNER_CCO"
       ? [
           { href: "/integrations", label: "Integrations", icon: Settings },

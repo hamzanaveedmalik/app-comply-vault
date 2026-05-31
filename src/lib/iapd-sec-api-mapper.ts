@@ -21,7 +21,10 @@ export type SecApiFirmFiling = {
   };
 };
 
-export function mapSecApiFilingToResult(filing: SecApiFirmFiling): IapdFirmLookupResult | null {
+export function mapSecApiFilingToResult(
+  filing: SecApiFirmFiling,
+  ccoName: string | null = null,
+): IapdFirmLookupResult | null {
   const busNm = filing.Info?.BusNm;
   const crd = filing.Info?.FirmCrdNb;
   if (!busNm || crd == null) {
@@ -41,6 +44,7 @@ export function mapSecApiFilingToResult(filing: SecApiFirmFiling): IapdFirmLooku
     city: filing.MainAddr?.City ?? null,
     state: filing.MainAddr?.State ?? null,
     phone: filing.MainAddr?.PhNb ?? null,
+    ccoName,
     riskFlags: part1A ? deriveRiskFlags(part1A) : [],
     source: "sec-api",
   };

@@ -9,6 +9,7 @@ export type IapdFirmLookupResult = {
   city: string | null;
   state: string | null;
   phone: string | null;
+  ccoName: string | null;
   riskFlags: string[];
   source: "sec-api" | "iapd-search";
 };

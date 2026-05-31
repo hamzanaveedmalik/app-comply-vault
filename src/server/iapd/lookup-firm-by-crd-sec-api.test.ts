@@ -38,9 +38,21 @@ describe("mapSecApiFilingToResult", () => {
       city: "TUCSON",
       state: "AZ",
       phone: "520-333-4719",
+      ccoName: null,
       riskFlags: ["Regulatory History", "Dual-Hat Advisors", "Insurance Affiliate"],
       source: "sec-api",
     });
+  });
+
+  it("includes CCO name when provided from Schedule A", () => {
+    const result = mapSecApiFilingToResult(
+      {
+        Info: { FirmCrdNb: 141195, BusNm: "SECURE INVESTMENT MANAGEMENT, LLC" },
+      },
+      "Janice Powell",
+    );
+
+    expect(result?.ccoName).toBe("Janice Powell");
   });
 
   it("returns null when required firm identity is missing", () => {

@@ -8,6 +8,7 @@ export type IapdLookupStatus = "idle" | "loading" | "found" | "not_found" | "err
 export type CrdLookupSetters = {
   setAdvFilingDate: (value: string) => void;
   setAumUsd: (value: string) => void;
+  setCcoName: (value: string) => void;
   setRiskFlags: (flags: string[]) => void;
   setIapdFirm: (firm: IapdFirmLookupResult | null) => void;
   setIapdLookup: (status: IapdLookupStatus) => void;
@@ -65,6 +66,9 @@ export function useCrdLookup(setters: CrdLookupSetters): {
       setters.setIapdFirm(firm);
       setters.setAdvFilingDate(firm.advFilingDate?.slice(0, 10) ?? "");
       setters.setAumUsd(firm.aumUsd ?? "");
+      if (firm.ccoName) {
+        setters.setCcoName(firm.ccoName);
+      }
       setters.setRiskFlags(firm.riskFlags);
       setters.setIapdLookup("found");
     } catch (err) {

@@ -57,6 +57,7 @@ export async function lookupFirmByCrd(crdNumber: string): Promise<IapdFirmLookup
     city: null,
     state: null,
     phone: null,
+    ccoName: null,
     riskFlags: [],
     source: "iapd-search",
   };

@@ -119,6 +119,7 @@ export function FirstRunWizard({
   const { lookup, error: crdLookupError } = useCrdLookup({
     setAdvFilingDate,
     setAumUsd,
+    setCcoName,
     setRiskFlags,
     setIapdFirm,
     setIapdLookup,
@@ -286,17 +287,21 @@ export function FirstRunWizard({
             <Label htmlFor="cco">
               CCO name <span className="text-semantic-danger">*</span>
             </Label>
-            <Input
-              id="cco"
-              value={ccoName}
-              aria-invalid={!!fieldErrors.ccoName}
-              onChange={(e) => {
-                setCcoName(e.target.value);
-                if (fieldErrors.ccoName) {
-                  setFieldErrors((prev) => ({ ...prev, ccoName: undefined }));
-                }
-              }}
-            />
+            <div className="relative">
+              <Input
+                id="cco"
+                value={ccoName}
+                aria-invalid={!!fieldErrors.ccoName}
+                aria-busy={isLookupLoading}
+                onChange={(e) => {
+                  setCcoName(e.target.value);
+                  if (fieldErrors.ccoName) {
+                    setFieldErrors((prev) => ({ ...prev, ccoName: undefined }));
+                  }
+                }}
+              />
+              <FieldSpinner show={isLookupLoading} />
+            </div>
             {fieldErrors.ccoName ? <FieldError message={fieldErrors.ccoName} /> : null}
           </div>
           <div>

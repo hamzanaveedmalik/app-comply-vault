@@ -8,6 +8,13 @@ import { DisclosureGrid } from "./DisclosureGrid";
 import { SuppressionEvidenceModal } from "./SuppressionEvidenceModal";
 import type { DisclosureCategoryDto } from "~/lib/firm-profile-types";
 import { DISCLOSURE_CATEGORY_CATALOG } from "~/lib/disclosure-categories";
+import {
+  hasRequiredFirmIdentity,
+  validateStep1Client,
+  type Step1FieldErrors,
+  type Step1SoftWarnings,
+} from "~/lib/firm-profile-schemas";
+import type { IapdFirmLookupResult } from "~/lib/iapd-types";
 
 type FirstRunWizardProps = {
   workspaceId: string;
@@ -36,13 +43,29 @@ function buildDefaultCategories(): DisclosureCategoryDto[] {
   }));
 }
 
+function FieldError({ message }: { message: string }): React.JSX.Element {
+  return (
+    <p className="mt-1 text-sm text-semantic-danger" role="alert">
+      {message}
+    </p>
+  );
+}
+
+function FieldWarning({ message }: { message: string }): React.JSX.Element {
+  return (
+    <p className="mt-1 text-sm text-amber-800" role="status">
+      {message}
+    </p>
+  );
+}
+
 export function FirstRunWizard({
   workspaceId,
   initialDraft,
   onComplete,
 }: FirstRunWizardProps): React.JSX.Element {
   const [step, setStep] = useState<1 | 2>(
-    initialDraft?.ccoName || initialDraft?.crdNumber ? 2 : 1,
+    initialDraft && hasRequiredFirmIdentity(initialDraft) ? 2 : 1,
   );
   const [crdNumber, setCrdNumber] = useState(initialDraft?.crdNumber ?? "");
   const [ccoName, setCcoName] = useState(initialDraft?.ccoName ?? "");
@@ -60,10 +83,51 @@ export function FirstRunWizard({
   const [pendingToggles, setPendingToggles] = useState<
     Array<{ slug: string; status: "SUPPRESSING"; suppressionEvidence: string }>
   >([]);
+  const [fieldErrors, setFieldErrors] = useState<Step1FieldErrors>({});
+  const [softWarnings, setSoftWarnings] = useState<Step1SoftWarnings>({});
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [iapdLookup, setIapdLookup] = useState<
+    "idle" | "loading" | "found" | "not_found" | "error"
+  >("idle");
+  const [iapdFirm, setIapdFirm] = useState<IapdFirmLookupResult | null>(null);
+
+  const lookupIapdFirm = async (crd: string): Promise<void> => {
+    const normalized = crd.trim();
+    if (!/^\d{4,7}$/.test(normalized)) {
+      setIapdLookup("idle");
+      setIapdFirm(null);
+      return;
+    }
+
+    setIapdLookup("loading");
+    setIapdFirm(null);
+    try {
+      const res = await fetch(`/api/iapd/firm/${encodeURIComponent(normalized)}`);
+      if (!res.ok) {
+        setIapdLookup("error");
+        return;
+      }
+      const json = (await res.json()) as { data: IapdFirmLookupResult | null };
+      if (!json.data) {
+        setIapdLookup("not_found");
+        return;
+      }
+      setIapdFirm(json.data);
+      setIapdLookup("found");
+    } catch {
+      setIapdLookup("error");
+    }
+  };
 
   const saveStep1 = async (): Promise<void> => {
+    const validation = validateStep1Client({ crdNumber, ccoName, advFilingDate, aumUsd });
+    setFieldErrors(validation.errors);
+    setSoftWarnings(validation.warnings);
+    if (!validation.canContinue) {
+      return;
+    }
+
     setSaving(true);
     setError(null);
     const riskFlags = riskFlagsText
@@ -75,8 +139,8 @@ export function FirstRunWizard({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         status: "DRAFT",
-        crdNumber: crdNumber || undefined,
-        ccoName: ccoName || undefined,
+        crdNumber: crdNumber.trim(),
+        ccoName: ccoName.trim(),
         advFilingDate: advFilingDate ? new Date(advFilingDate).toISOString() : undefined,
         aumUsd: aumUsd || undefined,
         advDocumentUrl: advDocumentUrl || undefined,
@@ -85,7 +149,8 @@ export function FirstRunWizard({
     });
     setSaving(false);
     if (!res.ok) {
-      setError("Could not save firm details.");
+      const data = (await res.json()) as { error?: string };
+      setError(data.error ?? "Could not save firm details.");
       return;
     }
     setStep(2);
@@ -153,12 +218,69 @@ export function FirstRunWizard({
         <p className="text-sm text-text-secondary">Step 1 — Firm details</p>
         <div className="space-y-3">
           <div>
-            <Label htmlFor="crd">CRD number</Label>
-            <Input id="crd" value={crdNumber} onChange={(e) => setCrdNumber(e.target.value)} />
+            <Label htmlFor="crd">
+              CRD number <span className="text-semantic-danger">*</span>
+            </Label>
+            <Input
+              id="crd"
+              value={crdNumber}
+              aria-invalid={!!fieldErrors.crdNumber}
+              aria-describedby={
+                fieldErrors.crdNumber
+                  ? "crd-error"
+                  : iapdLookup === "found"
+                    ? "crd-iapd"
+                    : undefined
+              }
+              onChange={(e) => {
+                setCrdNumber(e.target.value);
+                if (fieldErrors.crdNumber) {
+                  setFieldErrors((prev) => ({ ...prev, crdNumber: undefined }));
+                }
+                setIapdLookup("idle");
+                setIapdFirm(null);
+              }}
+              onBlur={() => void lookupIapdFirm(crdNumber)}
+            />
+            {fieldErrors.crdNumber ? (
+              <FieldError message={fieldErrors.crdNumber} />
+            ) : null}
+            {iapdLookup === "loading" ? (
+              <p className="mt-1 text-sm text-text-secondary">Looking up firm in IAPD…</p>
+            ) : null}
+            {iapdLookup === "found" && iapdFirm ? (
+              <p id="crd-iapd" className="mt-1 text-sm text-brand-dark" role="status">
+                Found in IAPD: {iapdFirm.firmName}
+                {iapdFirm.registrationScope ? ` (${iapdFirm.registrationScope})` : ""}
+              </p>
+            ) : null}
+            {iapdLookup === "not_found" ? (
+              <p className="mt-1 text-sm text-text-secondary" role="status">
+                No matching firm found in IAPD — you can still continue with this CRD.
+              </p>
+            ) : null}
+            {iapdLookup === "error" ? (
+              <p className="mt-1 text-sm text-text-secondary" role="status">
+                IAPD lookup unavailable — enter firm details manually.
+              </p>
+            ) : null}
           </div>
           <div>
-            <Label htmlFor="cco">CCO name</Label>
-            <Input id="cco" value={ccoName} onChange={(e) => setCcoName(e.target.value)} />
+            <Label htmlFor="cco">
+              CCO name <span className="text-semantic-danger">*</span>
+            </Label>
+            <Input
+              id="cco"
+              value={ccoName}
+              aria-invalid={!!fieldErrors.ccoName}
+              onChange={(e) => {
+                setCcoName(e.target.value);
+                if (fieldErrors.ccoName) {
+                  setFieldErrors((prev) => ({ ...prev, ccoName: undefined }));
+                }
+              }}
+            />
+            {fieldErrors.ccoName ? <FieldError message={fieldErrors.ccoName} /> : null}
           </div>
           <div>
             <Label htmlFor="adv-date">ADV filing date</Label>
@@ -166,12 +288,30 @@ export function FirstRunWizard({
               id="adv-date"
               type="date"
               value={advFilingDate}
-              onChange={(e) => setAdvFilingDate(e.target.value)}
+              onChange={(e) => {
+                setAdvFilingDate(e.target.value);
+                if (softWarnings.advFilingDate && e.target.value.trim()) {
+                  setSoftWarnings((prev) => ({ ...prev, advFilingDate: undefined }));
+                }
+              }}
             />
+            {softWarnings.advFilingDate ? (
+              <FieldWarning message={softWarnings.advFilingDate} />
+            ) : null}
           </div>
           <div>
             <Label htmlFor="aum">AUM (USD)</Label>
-            <Input id="aum" value={aumUsd} onChange={(e) => setAumUsd(e.target.value)} />
+            <Input
+              id="aum"
+              value={aumUsd}
+              onChange={(e) => {
+                setAumUsd(e.target.value);
+                if (softWarnings.aumUsd && e.target.value.trim()) {
+                  setSoftWarnings((prev) => ({ ...prev, aumUsd: undefined }));
+                }
+              }}
+            />
+            {softWarnings.aumUsd ? <FieldWarning message={softWarnings.aumUsd} /> : null}
           </div>
           <div>
             <Label htmlFor="adv-url">ADV Part 2A URL (optional)</Label>

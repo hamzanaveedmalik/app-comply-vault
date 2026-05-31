@@ -1,32 +1,17 @@
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { z } from "zod";
+import {
+  createDraftSchema,
+  hasRequiredFirmIdentity,
+  patchProfileSchema,
+} from "~/lib/firm-profile-schemas";
 import { getFirmProfileBundle } from "~/server/firm-profile/get-firm-profile";
-import { buildCategorySeedRows } from "~/server/firm-profile/seed-categories";
 import {
   canWriteCockpit,
   getWorkspaceMembership,
 } from "~/server/firm-profile/workspace-access";
 import { mapFirmProfileDto } from "~/server/firm-profile/map-dtos";
-
-const createDraftSchema = z.object({
-  status: z.literal("DRAFT").optional(),
-  crdNumber: z.string().optional(),
-  ccoName: z.string().optional(),
-  advFilingDate: z.string().datetime().optional().nullable(),
-  aumUsd: z.union([z.string(), z.number()]).optional().nullable(),
-  advDocumentUrl: z.string().url().optional().nullable().or(z.literal("")),
-  riskFlags: z.array(z.string()).optional(),
-});
-
-const patchProfileSchema = z.object({
-  crdNumber: z.string().optional(),
-  ccoName: z.string().optional(),
-  advFilingDate: z.string().datetime().optional().nullable(),
-  aumUsd: z.union([z.string(), z.number()]).optional().nullable(),
-  advDocumentUrl: z.string().url().optional().nullable().or(z.literal("")),
-  riskFlags: z.array(z.string()).optional(),
-});
 
 const completeWizardSchema = z.object({
   neverSuppressAcknowledged: z.literal(true),
@@ -44,6 +29,24 @@ const completeWizardSchema = z.object({
 function parseAum(value: string | number | null | undefined): string | null {
   if (value == null || value === "") return null;
   return String(value);
+}
+
+function draftProfileData(parsed: z.infer<typeof createDraftSchema>): {
+  crdNumber: string;
+  ccoName: string;
+  advFilingDate: Date | null;
+  aumUsd: string | null;
+  advDocumentUrl: string | null;
+  riskFlags: string[];
+} {
+  return {
+    crdNumber: parsed.crdNumber,
+    ccoName: parsed.ccoName,
+    advFilingDate: parsed.advFilingDate ? new Date(parsed.advFilingDate) : null,
+    aumUsd: parseAum(parsed.aumUsd),
+    advDocumentUrl: parsed.advDocumentUrl || null,
+    riskFlags: parsed.riskFlags ?? [],
+  };
 }
 
 export async function GET(
@@ -90,27 +93,29 @@ export async function POST(
   }
 
   const body = await request.json();
-  const parsed = createDraftSchema.parse(body);
+  const parsed = createDraftSchema.safeParse(body);
+  if (!parsed.success) {
+    const message = parsed.error.issues[0]?.message ?? "Invalid firm details";
+    return Response.json({ error: message }, { status: 422 });
+  }
 
   const existing = await db.firmProfile.findFirst({
     where: { workspaceId, deletedAt: null },
   });
-  if (existing) {
-    return Response.json({ success: true, data: { profile: mapFirmProfileDto(existing) } });
-  }
+  const data = draftProfileData(parsed.data);
 
-  const profile = await db.firmProfile.create({
-    data: {
-      workspaceId,
-      status: "DRAFT",
-      crdNumber: parsed.crdNumber ?? null,
-      ccoName: parsed.ccoName ?? null,
-      advFilingDate: parsed.advFilingDate ? new Date(parsed.advFilingDate) : null,
-      aumUsd: parseAum(parsed.aumUsd),
-      advDocumentUrl: parsed.advDocumentUrl || null,
-      riskFlags: parsed.riskFlags ?? [],
-    },
-  });
+  const profile = existing
+    ? await db.firmProfile.update({
+        where: { id: existing.id },
+        data,
+      })
+    : await db.firmProfile.create({
+        data: {
+          workspaceId,
+          status: "DRAFT",
+          ...data,
+        },
+      });
 
   return Response.json({ success: true, data: { profile: mapFirmProfileDto(profile) } });
 }
@@ -142,6 +147,12 @@ export async function PATCH(
     });
     if (!profile) {
       return Response.json({ error: "Profile not found" }, { status: 404 });
+    }
+    if (!hasRequiredFirmIdentity(profile)) {
+      return Response.json(
+        { error: "CRD number and CCO name are required before completing setup." },
+        { status: 422 },
+      );
     }
 
     const { completeFirmProfileWizard } = await import(

@@ -104,18 +104,27 @@ export async function POST(
   });
   const data = draftProfileData(parsed.data);
 
-  const profile = existing
-    ? await db.firmProfile.update({
-        where: { id: existing.id },
-        data,
-      })
-    : await db.firmProfile.create({
-        data: {
-          workspaceId,
-          status: "DRAFT",
-          ...data,
-        },
+  const profile = await db.$transaction(async (tx) => {
+    if (parsed.data.workspaceName) {
+      await tx.workspace.update({
+        where: { id: workspaceId },
+        data: { name: parsed.data.workspaceName },
       });
+    }
+
+    return existing
+      ? tx.firmProfile.update({
+          where: { id: existing.id },
+          data,
+        })
+      : tx.firmProfile.create({
+          data: {
+            workspaceId,
+            status: "DRAFT",
+            ...data,
+          },
+        });
+  });
 
   return Response.json({ success: true, data: { profile: mapFirmProfileDto(profile) } });
 }

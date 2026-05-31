@@ -16,6 +16,7 @@ export const firmProfileStep1Schema = z.object({
 
 export const createDraftSchema = firmProfileStep1Schema.extend({
   status: z.literal("DRAFT").optional(),
+  workspaceName: z.string().trim().min(1).optional(),
 });
 
 export const patchProfileSchema = z.object({

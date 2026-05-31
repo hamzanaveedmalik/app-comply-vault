@@ -1,10 +1,13 @@
 "use client";
 
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { DisclosureGrid } from "./DisclosureGrid";
+import { IapdSourceBadge } from "./IapdSourceBadge";
+import { RiskFlagChips } from "./RiskFlagChips";
 import { SuppressionEvidenceModal } from "./SuppressionEvidenceModal";
 import type { DisclosureCategoryDto } from "~/lib/firm-profile-types";
 import { DISCLOSURE_CATEGORY_CATALOG } from "~/lib/disclosure-categories";
@@ -14,7 +17,9 @@ import {
   type Step1FieldErrors,
   type Step1SoftWarnings,
 } from "~/lib/firm-profile-schemas";
+import { sortRiskFlags } from "~/lib/risk-flags";
 import type { IapdFirmLookupResult } from "~/lib/iapd-types";
+import { useCrdLookup, type IapdLookupStatus } from "~/hooks/useCrdLookup";
 
 type FirstRunWizardProps = {
   workspaceId: string;
@@ -59,13 +64,35 @@ function FieldWarning({ message }: { message: string }): React.JSX.Element {
   );
 }
 
+function FieldSpinner({ show }: { show: boolean }): React.JSX.Element | null {
+  if (!show) {
+    return null;
+  }
+  return (
+    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+      <Loader2 className="h-4 w-4 animate-spin text-brand-dark" aria-hidden />
+    </div>
+  );
+}
+
+function formatIapdLocation(firm: IapdFirmLookupResult): string {
+  const parts = [firm.city, firm.state].filter(Boolean);
+  return parts.length > 0 ? ` · ${parts.join(", ")}` : "";
+}
+
 export function FirstRunWizard({
   workspaceId,
   initialDraft,
   onComplete,
 }: FirstRunWizardProps): React.JSX.Element {
   const [step, setStep] = useState<1 | 2>(
-    initialDraft && hasRequiredFirmIdentity(initialDraft) ? 2 : 1,
+    initialDraft &&
+      hasRequiredFirmIdentity({
+        crdNumber: initialDraft.crdNumber ?? null,
+        ccoName: initialDraft.ccoName ?? null,
+      })
+      ? 2
+      : 1,
   );
   const [crdNumber, setCrdNumber] = useState(initialDraft?.crdNumber ?? "");
   const [ccoName, setCcoName] = useState(initialDraft?.ccoName ?? "");
@@ -74,9 +101,8 @@ export function FirstRunWizard({
   );
   const [aumUsd, setAumUsd] = useState(initialDraft?.aumUsd ?? "");
   const [advDocumentUrl, setAdvDocumentUrl] = useState(initialDraft?.advDocumentUrl ?? "");
-  const [riskFlagsText, setRiskFlagsText] = useState(
-    (initialDraft?.riskFlags ?? []).join(", "),
-  );
+  const [riskFlags, setRiskFlags] = useState<string[]>(initialDraft?.riskFlags ?? []);
+  const [customFlagInput, setCustomFlagInput] = useState("");
   const [categories, setCategories] = useState<DisclosureCategoryDto[]>(buildDefaultCategories);
   const [neverSuppressAck, setNeverSuppressAck] = useState(false);
   const [evidenceSlug, setEvidenceSlug] = useState<string | null>(null);
@@ -87,37 +113,29 @@ export function FirstRunWizard({
   const [softWarnings, setSoftWarnings] = useState<Step1SoftWarnings>({});
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [iapdLookup, setIapdLookup] = useState<
-    "idle" | "loading" | "found" | "not_found" | "error"
-  >("idle");
+  const [iapdLookup, setIapdLookup] = useState<IapdLookupStatus>("idle");
   const [iapdFirm, setIapdFirm] = useState<IapdFirmLookupResult | null>(null);
 
-  const lookupIapdFirm = async (crd: string): Promise<void> => {
-    const normalized = crd.trim();
-    if (!/^\d{4,7}$/.test(normalized)) {
-      setIapdLookup("idle");
-      setIapdFirm(null);
+  const { lookup, error: crdLookupError } = useCrdLookup({
+    setAdvFilingDate,
+    setAumUsd,
+    setRiskFlags,
+    setIapdFirm,
+    setIapdLookup,
+  });
+
+  const isLookupLoading = iapdLookup === "loading";
+
+  const addCustomFlags = (text: string): void => {
+    const incoming = text
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean);
+    if (incoming.length === 0) {
       return;
     }
-
-    setIapdLookup("loading");
-    setIapdFirm(null);
-    try {
-      const res = await fetch(`/api/iapd/firm/${encodeURIComponent(normalized)}`);
-      if (!res.ok) {
-        setIapdLookup("error");
-        return;
-      }
-      const json = (await res.json()) as { data: IapdFirmLookupResult | null };
-      if (!json.data) {
-        setIapdLookup("not_found");
-        return;
-      }
-      setIapdFirm(json.data);
-      setIapdLookup("found");
-    } catch {
-      setIapdLookup("error");
-    }
+    setRiskFlags((prev) => sortRiskFlags([...new Set([...prev, ...incoming])]));
+    setCustomFlagInput("");
   };
 
   const saveStep1 = async (): Promise<void> => {
@@ -130,10 +148,6 @@ export function FirstRunWizard({
 
     setSaving(true);
     setError(null);
-    const riskFlags = riskFlagsText
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
     const res = await fetch(`/api/workspaces/${workspaceId}/firm-profile`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -145,6 +159,7 @@ export function FirstRunWizard({
         aumUsd: aumUsd || undefined,
         advDocumentUrl: advDocumentUrl || undefined,
         riskFlags,
+        ...(iapdFirm ? { workspaceName: iapdFirm.firmName } : {}),
       }),
     });
     setSaving(false);
@@ -224,9 +239,9 @@ export function FirstRunWizard({
             <Input
               id="crd"
               value={crdNumber}
-              aria-invalid={!!fieldErrors.crdNumber}
+              aria-invalid={!!fieldErrors.crdNumber || !!crdLookupError}
               aria-describedby={
-                fieldErrors.crdNumber
+                fieldErrors.crdNumber || crdLookupError
                   ? "crd-error"
                   : iapdLookup === "found"
                     ? "crd-iapd"
@@ -240,28 +255,30 @@ export function FirstRunWizard({
                 setIapdLookup("idle");
                 setIapdFirm(null);
               }}
-              onBlur={() => void lookupIapdFirm(crdNumber)}
+              onBlur={() => void lookup(crdNumber)}
             />
             {fieldErrors.crdNumber ? (
               <FieldError message={fieldErrors.crdNumber} />
             ) : null}
-            {iapdLookup === "loading" ? (
-              <p className="mt-1 text-sm text-text-secondary">Looking up firm in IAPD…</p>
+            {crdLookupError ? (
+              <p id="crd-error" className="mt-1 text-sm text-semantic-danger" role="alert">
+                {crdLookupError}
+              </p>
             ) : null}
             {iapdLookup === "found" && iapdFirm ? (
               <p id="crd-iapd" className="mt-1 text-sm text-brand-dark" role="status">
                 Found in IAPD: {iapdFirm.firmName}
-                {iapdFirm.registrationScope ? ` (${iapdFirm.registrationScope})` : ""}
+                {formatIapdLocation(iapdFirm)}
+              </p>
+            ) : null}
+            {iapdLookup === "found" && iapdFirm?.source === "iapd-search" ? (
+              <p className="mt-1 text-sm text-amber-800" role="status">
+                Partial IAPD data — enter AUM and filing date manually.
               </p>
             ) : null}
             {iapdLookup === "not_found" ? (
               <p className="mt-1 text-sm text-text-secondary" role="status">
                 No matching firm found in IAPD — you can still continue with this CRD.
-              </p>
-            ) : null}
-            {iapdLookup === "error" ? (
-              <p className="mt-1 text-sm text-text-secondary" role="status">
-                IAPD lookup unavailable — enter firm details manually.
               </p>
             ) : null}
           </div>
@@ -284,33 +301,41 @@ export function FirstRunWizard({
           </div>
           <div>
             <Label htmlFor="adv-date">ADV filing date</Label>
-            <Input
-              id="adv-date"
-              type="date"
-              value={advFilingDate}
-              onChange={(e) => {
-                setAdvFilingDate(e.target.value);
-                if (softWarnings.advFilingDate && e.target.value.trim()) {
-                  setSoftWarnings((prev) => ({ ...prev, advFilingDate: undefined }));
-                }
-              }}
-            />
+            <div className="relative">
+              <Input
+                id="adv-date"
+                type="date"
+                value={advFilingDate}
+                aria-busy={isLookupLoading}
+                onChange={(e) => {
+                  setAdvFilingDate(e.target.value);
+                  if (softWarnings.advFilingDate && e.target.value.trim()) {
+                    setSoftWarnings((prev) => ({ ...prev, advFilingDate: undefined }));
+                  }
+                }}
+              />
+              <FieldSpinner show={isLookupLoading} />
+            </div>
             {softWarnings.advFilingDate ? (
               <FieldWarning message={softWarnings.advFilingDate} />
             ) : null}
           </div>
           <div>
             <Label htmlFor="aum">AUM (USD)</Label>
-            <Input
-              id="aum"
-              value={aumUsd}
-              onChange={(e) => {
-                setAumUsd(e.target.value);
-                if (softWarnings.aumUsd && e.target.value.trim()) {
-                  setSoftWarnings((prev) => ({ ...prev, aumUsd: undefined }));
-                }
-              }}
-            />
+            <div className="relative">
+              <Input
+                id="aum"
+                value={aumUsd}
+                aria-busy={isLookupLoading}
+                onChange={(e) => {
+                  setAumUsd(e.target.value);
+                  if (softWarnings.aumUsd && e.target.value.trim()) {
+                    setSoftWarnings((prev) => ({ ...prev, aumUsd: undefined }));
+                  }
+                }}
+              />
+              <FieldSpinner show={isLookupLoading} />
+            </div>
             {softWarnings.aumUsd ? <FieldWarning message={softWarnings.aumUsd} /> : null}
           </div>
           <div>
@@ -322,14 +347,39 @@ export function FirstRunWizard({
             />
           </div>
           <div>
-            <Label htmlFor="risk">Risk flags (comma-separated)</Label>
-            <Input
-              id="risk"
-              value={riskFlagsText}
-              onChange={(e) => setRiskFlagsText(e.target.value)}
-              placeholder="Dual-Hat Advisors, Regulatory History"
-            />
+            <Label htmlFor="risk">Risk flags</Label>
+            <div className="space-y-2">
+              <div className="relative min-h-[2.25rem] rounded-md border border-surface-border px-3 py-2">
+                {isLookupLoading && riskFlags.length === 0 ? (
+                  <div className="flex items-center gap-2 text-sm text-text-secondary">
+                    <Loader2 className="h-4 w-4 animate-spin text-brand-dark" aria-hidden />
+                    <span className="sr-only">Loading risk flags</span>
+                  </div>
+                ) : (
+                  <RiskFlagChips
+                    flags={riskFlags}
+                    onRemove={(flag) => setRiskFlags((prev) => prev.filter((item) => item !== flag))}
+                  />
+                )}
+              </div>
+              <Input
+                id="risk"
+                value={customFlagInput}
+                onChange={(e) => setCustomFlagInput(e.target.value)}
+                onBlur={() => addCustomFlags(customFlagInput)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addCustomFlags(customFlagInput);
+                  }
+                }}
+                placeholder="Add custom flag…"
+              />
+            </div>
           </div>
+          {iapdLookup === "found" && iapdFirm?.source === "sec-api" ? (
+            <IapdSourceBadge firm={iapdFirm} />
+          ) : null}
         </div>
         {error ? <p className="text-sm text-semantic-danger">{error}</p> : null}
         <Button type="button" disabled={saving} onClick={() => void saveStep1()}>

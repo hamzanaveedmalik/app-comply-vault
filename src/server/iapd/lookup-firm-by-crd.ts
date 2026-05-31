@@ -51,6 +51,13 @@ export async function lookupFirmByCrd(crdNumber: string): Promise<IapdFirmLookup
     firmName: source.firm_name,
     secNumber: source.firm_ia_sec_number ?? null,
     registrationScope: source.firm_ia_scope ?? null,
-    hasDisclosures: source.firm_ia_disclosure_fl === "Y",
+    advFilingDate: null,
+    aumUsd: null,
+    employees: null,
+    city: null,
+    state: null,
+    phone: null,
+    riskFlags: [],
+    source: "iapd-search",
   };
 }

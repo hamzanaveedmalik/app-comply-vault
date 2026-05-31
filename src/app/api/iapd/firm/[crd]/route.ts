@@ -1,5 +1,6 @@
 import { auth } from "~/server/auth";
 import { lookupFirmByCrd } from "~/server/iapd/lookup-firm-by-crd";
+import { lookupFirmByCrdSecApi } from "~/server/iapd/lookup-firm-by-crd-sec-api";
 
 export async function GET(
   _request: Request,
@@ -17,10 +18,11 @@ export async function GET(
   }
 
   try {
-    const firm = await lookupFirmByCrd(normalized);
+    let firm = await lookupFirmByCrdSecApi(normalized);
     if (!firm) {
-      return Response.json({ success: true, data: null });
+      firm = await lookupFirmByCrd(normalized);
     }
+
     return Response.json({ success: true, data: firm });
   } catch {
     return Response.json({ error: "Could not look up firm in IAPD" }, { status: 502 });

@@ -76,6 +76,7 @@ export const env = createEnv({
     ZOHO_CRM_CLIENT_ID: z.string().optional(),
     ZOHO_CRM_CLIENT_SECRET: z.string().optional(),
     ZOHO_CRM_ACCOUNTS_DOMAIN: z.string().url().optional(),
+    SEC_API_KEY: z.string().optional(),
   },
 
   /**
@@ -85,6 +86,7 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_APP_URL: z.string().optional(),
+    NEXT_PUBLIC_DEMO_MODE: z.string().optional(),
   },
 
   /**
@@ -149,6 +151,8 @@ export const env = createEnv({
     ZOHO_CRM_CLIENT_ID: process.env.ZOHO_CRM_CLIENT_ID,
     ZOHO_CRM_CLIENT_SECRET: process.env.ZOHO_CRM_CLIENT_SECRET,
     ZOHO_CRM_ACCOUNTS_DOMAIN: process.env.ZOHO_CRM_ACCOUNTS_DOMAIN,
+    SEC_API_KEY: process.env.SEC_API_KEY,
+    NEXT_PUBLIC_DEMO_MODE: process.env.NEXT_PUBLIC_DEMO_MODE,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

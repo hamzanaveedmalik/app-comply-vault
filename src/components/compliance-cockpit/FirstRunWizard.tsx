@@ -42,7 +42,7 @@ function buildDefaultCategories(): DisclosureCategoryDto[] {
     neverSuppress: def.neverSuppress,
     status: def.neverSuppress ? "NEVER_SUPPRESS" : "ACTIVE",
     suppressionEvidence: null,
-    advItemRef: null,
+    advItemRef: def.advItemRef,
     advPage: null,
     description: def.description,
   }));
@@ -400,6 +400,7 @@ export function FirstRunWizard({
       <p className="mb-4 text-sm text-text-secondary">Step 2 — Toggle suppressible items as needed.</p>
       <DisclosureGrid
         categories={categories}
+        crdNumber={crdNumber.trim() || null}
         canWrite
         onToggleRequest={handleToggleRequest}
       />

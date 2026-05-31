@@ -7,6 +7,7 @@ import { DisclosureCard } from "./DisclosureCard";
 
 type DisclosureGridProps = {
   categories: DisclosureCategoryDto[];
+  crdNumber?: string | null;
   canWrite: boolean;
   onToggleRequest: (slug: string) => void;
 };
@@ -19,6 +20,7 @@ const SECTION_LABELS: Record<string, string> = {
 
 export function DisclosureGrid({
   categories,
+  crdNumber,
   canWrite,
   onToggleRequest,
 }: DisclosureGridProps): React.JSX.Element {
@@ -63,7 +65,7 @@ export function DisclosureGrid({
                     neverSuppress: def.neverSuppress,
                     status: def.neverSuppress ? "NEVER_SUPPRESS" : "ACTIVE",
                     suppressionEvidence: null,
-                    advItemRef: null,
+                    advItemRef: def.advItemRef,
                     advPage: null,
                     description: def.description,
                   } satisfies DisclosureCategoryDto);
@@ -71,6 +73,7 @@ export function DisclosureGrid({
                   <DisclosureCard
                     key={def.slug}
                     category={cat}
+                    crdNumber={crdNumber}
                     canWrite={canWrite}
                     onToggleRequest={onToggleRequest}
                   />

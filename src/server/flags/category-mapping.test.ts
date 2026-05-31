@@ -13,6 +13,9 @@ describe("disclosure-categories catalog", () => {
       const def = DISCLOSURE_CATEGORY_CATALOG.find((c) => c.slug === slug);
       expect(def?.neverSuppress).toBe(true);
     }
+    for (const def of DISCLOSURE_CATEGORY_CATALOG) {
+      expect(def.advItemRef).toMatch(/^Part 2A · Item \d+$/);
+    }
   });
 });
 

@@ -22,6 +22,7 @@ export function buildCategorySeedRows(
       status,
       suppressionEvidence:
         status === "SUPPRESSING" ? (override?.suppressionEvidence ?? null) : null,
+      advItemRef: def.advItemRef,
       description: def.description,
     };
   });

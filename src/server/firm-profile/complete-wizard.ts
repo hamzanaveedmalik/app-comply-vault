@@ -1,4 +1,5 @@
 import type { Prisma } from "../../../generated/prisma";
+import { NEVER_SUPPRESS_SLUGS } from "~/lib/disclosure-categories";
 import { db } from "~/server/db";
 import { buildCategorySeedRows, type CategorySeedOverride } from "./seed-categories";
 
@@ -13,6 +14,7 @@ export async function completeFirmProfileWizard(params: {
   firmProfileId: string;
   userId: string;
   categoryToggles: WizardCategoryToggle[];
+  ipAddress?: string | null;
 }): Promise<{ success: true }> {
   const overrideMap = new Map<string, CategorySeedOverride>();
   for (const toggle of params.categoryToggles) {
@@ -87,6 +89,21 @@ export async function completeFirmProfileWizard(params: {
         versionType: "INITIAL_SETUP",
         approvedByUserId: null,
         snapshot,
+      },
+    });
+
+    await tx.auditEvent.create({
+      data: {
+        workspaceId: params.workspaceId,
+        userId: params.userId,
+        action: "CCO_ACKNOWLEDGED_NEVER_SUPPRESS",
+        resourceType: "firm_profile",
+        resourceId: params.firmProfileId,
+        metadata: {
+          categories: NEVER_SUPPRESS_SLUGS,
+          acknowledgedAt: new Date().toISOString(),
+          ...(params.ipAddress ? { ipAddress: params.ipAddress } : {}),
+        },
       },
     });
   });

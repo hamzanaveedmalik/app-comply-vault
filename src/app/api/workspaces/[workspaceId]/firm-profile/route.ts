@@ -168,11 +168,17 @@ export async function PATCH(
       "~/server/firm-profile/complete-wizard"
     );
     try {
+      const ipAddress =
+        request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+        request.headers.get("x-real-ip") ??
+        null;
+
       await completeFirmProfileWizard({
         workspaceId,
         firmProfileId: profile.id,
         userId: session.user.id,
         categoryToggles: wizard.categoryToggles ?? [],
+        ipAddress,
       });
     } catch (err) {
       return Response.json(

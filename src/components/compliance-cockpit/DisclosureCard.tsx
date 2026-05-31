@@ -1,11 +1,13 @@
 "use client";
 
 import { CheckCircle2, Circle, Lock, XCircle } from "lucide-react";
+import { iapdFirmSummaryUrl } from "~/lib/disclosure-categories";
 import { cn } from "~/lib/utils";
 import type { DisclosureCategoryDto } from "~/lib/firm-profile-types";
 
 type DisclosureCardProps = {
   category: DisclosureCategoryDto;
+  crdNumber?: string | null;
   canWrite: boolean;
   onToggleRequest?: (slug: string) => void;
 };
@@ -42,8 +44,38 @@ function statusMeta(status: DisclosureCategoryDto["status"]): {
   }
 }
 
+function AdvItemRefLine({
+  advItemRef,
+  advPage,
+  crdNumber,
+}: {
+  advItemRef: string | null;
+  advPage: number | null;
+  crdNumber?: string | null;
+}): React.JSX.Element {
+  const label = advItemRef
+    ? `${advItemRef}${advPage ? ` · p.${advPage}` : ""}`
+    : "ADV ref — pending parse";
+
+  if (advItemRef && crdNumber?.trim()) {
+    return (
+      <a
+        href={iapdFirmSummaryUrl(crdNumber)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-0.5 inline-block text-[10px] text-brand-dark underline-offset-2 hover:underline"
+      >
+        {label} ↗
+      </a>
+    );
+  }
+
+  return <div className="mt-0.5 text-[10px] text-text-muted">{label}</div>;
+}
+
 export function DisclosureCard({
   category,
+  crdNumber,
   canWrite,
   onToggleRequest,
 }: DisclosureCardProps): React.JSX.Element {
@@ -61,11 +93,11 @@ export function DisclosureCard({
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <div className="text-[12px] font-medium text-text-primary">{category.displayName}</div>
-          <div className="mt-0.5 text-[10px] text-text-muted">
-            {category.advItemRef
-              ? `${category.advItemRef}${category.advPage ? ` · p.${category.advPage}` : ""}`
-              : "ADV ref — pending parse"}
-          </div>
+          <AdvItemRefLine
+            advItemRef={category.advItemRef}
+            advPage={category.advPage}
+            crdNumber={crdNumber}
+          />
         </div>
         {locked ? (
           <Lock className="h-4 w-4 shrink-0 text-semantic-danger" aria-hidden="true" />

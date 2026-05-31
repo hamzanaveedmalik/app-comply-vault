@@ -149,6 +149,7 @@ export function ComplianceCockpitClient(
         <section className="overflow-y-auto">
           <DisclosureGrid
             categories={categories}
+            crdNumber={profile.crdNumber}
             canWrite={props.canWrite}
             onToggleRequest={handleToggleRequest}
           />

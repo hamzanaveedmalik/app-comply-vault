@@ -1,5 +1,5 @@
 import type { DisclosureCategory, FirmProfile } from "../../../generated/prisma";
-import { getCategoryBySlug } from "~/lib/disclosure-categories";
+import { getCategoryBySlug, resolveAdvItemRef } from "~/lib/disclosure-categories";
 import type {
   DisclosureCategoryDto,
   FirmProfileDto,
@@ -35,7 +35,7 @@ export function mapDisclosureCategoryDto(cat: DisclosureCategory): DisclosureCat
     neverSuppress: def?.neverSuppress ?? false,
     status: cat.status,
     suppressionEvidence: cat.suppressionEvidence,
-    advItemRef: cat.advItemRef,
+    advItemRef: resolveAdvItemRef(cat.advItemRef, cat.slug),
     advPage: cat.advPage,
     description: def?.description ?? "",
   };

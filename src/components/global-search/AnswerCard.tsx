@@ -1,0 +1,181 @@
+"use client";
+
+import { Fragment, useEffect, useState } from "react";
+import { ArrowUpRight, Loader2, Sparkles } from "lucide-react";
+
+import { cn } from "~/lib/utils";
+
+export type AnswerCitation = {
+  meetingId: string;
+  clientName: string;
+  meetingDate: string;
+  meetingType: string;
+  snippet: string;
+  transcriptStartSec?: number;
+};
+
+export type AnswerCardProps = {
+  question: string;
+  state:
+    | { kind: "loading" }
+    | {
+        kind: "answer";
+        answer: string;
+        citations: AnswerCitation[];
+        retrieval: { candidatesScanned: number; candidatesUsed: number; mode: string };
+        model: string;
+        latencyMs: number;
+      }
+    | { kind: "no-evidence"; answer: string }
+    | { kind: "rate-limited"; retryAfterSec: number }
+    | { kind: "error"; message: string };
+  onOpenMeeting: (meetingId: string) => void;
+  className?: string;
+};
+
+const LOADING_PHRASES = [
+  "Searching meetings…",
+  "Reading transcripts…",
+  "Checking flags and disclosures…",
+  "Synthesising answer…",
+] as const;
+
+function formatMeetingDate(iso: string): string {
+  try {
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  } catch {
+    return iso;
+  }
+}
+
+function formatLatency(ms: number): string {
+  if (ms < 1000) return `${ms}ms`;
+  return `${(ms / 1000).toFixed(1)}s`;
+}
+
+export function AnswerCard({
+  question,
+  state,
+  onOpenMeeting,
+  className,
+}: AnswerCardProps): React.JSX.Element {
+  const [phraseIdx, setPhraseIdx] = useState(0);
+
+  useEffect(() => {
+    if (state.kind !== "loading") return;
+    const interval = setInterval(() => {
+      setPhraseIdx((i) => (i + 1) % LOADING_PHRASES.length);
+    }, 1800);
+    return () => clearInterval(interval);
+  }, [state.kind]);
+
+  return (
+    <div
+      className={cn(
+        "mx-2 my-2 rounded-lg border border-border bg-card text-card-foreground shadow-sm",
+        className
+      )}
+      data-slot="ask-answer-card"
+    >
+      <div className="border-b border-border px-4 py-3">
+        <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <Sparkles className="h-3.5 w-3.5" />
+          Question
+        </div>
+        <p className="mt-1 text-sm font-medium text-foreground">{question}</p>
+      </div>
+
+      <div className="px-4 py-4 text-sm leading-relaxed text-foreground">
+        {state.kind === "loading" && (
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>{LOADING_PHRASES[phraseIdx]}</span>
+          </div>
+        )}
+
+        {state.kind === "answer" && (
+          <p className="whitespace-pre-wrap">{state.answer}</p>
+        )}
+
+        {state.kind === "no-evidence" && (
+          <p className="text-muted-foreground">{state.answer}</p>
+        )}
+
+        {state.kind === "rate-limited" && (
+          <p className="text-muted-foreground">
+            You&apos;ve asked a lot of questions in the last minute — try again
+            in {state.retryAfterSec}s.
+          </p>
+        )}
+
+        {state.kind === "error" && (
+          <p className="text-muted-foreground">
+            Couldn&apos;t generate an answer right now. The keyword results
+            below may help.
+          </p>
+        )}
+      </div>
+
+      {state.kind === "answer" && state.citations.length > 0 && (
+        <div className="border-t border-border px-4 py-3">
+          <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Evidence
+          </div>
+          <ul className="mt-2 space-y-2">
+            {state.citations.map((cite) => (
+              <li key={cite.meetingId}>
+                <button
+                  type="button"
+                  onClick={() => onOpenMeeting(cite.meetingId)}
+                  className="group flex w-full items-start gap-2 rounded-md px-2 py-2 text-left transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <span className="font-medium text-foreground">
+                        {cite.clientName}
+                      </span>
+                      <span>·</span>
+                      <span>{cite.meetingType}</span>
+                      <span>·</span>
+                      <span>{formatMeetingDate(cite.meetingDate)}</span>
+                    </div>
+                    {cite.snippet && (
+                      <div className="mt-1 text-xs italic text-muted-foreground line-clamp-2">
+                        &ldquo;{cite.snippet}&rdquo;
+                      </div>
+                    )}
+                  </div>
+                  <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground opacity-70 transition-opacity group-hover:opacity-100" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {state.kind === "answer" && (
+        <div className="border-t border-border px-4 py-2 text-[11px] text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <Fragment>
+              <span>
+                Answered from {state.retrieval.candidatesUsed} meeting
+                {state.retrieval.candidatesUsed === 1 ? "" : "s"} in your
+                workspace
+              </span>
+              <span>·</span>
+              <span>{formatLatency(state.latencyMs)}</span>
+              <span>·</span>
+              <span>{state.model}</span>
+            </Fragment>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -77,6 +77,11 @@ export const env = createEnv({
     ZOHO_CRM_CLIENT_SECRET: z.string().optional(),
     ZOHO_CRM_ACCOUNTS_DOMAIN: z.string().url().optional(),
     SEC_API_KEY: z.string().optional(),
+    // Ask ComplyVault (CV-FEAT-014)
+    // Per-user, per-workspace soft cap on questions per 60s window.
+    ASK_RATE_LIMIT_PER_MIN: z.coerce.number().int().positive().optional(),
+    // Optional override for context-block size cap (in chars); defaults baked into retrieval.ts.
+    ASK_MAX_CONTEXT_TOKENS: z.coerce.number().int().positive().optional(),
   },
 
   /**
@@ -152,6 +157,8 @@ export const env = createEnv({
     ZOHO_CRM_CLIENT_SECRET: process.env.ZOHO_CRM_CLIENT_SECRET,
     ZOHO_CRM_ACCOUNTS_DOMAIN: process.env.ZOHO_CRM_ACCOUNTS_DOMAIN,
     SEC_API_KEY: process.env.SEC_API_KEY,
+    ASK_RATE_LIMIT_PER_MIN: process.env.ASK_RATE_LIMIT_PER_MIN,
+    ASK_MAX_CONTEXT_TOKENS: process.env.ASK_MAX_CONTEXT_TOKENS,
     NEXT_PUBLIC_DEMO_MODE: process.env.NEXT_PUBLIC_DEMO_MODE,
   },
   /**

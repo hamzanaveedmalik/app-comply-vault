@@ -239,10 +239,74 @@ export async function listOpenTasks(args: {
   }));
 }
 
+function toYmd(d: Date): string {
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+const EVENTS_FALLBACK_CODES = new Set([
+  "INVALID_QUERY",
+  "INVALID_DATA",
+  "INVALID_REQUEST",
+  "INVALID_MODULE",
+]);
+
+/**
+ * Internal helper: GET a Zoho Events list URL.
+ *
+ * Returns:
+ *   - `ZohoEventRecord[]` on success (incl. 204 -> []).
+ *   - The literal "fallback" sentinel on 400 / `INVALID_QUERY`-like codes so the
+ *     caller can retry with a simpler request shape.
+ *
+ * Throws:
+ *   - `ZohoScopeError` on 401/403 with an OAuth-scope-style code.
+ *   - Generic `Error` on any other non-OK response.
+ */
+async function fetchEventsOrFallback(
+  url: string,
+  accessToken: string
+): Promise<ZohoEventRecord[] | "fallback"> {
+  const res = await fetch(url, {
+    headers: { Authorization: `Zoho-oauthtoken ${accessToken}` },
+    cache: "no-store",
+  });
+  if (res.status === 204) return [];
+  if (res.status === 401 || res.status === 403) {
+    // Reuse the shared parser; it will throw ZohoScopeError or a generic error.
+    return readZohoListResponse<ZohoEventRecord>(res, "Events");
+  }
+  if (res.status === 400) {
+    let code = "BAD_REQUEST";
+    try {
+      const j = (await res.clone().json()) as ZohoErrorPayload;
+      if (j.code) code = j.code;
+    } catch {}
+    if (EVENTS_FALLBACK_CODES.has(code)) {
+      return "fallback";
+    }
+    throw new Error(`Zoho Events list failed: 400 ${code}`);
+  }
+  if (!res.ok) {
+    throw new Error(`Zoho Events list failed: ${res.status}`);
+  }
+  const data = (await res.json()) as { data?: ZohoEventRecord[] };
+  return data.data ?? [];
+}
+
 /**
  * List upcoming Zoho CRM Events (= "Meetings" in the UI) starting from
  * `fromIso` (defaults to now), ordered by start time. When `ownerEmail`
- * is supplied, restricts to that Zoho user's meetings.
+ * is supplied, restricts to that Zoho user's meetings (filtered client-side
+ * because the plain Events list endpoint doesn't accept Owner.email criteria).
+ *
+ * Strategy (the search endpoint's datetime `criteria` filter is brittle on
+ * some Zoho org configurations and returns 400 INVALID_QUERY):
+ *   1. Primary: `GET /crm/v2/Events?from_date=YYYY-MM-DD&to_date=YYYY-MM-DD&…`
+ *   2. Fallback (on 400 INVALID_QUERY): plain `GET /crm/v2/Events?…` with no
+ *      date params; client-side filter to start times >= `from`.
  */
 export async function listUpcomingMeetings(args: {
   apiDomain: string;
@@ -253,35 +317,48 @@ export async function listUpcomingMeetings(args: {
 }): Promise<ZohoMeetingDto[]> {
   const { apiDomain, accessToken, ownerEmail } = args;
   const limit = Math.min(Math.max(args.limit ?? 25, 1), 200);
-  const from = args.fromIso ?? new Date().toISOString();
+  const from = args.fromIso ? new Date(args.fromIso) : new Date();
+  const fromMs = from.getTime();
+  const to = new Date(fromMs + 30 * 24 * 60 * 60 * 1000);
 
-  const criteriaParts = [`(Start_DateTime:greater_equal:${from})`];
-  if (ownerEmail) {
-    criteriaParts.push(`(Owner.email:equals:${escapeCoqlString(ownerEmail)})`);
-  }
-  const criteria = criteriaParts.length === 1
-    ? criteriaParts[0]!
-    : `(${criteriaParts.join("and")})`;
-
-  const params = new URLSearchParams({
-    criteria,
+  const baseParams = new URLSearchParams({
     fields: "Event_Title,Start_DateTime,End_DateTime,Venue,Owner",
     sort_by: "Start_DateTime",
     sort_order: "asc",
     per_page: String(limit),
   });
 
-  const res = await fetch(`${apiDomain}/crm/v2/Events/search?${params.toString()}`, {
-    headers: { Authorization: `Zoho-oauthtoken ${accessToken}` },
-    cache: "no-store",
-  });
-  const rows = await readZohoListResponse<ZohoEventRecord>(res, "Events");
-  return rows.map((r) => ({
-    id: r.id,
-    title: r.Event_Title ?? "(untitled)",
-    startIso: r.Start_DateTime ?? null,
-    endIso: r.End_DateTime ?? null,
-    venue: r.Venue ?? null,
-    ...mapOwner(r.Owner),
-  }));
+  const primaryParams = new URLSearchParams(baseParams);
+  primaryParams.set("from_date", toYmd(from));
+  primaryParams.set("to_date", toYmd(to));
+
+  const primaryUrl = `${apiDomain}/crm/v2/Events?${primaryParams.toString()}`;
+  const fallbackUrl = `${apiDomain}/crm/v2/Events?${baseParams.toString()}`;
+
+  let rows = await fetchEventsOrFallback(primaryUrl, accessToken);
+  if (rows === "fallback") {
+    const second = await fetchEventsOrFallback(fallbackUrl, accessToken);
+    rows = second === "fallback" ? [] : second;
+  }
+
+  const ownerEmailLc = ownerEmail?.toLowerCase();
+
+  return rows
+    .filter((r) => {
+      if (!ownerEmailLc) return true;
+      return (r.Owner?.email ?? "").toLowerCase() === ownerEmailLc;
+    })
+    .filter((r) => {
+      if (!r.Start_DateTime) return true;
+      const t = new Date(r.Start_DateTime).getTime();
+      return Number.isNaN(t) ? true : t >= fromMs;
+    })
+    .map((r) => ({
+      id: r.id,
+      title: r.Event_Title ?? "(untitled)",
+      startIso: r.Start_DateTime ?? null,
+      endIso: r.End_DateTime ?? null,
+      venue: r.Venue ?? null,
+      ...mapOwner(r.Owner),
+    }));
 }

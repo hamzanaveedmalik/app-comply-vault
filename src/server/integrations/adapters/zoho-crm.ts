@@ -13,6 +13,8 @@ const DEFAULT_ACCOUNTS = "https://accounts.zoho.com";
 const SCOPES = [
   "ZohoCRM.modules.contacts.READ",
   "ZohoCRM.modules.notes.CREATE",
+  "ZohoCRM.modules.tasks.READ",
+  "ZohoCRM.modules.events.READ",
   "ZohoCRM.users.READ",
   "ZohoCRM.org.READ",
 ].join(",");

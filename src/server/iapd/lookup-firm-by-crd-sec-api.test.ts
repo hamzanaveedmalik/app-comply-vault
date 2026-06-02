@@ -21,7 +21,9 @@ describe("mapSecApiFilingToResult", () => {
           Item5A: { TtlEmp: 31 },
           Item11D: { Q11D2: "Y" },
           Item7A: { Q7A12: "Y", Q7A16: "N" },
-          Item5B: { Q5B5: 2 },
+          // Insurance-licensed agents (Item 5.B.(5)) but no broker-dealer reps
+          // (Item 5.B.(2)) — must NOT produce a Dual-Hat flag.
+          Item5B: { Q5B2: 0 },
           Item2A: { Q2A10: "N" },
         },
       },
@@ -39,7 +41,7 @@ describe("mapSecApiFilingToResult", () => {
       state: "AZ",
       phone: "520-333-4719",
       ccoName: null,
-      riskFlags: ["Regulatory History", "Dual-Hat Advisors", "Insurance Affiliate"],
+      riskFlags: ["Regulatory History", "Insurance Affiliate"],
       source: "sec-api",
     });
   });

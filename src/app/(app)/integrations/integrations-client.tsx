@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -600,7 +601,7 @@ export function IntegrationsClient({
                   </Select>
                 </div>
               )}
-              <div>
+              <div className="flex items-center gap-4">
                 <button
                   type="button"
                   className="text-sm text-blue-600 hover:underline"
@@ -608,6 +609,14 @@ export function IntegrationsClient({
                 >
                   {expandedFailures === int.id ? "Hide" : "View"} failed syncs
                 </button>
+                {int.provider === "ZOHO_CRM" && (
+                  <Link
+                    href="/integrations/zoho"
+                    className="text-sm text-blue-600 hover:underline"
+                  >
+                    View tasks &amp; meetings →
+                  </Link>
+                )}
                 {expandedFailures === int.id && (
                   <div className="mt-2 rounded border bg-muted/50 p-3 text-sm">
                     {(failures[int.id] ?? []).length === 0 ? (

@@ -1,13 +1,20 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowRight,
+  CheckCircle2,
+  Loader2,
+  Search,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { DisclosureGrid } from "./DisclosureGrid";
-import { IapdSourceBadge } from "./IapdSourceBadge";
-import { RiskFlagChips } from "./RiskFlagChips";
+import { FirmConfirmationCard } from "./FirmConfirmationCard";
 import { SuppressionEvidenceModal } from "./SuppressionEvidenceModal";
 import type { DisclosureCategoryDto } from "~/lib/firm-profile-types";
 import { DISCLOSURE_CATEGORY_CATALOG } from "~/lib/disclosure-categories";
@@ -17,7 +24,6 @@ import {
   type Step1FieldErrors,
   type Step1SoftWarnings,
 } from "~/lib/firm-profile-schemas";
-import { sortRiskFlags } from "~/lib/risk-flags";
 import type { IapdFirmLookupResult } from "~/lib/iapd-types";
 import { useCrdLookup, type IapdLookupStatus } from "~/hooks/useCrdLookup";
 
@@ -56,30 +62,6 @@ function FieldError({ message }: { message: string }): React.JSX.Element {
   );
 }
 
-function FieldWarning({ message }: { message: string }): React.JSX.Element {
-  return (
-    <p className="mt-1 text-sm text-amber-800" role="status">
-      {message}
-    </p>
-  );
-}
-
-function FieldSpinner({ show }: { show: boolean }): React.JSX.Element | null {
-  if (!show) {
-    return null;
-  }
-  return (
-    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-      <Loader2 className="h-4 w-4 animate-spin text-brand-dark" aria-hidden />
-    </div>
-  );
-}
-
-function formatIapdLocation(firm: IapdFirmLookupResult): string {
-  const parts = [firm.city, firm.state].filter(Boolean);
-  return parts.length > 0 ? ` · ${parts.join(", ")}` : "";
-}
-
 export function FirstRunWizard({
   workspaceId,
   initialDraft,
@@ -100,9 +82,8 @@ export function FirstRunWizard({
     initialDraft?.advFilingDate?.slice(0, 10) ?? "",
   );
   const [aumUsd, setAumUsd] = useState(initialDraft?.aumUsd ?? "");
-  const [advDocumentUrl, setAdvDocumentUrl] = useState(initialDraft?.advDocumentUrl ?? "");
+  const [advDocumentUrl] = useState(initialDraft?.advDocumentUrl ?? "");
   const [riskFlags, setRiskFlags] = useState<string[]>(initialDraft?.riskFlags ?? []);
-  const [customFlagInput, setCustomFlagInput] = useState("");
   const [categories, setCategories] = useState<DisclosureCategoryDto[]>(buildDefaultCategories);
   const [neverSuppressAck, setNeverSuppressAck] = useState(false);
   const [evidenceSlug, setEvidenceSlug] = useState<string | null>(null);
@@ -110,7 +91,7 @@ export function FirstRunWizard({
     Array<{ slug: string; status: "SUPPRESSING"; suppressionEvidence: string }>
   >([]);
   const [fieldErrors, setFieldErrors] = useState<Step1FieldErrors>({});
-  const [softWarnings, setSoftWarnings] = useState<Step1SoftWarnings>({});
+  const [, setSoftWarnings] = useState<Step1SoftWarnings>({});
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [iapdLookup, setIapdLookup] = useState<IapdLookupStatus>("idle");
@@ -126,18 +107,9 @@ export function FirstRunWizard({
   });
 
   const isLookupLoading = iapdLookup === "loading";
-
-  const addCustomFlags = (text: string): void => {
-    const incoming = text
-      .split(",")
-      .map((value) => value.trim())
-      .filter(Boolean);
-    if (incoming.length === 0) {
-      return;
-    }
-    setRiskFlags((prev) => sortRiskFlags([...new Set([...prev, ...incoming])]));
-    setCustomFlagInput("");
-  };
+  const isLookupFound = iapdLookup === "found" && iapdFirm != null;
+  const isLookupResolved = iapdLookup === "not_found" || iapdLookup === "error";
+  const ccoFromIapd = Boolean(iapdFirm?.ccoName);
 
   const saveStep1 = async (): Promise<void> => {
     const validation = validateStep1Client({ crdNumber, ccoName, advFilingDate, aumUsd });
@@ -228,168 +200,248 @@ export function FirstRunWizard({
   };
 
   if (step === 1) {
+    const isValidCrd = /^\d{4,7}$/.test(crdNumber.trim());
+    const showManualFallback = isLookupResolved;
+    const canContinue =
+      (isLookupFound && ccoName.trim().length > 0) ||
+      (showManualFallback && isValidCrd && ccoName.trim().length > 0);
+
     return (
-      <div className="mx-auto max-w-lg space-y-4 p-6">
-        <h1 className="text-lg font-semibold text-text-primary">Firm disclosure profile setup</h1>
-        <p className="text-sm text-text-secondary">Step 1 — Firm details</p>
-        <div className="space-y-3">
-          <div>
-            <Label htmlFor="crd">
+      <div className="min-h-[calc(100vh-3.5rem)] bg-surface-page">
+        <div className="mx-auto w-full max-w-xl px-4 py-10 sm:py-14">
+          <div className="mb-6 flex items-center gap-2 text-[11px] font-medium uppercase tracking-wide text-text-muted">
+            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-brand-dark text-[10px] font-semibold text-white">
+              1
+            </span>
+            Step 1 of 2 · Firm details
+          </div>
+
+          <h1 className="text-2xl font-semibold text-text-primary">Set up your firm</h1>
+          <p className="mt-1.5 text-sm text-text-secondary">
+            Enter your firm&apos;s CRD number — we&apos;ll pull everything else from the SEC IAPD
+            so you don&apos;t have to retype public record.
+          </p>
+
+          <div className="mt-6 rounded-xl border border-surface-border bg-surface-card p-5 shadow-sm">
+            <Label htmlFor="crd" className="text-sm font-medium text-text-primary">
               CRD number <span className="text-semantic-danger">*</span>
             </Label>
-            <Input
-              id="crd"
-              value={crdNumber}
-              aria-invalid={!!fieldErrors.crdNumber || !!crdLookupError}
-              aria-describedby={
-                fieldErrors.crdNumber || crdLookupError
-                  ? "crd-error"
-                  : iapdLookup === "found"
-                    ? "crd-iapd"
-                    : undefined
-              }
-              onChange={(e) => {
-                setCrdNumber(e.target.value);
-                if (fieldErrors.crdNumber) {
-                  setFieldErrors((prev) => ({ ...prev, crdNumber: undefined }));
-                }
-                setIapdLookup("idle");
-                setIapdFirm(null);
-              }}
-              onBlur={() => void lookup(crdNumber)}
-            />
-            {fieldErrors.crdNumber ? (
-              <FieldError message={fieldErrors.crdNumber} />
+            <div className="relative mt-2">
+              <Search
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted"
+                aria-hidden
+              />
+              <Input
+                id="crd"
+                value={crdNumber}
+                inputMode="numeric"
+                autoComplete="off"
+                placeholder="e.g. 141195"
+                aria-invalid={!!fieldErrors.crdNumber || !!crdLookupError}
+                aria-describedby="crd-help"
+                className="h-12 pl-9 pr-12 font-mono text-base tracking-wider"
+                onChange={(e) => {
+                  setCrdNumber(e.target.value);
+                  if (fieldErrors.crdNumber) {
+                    setFieldErrors((prev) => ({ ...prev, crdNumber: undefined }));
+                  }
+                  setIapdLookup("idle");
+                  setIapdFirm(null);
+                }}
+                onBlur={() => void lookup(crdNumber)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    void lookup(crdNumber);
+                  }
+                }}
+              />
+              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+                {isLookupLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin text-brand-dark" aria-hidden />
+                ) : isLookupFound ? (
+                  <CheckCircle2
+                    className="h-4 w-4 text-semantic-success"
+                    aria-label="Firm found"
+                  />
+                ) : null}
+              </div>
+            </div>
+            <p id="crd-help" className="mt-2 text-[12px] text-text-muted">
+              Your firm&apos;s Central Registration Depository number (4–7 digits).{" "}
+              <a
+                href="https://adviserinfo.sec.gov/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-brand-dark hover:underline"
+              >
+                Look up on IAPD ↗
+              </a>
+            </p>
+            {fieldErrors.crdNumber ? <FieldError message={fieldErrors.crdNumber} /> : null}
+            {crdLookupError && !isLookupFound ? (
+              <FieldError message={crdLookupError} />
             ) : null}
-            {crdLookupError ? (
-              <p id="crd-error" className="mt-1 text-sm text-semantic-danger" role="alert">
-                {crdLookupError}
-              </p>
-            ) : null}
-            {iapdLookup === "found" && iapdFirm ? (
-              <p id="crd-iapd" className="mt-1 text-sm text-brand-dark" role="status">
-                Found in IAPD: {iapdFirm.firmName}
-                {formatIapdLocation(iapdFirm)}
-              </p>
-            ) : null}
-            {iapdLookup === "found" && iapdFirm?.source === "iapd-search" ? (
-              <p className="mt-1 text-sm text-amber-800" role="status">
-                Partial IAPD data — enter AUM and filing date manually.
-              </p>
-            ) : null}
-            {iapdLookup === "not_found" ? (
-              <p className="mt-1 text-sm text-text-secondary" role="status">
-                No matching firm found in IAPD — you can still continue with this CRD.
+
+            {!isLookupLoading && !isLookupFound && !showManualFallback ? (
+              <p className="mt-3 inline-flex items-center gap-1.5 text-[12px] text-text-secondary">
+                <Sparkles className="h-3.5 w-3.5 text-brand-mid" aria-hidden />
+                We&apos;ll auto-populate CCO, AUM, ADV filing date and risk flags from SEC IAPD.
               </p>
             ) : null}
           </div>
-          <div>
-            <Label htmlFor="cco">
-              CCO name <span className="text-semantic-danger">*</span>
-            </Label>
-            <div className="relative">
-              <Input
-                id="cco"
-                value={ccoName}
-                aria-invalid={!!fieldErrors.ccoName}
-                aria-busy={isLookupLoading}
-                onChange={(e) => {
-                  setCcoName(e.target.value);
+
+          {isLookupLoading ? (
+            <div
+              className="mt-4 animate-pulse overflow-hidden rounded-xl border border-surface-border bg-surface-card"
+              aria-live="polite"
+              aria-busy="true"
+            >
+              <div className="border-b border-surface-divider bg-gradient-to-br from-brand-light/40 to-surface-card px-5 py-4">
+                <div className="flex items-start gap-3">
+                  <div className="h-11 w-11 rounded-lg bg-surface-border" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-2/3 rounded bg-surface-border" />
+                    <div className="h-3 w-1/2 rounded bg-surface-border" />
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 px-5 py-5">
+                <div className="h-12 rounded bg-surface-border" />
+                <div className="h-12 rounded bg-surface-border" />
+                <div className="h-12 rounded bg-surface-border" />
+                <div className="h-12 rounded bg-surface-border" />
+              </div>
+              <p className="border-t border-surface-divider px-5 py-2.5 text-[11px] text-text-muted">
+                Looking up firm in SEC IAPD…
+              </p>
+            </div>
+          ) : null}
+
+          {isLookupFound && iapdFirm ? (
+            <div className="mt-4">
+              <FirmConfirmationCard
+                firm={iapdFirm}
+                ccoName={ccoName}
+                ccoSource={ccoFromIapd ? "iapd" : "manual"}
+                ccoError={fieldErrors.ccoName}
+                onCcoNameChange={(value) => {
+                  setCcoName(value);
                   if (fieldErrors.ccoName) {
                     setFieldErrors((prev) => ({ ...prev, ccoName: undefined }));
                   }
                 }}
               />
-              <FieldSpinner show={isLookupLoading} />
             </div>
-            {fieldErrors.ccoName ? <FieldError message={fieldErrors.ccoName} /> : null}
-          </div>
-          <div>
-            <Label htmlFor="adv-date">ADV filing date</Label>
-            <div className="relative">
-              <Input
-                id="adv-date"
-                type="date"
-                value={advFilingDate}
-                aria-busy={isLookupLoading}
-                onChange={(e) => {
-                  setAdvFilingDate(e.target.value);
-                  if (softWarnings.advFilingDate && e.target.value.trim()) {
-                    setSoftWarnings((prev) => ({ ...prev, advFilingDate: undefined }));
-                  }
-                }}
-              />
-              <FieldSpinner show={isLookupLoading} />
-            </div>
-            {softWarnings.advFilingDate ? (
-              <FieldWarning message={softWarnings.advFilingDate} />
-            ) : null}
-          </div>
-          <div>
-            <Label htmlFor="aum">AUM (USD)</Label>
-            <div className="relative">
-              <Input
-                id="aum"
-                value={aumUsd}
-                aria-busy={isLookupLoading}
-                onChange={(e) => {
-                  setAumUsd(e.target.value);
-                  if (softWarnings.aumUsd && e.target.value.trim()) {
-                    setSoftWarnings((prev) => ({ ...prev, aumUsd: undefined }));
-                  }
-                }}
-              />
-              <FieldSpinner show={isLookupLoading} />
-            </div>
-            {softWarnings.aumUsd ? <FieldWarning message={softWarnings.aumUsd} /> : null}
-          </div>
-          <div>
-            <Label htmlFor="adv-url">ADV Part 2A URL (optional)</Label>
-            <Input
-              id="adv-url"
-              value={advDocumentUrl}
-              onChange={(e) => setAdvDocumentUrl(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label htmlFor="risk">Risk flags</Label>
-            <div className="space-y-2">
-              <div className="relative min-h-[2.25rem] rounded-md border border-surface-border px-3 py-2">
-                {isLookupLoading && riskFlags.length === 0 ? (
-                  <div className="flex items-center gap-2 text-sm text-text-secondary">
-                    <Loader2 className="h-4 w-4 animate-spin text-brand-dark" aria-hidden />
-                    <span className="sr-only">Loading risk flags</span>
-                  </div>
-                ) : (
-                  <RiskFlagChips
-                    flags={riskFlags}
-                    onRemove={(flag) => setRiskFlags((prev) => prev.filter((item) => item !== flag))}
-                  />
-                )}
-              </div>
-              <Input
-                id="risk"
-                value={customFlagInput}
-                onChange={(e) => setCustomFlagInput(e.target.value)}
-                onBlur={() => addCustomFlags(customFlagInput)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addCustomFlags(customFlagInput);
-                  }
-                }}
-                placeholder="Add custom flag…"
-              />
-            </div>
-          </div>
-          {iapdLookup === "found" && iapdFirm?.source === "sec-api" ? (
-            <IapdSourceBadge firm={iapdFirm} />
           ) : null}
+
+          {showManualFallback ? (
+            <div
+              className="mt-4 rounded-xl border border-amber-200 bg-amber-50/60 p-5"
+              role="status"
+            >
+              <div className="flex items-start gap-3">
+                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" aria-hidden />
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-sm font-medium text-amber-900">
+                    {iapdLookup === "not_found"
+                      ? "No matching firm found in SEC IAPD"
+                      : "Couldn't reach SEC IAPD"}
+                  </h3>
+                  <p className="mt-0.5 text-[12px] text-amber-800">
+                    You can still continue by entering the basics manually.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="sm:col-span-2">
+                  <Label htmlFor="cco-manual" className="text-[12px] text-amber-900">
+                    CCO name <span className="text-semantic-danger">*</span>
+                  </Label>
+                  <Input
+                    id="cco-manual"
+                    value={ccoName}
+                    onChange={(e) => {
+                      setCcoName(e.target.value);
+                      if (fieldErrors.ccoName) {
+                        setFieldErrors((prev) => ({ ...prev, ccoName: undefined }));
+                      }
+                    }}
+                    aria-invalid={!!fieldErrors.ccoName}
+                    className="mt-1 bg-white"
+                  />
+                  {fieldErrors.ccoName ? <FieldError message={fieldErrors.ccoName} /> : null}
+                </div>
+                <div>
+                  <Label htmlFor="adv-manual" className="text-[12px] text-amber-900">
+                    ADV filing date
+                  </Label>
+                  <Input
+                    id="adv-manual"
+                    type="date"
+                    value={advFilingDate}
+                    onChange={(e) => setAdvFilingDate(e.target.value)}
+                    className="mt-1 bg-white"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="aum-manual" className="text-[12px] text-amber-900">
+                    AUM (USD)
+                  </Label>
+                  <Input
+                    id="aum-manual"
+                    value={aumUsd}
+                    onChange={(e) => setAumUsd(e.target.value)}
+                    placeholder="e.g. 42909330"
+                    className="mt-1 bg-white"
+                  />
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {error ? (
+            <p className="mt-4 text-sm text-semantic-danger" role="alert">
+              {error}
+            </p>
+          ) : null}
+
+          <div className="mt-6 flex items-center justify-end gap-3">
+            {!isLookupFound && !showManualFallback ? (
+              <p className="mr-auto text-[12px] text-text-muted">
+                Don&apos;t have a CRD on hand? Look it up on{" "}
+                <a
+                  href="https://adviserinfo.sec.gov/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand-dark hover:underline"
+                >
+                  IAPD
+                </a>
+                .
+              </p>
+            ) : null}
+            <Button
+              type="button"
+              disabled={saving || !canContinue}
+              onClick={() => void saveStep1()}
+              className="h-11 gap-2 bg-brand-dark px-6 text-white hover:bg-brand-dark/90 disabled:opacity-50"
+            >
+              {saving ? (
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+              ) : isLookupFound ? (
+                <ShieldCheck className="h-4 w-4" aria-hidden />
+              ) : (
+                <ArrowRight className="h-4 w-4" aria-hidden />
+              )}
+              {isLookupFound
+                ? "Yes, set up this firm"
+                : showManualFallback
+                  ? "Continue with manual entry"
+                  : "Continue"}
+            </Button>
+          </div>
         </div>
-        {error ? <p className="text-sm text-semantic-danger">{error}</p> : null}
-        <Button type="button" disabled={saving} onClick={() => void saveStep1()}>
-          Continue
-        </Button>
       </div>
     );
   }

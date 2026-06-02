@@ -10,9 +10,14 @@ const VARIANT_CLASSES = {
 type RiskFlagChipsProps = {
   flags: string[];
   onRemove: (flag: string) => void;
+  readOnly?: boolean;
 };
 
-export function RiskFlagChips({ flags, onRemove }: RiskFlagChipsProps): React.JSX.Element | null {
+export function RiskFlagChips({
+  flags,
+  onRemove,
+  readOnly = false,
+}: RiskFlagChipsProps): React.JSX.Element | null {
   if (flags.length === 0) {
     return null;
   }
@@ -27,14 +32,16 @@ export function RiskFlagChips({ flags, onRemove }: RiskFlagChipsProps): React.JS
             className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${VARIANT_CLASSES[variant]}`}
           >
             {flag}
-            <button
-              type="button"
-              onClick={() => onRemove(flag)}
-              className="rounded-full p-0.5 hover:bg-black/5"
-              aria-label={`Remove ${flag}`}
-            >
-              <X className="h-3 w-3" aria-hidden />
-            </button>
+            {!readOnly ? (
+              <button
+                type="button"
+                onClick={() => onRemove(flag)}
+                className="rounded-full p-0.5 hover:bg-black/5"
+                aria-label={`Remove ${flag}`}
+              >
+                <X className="h-3 w-3" aria-hidden />
+              </button>
+            ) : null}
           </span>
         );
       })}

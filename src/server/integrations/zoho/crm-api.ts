@@ -193,11 +193,69 @@ function mapOwner(owner: ZohoOwnerField | undefined): {
   };
 }
 
+function toYmd(d: Date): string {
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+const QUERY_FALLBACK_CODES = new Set([
+  "INVALID_QUERY",
+  "INVALID_DATA",
+  "INVALID_REQUEST",
+  "INVALID_MODULE",
+]);
+
+/**
+ * Internal helper: GET a Zoho list URL.
+ *
+ * Returns:
+ *   - `TRecord[]` on success (incl. 204 -> []).
+ *   - The literal "fallback" sentinel on 400 / `INVALID_QUERY`-like codes so the
+ *     caller can retry with a simpler request shape.
+ *
+ * Throws:
+ *   - `ZohoScopeError` on 401/403 with an OAuth-scope-style code.
+ *   - Generic `Error` on any other non-OK response.
+ */
+async function fetchListOrFallback<TRecord>(
+  module: string,
+  url: string,
+  accessToken: string
+): Promise<TRecord[] | "fallback"> {
+  const res = await fetch(url, {
+    headers: { Authorization: `Zoho-oauthtoken ${accessToken}` },
+    cache: "no-store",
+  });
+  if (res.status === 204) return [];
+  if (res.status === 401 || res.status === 403) {
+    return readZohoListResponse<TRecord>(res, module);
+  }
+  if (res.status === 400) {
+    let code = "BAD_REQUEST";
+    try {
+      const j = (await res.clone().json()) as ZohoErrorPayload;
+      if (j.code) code = j.code;
+    } catch {}
+    if (QUERY_FALLBACK_CODES.has(code)) {
+      return "fallback";
+    }
+    throw new Error(`Zoho ${module} list failed: 400 ${code}`);
+  }
+  if (!res.ok) {
+    throw new Error(`Zoho ${module} list failed: ${res.status}`);
+  }
+  const data = (await res.json()) as { data?: TRecord[] };
+  return data.data ?? [];
+}
+
 /**
  * List the open Tasks on the connected Zoho CRM org, ordered by due date.
- * Filters server-side to `Status != Completed`. When `ownerEmail` is given,
- * also restricts to tasks owned by that Zoho user (mirrors Zoho Home's
- * "My Open Tasks" widget).
+ * Filters `Status != Completed` and (optionally) `Owner.email` **client-side**
+ * because the Zoho `/Tasks/search` endpoint rejects datetime/enum criteria
+ * with 400 INVALID_QUERY on some org configurations. Mirrors Zoho Home's
+ * "My Open Tasks" widget when `ownerEmail` is supplied.
  */
 export async function listOpenTasks(args: {
   apiDomain: string;
@@ -207,93 +265,36 @@ export async function listOpenTasks(args: {
 }): Promise<ZohoTaskDto[]> {
   const { apiDomain, accessToken, ownerEmail } = args;
   const limit = Math.min(Math.max(args.limit ?? 25, 1), 200);
-
-  const criteriaParts = ["(Status:not_equal:Completed)"];
-  if (ownerEmail) {
-    criteriaParts.push(`(Owner.email:equals:${escapeCoqlString(ownerEmail)})`);
-  }
-  const criteria = criteriaParts.length === 1
-    ? criteriaParts[0]!
-    : `(${criteriaParts.join("and")})`;
+  const fetchPerPage = Math.min(200, Math.max(limit * 4, 50));
 
   const params = new URLSearchParams({
-    criteria,
     fields: "Subject,Due_Date,Status,Priority,Owner",
     sort_by: "Due_Date",
     sort_order: "asc",
-    per_page: String(limit),
+    per_page: String(fetchPerPage),
   });
 
-  const res = await fetch(`${apiDomain}/crm/v2/Tasks/search?${params.toString()}`, {
-    headers: { Authorization: `Zoho-oauthtoken ${accessToken}` },
-    cache: "no-store",
-  });
-  const rows = await readZohoListResponse<ZohoTaskRecord>(res, "Tasks");
-  return rows.map((r) => ({
-    id: r.id,
-    subject: r.Subject ?? "(no subject)",
-    dueDate: r.Due_Date ?? null,
-    status: r.Status ?? "Not Started",
-    priority: r.Priority ?? null,
-    ...mapOwner(r.Owner),
-  }));
-}
+  const url = `${apiDomain}/crm/v2/Tasks?${params.toString()}`;
+  const result = await fetchListOrFallback<ZohoTaskRecord>("Tasks", url, accessToken);
+  const rows = result === "fallback" ? [] : result;
 
-function toYmd(d: Date): string {
-  const y = d.getUTCFullYear();
-  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(d.getUTCDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
+  const ownerEmailLc = ownerEmail?.toLowerCase();
 
-const EVENTS_FALLBACK_CODES = new Set([
-  "INVALID_QUERY",
-  "INVALID_DATA",
-  "INVALID_REQUEST",
-  "INVALID_MODULE",
-]);
-
-/**
- * Internal helper: GET a Zoho Events list URL.
- *
- * Returns:
- *   - `ZohoEventRecord[]` on success (incl. 204 -> []).
- *   - The literal "fallback" sentinel on 400 / `INVALID_QUERY`-like codes so the
- *     caller can retry with a simpler request shape.
- *
- * Throws:
- *   - `ZohoScopeError` on 401/403 with an OAuth-scope-style code.
- *   - Generic `Error` on any other non-OK response.
- */
-async function fetchEventsOrFallback(
-  url: string,
-  accessToken: string
-): Promise<ZohoEventRecord[] | "fallback"> {
-  const res = await fetch(url, {
-    headers: { Authorization: `Zoho-oauthtoken ${accessToken}` },
-    cache: "no-store",
-  });
-  if (res.status === 204) return [];
-  if (res.status === 401 || res.status === 403) {
-    // Reuse the shared parser; it will throw ZohoScopeError or a generic error.
-    return readZohoListResponse<ZohoEventRecord>(res, "Events");
-  }
-  if (res.status === 400) {
-    let code = "BAD_REQUEST";
-    try {
-      const j = (await res.clone().json()) as ZohoErrorPayload;
-      if (j.code) code = j.code;
-    } catch {}
-    if (EVENTS_FALLBACK_CODES.has(code)) {
-      return "fallback";
-    }
-    throw new Error(`Zoho Events list failed: 400 ${code}`);
-  }
-  if (!res.ok) {
-    throw new Error(`Zoho Events list failed: ${res.status}`);
-  }
-  const data = (await res.json()) as { data?: ZohoEventRecord[] };
-  return data.data ?? [];
+  return rows
+    .filter((r) => (r.Status ?? "").toLowerCase() !== "completed")
+    .filter((r) => {
+      if (!ownerEmailLc) return true;
+      return (r.Owner?.email ?? "").toLowerCase() === ownerEmailLc;
+    })
+    .slice(0, limit)
+    .map((r) => ({
+      id: r.id,
+      subject: r.Subject ?? "(no subject)",
+      dueDate: r.Due_Date ?? null,
+      status: r.Status ?? "Not Started",
+      priority: r.Priority ?? null,
+      ...mapOwner(r.Owner),
+    }));
 }
 
 /**
@@ -335,9 +336,9 @@ export async function listUpcomingMeetings(args: {
   const primaryUrl = `${apiDomain}/crm/v2/Events?${primaryParams.toString()}`;
   const fallbackUrl = `${apiDomain}/crm/v2/Events?${baseParams.toString()}`;
 
-  let rows = await fetchEventsOrFallback(primaryUrl, accessToken);
+  let rows = await fetchListOrFallback<ZohoEventRecord>("Events", primaryUrl, accessToken);
   if (rows === "fallback") {
-    const second = await fetchEventsOrFallback(fallbackUrl, accessToken);
+    const second = await fetchListOrFallback<ZohoEventRecord>("Events", fallbackUrl, accessToken);
     rows = second === "fallback" ? [] : second;
   }
 

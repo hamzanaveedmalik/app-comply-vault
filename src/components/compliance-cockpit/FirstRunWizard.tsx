@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   AlertCircle,
@@ -8,24 +8,24 @@ import {
   Search,
   ShieldCheck,
   Sparkles,
-} from "lucide-react";
-import { useState } from "react";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { DisclosureGrid } from "./DisclosureGrid";
-import { FirmConfirmationCard } from "./FirmConfirmationCard";
-import { SuppressionEvidenceModal } from "./SuppressionEvidenceModal";
-import type { DisclosureCategoryDto } from "~/lib/firm-profile-types";
-import { DISCLOSURE_CATEGORY_CATALOG } from "~/lib/disclosure-categories";
+} from 'lucide-react';
+import { useState } from 'react';
+import { Button } from '~/components/ui/button';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { DisclosureGrid } from './DisclosureGrid';
+import { FirmConfirmationCard } from './FirmConfirmationCard';
+import { SuppressionEvidenceModal } from './SuppressionEvidenceModal';
+import type { DisclosureCategoryDto } from '~/lib/firm-profile-types';
+import { DISCLOSURE_CATEGORY_CATALOG } from '~/lib/disclosure-categories';
 import {
   hasRequiredFirmIdentity,
   validateStep1Client,
   type Step1FieldErrors,
   type Step1SoftWarnings,
-} from "~/lib/firm-profile-schemas";
-import type { IapdFirmLookupResult } from "~/lib/iapd-types";
-import { useCrdLookup, type IapdLookupStatus } from "~/hooks/useCrdLookup";
+} from '~/lib/firm-profile-schemas';
+import type { IapdFirmLookupResult } from '~/lib/iapd-types';
+import { useCrdLookup, type IapdLookupStatus } from '~/hooks/useCrdLookup';
 
 type FirstRunWizardProps = {
   workspaceId: string;
@@ -46,7 +46,7 @@ function buildDefaultCategories(): DisclosureCategoryDto[] {
     displayName: def.displayName,
     section: def.section,
     neverSuppress: def.neverSuppress,
-    status: def.neverSuppress ? "NEVER_SUPPRESS" : "ACTIVE",
+    status: def.neverSuppress ? 'NEVER_SUPPRESS' : 'ACTIVE',
     suppressionEvidence: null,
     advItemRef: def.advItemRef,
     advPage: null,
@@ -76,25 +76,29 @@ export function FirstRunWizard({
       ? 2
       : 1,
   );
-  const [crdNumber, setCrdNumber] = useState(initialDraft?.crdNumber ?? "");
-  const [ccoName, setCcoName] = useState(initialDraft?.ccoName ?? "");
+  const [crdNumber, setCrdNumber] = useState(initialDraft?.crdNumber ?? '');
+  const [ccoName, setCcoName] = useState(initialDraft?.ccoName ?? '');
   const [advFilingDate, setAdvFilingDate] = useState(
-    initialDraft?.advFilingDate?.slice(0, 10) ?? "",
+    initialDraft?.advFilingDate?.slice(0, 10) ?? '',
   );
-  const [aumUsd, setAumUsd] = useState(initialDraft?.aumUsd ?? "");
-  const [advDocumentUrl] = useState(initialDraft?.advDocumentUrl ?? "");
-  const [riskFlags, setRiskFlags] = useState<string[]>(initialDraft?.riskFlags ?? []);
-  const [categories, setCategories] = useState<DisclosureCategoryDto[]>(buildDefaultCategories);
+  const [aumUsd, setAumUsd] = useState(initialDraft?.aumUsd ?? '');
+  const [advDocumentUrl] = useState(initialDraft?.advDocumentUrl ?? '');
+  const [riskFlags, setRiskFlags] = useState<string[]>(
+    initialDraft?.riskFlags ?? [],
+  );
+  const [categories, setCategories] = useState<DisclosureCategoryDto[]>(
+    buildDefaultCategories,
+  );
   const [neverSuppressAck, setNeverSuppressAck] = useState(false);
   const [evidenceSlug, setEvidenceSlug] = useState<string | null>(null);
   const [pendingToggles, setPendingToggles] = useState<
-    Array<{ slug: string; status: "SUPPRESSING"; suppressionEvidence: string }>
+    Array<{ slug: string; status: 'SUPPRESSING'; suppressionEvidence: string }>
   >([]);
   const [fieldErrors, setFieldErrors] = useState<Step1FieldErrors>({});
   const [, setSoftWarnings] = useState<Step1SoftWarnings>({});
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [iapdLookup, setIapdLookup] = useState<IapdLookupStatus>("idle");
+  const [iapdLookup, setIapdLookup] = useState<IapdLookupStatus>('idle');
   const [iapdFirm, setIapdFirm] = useState<IapdFirmLookupResult | null>(null);
 
   const { lookup, error: crdLookupError } = useCrdLookup({
@@ -106,13 +110,18 @@ export function FirstRunWizard({
     setIapdLookup,
   });
 
-  const isLookupLoading = iapdLookup === "loading";
-  const isLookupFound = iapdLookup === "found" && iapdFirm != null;
-  const isLookupResolved = iapdLookup === "not_found" || iapdLookup === "error";
+  const isLookupLoading = iapdLookup === 'loading';
+  const isLookupFound = iapdLookup === 'found' && iapdFirm != null;
+  const isLookupResolved = iapdLookup === 'not_found' || iapdLookup === 'error';
   const ccoFromIapd = Boolean(iapdFirm?.ccoName);
 
   const saveStep1 = async (): Promise<void> => {
-    const validation = validateStep1Client({ crdNumber, ccoName, advFilingDate, aumUsd });
+    const validation = validateStep1Client({
+      crdNumber,
+      ccoName,
+      advFilingDate,
+      aumUsd,
+    });
     setFieldErrors(validation.errors);
     setSoftWarnings(validation.warnings);
     if (!validation.canContinue) {
@@ -122,13 +131,15 @@ export function FirstRunWizard({
     setSaving(true);
     setError(null);
     const res = await fetch(`/api/workspaces/${workspaceId}/firm-profile`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        status: "DRAFT",
+        status: 'DRAFT',
         crdNumber: crdNumber.trim(),
         ccoName: ccoName.trim(),
-        advFilingDate: advFilingDate ? new Date(advFilingDate).toISOString() : undefined,
+        advFilingDate: advFilingDate
+          ? new Date(advFilingDate).toISOString()
+          : undefined,
         aumUsd: aumUsd || undefined,
         advDocumentUrl: advDocumentUrl || undefined,
         riskFlags,
@@ -138,7 +149,7 @@ export function FirstRunWizard({
     setSaving(false);
     if (!res.ok) {
       const data = (await res.json()) as { error?: string };
-      setError(data.error ?? "Could not save firm details.");
+      setError(data.error ?? 'Could not save firm details.');
       return;
     }
     setStep(2);
@@ -147,10 +158,12 @@ export function FirstRunWizard({
   const handleToggleRequest = (slug: string): void => {
     const cat = categories.find((c) => c.slug === slug);
     if (!cat || cat.neverSuppress) return;
-    if (cat.status === "SUPPRESSING") {
+    if (cat.status === 'SUPPRESSING') {
       setCategories((prev) =>
         prev.map((c) =>
-          c.slug === slug ? { ...c, status: "ACTIVE", suppressionEvidence: null } : c,
+          c.slug === slug
+            ? { ...c, status: 'ACTIVE', suppressionEvidence: null }
+            : c,
         ),
       );
       setPendingToggles((prev) => prev.filter((t) => t.slug !== slug));
@@ -164,27 +177,31 @@ export function FirstRunWizard({
     setCategories((prev) =>
       prev.map((c) =>
         c.slug === evidenceSlug
-          ? { ...c, status: "SUPPRESSING", suppressionEvidence: evidence }
+          ? { ...c, status: 'SUPPRESSING', suppressionEvidence: evidence }
           : c,
       ),
     );
     setPendingToggles((prev) => [
       ...prev.filter((t) => t.slug !== evidenceSlug),
-      { slug: evidenceSlug, status: "SUPPRESSING", suppressionEvidence: evidence },
+      {
+        slug: evidenceSlug,
+        status: 'SUPPRESSING',
+        suppressionEvidence: evidence,
+      },
     ]);
     setEvidenceSlug(null);
   };
 
   const completeWizard = async (): Promise<void> => {
     if (!neverSuppressAck) {
-      setError("Please acknowledge never-suppress requirements.");
+      setError('Please acknowledge never-suppress requirements.');
       return;
     }
     setSaving(true);
     setError(null);
     const res = await fetch(`/api/workspaces/${workspaceId}/firm-profile`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         neverSuppressAcknowledged: true,
         categoryToggles: pendingToggles,
@@ -193,7 +210,7 @@ export function FirstRunWizard({
     setSaving(false);
     if (!res.ok) {
       const data = (await res.json()) as { error?: string };
-      setError(data.error ?? "Could not complete setup.");
+      setError(data.error ?? 'Could not complete setup.');
       return;
     }
     onComplete();
@@ -216,14 +233,19 @@ export function FirstRunWizard({
             Step 1 of 2 · Firm details
           </div>
 
-          <h1 className="text-2xl font-semibold text-text-primary">Set up your firm</h1>
+          <h1 className="text-2xl font-semibold text-text-primary">
+            Set up your firm
+          </h1>
           <p className="mt-1.5 text-sm text-text-secondary">
-            Enter your firm&apos;s CRD number — we&apos;ll pull everything else from the SEC IAPD
-            so you don&apos;t have to retype public record.
+            Enter your firm&apos;s CRD number — we&apos;ll pull everything else
+            from the SEC IAPD so you don&apos;t have to retype public record.
           </p>
 
           <div className="mt-6 rounded-xl border border-surface-border bg-surface-card p-5 shadow-sm">
-            <Label htmlFor="crd" className="text-sm font-medium text-text-primary">
+            <Label
+              htmlFor="crd"
+              className="text-sm font-medium text-text-primary"
+            >
               CRD number <span className="text-semantic-danger">*</span>
             </Label>
             <div className="relative mt-2">
@@ -236,21 +258,24 @@ export function FirstRunWizard({
                 value={crdNumber}
                 inputMode="numeric"
                 autoComplete="off"
-                placeholder="e.g. 141195"
+                placeholder="e.g. 140102"
                 aria-invalid={!!fieldErrors.crdNumber || !!crdLookupError}
                 aria-describedby="crd-help"
                 className="h-12 pl-9 pr-12 font-mono text-base tracking-wider"
                 onChange={(e) => {
                   setCrdNumber(e.target.value);
                   if (fieldErrors.crdNumber) {
-                    setFieldErrors((prev) => ({ ...prev, crdNumber: undefined }));
+                    setFieldErrors((prev) => ({
+                      ...prev,
+                      crdNumber: undefined,
+                    }));
                   }
-                  setIapdLookup("idle");
+                  setIapdLookup('idle');
                   setIapdFirm(null);
                 }}
                 onBlur={() => void lookup(crdNumber)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === 'Enter') {
                     e.preventDefault();
                     void lookup(crdNumber);
                   }
@@ -258,7 +283,10 @@ export function FirstRunWizard({
               />
               <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
                 {isLookupLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin text-brand-dark" aria-hidden />
+                  <Loader2
+                    className="h-4 w-4 animate-spin text-brand-dark"
+                    aria-hidden
+                  />
                 ) : isLookupFound ? (
                   <CheckCircle2
                     className="h-4 w-4 text-semantic-success"
@@ -268,7 +296,8 @@ export function FirstRunWizard({
               </div>
             </div>
             <p id="crd-help" className="mt-2 text-[12px] text-text-muted">
-              Your firm&apos;s Central Registration Depository number (4–7 digits).{" "}
+              Your firm&apos;s Central Registration Depository number (4–7
+              digits).{' '}
               <a
                 href="https://adviserinfo.sec.gov/"
                 target="_blank"
@@ -278,7 +307,9 @@ export function FirstRunWizard({
                 Look up on IAPD ↗
               </a>
             </p>
-            {fieldErrors.crdNumber ? <FieldError message={fieldErrors.crdNumber} /> : null}
+            {fieldErrors.crdNumber ? (
+              <FieldError message={fieldErrors.crdNumber} />
+            ) : null}
             {crdLookupError && !isLookupFound ? (
               <FieldError message={crdLookupError} />
             ) : null}
@@ -286,7 +317,8 @@ export function FirstRunWizard({
             {!isLookupLoading && !isLookupFound && !showManualFallback ? (
               <p className="mt-3 inline-flex items-center gap-1.5 text-[12px] text-text-secondary">
                 <Sparkles className="h-3.5 w-3.5 text-brand-mid" aria-hidden />
-                We&apos;ll auto-populate CCO, AUM, ADV filing date and risk flags from SEC IAPD.
+                We&apos;ll auto-populate CCO, AUM, ADV filing date and risk
+                flags from SEC IAPD.
               </p>
             ) : null}
           </div>
@@ -323,7 +355,7 @@ export function FirstRunWizard({
               <FirmConfirmationCard
                 firm={iapdFirm}
                 ccoName={ccoName}
-                ccoSource={ccoFromIapd ? "iapd" : "manual"}
+                ccoSource={ccoFromIapd ? 'iapd' : 'manual'}
                 ccoError={fieldErrors.ccoName}
                 onCcoNameChange={(value) => {
                   setCcoName(value);
@@ -341,11 +373,14 @@ export function FirstRunWizard({
               role="status"
             >
               <div className="flex items-start gap-3">
-                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" aria-hidden />
+                <AlertCircle
+                  className="mt-0.5 h-5 w-5 shrink-0 text-amber-700"
+                  aria-hidden
+                />
                 <div className="min-w-0 flex-1">
                   <h3 className="text-sm font-medium text-amber-900">
-                    {iapdLookup === "not_found"
-                      ? "No matching firm found in SEC IAPD"
+                    {iapdLookup === 'not_found'
+                      ? 'No matching firm found in SEC IAPD'
                       : "Couldn't reach SEC IAPD"}
                   </h3>
                   <p className="mt-0.5 text-[12px] text-amber-800">
@@ -355,7 +390,10 @@ export function FirstRunWizard({
               </div>
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="sm:col-span-2">
-                  <Label htmlFor="cco-manual" className="text-[12px] text-amber-900">
+                  <Label
+                    htmlFor="cco-manual"
+                    className="text-[12px] text-amber-900"
+                  >
                     CCO name <span className="text-semantic-danger">*</span>
                   </Label>
                   <Input
@@ -364,16 +402,24 @@ export function FirstRunWizard({
                     onChange={(e) => {
                       setCcoName(e.target.value);
                       if (fieldErrors.ccoName) {
-                        setFieldErrors((prev) => ({ ...prev, ccoName: undefined }));
+                        setFieldErrors((prev) => ({
+                          ...prev,
+                          ccoName: undefined,
+                        }));
                       }
                     }}
                     aria-invalid={!!fieldErrors.ccoName}
                     className="mt-1 bg-white"
                   />
-                  {fieldErrors.ccoName ? <FieldError message={fieldErrors.ccoName} /> : null}
+                  {fieldErrors.ccoName ? (
+                    <FieldError message={fieldErrors.ccoName} />
+                  ) : null}
                 </div>
                 <div>
-                  <Label htmlFor="adv-manual" className="text-[12px] text-amber-900">
+                  <Label
+                    htmlFor="adv-manual"
+                    className="text-[12px] text-amber-900"
+                  >
                     ADV filing date
                   </Label>
                   <Input
@@ -385,7 +431,10 @@ export function FirstRunWizard({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="aum-manual" className="text-[12px] text-amber-900">
+                  <Label
+                    htmlFor="aum-manual"
+                    className="text-[12px] text-amber-900"
+                  >
                     AUM (USD)
                   </Label>
                   <Input
@@ -409,7 +458,7 @@ export function FirstRunWizard({
           <div className="mt-6 flex items-center justify-end gap-3">
             {!isLookupFound && !showManualFallback ? (
               <p className="mr-auto text-[12px] text-text-muted">
-                Don&apos;t have a CRD on hand? Look it up on{" "}
+                Don&apos;t have a CRD on hand? Look it up on{' '}
                 <a
                   href="https://adviserinfo.sec.gov/"
                   target="_blank"
@@ -435,10 +484,10 @@ export function FirstRunWizard({
                 <ArrowRight className="h-4 w-4" aria-hidden />
               )}
               {isLookupFound
-                ? "Yes, set up this firm"
+                ? 'Yes, set up this firm'
                 : showManualFallback
-                  ? "Continue with manual entry"
-                  : "Continue"}
+                  ? 'Continue with manual entry'
+                  : 'Continue'}
             </Button>
           </div>
         </div>
@@ -448,8 +497,12 @@ export function FirstRunWizard({
 
   return (
     <div className="p-4 sm:p-6">
-      <h1 className="mb-1 text-lg font-semibold text-text-primary">Review disclosure categories</h1>
-      <p className="mb-4 text-sm text-text-secondary">Step 2 — Toggle suppressible items as needed.</p>
+      <h1 className="mb-1 text-lg font-semibold text-text-primary">
+        Review disclosure categories
+      </h1>
+      <p className="mb-4 text-sm text-text-secondary">
+        Step 2 — Toggle suppressible items as needed.
+      </p>
       <DisclosureGrid
         categories={categories}
         crdNumber={crdNumber.trim() || null}
@@ -464,16 +517,22 @@ export function FirstRunWizard({
           className="mt-1"
         />
         <span>
-          I understand Conflicts of Interest, Insurance Comp., and Disciplinary History require
-          verbal disclosure in every client meeting.
+          I understand Conflicts of Interest, Insurance Comp., and Disciplinary
+          History require verbal disclosure in every client meeting.
         </span>
       </label>
-      {error ? <p className="mt-2 text-sm text-semantic-danger">{error}</p> : null}
+      {error ? (
+        <p className="mt-2 text-sm text-semantic-danger">{error}</p>
+      ) : null}
       <div className="mt-4 flex gap-2">
         <Button type="button" variant="outline" onClick={() => setStep(1)}>
           Back
         </Button>
-        <Button type="button" disabled={saving} onClick={() => void completeWizard()}>
+        <Button
+          type="button"
+          disabled={saving}
+          onClick={() => void completeWizard()}
+        >
           Complete setup
         </Button>
       </div>

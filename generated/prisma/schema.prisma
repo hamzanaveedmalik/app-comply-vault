@@ -51,6 +51,13 @@ model Workspace {
   integrationCredentials IntegrationCredential[]
   integrationConfigs     IntegrationConfig[]
   firmProfile            FirmProfile?
+  evidenceItems          EvidenceItem[]
+  clients                Client[]
+  mailboxConnections     MailboxConnection[]
+  communicationThreads   CommunicationThread[]
+  emailAliases           EmailAlias[]
+  emailTriageItems       EmailTriageItem[]
+  ingestJobs             IngestJob[]
 
   @@index([createdAt])
 }
@@ -230,6 +237,15 @@ enum AuditAction {
   DISCLOSURE_SUPPRESSION_DEACTIVATED
   FIRM_PROFILE_APPROVED
   CCO_ACKNOWLEDGED_NEVER_SUPPRESS
+  AI_QUERY
+  MAILBOX_CONNECTED
+  MAILBOX_DISCONNECTED
+  MAILBOX_SYNC_STARTED
+  MAILBOX_SYNC_COMPLETED
+  EVIDENCE_VIEW
+  EVIDENCE_TAG
+  EMAIL_TRIAGE_RESOLVED
+  THREAD_EXPORT
 }
 
 enum FlagType {
@@ -475,6 +491,7 @@ model User {
   meetingsCcoSignedOff        Meeting[]       @relation("MeetingCcoSignedOffBy")
   flagsCmTriaged              Flag[]          @relation("FlagCmTriagedBy")
   invitationsSent             Invitation[]    @relation("InvitationsSent")
+  emailAliases                EmailAlias[]
 }
 
 model VerificationToken {
@@ -530,6 +547,7 @@ enum IntegrationProvider {
   SLACK
   TEAMS_BOT
   ZOHO_CRM
+  M365_MAIL
 }
 
 enum IntegrationStatus {
@@ -698,6 +716,294 @@ model FirmProfileVersion {
 
   @@index([firmProfileId, approvedAt])
   @@index([workspaceId])
+}
+
+// ============================================
+// Evidence Layer + M365 Mail (Epic A subset + Epic B)
+// ============================================
+
+enum EvidenceSourceType {
+  MEETING
+  EMAIL
+  MESSAGE
+  DOCUMENT
+  POLICY
+  ATTESTATION
+  NOTE
+  FINDING_RECORD
+}
+
+enum TagCategory {
+  ADVICE
+  RECOMMENDATION
+  COMPLAINT
+  FEE
+  PERFORMANCE
+  MARKETING
+  REVIEW
+  VULNERABLE_CLIENT
+  OFF_CHANNEL
+}
+
+enum CommunicationChannel {
+  EMAIL_M365
+  WHATSAPP_IMPORT
+  SMS_IMPORT
+  TEAMS_IMPORT
+  SLACK_IMPORT
+  OTHER_IMPORT
+}
+
+enum CommunicationDirection {
+  INBOUND
+  OUTBOUND
+  INTERNAL
+}
+
+enum ClientStatus {
+  CLIENT
+  PROSPECT
+  FORMER
+}
+
+enum MailboxProvider {
+  M365
+}
+
+enum MailboxSyncStatus {
+  PENDING
+  BACKFILLING
+  ACTIVE
+  ERROR
+  DISCONNECTED
+}
+
+enum MailboxConsentMode {
+  APPLICATION
+  DELEGATED
+}
+
+enum IngestJobKind {
+  BACKFILL
+  DELTA
+  MESSAGE_IMPORT
+}
+
+enum IngestJobStatus {
+  QUEUED
+  RUNNING
+  PAUSED
+  DONE
+  FAILED
+}
+
+enum EmailTriageStatus {
+  PENDING
+  CONFIRMED
+  EXTERNAL
+  IRRELEVANT
+}
+
+model Client {
+  id          String       @id @default(cuid())
+  workspaceId String
+  name        String
+  zohoId      String?
+  status      ClientStatus @default(CLIENT)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
+
+  workspace     Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  emailAliases  EmailAlias[]
+  evidenceItems EvidenceItem[]
+
+  @@index([workspaceId])
+  @@index([workspaceId, name])
+}
+
+model EmailAlias {
+  id          String    @id @default(cuid())
+  workspaceId String
+  address     String
+  userId      String?
+  clientId    String?
+  verified    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  client    Client?   @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  @@unique([workspaceId, address, userId, clientId])
+  @@index([workspaceId, address])
+}
+
+model EvidenceItem {
+  id                    String             @id @default(cuid())
+  workspaceId           String
+  clientId              String?
+  createdById           String?
+  sourceType            EvidenceSourceType
+  title                 String
+  occurredAt            DateTime
+  ingestedAt            DateTime           @default(now())
+  contentSha256         String
+  storageUri            String?
+  retentionRuleId       String?
+  destructionEligibleAt DateTime?
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+  deletedAt             DateTime?
+
+  workspace     Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  client        Client?        @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  tags          EvidenceTag[]
+  communication Communication?
+
+  @@index([workspaceId, clientId, occurredAt])
+  @@index([workspaceId, sourceType])
+}
+
+model EvidenceTag {
+  id        String      @id @default(cuid())
+  itemId    String
+  category  TagCategory
+  addedBy   String
+  addedAt   DateTime    @default(now())
+  removedAt DateTime?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  item EvidenceItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([itemId])
+  @@index([itemId, category])
+}
+
+model CommunicationThread {
+  id               String               @id @default(cuid())
+  workspaceId      String
+  channel          CommunicationChannel
+  externalThreadId String?
+  subject          String?
+  participants     Json
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  deletedAt        DateTime?
+
+  workspace Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  messages  Communication[]
+
+  @@index([workspaceId, externalThreadId])
+  @@index([workspaceId, updatedAt])
+}
+
+model Communication {
+  id                String                 @id @default(cuid())
+  threadId          String
+  evidenceItemId    String                 @unique
+  direction         CommunicationDirection
+  sentAt            DateTime
+  fromAddress       String
+  toAddresses       String[]
+  ccAddresses       String[]
+  internetMessageId String?                @unique
+  bodyText          String                 @db.Text
+  bodyHtml          String?                @db.Text
+  inReplyTo         String?
+  referencesHeader  String?                @db.Text
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  deletedAt         DateTime?
+
+  thread       CommunicationThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  evidenceItem EvidenceItem        @relation(fields: [evidenceItemId], references: [id], onDelete: Cascade)
+  attachments  Attachment[]
+
+  @@index([threadId, sentAt])
+}
+
+model Attachment {
+  id              String    @id @default(cuid())
+  communicationId String
+  filename        String
+  mimeType        String
+  contentSha256   String
+  storageUri      String
+  sizeBytes       Int?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+
+  communication Communication @relation(fields: [communicationId], references: [id], onDelete: Cascade)
+
+  @@index([communicationId])
+}
+
+model MailboxConnection {
+  id               String             @id @default(cuid())
+  workspaceId      String
+  provider         MailboxProvider    @default(M365)
+  mailboxAddress   String
+  consentMode      MailboxConsentMode @default(APPLICATION)
+  scopeFolders     String[]
+  backfillFrom     DateTime?
+  status           MailboxSyncStatus  @default(PENDING)
+  encryptedToken   String?            @db.Text
+  deltaCursor      String?            @db.Text
+  lastSyncAt       DateTime?
+  lastErrorMessage String?            @db.Text
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  deletedAt        DateTime?
+
+  workspace  Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  ingestJobs IngestJob[]
+
+  @@unique([workspaceId, mailboxAddress])
+  @@index([workspaceId, status])
+}
+
+model IngestJob {
+  id           String          @id @default(cuid())
+  workspaceId  String
+  connectionId String?
+  importFileId String?
+  kind         IngestJobKind
+  status       IngestJobStatus @default(QUEUED)
+  cursor       String?         @db.Text
+  stats        Json            @default("{}")
+  errorMessage String?         @db.Text
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  workspace  Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  connection MailboxConnection? @relation(fields: [connectionId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, status])
+  @@index([connectionId, kind, status])
+}
+
+model EmailTriageItem {
+  id          String            @id @default(cuid())
+  workspaceId String
+  address     String
+  status      EmailTriageStatus @default(PENDING)
+  userId      String?
+  clientId    String?
+  resolvedBy  String?
+  resolvedAt  DateTime?
+  notes       String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, address])
+  @@index([workspaceId, status])
 }
 
 // ============================================

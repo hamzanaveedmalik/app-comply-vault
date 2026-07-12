@@ -124,6 +124,56 @@ export type SuppressionLogEntry = $Result.DefaultSelection<Prisma.$SuppressionLo
  */
 export type FirmProfileVersion = $Result.DefaultSelection<Prisma.$FirmProfileVersionPayload>
 /**
+ * Model Client
+ * 
+ */
+export type Client = $Result.DefaultSelection<Prisma.$ClientPayload>
+/**
+ * Model EmailAlias
+ * 
+ */
+export type EmailAlias = $Result.DefaultSelection<Prisma.$EmailAliasPayload>
+/**
+ * Model EvidenceItem
+ * 
+ */
+export type EvidenceItem = $Result.DefaultSelection<Prisma.$EvidenceItemPayload>
+/**
+ * Model EvidenceTag
+ * 
+ */
+export type EvidenceTag = $Result.DefaultSelection<Prisma.$EvidenceTagPayload>
+/**
+ * Model CommunicationThread
+ * 
+ */
+export type CommunicationThread = $Result.DefaultSelection<Prisma.$CommunicationThreadPayload>
+/**
+ * Model Communication
+ * 
+ */
+export type Communication = $Result.DefaultSelection<Prisma.$CommunicationPayload>
+/**
+ * Model Attachment
+ * 
+ */
+export type Attachment = $Result.DefaultSelection<Prisma.$AttachmentPayload>
+/**
+ * Model MailboxConnection
+ * 
+ */
+export type MailboxConnection = $Result.DefaultSelection<Prisma.$MailboxConnectionPayload>
+/**
+ * Model IngestJob
+ * 
+ */
+export type IngestJob = $Result.DefaultSelection<Prisma.$IngestJobPayload>
+/**
+ * Model EmailTriageItem
+ * 
+ */
+export type EmailTriageItem = $Result.DefaultSelection<Prisma.$EmailTriageItemPayload>
+/**
  * Model Lead
  * 
  */
@@ -220,7 +270,16 @@ export const AuditAction: {
   DISCLOSURE_SUPPRESSION_ACTIVATED: 'DISCLOSURE_SUPPRESSION_ACTIVATED',
   DISCLOSURE_SUPPRESSION_DEACTIVATED: 'DISCLOSURE_SUPPRESSION_DEACTIVATED',
   FIRM_PROFILE_APPROVED: 'FIRM_PROFILE_APPROVED',
-  CCO_ACKNOWLEDGED_NEVER_SUPPRESS: 'CCO_ACKNOWLEDGED_NEVER_SUPPRESS'
+  CCO_ACKNOWLEDGED_NEVER_SUPPRESS: 'CCO_ACKNOWLEDGED_NEVER_SUPPRESS',
+  AI_QUERY: 'AI_QUERY',
+  MAILBOX_CONNECTED: 'MAILBOX_CONNECTED',
+  MAILBOX_DISCONNECTED: 'MAILBOX_DISCONNECTED',
+  MAILBOX_SYNC_STARTED: 'MAILBOX_SYNC_STARTED',
+  MAILBOX_SYNC_COMPLETED: 'MAILBOX_SYNC_COMPLETED',
+  EVIDENCE_VIEW: 'EVIDENCE_VIEW',
+  EVIDENCE_TAG: 'EVIDENCE_TAG',
+  EMAIL_TRIAGE_RESOLVED: 'EMAIL_TRIAGE_RESOLVED',
+  THREAD_EXPORT: 'THREAD_EXPORT'
 };
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction]
@@ -326,7 +385,8 @@ export const IntegrationProvider: {
   COMPLYSCI: 'COMPLYSCI',
   SLACK: 'SLACK',
   TEAMS_BOT: 'TEAMS_BOT',
-  ZOHO_CRM: 'ZOHO_CRM'
+  ZOHO_CRM: 'ZOHO_CRM',
+  M365_MAIL: 'M365_MAIL'
 };
 
 export type IntegrationProvider = (typeof IntegrationProvider)[keyof typeof IntegrationProvider]
@@ -373,6 +433,121 @@ export const SuppressionAction: {
 };
 
 export type SuppressionAction = (typeof SuppressionAction)[keyof typeof SuppressionAction]
+
+
+export const EvidenceSourceType: {
+  MEETING: 'MEETING',
+  EMAIL: 'EMAIL',
+  MESSAGE: 'MESSAGE',
+  DOCUMENT: 'DOCUMENT',
+  POLICY: 'POLICY',
+  ATTESTATION: 'ATTESTATION',
+  NOTE: 'NOTE',
+  FINDING_RECORD: 'FINDING_RECORD'
+};
+
+export type EvidenceSourceType = (typeof EvidenceSourceType)[keyof typeof EvidenceSourceType]
+
+
+export const TagCategory: {
+  ADVICE: 'ADVICE',
+  RECOMMENDATION: 'RECOMMENDATION',
+  COMPLAINT: 'COMPLAINT',
+  FEE: 'FEE',
+  PERFORMANCE: 'PERFORMANCE',
+  MARKETING: 'MARKETING',
+  REVIEW: 'REVIEW',
+  VULNERABLE_CLIENT: 'VULNERABLE_CLIENT',
+  OFF_CHANNEL: 'OFF_CHANNEL'
+};
+
+export type TagCategory = (typeof TagCategory)[keyof typeof TagCategory]
+
+
+export const CommunicationChannel: {
+  EMAIL_M365: 'EMAIL_M365',
+  WHATSAPP_IMPORT: 'WHATSAPP_IMPORT',
+  SMS_IMPORT: 'SMS_IMPORT',
+  TEAMS_IMPORT: 'TEAMS_IMPORT',
+  SLACK_IMPORT: 'SLACK_IMPORT',
+  OTHER_IMPORT: 'OTHER_IMPORT'
+};
+
+export type CommunicationChannel = (typeof CommunicationChannel)[keyof typeof CommunicationChannel]
+
+
+export const CommunicationDirection: {
+  INBOUND: 'INBOUND',
+  OUTBOUND: 'OUTBOUND',
+  INTERNAL: 'INTERNAL'
+};
+
+export type CommunicationDirection = (typeof CommunicationDirection)[keyof typeof CommunicationDirection]
+
+
+export const ClientStatus: {
+  CLIENT: 'CLIENT',
+  PROSPECT: 'PROSPECT',
+  FORMER: 'FORMER'
+};
+
+export type ClientStatus = (typeof ClientStatus)[keyof typeof ClientStatus]
+
+
+export const MailboxProvider: {
+  M365: 'M365'
+};
+
+export type MailboxProvider = (typeof MailboxProvider)[keyof typeof MailboxProvider]
+
+
+export const MailboxSyncStatus: {
+  PENDING: 'PENDING',
+  BACKFILLING: 'BACKFILLING',
+  ACTIVE: 'ACTIVE',
+  ERROR: 'ERROR',
+  DISCONNECTED: 'DISCONNECTED'
+};
+
+export type MailboxSyncStatus = (typeof MailboxSyncStatus)[keyof typeof MailboxSyncStatus]
+
+
+export const MailboxConsentMode: {
+  APPLICATION: 'APPLICATION',
+  DELEGATED: 'DELEGATED'
+};
+
+export type MailboxConsentMode = (typeof MailboxConsentMode)[keyof typeof MailboxConsentMode]
+
+
+export const IngestJobKind: {
+  BACKFILL: 'BACKFILL',
+  DELTA: 'DELTA',
+  MESSAGE_IMPORT: 'MESSAGE_IMPORT'
+};
+
+export type IngestJobKind = (typeof IngestJobKind)[keyof typeof IngestJobKind]
+
+
+export const IngestJobStatus: {
+  QUEUED: 'QUEUED',
+  RUNNING: 'RUNNING',
+  PAUSED: 'PAUSED',
+  DONE: 'DONE',
+  FAILED: 'FAILED'
+};
+
+export type IngestJobStatus = (typeof IngestJobStatus)[keyof typeof IngestJobStatus]
+
+
+export const EmailTriageStatus: {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  EXTERNAL: 'EXTERNAL',
+  IRRELEVANT: 'IRRELEVANT'
+};
+
+export type EmailTriageStatus = (typeof EmailTriageStatus)[keyof typeof EmailTriageStatus]
 
 }
 
@@ -463,6 +638,50 @@ export const FirmProfileVersionType: typeof $Enums.FirmProfileVersionType
 export type SuppressionAction = $Enums.SuppressionAction
 
 export const SuppressionAction: typeof $Enums.SuppressionAction
+
+export type EvidenceSourceType = $Enums.EvidenceSourceType
+
+export const EvidenceSourceType: typeof $Enums.EvidenceSourceType
+
+export type TagCategory = $Enums.TagCategory
+
+export const TagCategory: typeof $Enums.TagCategory
+
+export type CommunicationChannel = $Enums.CommunicationChannel
+
+export const CommunicationChannel: typeof $Enums.CommunicationChannel
+
+export type CommunicationDirection = $Enums.CommunicationDirection
+
+export const CommunicationDirection: typeof $Enums.CommunicationDirection
+
+export type ClientStatus = $Enums.ClientStatus
+
+export const ClientStatus: typeof $Enums.ClientStatus
+
+export type MailboxProvider = $Enums.MailboxProvider
+
+export const MailboxProvider: typeof $Enums.MailboxProvider
+
+export type MailboxSyncStatus = $Enums.MailboxSyncStatus
+
+export const MailboxSyncStatus: typeof $Enums.MailboxSyncStatus
+
+export type MailboxConsentMode = $Enums.MailboxConsentMode
+
+export const MailboxConsentMode: typeof $Enums.MailboxConsentMode
+
+export type IngestJobKind = $Enums.IngestJobKind
+
+export const IngestJobKind: typeof $Enums.IngestJobKind
+
+export type IngestJobStatus = $Enums.IngestJobStatus
+
+export const IngestJobStatus: typeof $Enums.IngestJobStatus
+
+export type EmailTriageStatus = $Enums.EmailTriageStatus
+
+export const EmailTriageStatus: typeof $Enums.EmailTriageStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -801,6 +1020,106 @@ export class PrismaClient<
     * ```
     */
   get firmProfileVersion(): Prisma.FirmProfileVersionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.client`: Exposes CRUD operations for the **Client** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Clients
+    * const clients = await prisma.client.findMany()
+    * ```
+    */
+  get client(): Prisma.ClientDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.emailAlias`: Exposes CRUD operations for the **EmailAlias** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more EmailAliases
+    * const emailAliases = await prisma.emailAlias.findMany()
+    * ```
+    */
+  get emailAlias(): Prisma.EmailAliasDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.evidenceItem`: Exposes CRUD operations for the **EvidenceItem** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more EvidenceItems
+    * const evidenceItems = await prisma.evidenceItem.findMany()
+    * ```
+    */
+  get evidenceItem(): Prisma.EvidenceItemDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.evidenceTag`: Exposes CRUD operations for the **EvidenceTag** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more EvidenceTags
+    * const evidenceTags = await prisma.evidenceTag.findMany()
+    * ```
+    */
+  get evidenceTag(): Prisma.EvidenceTagDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.communicationThread`: Exposes CRUD operations for the **CommunicationThread** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CommunicationThreads
+    * const communicationThreads = await prisma.communicationThread.findMany()
+    * ```
+    */
+  get communicationThread(): Prisma.CommunicationThreadDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.communication`: Exposes CRUD operations for the **Communication** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Communications
+    * const communications = await prisma.communication.findMany()
+    * ```
+    */
+  get communication(): Prisma.CommunicationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.attachment`: Exposes CRUD operations for the **Attachment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Attachments
+    * const attachments = await prisma.attachment.findMany()
+    * ```
+    */
+  get attachment(): Prisma.AttachmentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.mailboxConnection`: Exposes CRUD operations for the **MailboxConnection** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MailboxConnections
+    * const mailboxConnections = await prisma.mailboxConnection.findMany()
+    * ```
+    */
+  get mailboxConnection(): Prisma.MailboxConnectionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.ingestJob`: Exposes CRUD operations for the **IngestJob** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more IngestJobs
+    * const ingestJobs = await prisma.ingestJob.findMany()
+    * ```
+    */
+  get ingestJob(): Prisma.IngestJobDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.emailTriageItem`: Exposes CRUD operations for the **EmailTriageItem** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more EmailTriageItems
+    * const emailTriageItems = await prisma.emailTriageItem.findMany()
+    * ```
+    */
+  get emailTriageItem(): Prisma.EmailTriageItemDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.lead`: Exposes CRUD operations for the **Lead** model.
@@ -1274,6 +1593,16 @@ export namespace Prisma {
     DisclosureCategory: 'DisclosureCategory',
     SuppressionLogEntry: 'SuppressionLogEntry',
     FirmProfileVersion: 'FirmProfileVersion',
+    Client: 'Client',
+    EmailAlias: 'EmailAlias',
+    EvidenceItem: 'EvidenceItem',
+    EvidenceTag: 'EvidenceTag',
+    CommunicationThread: 'CommunicationThread',
+    Communication: 'Communication',
+    Attachment: 'Attachment',
+    MailboxConnection: 'MailboxConnection',
+    IngestJob: 'IngestJob',
+    EmailTriageItem: 'EmailTriageItem',
     Lead: 'Lead'
   };
 
@@ -1293,7 +1622,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "workspace" | "userWorkspace" | "meeting" | "version" | "flag" | "resolutionRecord" | "actionItem" | "evidenceLink" | "verification" | "auditEvent" | "account" | "session" | "user" | "verificationToken" | "invitation" | "integrationCredential" | "integrationConfig" | "integrationSyncLog" | "firmProfile" | "disclosureCategory" | "suppressionLogEntry" | "firmProfileVersion" | "lead"
+      modelProps: "workspace" | "userWorkspace" | "meeting" | "version" | "flag" | "resolutionRecord" | "actionItem" | "evidenceLink" | "verification" | "auditEvent" | "account" | "session" | "user" | "verificationToken" | "invitation" | "integrationCredential" | "integrationConfig" | "integrationSyncLog" | "firmProfile" | "disclosureCategory" | "suppressionLogEntry" | "firmProfileVersion" | "client" | "emailAlias" | "evidenceItem" | "evidenceTag" | "communicationThread" | "communication" | "attachment" | "mailboxConnection" | "ingestJob" | "emailTriageItem" | "lead"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2925,6 +3254,746 @@ export namespace Prisma {
           }
         }
       }
+      Client: {
+        payload: Prisma.$ClientPayload<ExtArgs>
+        fields: Prisma.ClientFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ClientFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClientPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ClientFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClientPayload>
+          }
+          findFirst: {
+            args: Prisma.ClientFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClientPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ClientFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClientPayload>
+          }
+          findMany: {
+            args: Prisma.ClientFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClientPayload>[]
+          }
+          create: {
+            args: Prisma.ClientCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClientPayload>
+          }
+          createMany: {
+            args: Prisma.ClientCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ClientCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClientPayload>[]
+          }
+          delete: {
+            args: Prisma.ClientDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClientPayload>
+          }
+          update: {
+            args: Prisma.ClientUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClientPayload>
+          }
+          deleteMany: {
+            args: Prisma.ClientDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ClientUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ClientUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClientPayload>[]
+          }
+          upsert: {
+            args: Prisma.ClientUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClientPayload>
+          }
+          aggregate: {
+            args: Prisma.ClientAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateClient>
+          }
+          groupBy: {
+            args: Prisma.ClientGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ClientGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ClientCountArgs<ExtArgs>
+            result: $Utils.Optional<ClientCountAggregateOutputType> | number
+          }
+        }
+      }
+      EmailAlias: {
+        payload: Prisma.$EmailAliasPayload<ExtArgs>
+        fields: Prisma.EmailAliasFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EmailAliasFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailAliasPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EmailAliasFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailAliasPayload>
+          }
+          findFirst: {
+            args: Prisma.EmailAliasFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailAliasPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EmailAliasFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailAliasPayload>
+          }
+          findMany: {
+            args: Prisma.EmailAliasFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailAliasPayload>[]
+          }
+          create: {
+            args: Prisma.EmailAliasCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailAliasPayload>
+          }
+          createMany: {
+            args: Prisma.EmailAliasCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EmailAliasCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailAliasPayload>[]
+          }
+          delete: {
+            args: Prisma.EmailAliasDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailAliasPayload>
+          }
+          update: {
+            args: Prisma.EmailAliasUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailAliasPayload>
+          }
+          deleteMany: {
+            args: Prisma.EmailAliasDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EmailAliasUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EmailAliasUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailAliasPayload>[]
+          }
+          upsert: {
+            args: Prisma.EmailAliasUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailAliasPayload>
+          }
+          aggregate: {
+            args: Prisma.EmailAliasAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEmailAlias>
+          }
+          groupBy: {
+            args: Prisma.EmailAliasGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EmailAliasGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EmailAliasCountArgs<ExtArgs>
+            result: $Utils.Optional<EmailAliasCountAggregateOutputType> | number
+          }
+        }
+      }
+      EvidenceItem: {
+        payload: Prisma.$EvidenceItemPayload<ExtArgs>
+        fields: Prisma.EvidenceItemFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EvidenceItemFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceItemPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EvidenceItemFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceItemPayload>
+          }
+          findFirst: {
+            args: Prisma.EvidenceItemFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceItemPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EvidenceItemFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceItemPayload>
+          }
+          findMany: {
+            args: Prisma.EvidenceItemFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceItemPayload>[]
+          }
+          create: {
+            args: Prisma.EvidenceItemCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceItemPayload>
+          }
+          createMany: {
+            args: Prisma.EvidenceItemCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EvidenceItemCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceItemPayload>[]
+          }
+          delete: {
+            args: Prisma.EvidenceItemDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceItemPayload>
+          }
+          update: {
+            args: Prisma.EvidenceItemUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceItemPayload>
+          }
+          deleteMany: {
+            args: Prisma.EvidenceItemDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EvidenceItemUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EvidenceItemUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceItemPayload>[]
+          }
+          upsert: {
+            args: Prisma.EvidenceItemUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceItemPayload>
+          }
+          aggregate: {
+            args: Prisma.EvidenceItemAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEvidenceItem>
+          }
+          groupBy: {
+            args: Prisma.EvidenceItemGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EvidenceItemGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EvidenceItemCountArgs<ExtArgs>
+            result: $Utils.Optional<EvidenceItemCountAggregateOutputType> | number
+          }
+        }
+      }
+      EvidenceTag: {
+        payload: Prisma.$EvidenceTagPayload<ExtArgs>
+        fields: Prisma.EvidenceTagFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EvidenceTagFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceTagPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EvidenceTagFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceTagPayload>
+          }
+          findFirst: {
+            args: Prisma.EvidenceTagFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceTagPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EvidenceTagFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceTagPayload>
+          }
+          findMany: {
+            args: Prisma.EvidenceTagFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceTagPayload>[]
+          }
+          create: {
+            args: Prisma.EvidenceTagCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceTagPayload>
+          }
+          createMany: {
+            args: Prisma.EvidenceTagCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EvidenceTagCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceTagPayload>[]
+          }
+          delete: {
+            args: Prisma.EvidenceTagDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceTagPayload>
+          }
+          update: {
+            args: Prisma.EvidenceTagUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceTagPayload>
+          }
+          deleteMany: {
+            args: Prisma.EvidenceTagDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EvidenceTagUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EvidenceTagUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceTagPayload>[]
+          }
+          upsert: {
+            args: Prisma.EvidenceTagUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceTagPayload>
+          }
+          aggregate: {
+            args: Prisma.EvidenceTagAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEvidenceTag>
+          }
+          groupBy: {
+            args: Prisma.EvidenceTagGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EvidenceTagGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EvidenceTagCountArgs<ExtArgs>
+            result: $Utils.Optional<EvidenceTagCountAggregateOutputType> | number
+          }
+        }
+      }
+      CommunicationThread: {
+        payload: Prisma.$CommunicationThreadPayload<ExtArgs>
+        fields: Prisma.CommunicationThreadFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CommunicationThreadFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationThreadPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CommunicationThreadFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationThreadPayload>
+          }
+          findFirst: {
+            args: Prisma.CommunicationThreadFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationThreadPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CommunicationThreadFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationThreadPayload>
+          }
+          findMany: {
+            args: Prisma.CommunicationThreadFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationThreadPayload>[]
+          }
+          create: {
+            args: Prisma.CommunicationThreadCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationThreadPayload>
+          }
+          createMany: {
+            args: Prisma.CommunicationThreadCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CommunicationThreadCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationThreadPayload>[]
+          }
+          delete: {
+            args: Prisma.CommunicationThreadDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationThreadPayload>
+          }
+          update: {
+            args: Prisma.CommunicationThreadUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationThreadPayload>
+          }
+          deleteMany: {
+            args: Prisma.CommunicationThreadDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CommunicationThreadUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CommunicationThreadUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationThreadPayload>[]
+          }
+          upsert: {
+            args: Prisma.CommunicationThreadUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationThreadPayload>
+          }
+          aggregate: {
+            args: Prisma.CommunicationThreadAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCommunicationThread>
+          }
+          groupBy: {
+            args: Prisma.CommunicationThreadGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CommunicationThreadGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CommunicationThreadCountArgs<ExtArgs>
+            result: $Utils.Optional<CommunicationThreadCountAggregateOutputType> | number
+          }
+        }
+      }
+      Communication: {
+        payload: Prisma.$CommunicationPayload<ExtArgs>
+        fields: Prisma.CommunicationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CommunicationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CommunicationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationPayload>
+          }
+          findFirst: {
+            args: Prisma.CommunicationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CommunicationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationPayload>
+          }
+          findMany: {
+            args: Prisma.CommunicationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationPayload>[]
+          }
+          create: {
+            args: Prisma.CommunicationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationPayload>
+          }
+          createMany: {
+            args: Prisma.CommunicationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CommunicationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationPayload>[]
+          }
+          delete: {
+            args: Prisma.CommunicationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationPayload>
+          }
+          update: {
+            args: Prisma.CommunicationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationPayload>
+          }
+          deleteMany: {
+            args: Prisma.CommunicationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CommunicationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CommunicationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationPayload>[]
+          }
+          upsert: {
+            args: Prisma.CommunicationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunicationPayload>
+          }
+          aggregate: {
+            args: Prisma.CommunicationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCommunication>
+          }
+          groupBy: {
+            args: Prisma.CommunicationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CommunicationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CommunicationCountArgs<ExtArgs>
+            result: $Utils.Optional<CommunicationCountAggregateOutputType> | number
+          }
+        }
+      }
+      Attachment: {
+        payload: Prisma.$AttachmentPayload<ExtArgs>
+        fields: Prisma.AttachmentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AttachmentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AttachmentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AttachmentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AttachmentPayload>
+          }
+          findFirst: {
+            args: Prisma.AttachmentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AttachmentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AttachmentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AttachmentPayload>
+          }
+          findMany: {
+            args: Prisma.AttachmentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AttachmentPayload>[]
+          }
+          create: {
+            args: Prisma.AttachmentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AttachmentPayload>
+          }
+          createMany: {
+            args: Prisma.AttachmentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AttachmentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AttachmentPayload>[]
+          }
+          delete: {
+            args: Prisma.AttachmentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AttachmentPayload>
+          }
+          update: {
+            args: Prisma.AttachmentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AttachmentPayload>
+          }
+          deleteMany: {
+            args: Prisma.AttachmentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AttachmentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AttachmentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AttachmentPayload>[]
+          }
+          upsert: {
+            args: Prisma.AttachmentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AttachmentPayload>
+          }
+          aggregate: {
+            args: Prisma.AttachmentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAttachment>
+          }
+          groupBy: {
+            args: Prisma.AttachmentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AttachmentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AttachmentCountArgs<ExtArgs>
+            result: $Utils.Optional<AttachmentCountAggregateOutputType> | number
+          }
+        }
+      }
+      MailboxConnection: {
+        payload: Prisma.$MailboxConnectionPayload<ExtArgs>
+        fields: Prisma.MailboxConnectionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MailboxConnectionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MailboxConnectionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MailboxConnectionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MailboxConnectionPayload>
+          }
+          findFirst: {
+            args: Prisma.MailboxConnectionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MailboxConnectionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MailboxConnectionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MailboxConnectionPayload>
+          }
+          findMany: {
+            args: Prisma.MailboxConnectionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MailboxConnectionPayload>[]
+          }
+          create: {
+            args: Prisma.MailboxConnectionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MailboxConnectionPayload>
+          }
+          createMany: {
+            args: Prisma.MailboxConnectionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MailboxConnectionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MailboxConnectionPayload>[]
+          }
+          delete: {
+            args: Prisma.MailboxConnectionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MailboxConnectionPayload>
+          }
+          update: {
+            args: Prisma.MailboxConnectionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MailboxConnectionPayload>
+          }
+          deleteMany: {
+            args: Prisma.MailboxConnectionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MailboxConnectionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.MailboxConnectionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MailboxConnectionPayload>[]
+          }
+          upsert: {
+            args: Prisma.MailboxConnectionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MailboxConnectionPayload>
+          }
+          aggregate: {
+            args: Prisma.MailboxConnectionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMailboxConnection>
+          }
+          groupBy: {
+            args: Prisma.MailboxConnectionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MailboxConnectionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MailboxConnectionCountArgs<ExtArgs>
+            result: $Utils.Optional<MailboxConnectionCountAggregateOutputType> | number
+          }
+        }
+      }
+      IngestJob: {
+        payload: Prisma.$IngestJobPayload<ExtArgs>
+        fields: Prisma.IngestJobFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.IngestJobFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IngestJobPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.IngestJobFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IngestJobPayload>
+          }
+          findFirst: {
+            args: Prisma.IngestJobFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IngestJobPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.IngestJobFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IngestJobPayload>
+          }
+          findMany: {
+            args: Prisma.IngestJobFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IngestJobPayload>[]
+          }
+          create: {
+            args: Prisma.IngestJobCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IngestJobPayload>
+          }
+          createMany: {
+            args: Prisma.IngestJobCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.IngestJobCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IngestJobPayload>[]
+          }
+          delete: {
+            args: Prisma.IngestJobDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IngestJobPayload>
+          }
+          update: {
+            args: Prisma.IngestJobUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IngestJobPayload>
+          }
+          deleteMany: {
+            args: Prisma.IngestJobDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.IngestJobUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.IngestJobUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IngestJobPayload>[]
+          }
+          upsert: {
+            args: Prisma.IngestJobUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IngestJobPayload>
+          }
+          aggregate: {
+            args: Prisma.IngestJobAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateIngestJob>
+          }
+          groupBy: {
+            args: Prisma.IngestJobGroupByArgs<ExtArgs>
+            result: $Utils.Optional<IngestJobGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.IngestJobCountArgs<ExtArgs>
+            result: $Utils.Optional<IngestJobCountAggregateOutputType> | number
+          }
+        }
+      }
+      EmailTriageItem: {
+        payload: Prisma.$EmailTriageItemPayload<ExtArgs>
+        fields: Prisma.EmailTriageItemFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EmailTriageItemFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailTriageItemPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EmailTriageItemFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailTriageItemPayload>
+          }
+          findFirst: {
+            args: Prisma.EmailTriageItemFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailTriageItemPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EmailTriageItemFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailTriageItemPayload>
+          }
+          findMany: {
+            args: Prisma.EmailTriageItemFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailTriageItemPayload>[]
+          }
+          create: {
+            args: Prisma.EmailTriageItemCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailTriageItemPayload>
+          }
+          createMany: {
+            args: Prisma.EmailTriageItemCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EmailTriageItemCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailTriageItemPayload>[]
+          }
+          delete: {
+            args: Prisma.EmailTriageItemDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailTriageItemPayload>
+          }
+          update: {
+            args: Prisma.EmailTriageItemUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailTriageItemPayload>
+          }
+          deleteMany: {
+            args: Prisma.EmailTriageItemDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EmailTriageItemUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EmailTriageItemUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailTriageItemPayload>[]
+          }
+          upsert: {
+            args: Prisma.EmailTriageItemUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailTriageItemPayload>
+          }
+          aggregate: {
+            args: Prisma.EmailTriageItemAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEmailTriageItem>
+          }
+          groupBy: {
+            args: Prisma.EmailTriageItemGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EmailTriageItemGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EmailTriageItemCountArgs<ExtArgs>
+            result: $Utils.Optional<EmailTriageItemCountAggregateOutputType> | number
+          }
+        }
+      }
       Lead: {
         payload: Prisma.$LeadPayload<ExtArgs>
         fields: Prisma.LeadFieldRefs
@@ -3117,6 +4186,16 @@ export namespace Prisma {
     disclosureCategory?: DisclosureCategoryOmit
     suppressionLogEntry?: SuppressionLogEntryOmit
     firmProfileVersion?: FirmProfileVersionOmit
+    client?: ClientOmit
+    emailAlias?: EmailAliasOmit
+    evidenceItem?: EvidenceItemOmit
+    evidenceTag?: EvidenceTagOmit
+    communicationThread?: CommunicationThreadOmit
+    communication?: CommunicationOmit
+    attachment?: AttachmentOmit
+    mailboxConnection?: MailboxConnectionOmit
+    ingestJob?: IngestJobOmit
+    emailTriageItem?: EmailTriageItemOmit
     lead?: LeadOmit
   }
 
@@ -3206,6 +4285,13 @@ export namespace Prisma {
     resolutionRecords: number
     integrationCredentials: number
     integrationConfigs: number
+    evidenceItems: number
+    clients: number
+    mailboxConnections: number
+    communicationThreads: number
+    emailAliases: number
+    emailTriageItems: number
+    ingestJobs: number
   }
 
   export type WorkspaceCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3217,6 +4303,13 @@ export namespace Prisma {
     resolutionRecords?: boolean | WorkspaceCountOutputTypeCountResolutionRecordsArgs
     integrationCredentials?: boolean | WorkspaceCountOutputTypeCountIntegrationCredentialsArgs
     integrationConfigs?: boolean | WorkspaceCountOutputTypeCountIntegrationConfigsArgs
+    evidenceItems?: boolean | WorkspaceCountOutputTypeCountEvidenceItemsArgs
+    clients?: boolean | WorkspaceCountOutputTypeCountClientsArgs
+    mailboxConnections?: boolean | WorkspaceCountOutputTypeCountMailboxConnectionsArgs
+    communicationThreads?: boolean | WorkspaceCountOutputTypeCountCommunicationThreadsArgs
+    emailAliases?: boolean | WorkspaceCountOutputTypeCountEmailAliasesArgs
+    emailTriageItems?: boolean | WorkspaceCountOutputTypeCountEmailTriageItemsArgs
+    ingestJobs?: boolean | WorkspaceCountOutputTypeCountIngestJobsArgs
   }
 
   // Custom InputTypes
@@ -3284,6 +4377,55 @@ export namespace Prisma {
    */
   export type WorkspaceCountOutputTypeCountIntegrationConfigsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: IntegrationConfigWhereInput
+  }
+
+  /**
+   * WorkspaceCountOutputType without action
+   */
+  export type WorkspaceCountOutputTypeCountEvidenceItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EvidenceItemWhereInput
+  }
+
+  /**
+   * WorkspaceCountOutputType without action
+   */
+  export type WorkspaceCountOutputTypeCountClientsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ClientWhereInput
+  }
+
+  /**
+   * WorkspaceCountOutputType without action
+   */
+  export type WorkspaceCountOutputTypeCountMailboxConnectionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MailboxConnectionWhereInput
+  }
+
+  /**
+   * WorkspaceCountOutputType without action
+   */
+  export type WorkspaceCountOutputTypeCountCommunicationThreadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommunicationThreadWhereInput
+  }
+
+  /**
+   * WorkspaceCountOutputType without action
+   */
+  export type WorkspaceCountOutputTypeCountEmailAliasesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EmailAliasWhereInput
+  }
+
+  /**
+   * WorkspaceCountOutputType without action
+   */
+  export type WorkspaceCountOutputTypeCountEmailTriageItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EmailTriageItemWhereInput
+  }
+
+  /**
+   * WorkspaceCountOutputType without action
+   */
+  export type WorkspaceCountOutputTypeCountIngestJobsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IngestJobWhereInput
   }
 
 
@@ -3448,6 +4590,7 @@ export namespace Prisma {
     meetingsCcoSignedOff: number
     flagsCmTriaged: number
     invitationsSent: number
+    emailAliases: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3460,6 +4603,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: boolean | UserCountOutputTypeCountMeetingsCcoSignedOffArgs
     flagsCmTriaged?: boolean | UserCountOutputTypeCountFlagsCmTriagedArgs
     invitationsSent?: boolean | UserCountOutputTypeCountInvitationsSentArgs
+    emailAliases?: boolean | UserCountOutputTypeCountEmailAliasesArgs
   }
 
   // Custom InputTypes
@@ -3534,6 +4678,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountInvitationsSentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: InvitationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountEmailAliasesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EmailAliasWhereInput
   }
 
 
@@ -3614,6 +4765,170 @@ export namespace Prisma {
    */
   export type FirmProfileCountOutputTypeCountVersionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: FirmProfileVersionWhereInput
+  }
+
+
+  /**
+   * Count Type ClientCountOutputType
+   */
+
+  export type ClientCountOutputType = {
+    emailAliases: number
+    evidenceItems: number
+  }
+
+  export type ClientCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    emailAliases?: boolean | ClientCountOutputTypeCountEmailAliasesArgs
+    evidenceItems?: boolean | ClientCountOutputTypeCountEvidenceItemsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ClientCountOutputType without action
+   */
+  export type ClientCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ClientCountOutputType
+     */
+    select?: ClientCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ClientCountOutputType without action
+   */
+  export type ClientCountOutputTypeCountEmailAliasesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EmailAliasWhereInput
+  }
+
+  /**
+   * ClientCountOutputType without action
+   */
+  export type ClientCountOutputTypeCountEvidenceItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EvidenceItemWhereInput
+  }
+
+
+  /**
+   * Count Type EvidenceItemCountOutputType
+   */
+
+  export type EvidenceItemCountOutputType = {
+    tags: number
+  }
+
+  export type EvidenceItemCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tags?: boolean | EvidenceItemCountOutputTypeCountTagsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * EvidenceItemCountOutputType without action
+   */
+  export type EvidenceItemCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceItemCountOutputType
+     */
+    select?: EvidenceItemCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * EvidenceItemCountOutputType without action
+   */
+  export type EvidenceItemCountOutputTypeCountTagsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EvidenceTagWhereInput
+  }
+
+
+  /**
+   * Count Type CommunicationThreadCountOutputType
+   */
+
+  export type CommunicationThreadCountOutputType = {
+    messages: number
+  }
+
+  export type CommunicationThreadCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    messages?: boolean | CommunicationThreadCountOutputTypeCountMessagesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * CommunicationThreadCountOutputType without action
+   */
+  export type CommunicationThreadCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunicationThreadCountOutputType
+     */
+    select?: CommunicationThreadCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * CommunicationThreadCountOutputType without action
+   */
+  export type CommunicationThreadCountOutputTypeCountMessagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommunicationWhereInput
+  }
+
+
+  /**
+   * Count Type CommunicationCountOutputType
+   */
+
+  export type CommunicationCountOutputType = {
+    attachments: number
+  }
+
+  export type CommunicationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    attachments?: boolean | CommunicationCountOutputTypeCountAttachmentsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * CommunicationCountOutputType without action
+   */
+  export type CommunicationCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunicationCountOutputType
+     */
+    select?: CommunicationCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * CommunicationCountOutputType without action
+   */
+  export type CommunicationCountOutputTypeCountAttachmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AttachmentWhereInput
+  }
+
+
+  /**
+   * Count Type MailboxConnectionCountOutputType
+   */
+
+  export type MailboxConnectionCountOutputType = {
+    ingestJobs: number
+  }
+
+  export type MailboxConnectionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    ingestJobs?: boolean | MailboxConnectionCountOutputTypeCountIngestJobsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * MailboxConnectionCountOutputType without action
+   */
+  export type MailboxConnectionCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MailboxConnectionCountOutputType
+     */
+    select?: MailboxConnectionCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * MailboxConnectionCountOutputType without action
+   */
+  export type MailboxConnectionCountOutputTypeCountIngestJobsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IngestJobWhereInput
   }
 
 
@@ -3940,6 +5255,13 @@ export namespace Prisma {
     integrationCredentials?: boolean | Workspace$integrationCredentialsArgs<ExtArgs>
     integrationConfigs?: boolean | Workspace$integrationConfigsArgs<ExtArgs>
     firmProfile?: boolean | Workspace$firmProfileArgs<ExtArgs>
+    evidenceItems?: boolean | Workspace$evidenceItemsArgs<ExtArgs>
+    clients?: boolean | Workspace$clientsArgs<ExtArgs>
+    mailboxConnections?: boolean | Workspace$mailboxConnectionsArgs<ExtArgs>
+    communicationThreads?: boolean | Workspace$communicationThreadsArgs<ExtArgs>
+    emailAliases?: boolean | Workspace$emailAliasesArgs<ExtArgs>
+    emailTriageItems?: boolean | Workspace$emailTriageItemsArgs<ExtArgs>
+    ingestJobs?: boolean | Workspace$ingestJobsArgs<ExtArgs>
     _count?: boolean | WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["workspace"]>
 
@@ -4020,6 +5342,13 @@ export namespace Prisma {
     integrationCredentials?: boolean | Workspace$integrationCredentialsArgs<ExtArgs>
     integrationConfigs?: boolean | Workspace$integrationConfigsArgs<ExtArgs>
     firmProfile?: boolean | Workspace$firmProfileArgs<ExtArgs>
+    evidenceItems?: boolean | Workspace$evidenceItemsArgs<ExtArgs>
+    clients?: boolean | Workspace$clientsArgs<ExtArgs>
+    mailboxConnections?: boolean | Workspace$mailboxConnectionsArgs<ExtArgs>
+    communicationThreads?: boolean | Workspace$communicationThreadsArgs<ExtArgs>
+    emailAliases?: boolean | Workspace$emailAliasesArgs<ExtArgs>
+    emailTriageItems?: boolean | Workspace$emailTriageItemsArgs<ExtArgs>
+    ingestJobs?: boolean | Workspace$ingestJobsArgs<ExtArgs>
     _count?: boolean | WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type WorkspaceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -4037,6 +5366,13 @@ export namespace Prisma {
       integrationCredentials: Prisma.$IntegrationCredentialPayload<ExtArgs>[]
       integrationConfigs: Prisma.$IntegrationConfigPayload<ExtArgs>[]
       firmProfile: Prisma.$FirmProfilePayload<ExtArgs> | null
+      evidenceItems: Prisma.$EvidenceItemPayload<ExtArgs>[]
+      clients: Prisma.$ClientPayload<ExtArgs>[]
+      mailboxConnections: Prisma.$MailboxConnectionPayload<ExtArgs>[]
+      communicationThreads: Prisma.$CommunicationThreadPayload<ExtArgs>[]
+      emailAliases: Prisma.$EmailAliasPayload<ExtArgs>[]
+      emailTriageItems: Prisma.$EmailTriageItemPayload<ExtArgs>[]
+      ingestJobs: Prisma.$IngestJobPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4461,6 +5797,13 @@ export namespace Prisma {
     integrationCredentials<T extends Workspace$integrationCredentialsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$integrationCredentialsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IntegrationCredentialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     integrationConfigs<T extends Workspace$integrationConfigsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$integrationConfigsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IntegrationConfigPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     firmProfile<T extends Workspace$firmProfileArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$firmProfileArgs<ExtArgs>>): Prisma__FirmProfileClient<$Result.GetResult<Prisma.$FirmProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    evidenceItems<T extends Workspace$evidenceItemsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$evidenceItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    clients<T extends Workspace$clientsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$clientsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    mailboxConnections<T extends Workspace$mailboxConnectionsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$mailboxConnectionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MailboxConnectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    communicationThreads<T extends Workspace$communicationThreadsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$communicationThreadsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunicationThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    emailAliases<T extends Workspace$emailAliasesArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$emailAliasesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailAliasPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    emailTriageItems<T extends Workspace$emailTriageItemsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$emailTriageItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailTriageItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    ingestJobs<T extends Workspace$ingestJobsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$ingestJobsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IngestJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5105,6 +6448,174 @@ export namespace Prisma {
      */
     include?: FirmProfileInclude<ExtArgs> | null
     where?: FirmProfileWhereInput
+  }
+
+  /**
+   * Workspace.evidenceItems
+   */
+  export type Workspace$evidenceItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceItem
+     */
+    select?: EvidenceItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceItem
+     */
+    omit?: EvidenceItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceItemInclude<ExtArgs> | null
+    where?: EvidenceItemWhereInput
+    orderBy?: EvidenceItemOrderByWithRelationInput | EvidenceItemOrderByWithRelationInput[]
+    cursor?: EvidenceItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EvidenceItemScalarFieldEnum | EvidenceItemScalarFieldEnum[]
+  }
+
+  /**
+   * Workspace.clients
+   */
+  export type Workspace$clientsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientInclude<ExtArgs> | null
+    where?: ClientWhereInput
+    orderBy?: ClientOrderByWithRelationInput | ClientOrderByWithRelationInput[]
+    cursor?: ClientWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ClientScalarFieldEnum | ClientScalarFieldEnum[]
+  }
+
+  /**
+   * Workspace.mailboxConnections
+   */
+  export type Workspace$mailboxConnectionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MailboxConnection
+     */
+    select?: MailboxConnectionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MailboxConnection
+     */
+    omit?: MailboxConnectionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MailboxConnectionInclude<ExtArgs> | null
+    where?: MailboxConnectionWhereInput
+    orderBy?: MailboxConnectionOrderByWithRelationInput | MailboxConnectionOrderByWithRelationInput[]
+    cursor?: MailboxConnectionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MailboxConnectionScalarFieldEnum | MailboxConnectionScalarFieldEnum[]
+  }
+
+  /**
+   * Workspace.communicationThreads
+   */
+  export type Workspace$communicationThreadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunicationThread
+     */
+    select?: CommunicationThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunicationThread
+     */
+    omit?: CommunicationThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationThreadInclude<ExtArgs> | null
+    where?: CommunicationThreadWhereInput
+    orderBy?: CommunicationThreadOrderByWithRelationInput | CommunicationThreadOrderByWithRelationInput[]
+    cursor?: CommunicationThreadWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CommunicationThreadScalarFieldEnum | CommunicationThreadScalarFieldEnum[]
+  }
+
+  /**
+   * Workspace.emailAliases
+   */
+  export type Workspace$emailAliasesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailAlias
+     */
+    select?: EmailAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailAlias
+     */
+    omit?: EmailAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailAliasInclude<ExtArgs> | null
+    where?: EmailAliasWhereInput
+    orderBy?: EmailAliasOrderByWithRelationInput | EmailAliasOrderByWithRelationInput[]
+    cursor?: EmailAliasWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EmailAliasScalarFieldEnum | EmailAliasScalarFieldEnum[]
+  }
+
+  /**
+   * Workspace.emailTriageItems
+   */
+  export type Workspace$emailTriageItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailTriageItem
+     */
+    select?: EmailTriageItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailTriageItem
+     */
+    omit?: EmailTriageItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailTriageItemInclude<ExtArgs> | null
+    where?: EmailTriageItemWhereInput
+    orderBy?: EmailTriageItemOrderByWithRelationInput | EmailTriageItemOrderByWithRelationInput[]
+    cursor?: EmailTriageItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EmailTriageItemScalarFieldEnum | EmailTriageItemScalarFieldEnum[]
+  }
+
+  /**
+   * Workspace.ingestJobs
+   */
+  export type Workspace$ingestJobsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IngestJob
+     */
+    select?: IngestJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IngestJob
+     */
+    omit?: IngestJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IngestJobInclude<ExtArgs> | null
+    where?: IngestJobWhereInput
+    orderBy?: IngestJobOrderByWithRelationInput | IngestJobOrderByWithRelationInput[]
+    cursor?: IngestJobWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: IngestJobScalarFieldEnum | IngestJobScalarFieldEnum[]
   }
 
   /**
@@ -18616,6 +20127,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: boolean | User$meetingsCcoSignedOffArgs<ExtArgs>
     flagsCmTriaged?: boolean | User$flagsCmTriagedArgs<ExtArgs>
     invitationsSent?: boolean | User$invitationsSentArgs<ExtArgs>
+    emailAliases?: boolean | User$emailAliasesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -18654,6 +20166,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: boolean | User$meetingsCcoSignedOffArgs<ExtArgs>
     flagsCmTriaged?: boolean | User$flagsCmTriagedArgs<ExtArgs>
     invitationsSent?: boolean | User$invitationsSentArgs<ExtArgs>
+    emailAliases?: boolean | User$emailAliasesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -18671,6 +20184,7 @@ export namespace Prisma {
       meetingsCcoSignedOff: Prisma.$MeetingPayload<ExtArgs>[]
       flagsCmTriaged: Prisma.$FlagPayload<ExtArgs>[]
       invitationsSent: Prisma.$InvitationPayload<ExtArgs>[]
+      emailAliases: Prisma.$EmailAliasPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -19081,6 +20595,7 @@ export namespace Prisma {
     meetingsCcoSignedOff<T extends User$meetingsCcoSignedOffArgs<ExtArgs> = {}>(args?: Subset<T, User$meetingsCcoSignedOffArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MeetingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     flagsCmTriaged<T extends User$flagsCmTriagedArgs<ExtArgs> = {}>(args?: Subset<T, User$flagsCmTriagedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FlagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     invitationsSent<T extends User$invitationsSentArgs<ExtArgs> = {}>(args?: Subset<T, User$invitationsSentArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    emailAliases<T extends User$emailAliasesArgs<ExtArgs> = {}>(args?: Subset<T, User$emailAliasesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailAliasPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -19716,6 +21231,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: InvitationScalarFieldEnum | InvitationScalarFieldEnum[]
+  }
+
+  /**
+   * User.emailAliases
+   */
+  export type User$emailAliasesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailAlias
+     */
+    select?: EmailAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailAlias
+     */
+    omit?: EmailAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailAliasInclude<ExtArgs> | null
+    where?: EmailAliasWhereInput
+    orderBy?: EmailAliasOrderByWithRelationInput | EmailAliasOrderByWithRelationInput[]
+    cursor?: EmailAliasWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EmailAliasScalarFieldEnum | EmailAliasScalarFieldEnum[]
   }
 
   /**
@@ -30009,6 +31548,11723 @@ export namespace Prisma {
 
 
   /**
+   * Model Client
+   */
+
+  export type AggregateClient = {
+    _count: ClientCountAggregateOutputType | null
+    _min: ClientMinAggregateOutputType | null
+    _max: ClientMaxAggregateOutputType | null
+  }
+
+  export type ClientMinAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    name: string | null
+    zohoId: string | null
+    status: $Enums.ClientStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type ClientMaxAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    name: string | null
+    zohoId: string | null
+    status: $Enums.ClientStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type ClientCountAggregateOutputType = {
+    id: number
+    workspaceId: number
+    name: number
+    zohoId: number
+    status: number
+    createdAt: number
+    updatedAt: number
+    deletedAt: number
+    _all: number
+  }
+
+
+  export type ClientMinAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    name?: true
+    zohoId?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type ClientMaxAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    name?: true
+    zohoId?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type ClientCountAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    name?: true
+    zohoId?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+    _all?: true
+  }
+
+  export type ClientAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Client to aggregate.
+     */
+    where?: ClientWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Clients to fetch.
+     */
+    orderBy?: ClientOrderByWithRelationInput | ClientOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ClientWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Clients from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Clients.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Clients
+    **/
+    _count?: true | ClientCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ClientMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ClientMaxAggregateInputType
+  }
+
+  export type GetClientAggregateType<T extends ClientAggregateArgs> = {
+        [P in keyof T & keyof AggregateClient]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateClient[P]>
+      : GetScalarType<T[P], AggregateClient[P]>
+  }
+
+
+
+
+  export type ClientGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ClientWhereInput
+    orderBy?: ClientOrderByWithAggregationInput | ClientOrderByWithAggregationInput[]
+    by: ClientScalarFieldEnum[] | ClientScalarFieldEnum
+    having?: ClientScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ClientCountAggregateInputType | true
+    _min?: ClientMinAggregateInputType
+    _max?: ClientMaxAggregateInputType
+  }
+
+  export type ClientGroupByOutputType = {
+    id: string
+    workspaceId: string
+    name: string
+    zohoId: string | null
+    status: $Enums.ClientStatus
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date | null
+    _count: ClientCountAggregateOutputType | null
+    _min: ClientMinAggregateOutputType | null
+    _max: ClientMaxAggregateOutputType | null
+  }
+
+  type GetClientGroupByPayload<T extends ClientGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ClientGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ClientGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ClientGroupByOutputType[P]>
+            : GetScalarType<T[P], ClientGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ClientSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    name?: boolean
+    zohoId?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    emailAliases?: boolean | Client$emailAliasesArgs<ExtArgs>
+    evidenceItems?: boolean | Client$evidenceItemsArgs<ExtArgs>
+    _count?: boolean | ClientCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["client"]>
+
+  export type ClientSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    name?: boolean
+    zohoId?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["client"]>
+
+  export type ClientSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    name?: boolean
+    zohoId?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["client"]>
+
+  export type ClientSelectScalar = {
+    id?: boolean
+    workspaceId?: boolean
+    name?: boolean
+    zohoId?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }
+
+  export type ClientOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "name" | "zohoId" | "status" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["client"]>
+  export type ClientInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    emailAliases?: boolean | Client$emailAliasesArgs<ExtArgs>
+    evidenceItems?: boolean | Client$evidenceItemsArgs<ExtArgs>
+    _count?: boolean | ClientCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ClientIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+  export type ClientIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+
+  export type $ClientPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Client"
+    objects: {
+      workspace: Prisma.$WorkspacePayload<ExtArgs>
+      emailAliases: Prisma.$EmailAliasPayload<ExtArgs>[]
+      evidenceItems: Prisma.$EvidenceItemPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workspaceId: string
+      name: string
+      zohoId: string | null
+      status: $Enums.ClientStatus
+      createdAt: Date
+      updatedAt: Date
+      deletedAt: Date | null
+    }, ExtArgs["result"]["client"]>
+    composites: {}
+  }
+
+  type ClientGetPayload<S extends boolean | null | undefined | ClientDefaultArgs> = $Result.GetResult<Prisma.$ClientPayload, S>
+
+  type ClientCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ClientFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ClientCountAggregateInputType | true
+    }
+
+  export interface ClientDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Client'], meta: { name: 'Client' } }
+    /**
+     * Find zero or one Client that matches the filter.
+     * @param {ClientFindUniqueArgs} args - Arguments to find a Client
+     * @example
+     * // Get one Client
+     * const client = await prisma.client.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ClientFindUniqueArgs>(args: SelectSubset<T, ClientFindUniqueArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Client that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ClientFindUniqueOrThrowArgs} args - Arguments to find a Client
+     * @example
+     * // Get one Client
+     * const client = await prisma.client.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ClientFindUniqueOrThrowArgs>(args: SelectSubset<T, ClientFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Client that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClientFindFirstArgs} args - Arguments to find a Client
+     * @example
+     * // Get one Client
+     * const client = await prisma.client.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ClientFindFirstArgs>(args?: SelectSubset<T, ClientFindFirstArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Client that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClientFindFirstOrThrowArgs} args - Arguments to find a Client
+     * @example
+     * // Get one Client
+     * const client = await prisma.client.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ClientFindFirstOrThrowArgs>(args?: SelectSubset<T, ClientFindFirstOrThrowArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Clients that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClientFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Clients
+     * const clients = await prisma.client.findMany()
+     * 
+     * // Get first 10 Clients
+     * const clients = await prisma.client.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const clientWithIdOnly = await prisma.client.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ClientFindManyArgs>(args?: SelectSubset<T, ClientFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Client.
+     * @param {ClientCreateArgs} args - Arguments to create a Client.
+     * @example
+     * // Create one Client
+     * const Client = await prisma.client.create({
+     *   data: {
+     *     // ... data to create a Client
+     *   }
+     * })
+     * 
+     */
+    create<T extends ClientCreateArgs>(args: SelectSubset<T, ClientCreateArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Clients.
+     * @param {ClientCreateManyArgs} args - Arguments to create many Clients.
+     * @example
+     * // Create many Clients
+     * const client = await prisma.client.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ClientCreateManyArgs>(args?: SelectSubset<T, ClientCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Clients and returns the data saved in the database.
+     * @param {ClientCreateManyAndReturnArgs} args - Arguments to create many Clients.
+     * @example
+     * // Create many Clients
+     * const client = await prisma.client.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Clients and only return the `id`
+     * const clientWithIdOnly = await prisma.client.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ClientCreateManyAndReturnArgs>(args?: SelectSubset<T, ClientCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Client.
+     * @param {ClientDeleteArgs} args - Arguments to delete one Client.
+     * @example
+     * // Delete one Client
+     * const Client = await prisma.client.delete({
+     *   where: {
+     *     // ... filter to delete one Client
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ClientDeleteArgs>(args: SelectSubset<T, ClientDeleteArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Client.
+     * @param {ClientUpdateArgs} args - Arguments to update one Client.
+     * @example
+     * // Update one Client
+     * const client = await prisma.client.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ClientUpdateArgs>(args: SelectSubset<T, ClientUpdateArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Clients.
+     * @param {ClientDeleteManyArgs} args - Arguments to filter Clients to delete.
+     * @example
+     * // Delete a few Clients
+     * const { count } = await prisma.client.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ClientDeleteManyArgs>(args?: SelectSubset<T, ClientDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Clients.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClientUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Clients
+     * const client = await prisma.client.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ClientUpdateManyArgs>(args: SelectSubset<T, ClientUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Clients and returns the data updated in the database.
+     * @param {ClientUpdateManyAndReturnArgs} args - Arguments to update many Clients.
+     * @example
+     * // Update many Clients
+     * const client = await prisma.client.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Clients and only return the `id`
+     * const clientWithIdOnly = await prisma.client.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ClientUpdateManyAndReturnArgs>(args: SelectSubset<T, ClientUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Client.
+     * @param {ClientUpsertArgs} args - Arguments to update or create a Client.
+     * @example
+     * // Update or create a Client
+     * const client = await prisma.client.upsert({
+     *   create: {
+     *     // ... data to create a Client
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Client we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ClientUpsertArgs>(args: SelectSubset<T, ClientUpsertArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Clients.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClientCountArgs} args - Arguments to filter Clients to count.
+     * @example
+     * // Count the number of Clients
+     * const count = await prisma.client.count({
+     *   where: {
+     *     // ... the filter for the Clients we want to count
+     *   }
+     * })
+    **/
+    count<T extends ClientCountArgs>(
+      args?: Subset<T, ClientCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ClientCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Client.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClientAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ClientAggregateArgs>(args: Subset<T, ClientAggregateArgs>): Prisma.PrismaPromise<GetClientAggregateType<T>>
+
+    /**
+     * Group by Client.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClientGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ClientGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ClientGroupByArgs['orderBy'] }
+        : { orderBy?: ClientGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ClientGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetClientGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Client model
+   */
+  readonly fields: ClientFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Client.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ClientClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    emailAliases<T extends Client$emailAliasesArgs<ExtArgs> = {}>(args?: Subset<T, Client$emailAliasesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailAliasPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    evidenceItems<T extends Client$evidenceItemsArgs<ExtArgs> = {}>(args?: Subset<T, Client$evidenceItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Client model
+   */
+  interface ClientFieldRefs {
+    readonly id: FieldRef<"Client", 'String'>
+    readonly workspaceId: FieldRef<"Client", 'String'>
+    readonly name: FieldRef<"Client", 'String'>
+    readonly zohoId: FieldRef<"Client", 'String'>
+    readonly status: FieldRef<"Client", 'ClientStatus'>
+    readonly createdAt: FieldRef<"Client", 'DateTime'>
+    readonly updatedAt: FieldRef<"Client", 'DateTime'>
+    readonly deletedAt: FieldRef<"Client", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Client findUnique
+   */
+  export type ClientFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientInclude<ExtArgs> | null
+    /**
+     * Filter, which Client to fetch.
+     */
+    where: ClientWhereUniqueInput
+  }
+
+  /**
+   * Client findUniqueOrThrow
+   */
+  export type ClientFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientInclude<ExtArgs> | null
+    /**
+     * Filter, which Client to fetch.
+     */
+    where: ClientWhereUniqueInput
+  }
+
+  /**
+   * Client findFirst
+   */
+  export type ClientFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientInclude<ExtArgs> | null
+    /**
+     * Filter, which Client to fetch.
+     */
+    where?: ClientWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Clients to fetch.
+     */
+    orderBy?: ClientOrderByWithRelationInput | ClientOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Clients.
+     */
+    cursor?: ClientWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Clients from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Clients.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Clients.
+     */
+    distinct?: ClientScalarFieldEnum | ClientScalarFieldEnum[]
+  }
+
+  /**
+   * Client findFirstOrThrow
+   */
+  export type ClientFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientInclude<ExtArgs> | null
+    /**
+     * Filter, which Client to fetch.
+     */
+    where?: ClientWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Clients to fetch.
+     */
+    orderBy?: ClientOrderByWithRelationInput | ClientOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Clients.
+     */
+    cursor?: ClientWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Clients from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Clients.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Clients.
+     */
+    distinct?: ClientScalarFieldEnum | ClientScalarFieldEnum[]
+  }
+
+  /**
+   * Client findMany
+   */
+  export type ClientFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientInclude<ExtArgs> | null
+    /**
+     * Filter, which Clients to fetch.
+     */
+    where?: ClientWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Clients to fetch.
+     */
+    orderBy?: ClientOrderByWithRelationInput | ClientOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Clients.
+     */
+    cursor?: ClientWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Clients from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Clients.
+     */
+    skip?: number
+    distinct?: ClientScalarFieldEnum | ClientScalarFieldEnum[]
+  }
+
+  /**
+   * Client create
+   */
+  export type ClientCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Client.
+     */
+    data: XOR<ClientCreateInput, ClientUncheckedCreateInput>
+  }
+
+  /**
+   * Client createMany
+   */
+  export type ClientCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Clients.
+     */
+    data: ClientCreateManyInput | ClientCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Client createManyAndReturn
+   */
+  export type ClientCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * The data used to create many Clients.
+     */
+    data: ClientCreateManyInput | ClientCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Client update
+   */
+  export type ClientUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Client.
+     */
+    data: XOR<ClientUpdateInput, ClientUncheckedUpdateInput>
+    /**
+     * Choose, which Client to update.
+     */
+    where: ClientWhereUniqueInput
+  }
+
+  /**
+   * Client updateMany
+   */
+  export type ClientUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Clients.
+     */
+    data: XOR<ClientUpdateManyMutationInput, ClientUncheckedUpdateManyInput>
+    /**
+     * Filter which Clients to update
+     */
+    where?: ClientWhereInput
+    /**
+     * Limit how many Clients to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Client updateManyAndReturn
+   */
+  export type ClientUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * The data used to update Clients.
+     */
+    data: XOR<ClientUpdateManyMutationInput, ClientUncheckedUpdateManyInput>
+    /**
+     * Filter which Clients to update
+     */
+    where?: ClientWhereInput
+    /**
+     * Limit how many Clients to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Client upsert
+   */
+  export type ClientUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Client to update in case it exists.
+     */
+    where: ClientWhereUniqueInput
+    /**
+     * In case the Client found by the `where` argument doesn't exist, create a new Client with this data.
+     */
+    create: XOR<ClientCreateInput, ClientUncheckedCreateInput>
+    /**
+     * In case the Client was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ClientUpdateInput, ClientUncheckedUpdateInput>
+  }
+
+  /**
+   * Client delete
+   */
+  export type ClientDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientInclude<ExtArgs> | null
+    /**
+     * Filter which Client to delete.
+     */
+    where: ClientWhereUniqueInput
+  }
+
+  /**
+   * Client deleteMany
+   */
+  export type ClientDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Clients to delete
+     */
+    where?: ClientWhereInput
+    /**
+     * Limit how many Clients to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Client.emailAliases
+   */
+  export type Client$emailAliasesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailAlias
+     */
+    select?: EmailAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailAlias
+     */
+    omit?: EmailAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailAliasInclude<ExtArgs> | null
+    where?: EmailAliasWhereInput
+    orderBy?: EmailAliasOrderByWithRelationInput | EmailAliasOrderByWithRelationInput[]
+    cursor?: EmailAliasWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EmailAliasScalarFieldEnum | EmailAliasScalarFieldEnum[]
+  }
+
+  /**
+   * Client.evidenceItems
+   */
+  export type Client$evidenceItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceItem
+     */
+    select?: EvidenceItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceItem
+     */
+    omit?: EvidenceItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceItemInclude<ExtArgs> | null
+    where?: EvidenceItemWhereInput
+    orderBy?: EvidenceItemOrderByWithRelationInput | EvidenceItemOrderByWithRelationInput[]
+    cursor?: EvidenceItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EvidenceItemScalarFieldEnum | EvidenceItemScalarFieldEnum[]
+  }
+
+  /**
+   * Client without action
+   */
+  export type ClientDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model EmailAlias
+   */
+
+  export type AggregateEmailAlias = {
+    _count: EmailAliasCountAggregateOutputType | null
+    _min: EmailAliasMinAggregateOutputType | null
+    _max: EmailAliasMaxAggregateOutputType | null
+  }
+
+  export type EmailAliasMinAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    address: string | null
+    userId: string | null
+    clientId: string | null
+    verified: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type EmailAliasMaxAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    address: string | null
+    userId: string | null
+    clientId: string | null
+    verified: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type EmailAliasCountAggregateOutputType = {
+    id: number
+    workspaceId: number
+    address: number
+    userId: number
+    clientId: number
+    verified: number
+    createdAt: number
+    updatedAt: number
+    deletedAt: number
+    _all: number
+  }
+
+
+  export type EmailAliasMinAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    address?: true
+    userId?: true
+    clientId?: true
+    verified?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type EmailAliasMaxAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    address?: true
+    userId?: true
+    clientId?: true
+    verified?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type EmailAliasCountAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    address?: true
+    userId?: true
+    clientId?: true
+    verified?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+    _all?: true
+  }
+
+  export type EmailAliasAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EmailAlias to aggregate.
+     */
+    where?: EmailAliasWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmailAliases to fetch.
+     */
+    orderBy?: EmailAliasOrderByWithRelationInput | EmailAliasOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EmailAliasWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmailAliases from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmailAliases.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned EmailAliases
+    **/
+    _count?: true | EmailAliasCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EmailAliasMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EmailAliasMaxAggregateInputType
+  }
+
+  export type GetEmailAliasAggregateType<T extends EmailAliasAggregateArgs> = {
+        [P in keyof T & keyof AggregateEmailAlias]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEmailAlias[P]>
+      : GetScalarType<T[P], AggregateEmailAlias[P]>
+  }
+
+
+
+
+  export type EmailAliasGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EmailAliasWhereInput
+    orderBy?: EmailAliasOrderByWithAggregationInput | EmailAliasOrderByWithAggregationInput[]
+    by: EmailAliasScalarFieldEnum[] | EmailAliasScalarFieldEnum
+    having?: EmailAliasScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EmailAliasCountAggregateInputType | true
+    _min?: EmailAliasMinAggregateInputType
+    _max?: EmailAliasMaxAggregateInputType
+  }
+
+  export type EmailAliasGroupByOutputType = {
+    id: string
+    workspaceId: string
+    address: string
+    userId: string | null
+    clientId: string | null
+    verified: boolean
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date | null
+    _count: EmailAliasCountAggregateOutputType | null
+    _min: EmailAliasMinAggregateOutputType | null
+    _max: EmailAliasMaxAggregateOutputType | null
+  }
+
+  type GetEmailAliasGroupByPayload<T extends EmailAliasGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EmailAliasGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EmailAliasGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EmailAliasGroupByOutputType[P]>
+            : GetScalarType<T[P], EmailAliasGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EmailAliasSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    address?: boolean
+    userId?: boolean
+    clientId?: boolean
+    verified?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    user?: boolean | EmailAlias$userArgs<ExtArgs>
+    client?: boolean | EmailAlias$clientArgs<ExtArgs>
+  }, ExtArgs["result"]["emailAlias"]>
+
+  export type EmailAliasSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    address?: boolean
+    userId?: boolean
+    clientId?: boolean
+    verified?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    user?: boolean | EmailAlias$userArgs<ExtArgs>
+    client?: boolean | EmailAlias$clientArgs<ExtArgs>
+  }, ExtArgs["result"]["emailAlias"]>
+
+  export type EmailAliasSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    address?: boolean
+    userId?: boolean
+    clientId?: boolean
+    verified?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    user?: boolean | EmailAlias$userArgs<ExtArgs>
+    client?: boolean | EmailAlias$clientArgs<ExtArgs>
+  }, ExtArgs["result"]["emailAlias"]>
+
+  export type EmailAliasSelectScalar = {
+    id?: boolean
+    workspaceId?: boolean
+    address?: boolean
+    userId?: boolean
+    clientId?: boolean
+    verified?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }
+
+  export type EmailAliasOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "address" | "userId" | "clientId" | "verified" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["emailAlias"]>
+  export type EmailAliasInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    user?: boolean | EmailAlias$userArgs<ExtArgs>
+    client?: boolean | EmailAlias$clientArgs<ExtArgs>
+  }
+  export type EmailAliasIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    user?: boolean | EmailAlias$userArgs<ExtArgs>
+    client?: boolean | EmailAlias$clientArgs<ExtArgs>
+  }
+  export type EmailAliasIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    user?: boolean | EmailAlias$userArgs<ExtArgs>
+    client?: boolean | EmailAlias$clientArgs<ExtArgs>
+  }
+
+  export type $EmailAliasPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "EmailAlias"
+    objects: {
+      workspace: Prisma.$WorkspacePayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs> | null
+      client: Prisma.$ClientPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workspaceId: string
+      address: string
+      userId: string | null
+      clientId: string | null
+      verified: boolean
+      createdAt: Date
+      updatedAt: Date
+      deletedAt: Date | null
+    }, ExtArgs["result"]["emailAlias"]>
+    composites: {}
+  }
+
+  type EmailAliasGetPayload<S extends boolean | null | undefined | EmailAliasDefaultArgs> = $Result.GetResult<Prisma.$EmailAliasPayload, S>
+
+  type EmailAliasCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EmailAliasFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EmailAliasCountAggregateInputType | true
+    }
+
+  export interface EmailAliasDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['EmailAlias'], meta: { name: 'EmailAlias' } }
+    /**
+     * Find zero or one EmailAlias that matches the filter.
+     * @param {EmailAliasFindUniqueArgs} args - Arguments to find a EmailAlias
+     * @example
+     * // Get one EmailAlias
+     * const emailAlias = await prisma.emailAlias.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EmailAliasFindUniqueArgs>(args: SelectSubset<T, EmailAliasFindUniqueArgs<ExtArgs>>): Prisma__EmailAliasClient<$Result.GetResult<Prisma.$EmailAliasPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one EmailAlias that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EmailAliasFindUniqueOrThrowArgs} args - Arguments to find a EmailAlias
+     * @example
+     * // Get one EmailAlias
+     * const emailAlias = await prisma.emailAlias.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EmailAliasFindUniqueOrThrowArgs>(args: SelectSubset<T, EmailAliasFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EmailAliasClient<$Result.GetResult<Prisma.$EmailAliasPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EmailAlias that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailAliasFindFirstArgs} args - Arguments to find a EmailAlias
+     * @example
+     * // Get one EmailAlias
+     * const emailAlias = await prisma.emailAlias.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EmailAliasFindFirstArgs>(args?: SelectSubset<T, EmailAliasFindFirstArgs<ExtArgs>>): Prisma__EmailAliasClient<$Result.GetResult<Prisma.$EmailAliasPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EmailAlias that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailAliasFindFirstOrThrowArgs} args - Arguments to find a EmailAlias
+     * @example
+     * // Get one EmailAlias
+     * const emailAlias = await prisma.emailAlias.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EmailAliasFindFirstOrThrowArgs>(args?: SelectSubset<T, EmailAliasFindFirstOrThrowArgs<ExtArgs>>): Prisma__EmailAliasClient<$Result.GetResult<Prisma.$EmailAliasPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more EmailAliases that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailAliasFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all EmailAliases
+     * const emailAliases = await prisma.emailAlias.findMany()
+     * 
+     * // Get first 10 EmailAliases
+     * const emailAliases = await prisma.emailAlias.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const emailAliasWithIdOnly = await prisma.emailAlias.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EmailAliasFindManyArgs>(args?: SelectSubset<T, EmailAliasFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailAliasPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a EmailAlias.
+     * @param {EmailAliasCreateArgs} args - Arguments to create a EmailAlias.
+     * @example
+     * // Create one EmailAlias
+     * const EmailAlias = await prisma.emailAlias.create({
+     *   data: {
+     *     // ... data to create a EmailAlias
+     *   }
+     * })
+     * 
+     */
+    create<T extends EmailAliasCreateArgs>(args: SelectSubset<T, EmailAliasCreateArgs<ExtArgs>>): Prisma__EmailAliasClient<$Result.GetResult<Prisma.$EmailAliasPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many EmailAliases.
+     * @param {EmailAliasCreateManyArgs} args - Arguments to create many EmailAliases.
+     * @example
+     * // Create many EmailAliases
+     * const emailAlias = await prisma.emailAlias.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends EmailAliasCreateManyArgs>(args?: SelectSubset<T, EmailAliasCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many EmailAliases and returns the data saved in the database.
+     * @param {EmailAliasCreateManyAndReturnArgs} args - Arguments to create many EmailAliases.
+     * @example
+     * // Create many EmailAliases
+     * const emailAlias = await prisma.emailAlias.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many EmailAliases and only return the `id`
+     * const emailAliasWithIdOnly = await prisma.emailAlias.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends EmailAliasCreateManyAndReturnArgs>(args?: SelectSubset<T, EmailAliasCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailAliasPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a EmailAlias.
+     * @param {EmailAliasDeleteArgs} args - Arguments to delete one EmailAlias.
+     * @example
+     * // Delete one EmailAlias
+     * const EmailAlias = await prisma.emailAlias.delete({
+     *   where: {
+     *     // ... filter to delete one EmailAlias
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EmailAliasDeleteArgs>(args: SelectSubset<T, EmailAliasDeleteArgs<ExtArgs>>): Prisma__EmailAliasClient<$Result.GetResult<Prisma.$EmailAliasPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one EmailAlias.
+     * @param {EmailAliasUpdateArgs} args - Arguments to update one EmailAlias.
+     * @example
+     * // Update one EmailAlias
+     * const emailAlias = await prisma.emailAlias.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EmailAliasUpdateArgs>(args: SelectSubset<T, EmailAliasUpdateArgs<ExtArgs>>): Prisma__EmailAliasClient<$Result.GetResult<Prisma.$EmailAliasPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more EmailAliases.
+     * @param {EmailAliasDeleteManyArgs} args - Arguments to filter EmailAliases to delete.
+     * @example
+     * // Delete a few EmailAliases
+     * const { count } = await prisma.emailAlias.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EmailAliasDeleteManyArgs>(args?: SelectSubset<T, EmailAliasDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EmailAliases.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailAliasUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many EmailAliases
+     * const emailAlias = await prisma.emailAlias.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EmailAliasUpdateManyArgs>(args: SelectSubset<T, EmailAliasUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EmailAliases and returns the data updated in the database.
+     * @param {EmailAliasUpdateManyAndReturnArgs} args - Arguments to update many EmailAliases.
+     * @example
+     * // Update many EmailAliases
+     * const emailAlias = await prisma.emailAlias.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more EmailAliases and only return the `id`
+     * const emailAliasWithIdOnly = await prisma.emailAlias.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EmailAliasUpdateManyAndReturnArgs>(args: SelectSubset<T, EmailAliasUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailAliasPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one EmailAlias.
+     * @param {EmailAliasUpsertArgs} args - Arguments to update or create a EmailAlias.
+     * @example
+     * // Update or create a EmailAlias
+     * const emailAlias = await prisma.emailAlias.upsert({
+     *   create: {
+     *     // ... data to create a EmailAlias
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the EmailAlias we want to update
+     *   }
+     * })
+     */
+    upsert<T extends EmailAliasUpsertArgs>(args: SelectSubset<T, EmailAliasUpsertArgs<ExtArgs>>): Prisma__EmailAliasClient<$Result.GetResult<Prisma.$EmailAliasPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of EmailAliases.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailAliasCountArgs} args - Arguments to filter EmailAliases to count.
+     * @example
+     * // Count the number of EmailAliases
+     * const count = await prisma.emailAlias.count({
+     *   where: {
+     *     // ... the filter for the EmailAliases we want to count
+     *   }
+     * })
+    **/
+    count<T extends EmailAliasCountArgs>(
+      args?: Subset<T, EmailAliasCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EmailAliasCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a EmailAlias.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailAliasAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EmailAliasAggregateArgs>(args: Subset<T, EmailAliasAggregateArgs>): Prisma.PrismaPromise<GetEmailAliasAggregateType<T>>
+
+    /**
+     * Group by EmailAlias.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailAliasGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EmailAliasGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EmailAliasGroupByArgs['orderBy'] }
+        : { orderBy?: EmailAliasGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EmailAliasGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEmailAliasGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the EmailAlias model
+   */
+  readonly fields: EmailAliasFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for EmailAlias.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EmailAliasClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends EmailAlias$userArgs<ExtArgs> = {}>(args?: Subset<T, EmailAlias$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    client<T extends EmailAlias$clientArgs<ExtArgs> = {}>(args?: Subset<T, EmailAlias$clientArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the EmailAlias model
+   */
+  interface EmailAliasFieldRefs {
+    readonly id: FieldRef<"EmailAlias", 'String'>
+    readonly workspaceId: FieldRef<"EmailAlias", 'String'>
+    readonly address: FieldRef<"EmailAlias", 'String'>
+    readonly userId: FieldRef<"EmailAlias", 'String'>
+    readonly clientId: FieldRef<"EmailAlias", 'String'>
+    readonly verified: FieldRef<"EmailAlias", 'Boolean'>
+    readonly createdAt: FieldRef<"EmailAlias", 'DateTime'>
+    readonly updatedAt: FieldRef<"EmailAlias", 'DateTime'>
+    readonly deletedAt: FieldRef<"EmailAlias", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * EmailAlias findUnique
+   */
+  export type EmailAliasFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailAlias
+     */
+    select?: EmailAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailAlias
+     */
+    omit?: EmailAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailAliasInclude<ExtArgs> | null
+    /**
+     * Filter, which EmailAlias to fetch.
+     */
+    where: EmailAliasWhereUniqueInput
+  }
+
+  /**
+   * EmailAlias findUniqueOrThrow
+   */
+  export type EmailAliasFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailAlias
+     */
+    select?: EmailAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailAlias
+     */
+    omit?: EmailAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailAliasInclude<ExtArgs> | null
+    /**
+     * Filter, which EmailAlias to fetch.
+     */
+    where: EmailAliasWhereUniqueInput
+  }
+
+  /**
+   * EmailAlias findFirst
+   */
+  export type EmailAliasFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailAlias
+     */
+    select?: EmailAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailAlias
+     */
+    omit?: EmailAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailAliasInclude<ExtArgs> | null
+    /**
+     * Filter, which EmailAlias to fetch.
+     */
+    where?: EmailAliasWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmailAliases to fetch.
+     */
+    orderBy?: EmailAliasOrderByWithRelationInput | EmailAliasOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EmailAliases.
+     */
+    cursor?: EmailAliasWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmailAliases from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmailAliases.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EmailAliases.
+     */
+    distinct?: EmailAliasScalarFieldEnum | EmailAliasScalarFieldEnum[]
+  }
+
+  /**
+   * EmailAlias findFirstOrThrow
+   */
+  export type EmailAliasFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailAlias
+     */
+    select?: EmailAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailAlias
+     */
+    omit?: EmailAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailAliasInclude<ExtArgs> | null
+    /**
+     * Filter, which EmailAlias to fetch.
+     */
+    where?: EmailAliasWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmailAliases to fetch.
+     */
+    orderBy?: EmailAliasOrderByWithRelationInput | EmailAliasOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EmailAliases.
+     */
+    cursor?: EmailAliasWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmailAliases from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmailAliases.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EmailAliases.
+     */
+    distinct?: EmailAliasScalarFieldEnum | EmailAliasScalarFieldEnum[]
+  }
+
+  /**
+   * EmailAlias findMany
+   */
+  export type EmailAliasFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailAlias
+     */
+    select?: EmailAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailAlias
+     */
+    omit?: EmailAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailAliasInclude<ExtArgs> | null
+    /**
+     * Filter, which EmailAliases to fetch.
+     */
+    where?: EmailAliasWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmailAliases to fetch.
+     */
+    orderBy?: EmailAliasOrderByWithRelationInput | EmailAliasOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing EmailAliases.
+     */
+    cursor?: EmailAliasWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmailAliases from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmailAliases.
+     */
+    skip?: number
+    distinct?: EmailAliasScalarFieldEnum | EmailAliasScalarFieldEnum[]
+  }
+
+  /**
+   * EmailAlias create
+   */
+  export type EmailAliasCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailAlias
+     */
+    select?: EmailAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailAlias
+     */
+    omit?: EmailAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailAliasInclude<ExtArgs> | null
+    /**
+     * The data needed to create a EmailAlias.
+     */
+    data: XOR<EmailAliasCreateInput, EmailAliasUncheckedCreateInput>
+  }
+
+  /**
+   * EmailAlias createMany
+   */
+  export type EmailAliasCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many EmailAliases.
+     */
+    data: EmailAliasCreateManyInput | EmailAliasCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * EmailAlias createManyAndReturn
+   */
+  export type EmailAliasCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailAlias
+     */
+    select?: EmailAliasSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailAlias
+     */
+    omit?: EmailAliasOmit<ExtArgs> | null
+    /**
+     * The data used to create many EmailAliases.
+     */
+    data: EmailAliasCreateManyInput | EmailAliasCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailAliasIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EmailAlias update
+   */
+  export type EmailAliasUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailAlias
+     */
+    select?: EmailAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailAlias
+     */
+    omit?: EmailAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailAliasInclude<ExtArgs> | null
+    /**
+     * The data needed to update a EmailAlias.
+     */
+    data: XOR<EmailAliasUpdateInput, EmailAliasUncheckedUpdateInput>
+    /**
+     * Choose, which EmailAlias to update.
+     */
+    where: EmailAliasWhereUniqueInput
+  }
+
+  /**
+   * EmailAlias updateMany
+   */
+  export type EmailAliasUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update EmailAliases.
+     */
+    data: XOR<EmailAliasUpdateManyMutationInput, EmailAliasUncheckedUpdateManyInput>
+    /**
+     * Filter which EmailAliases to update
+     */
+    where?: EmailAliasWhereInput
+    /**
+     * Limit how many EmailAliases to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * EmailAlias updateManyAndReturn
+   */
+  export type EmailAliasUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailAlias
+     */
+    select?: EmailAliasSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailAlias
+     */
+    omit?: EmailAliasOmit<ExtArgs> | null
+    /**
+     * The data used to update EmailAliases.
+     */
+    data: XOR<EmailAliasUpdateManyMutationInput, EmailAliasUncheckedUpdateManyInput>
+    /**
+     * Filter which EmailAliases to update
+     */
+    where?: EmailAliasWhereInput
+    /**
+     * Limit how many EmailAliases to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailAliasIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EmailAlias upsert
+   */
+  export type EmailAliasUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailAlias
+     */
+    select?: EmailAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailAlias
+     */
+    omit?: EmailAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailAliasInclude<ExtArgs> | null
+    /**
+     * The filter to search for the EmailAlias to update in case it exists.
+     */
+    where: EmailAliasWhereUniqueInput
+    /**
+     * In case the EmailAlias found by the `where` argument doesn't exist, create a new EmailAlias with this data.
+     */
+    create: XOR<EmailAliasCreateInput, EmailAliasUncheckedCreateInput>
+    /**
+     * In case the EmailAlias was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EmailAliasUpdateInput, EmailAliasUncheckedUpdateInput>
+  }
+
+  /**
+   * EmailAlias delete
+   */
+  export type EmailAliasDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailAlias
+     */
+    select?: EmailAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailAlias
+     */
+    omit?: EmailAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailAliasInclude<ExtArgs> | null
+    /**
+     * Filter which EmailAlias to delete.
+     */
+    where: EmailAliasWhereUniqueInput
+  }
+
+  /**
+   * EmailAlias deleteMany
+   */
+  export type EmailAliasDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EmailAliases to delete
+     */
+    where?: EmailAliasWhereInput
+    /**
+     * Limit how many EmailAliases to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * EmailAlias.user
+   */
+  export type EmailAlias$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * EmailAlias.client
+   */
+  export type EmailAlias$clientArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientInclude<ExtArgs> | null
+    where?: ClientWhereInput
+  }
+
+  /**
+   * EmailAlias without action
+   */
+  export type EmailAliasDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailAlias
+     */
+    select?: EmailAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailAlias
+     */
+    omit?: EmailAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailAliasInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model EvidenceItem
+   */
+
+  export type AggregateEvidenceItem = {
+    _count: EvidenceItemCountAggregateOutputType | null
+    _min: EvidenceItemMinAggregateOutputType | null
+    _max: EvidenceItemMaxAggregateOutputType | null
+  }
+
+  export type EvidenceItemMinAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    clientId: string | null
+    createdById: string | null
+    sourceType: $Enums.EvidenceSourceType | null
+    title: string | null
+    occurredAt: Date | null
+    ingestedAt: Date | null
+    contentSha256: string | null
+    storageUri: string | null
+    retentionRuleId: string | null
+    destructionEligibleAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type EvidenceItemMaxAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    clientId: string | null
+    createdById: string | null
+    sourceType: $Enums.EvidenceSourceType | null
+    title: string | null
+    occurredAt: Date | null
+    ingestedAt: Date | null
+    contentSha256: string | null
+    storageUri: string | null
+    retentionRuleId: string | null
+    destructionEligibleAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type EvidenceItemCountAggregateOutputType = {
+    id: number
+    workspaceId: number
+    clientId: number
+    createdById: number
+    sourceType: number
+    title: number
+    occurredAt: number
+    ingestedAt: number
+    contentSha256: number
+    storageUri: number
+    retentionRuleId: number
+    destructionEligibleAt: number
+    createdAt: number
+    updatedAt: number
+    deletedAt: number
+    _all: number
+  }
+
+
+  export type EvidenceItemMinAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    clientId?: true
+    createdById?: true
+    sourceType?: true
+    title?: true
+    occurredAt?: true
+    ingestedAt?: true
+    contentSha256?: true
+    storageUri?: true
+    retentionRuleId?: true
+    destructionEligibleAt?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type EvidenceItemMaxAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    clientId?: true
+    createdById?: true
+    sourceType?: true
+    title?: true
+    occurredAt?: true
+    ingestedAt?: true
+    contentSha256?: true
+    storageUri?: true
+    retentionRuleId?: true
+    destructionEligibleAt?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type EvidenceItemCountAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    clientId?: true
+    createdById?: true
+    sourceType?: true
+    title?: true
+    occurredAt?: true
+    ingestedAt?: true
+    contentSha256?: true
+    storageUri?: true
+    retentionRuleId?: true
+    destructionEligibleAt?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+    _all?: true
+  }
+
+  export type EvidenceItemAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EvidenceItem to aggregate.
+     */
+    where?: EvidenceItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EvidenceItems to fetch.
+     */
+    orderBy?: EvidenceItemOrderByWithRelationInput | EvidenceItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EvidenceItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EvidenceItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EvidenceItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned EvidenceItems
+    **/
+    _count?: true | EvidenceItemCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EvidenceItemMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EvidenceItemMaxAggregateInputType
+  }
+
+  export type GetEvidenceItemAggregateType<T extends EvidenceItemAggregateArgs> = {
+        [P in keyof T & keyof AggregateEvidenceItem]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEvidenceItem[P]>
+      : GetScalarType<T[P], AggregateEvidenceItem[P]>
+  }
+
+
+
+
+  export type EvidenceItemGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EvidenceItemWhereInput
+    orderBy?: EvidenceItemOrderByWithAggregationInput | EvidenceItemOrderByWithAggregationInput[]
+    by: EvidenceItemScalarFieldEnum[] | EvidenceItemScalarFieldEnum
+    having?: EvidenceItemScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EvidenceItemCountAggregateInputType | true
+    _min?: EvidenceItemMinAggregateInputType
+    _max?: EvidenceItemMaxAggregateInputType
+  }
+
+  export type EvidenceItemGroupByOutputType = {
+    id: string
+    workspaceId: string
+    clientId: string | null
+    createdById: string | null
+    sourceType: $Enums.EvidenceSourceType
+    title: string
+    occurredAt: Date
+    ingestedAt: Date
+    contentSha256: string
+    storageUri: string | null
+    retentionRuleId: string | null
+    destructionEligibleAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date | null
+    _count: EvidenceItemCountAggregateOutputType | null
+    _min: EvidenceItemMinAggregateOutputType | null
+    _max: EvidenceItemMaxAggregateOutputType | null
+  }
+
+  type GetEvidenceItemGroupByPayload<T extends EvidenceItemGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EvidenceItemGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EvidenceItemGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EvidenceItemGroupByOutputType[P]>
+            : GetScalarType<T[P], EvidenceItemGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EvidenceItemSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    clientId?: boolean
+    createdById?: boolean
+    sourceType?: boolean
+    title?: boolean
+    occurredAt?: boolean
+    ingestedAt?: boolean
+    contentSha256?: boolean
+    storageUri?: boolean
+    retentionRuleId?: boolean
+    destructionEligibleAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    client?: boolean | EvidenceItem$clientArgs<ExtArgs>
+    tags?: boolean | EvidenceItem$tagsArgs<ExtArgs>
+    communication?: boolean | EvidenceItem$communicationArgs<ExtArgs>
+    _count?: boolean | EvidenceItemCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["evidenceItem"]>
+
+  export type EvidenceItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    clientId?: boolean
+    createdById?: boolean
+    sourceType?: boolean
+    title?: boolean
+    occurredAt?: boolean
+    ingestedAt?: boolean
+    contentSha256?: boolean
+    storageUri?: boolean
+    retentionRuleId?: boolean
+    destructionEligibleAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    client?: boolean | EvidenceItem$clientArgs<ExtArgs>
+  }, ExtArgs["result"]["evidenceItem"]>
+
+  export type EvidenceItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    clientId?: boolean
+    createdById?: boolean
+    sourceType?: boolean
+    title?: boolean
+    occurredAt?: boolean
+    ingestedAt?: boolean
+    contentSha256?: boolean
+    storageUri?: boolean
+    retentionRuleId?: boolean
+    destructionEligibleAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    client?: boolean | EvidenceItem$clientArgs<ExtArgs>
+  }, ExtArgs["result"]["evidenceItem"]>
+
+  export type EvidenceItemSelectScalar = {
+    id?: boolean
+    workspaceId?: boolean
+    clientId?: boolean
+    createdById?: boolean
+    sourceType?: boolean
+    title?: boolean
+    occurredAt?: boolean
+    ingestedAt?: boolean
+    contentSha256?: boolean
+    storageUri?: boolean
+    retentionRuleId?: boolean
+    destructionEligibleAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }
+
+  export type EvidenceItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientId" | "createdById" | "sourceType" | "title" | "occurredAt" | "ingestedAt" | "contentSha256" | "storageUri" | "retentionRuleId" | "destructionEligibleAt" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["evidenceItem"]>
+  export type EvidenceItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    client?: boolean | EvidenceItem$clientArgs<ExtArgs>
+    tags?: boolean | EvidenceItem$tagsArgs<ExtArgs>
+    communication?: boolean | EvidenceItem$communicationArgs<ExtArgs>
+    _count?: boolean | EvidenceItemCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type EvidenceItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    client?: boolean | EvidenceItem$clientArgs<ExtArgs>
+  }
+  export type EvidenceItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    client?: boolean | EvidenceItem$clientArgs<ExtArgs>
+  }
+
+  export type $EvidenceItemPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "EvidenceItem"
+    objects: {
+      workspace: Prisma.$WorkspacePayload<ExtArgs>
+      client: Prisma.$ClientPayload<ExtArgs> | null
+      tags: Prisma.$EvidenceTagPayload<ExtArgs>[]
+      communication: Prisma.$CommunicationPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workspaceId: string
+      clientId: string | null
+      createdById: string | null
+      sourceType: $Enums.EvidenceSourceType
+      title: string
+      occurredAt: Date
+      ingestedAt: Date
+      contentSha256: string
+      storageUri: string | null
+      retentionRuleId: string | null
+      destructionEligibleAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+      deletedAt: Date | null
+    }, ExtArgs["result"]["evidenceItem"]>
+    composites: {}
+  }
+
+  type EvidenceItemGetPayload<S extends boolean | null | undefined | EvidenceItemDefaultArgs> = $Result.GetResult<Prisma.$EvidenceItemPayload, S>
+
+  type EvidenceItemCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EvidenceItemFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EvidenceItemCountAggregateInputType | true
+    }
+
+  export interface EvidenceItemDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['EvidenceItem'], meta: { name: 'EvidenceItem' } }
+    /**
+     * Find zero or one EvidenceItem that matches the filter.
+     * @param {EvidenceItemFindUniqueArgs} args - Arguments to find a EvidenceItem
+     * @example
+     * // Get one EvidenceItem
+     * const evidenceItem = await prisma.evidenceItem.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EvidenceItemFindUniqueArgs>(args: SelectSubset<T, EvidenceItemFindUniqueArgs<ExtArgs>>): Prisma__EvidenceItemClient<$Result.GetResult<Prisma.$EvidenceItemPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one EvidenceItem that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EvidenceItemFindUniqueOrThrowArgs} args - Arguments to find a EvidenceItem
+     * @example
+     * // Get one EvidenceItem
+     * const evidenceItem = await prisma.evidenceItem.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EvidenceItemFindUniqueOrThrowArgs>(args: SelectSubset<T, EvidenceItemFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EvidenceItemClient<$Result.GetResult<Prisma.$EvidenceItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EvidenceItem that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceItemFindFirstArgs} args - Arguments to find a EvidenceItem
+     * @example
+     * // Get one EvidenceItem
+     * const evidenceItem = await prisma.evidenceItem.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EvidenceItemFindFirstArgs>(args?: SelectSubset<T, EvidenceItemFindFirstArgs<ExtArgs>>): Prisma__EvidenceItemClient<$Result.GetResult<Prisma.$EvidenceItemPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EvidenceItem that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceItemFindFirstOrThrowArgs} args - Arguments to find a EvidenceItem
+     * @example
+     * // Get one EvidenceItem
+     * const evidenceItem = await prisma.evidenceItem.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EvidenceItemFindFirstOrThrowArgs>(args?: SelectSubset<T, EvidenceItemFindFirstOrThrowArgs<ExtArgs>>): Prisma__EvidenceItemClient<$Result.GetResult<Prisma.$EvidenceItemPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more EvidenceItems that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceItemFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all EvidenceItems
+     * const evidenceItems = await prisma.evidenceItem.findMany()
+     * 
+     * // Get first 10 EvidenceItems
+     * const evidenceItems = await prisma.evidenceItem.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const evidenceItemWithIdOnly = await prisma.evidenceItem.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EvidenceItemFindManyArgs>(args?: SelectSubset<T, EvidenceItemFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a EvidenceItem.
+     * @param {EvidenceItemCreateArgs} args - Arguments to create a EvidenceItem.
+     * @example
+     * // Create one EvidenceItem
+     * const EvidenceItem = await prisma.evidenceItem.create({
+     *   data: {
+     *     // ... data to create a EvidenceItem
+     *   }
+     * })
+     * 
+     */
+    create<T extends EvidenceItemCreateArgs>(args: SelectSubset<T, EvidenceItemCreateArgs<ExtArgs>>): Prisma__EvidenceItemClient<$Result.GetResult<Prisma.$EvidenceItemPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many EvidenceItems.
+     * @param {EvidenceItemCreateManyArgs} args - Arguments to create many EvidenceItems.
+     * @example
+     * // Create many EvidenceItems
+     * const evidenceItem = await prisma.evidenceItem.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends EvidenceItemCreateManyArgs>(args?: SelectSubset<T, EvidenceItemCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many EvidenceItems and returns the data saved in the database.
+     * @param {EvidenceItemCreateManyAndReturnArgs} args - Arguments to create many EvidenceItems.
+     * @example
+     * // Create many EvidenceItems
+     * const evidenceItem = await prisma.evidenceItem.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many EvidenceItems and only return the `id`
+     * const evidenceItemWithIdOnly = await prisma.evidenceItem.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends EvidenceItemCreateManyAndReturnArgs>(args?: SelectSubset<T, EvidenceItemCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceItemPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a EvidenceItem.
+     * @param {EvidenceItemDeleteArgs} args - Arguments to delete one EvidenceItem.
+     * @example
+     * // Delete one EvidenceItem
+     * const EvidenceItem = await prisma.evidenceItem.delete({
+     *   where: {
+     *     // ... filter to delete one EvidenceItem
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EvidenceItemDeleteArgs>(args: SelectSubset<T, EvidenceItemDeleteArgs<ExtArgs>>): Prisma__EvidenceItemClient<$Result.GetResult<Prisma.$EvidenceItemPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one EvidenceItem.
+     * @param {EvidenceItemUpdateArgs} args - Arguments to update one EvidenceItem.
+     * @example
+     * // Update one EvidenceItem
+     * const evidenceItem = await prisma.evidenceItem.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EvidenceItemUpdateArgs>(args: SelectSubset<T, EvidenceItemUpdateArgs<ExtArgs>>): Prisma__EvidenceItemClient<$Result.GetResult<Prisma.$EvidenceItemPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more EvidenceItems.
+     * @param {EvidenceItemDeleteManyArgs} args - Arguments to filter EvidenceItems to delete.
+     * @example
+     * // Delete a few EvidenceItems
+     * const { count } = await prisma.evidenceItem.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EvidenceItemDeleteManyArgs>(args?: SelectSubset<T, EvidenceItemDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EvidenceItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceItemUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many EvidenceItems
+     * const evidenceItem = await prisma.evidenceItem.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EvidenceItemUpdateManyArgs>(args: SelectSubset<T, EvidenceItemUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EvidenceItems and returns the data updated in the database.
+     * @param {EvidenceItemUpdateManyAndReturnArgs} args - Arguments to update many EvidenceItems.
+     * @example
+     * // Update many EvidenceItems
+     * const evidenceItem = await prisma.evidenceItem.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more EvidenceItems and only return the `id`
+     * const evidenceItemWithIdOnly = await prisma.evidenceItem.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EvidenceItemUpdateManyAndReturnArgs>(args: SelectSubset<T, EvidenceItemUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceItemPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one EvidenceItem.
+     * @param {EvidenceItemUpsertArgs} args - Arguments to update or create a EvidenceItem.
+     * @example
+     * // Update or create a EvidenceItem
+     * const evidenceItem = await prisma.evidenceItem.upsert({
+     *   create: {
+     *     // ... data to create a EvidenceItem
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the EvidenceItem we want to update
+     *   }
+     * })
+     */
+    upsert<T extends EvidenceItemUpsertArgs>(args: SelectSubset<T, EvidenceItemUpsertArgs<ExtArgs>>): Prisma__EvidenceItemClient<$Result.GetResult<Prisma.$EvidenceItemPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of EvidenceItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceItemCountArgs} args - Arguments to filter EvidenceItems to count.
+     * @example
+     * // Count the number of EvidenceItems
+     * const count = await prisma.evidenceItem.count({
+     *   where: {
+     *     // ... the filter for the EvidenceItems we want to count
+     *   }
+     * })
+    **/
+    count<T extends EvidenceItemCountArgs>(
+      args?: Subset<T, EvidenceItemCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EvidenceItemCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a EvidenceItem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceItemAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EvidenceItemAggregateArgs>(args: Subset<T, EvidenceItemAggregateArgs>): Prisma.PrismaPromise<GetEvidenceItemAggregateType<T>>
+
+    /**
+     * Group by EvidenceItem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceItemGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EvidenceItemGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EvidenceItemGroupByArgs['orderBy'] }
+        : { orderBy?: EvidenceItemGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EvidenceItemGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEvidenceItemGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the EvidenceItem model
+   */
+  readonly fields: EvidenceItemFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for EvidenceItem.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EvidenceItemClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    client<T extends EvidenceItem$clientArgs<ExtArgs> = {}>(args?: Subset<T, EvidenceItem$clientArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    tags<T extends EvidenceItem$tagsArgs<ExtArgs> = {}>(args?: Subset<T, EvidenceItem$tagsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceTagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    communication<T extends EvidenceItem$communicationArgs<ExtArgs> = {}>(args?: Subset<T, EvidenceItem$communicationArgs<ExtArgs>>): Prisma__CommunicationClient<$Result.GetResult<Prisma.$CommunicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the EvidenceItem model
+   */
+  interface EvidenceItemFieldRefs {
+    readonly id: FieldRef<"EvidenceItem", 'String'>
+    readonly workspaceId: FieldRef<"EvidenceItem", 'String'>
+    readonly clientId: FieldRef<"EvidenceItem", 'String'>
+    readonly createdById: FieldRef<"EvidenceItem", 'String'>
+    readonly sourceType: FieldRef<"EvidenceItem", 'EvidenceSourceType'>
+    readonly title: FieldRef<"EvidenceItem", 'String'>
+    readonly occurredAt: FieldRef<"EvidenceItem", 'DateTime'>
+    readonly ingestedAt: FieldRef<"EvidenceItem", 'DateTime'>
+    readonly contentSha256: FieldRef<"EvidenceItem", 'String'>
+    readonly storageUri: FieldRef<"EvidenceItem", 'String'>
+    readonly retentionRuleId: FieldRef<"EvidenceItem", 'String'>
+    readonly destructionEligibleAt: FieldRef<"EvidenceItem", 'DateTime'>
+    readonly createdAt: FieldRef<"EvidenceItem", 'DateTime'>
+    readonly updatedAt: FieldRef<"EvidenceItem", 'DateTime'>
+    readonly deletedAt: FieldRef<"EvidenceItem", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * EvidenceItem findUnique
+   */
+  export type EvidenceItemFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceItem
+     */
+    select?: EvidenceItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceItem
+     */
+    omit?: EvidenceItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceItemInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceItem to fetch.
+     */
+    where: EvidenceItemWhereUniqueInput
+  }
+
+  /**
+   * EvidenceItem findUniqueOrThrow
+   */
+  export type EvidenceItemFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceItem
+     */
+    select?: EvidenceItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceItem
+     */
+    omit?: EvidenceItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceItemInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceItem to fetch.
+     */
+    where: EvidenceItemWhereUniqueInput
+  }
+
+  /**
+   * EvidenceItem findFirst
+   */
+  export type EvidenceItemFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceItem
+     */
+    select?: EvidenceItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceItem
+     */
+    omit?: EvidenceItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceItemInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceItem to fetch.
+     */
+    where?: EvidenceItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EvidenceItems to fetch.
+     */
+    orderBy?: EvidenceItemOrderByWithRelationInput | EvidenceItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EvidenceItems.
+     */
+    cursor?: EvidenceItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EvidenceItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EvidenceItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EvidenceItems.
+     */
+    distinct?: EvidenceItemScalarFieldEnum | EvidenceItemScalarFieldEnum[]
+  }
+
+  /**
+   * EvidenceItem findFirstOrThrow
+   */
+  export type EvidenceItemFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceItem
+     */
+    select?: EvidenceItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceItem
+     */
+    omit?: EvidenceItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceItemInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceItem to fetch.
+     */
+    where?: EvidenceItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EvidenceItems to fetch.
+     */
+    orderBy?: EvidenceItemOrderByWithRelationInput | EvidenceItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EvidenceItems.
+     */
+    cursor?: EvidenceItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EvidenceItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EvidenceItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EvidenceItems.
+     */
+    distinct?: EvidenceItemScalarFieldEnum | EvidenceItemScalarFieldEnum[]
+  }
+
+  /**
+   * EvidenceItem findMany
+   */
+  export type EvidenceItemFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceItem
+     */
+    select?: EvidenceItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceItem
+     */
+    omit?: EvidenceItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceItemInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceItems to fetch.
+     */
+    where?: EvidenceItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EvidenceItems to fetch.
+     */
+    orderBy?: EvidenceItemOrderByWithRelationInput | EvidenceItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing EvidenceItems.
+     */
+    cursor?: EvidenceItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EvidenceItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EvidenceItems.
+     */
+    skip?: number
+    distinct?: EvidenceItemScalarFieldEnum | EvidenceItemScalarFieldEnum[]
+  }
+
+  /**
+   * EvidenceItem create
+   */
+  export type EvidenceItemCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceItem
+     */
+    select?: EvidenceItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceItem
+     */
+    omit?: EvidenceItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceItemInclude<ExtArgs> | null
+    /**
+     * The data needed to create a EvidenceItem.
+     */
+    data: XOR<EvidenceItemCreateInput, EvidenceItemUncheckedCreateInput>
+  }
+
+  /**
+   * EvidenceItem createMany
+   */
+  export type EvidenceItemCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many EvidenceItems.
+     */
+    data: EvidenceItemCreateManyInput | EvidenceItemCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * EvidenceItem createManyAndReturn
+   */
+  export type EvidenceItemCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceItem
+     */
+    select?: EvidenceItemSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceItem
+     */
+    omit?: EvidenceItemOmit<ExtArgs> | null
+    /**
+     * The data used to create many EvidenceItems.
+     */
+    data: EvidenceItemCreateManyInput | EvidenceItemCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceItemIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EvidenceItem update
+   */
+  export type EvidenceItemUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceItem
+     */
+    select?: EvidenceItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceItem
+     */
+    omit?: EvidenceItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceItemInclude<ExtArgs> | null
+    /**
+     * The data needed to update a EvidenceItem.
+     */
+    data: XOR<EvidenceItemUpdateInput, EvidenceItemUncheckedUpdateInput>
+    /**
+     * Choose, which EvidenceItem to update.
+     */
+    where: EvidenceItemWhereUniqueInput
+  }
+
+  /**
+   * EvidenceItem updateMany
+   */
+  export type EvidenceItemUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update EvidenceItems.
+     */
+    data: XOR<EvidenceItemUpdateManyMutationInput, EvidenceItemUncheckedUpdateManyInput>
+    /**
+     * Filter which EvidenceItems to update
+     */
+    where?: EvidenceItemWhereInput
+    /**
+     * Limit how many EvidenceItems to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * EvidenceItem updateManyAndReturn
+   */
+  export type EvidenceItemUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceItem
+     */
+    select?: EvidenceItemSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceItem
+     */
+    omit?: EvidenceItemOmit<ExtArgs> | null
+    /**
+     * The data used to update EvidenceItems.
+     */
+    data: XOR<EvidenceItemUpdateManyMutationInput, EvidenceItemUncheckedUpdateManyInput>
+    /**
+     * Filter which EvidenceItems to update
+     */
+    where?: EvidenceItemWhereInput
+    /**
+     * Limit how many EvidenceItems to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceItemIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EvidenceItem upsert
+   */
+  export type EvidenceItemUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceItem
+     */
+    select?: EvidenceItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceItem
+     */
+    omit?: EvidenceItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceItemInclude<ExtArgs> | null
+    /**
+     * The filter to search for the EvidenceItem to update in case it exists.
+     */
+    where: EvidenceItemWhereUniqueInput
+    /**
+     * In case the EvidenceItem found by the `where` argument doesn't exist, create a new EvidenceItem with this data.
+     */
+    create: XOR<EvidenceItemCreateInput, EvidenceItemUncheckedCreateInput>
+    /**
+     * In case the EvidenceItem was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EvidenceItemUpdateInput, EvidenceItemUncheckedUpdateInput>
+  }
+
+  /**
+   * EvidenceItem delete
+   */
+  export type EvidenceItemDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceItem
+     */
+    select?: EvidenceItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceItem
+     */
+    omit?: EvidenceItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceItemInclude<ExtArgs> | null
+    /**
+     * Filter which EvidenceItem to delete.
+     */
+    where: EvidenceItemWhereUniqueInput
+  }
+
+  /**
+   * EvidenceItem deleteMany
+   */
+  export type EvidenceItemDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EvidenceItems to delete
+     */
+    where?: EvidenceItemWhereInput
+    /**
+     * Limit how many EvidenceItems to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * EvidenceItem.client
+   */
+  export type EvidenceItem$clientArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientInclude<ExtArgs> | null
+    where?: ClientWhereInput
+  }
+
+  /**
+   * EvidenceItem.tags
+   */
+  export type EvidenceItem$tagsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceTag
+     */
+    select?: EvidenceTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceTag
+     */
+    omit?: EvidenceTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceTagInclude<ExtArgs> | null
+    where?: EvidenceTagWhereInput
+    orderBy?: EvidenceTagOrderByWithRelationInput | EvidenceTagOrderByWithRelationInput[]
+    cursor?: EvidenceTagWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EvidenceTagScalarFieldEnum | EvidenceTagScalarFieldEnum[]
+  }
+
+  /**
+   * EvidenceItem.communication
+   */
+  export type EvidenceItem$communicationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Communication
+     */
+    select?: CommunicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Communication
+     */
+    omit?: CommunicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationInclude<ExtArgs> | null
+    where?: CommunicationWhereInput
+  }
+
+  /**
+   * EvidenceItem without action
+   */
+  export type EvidenceItemDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceItem
+     */
+    select?: EvidenceItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceItem
+     */
+    omit?: EvidenceItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceItemInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model EvidenceTag
+   */
+
+  export type AggregateEvidenceTag = {
+    _count: EvidenceTagCountAggregateOutputType | null
+    _min: EvidenceTagMinAggregateOutputType | null
+    _max: EvidenceTagMaxAggregateOutputType | null
+  }
+
+  export type EvidenceTagMinAggregateOutputType = {
+    id: string | null
+    itemId: string | null
+    category: $Enums.TagCategory | null
+    addedBy: string | null
+    addedAt: Date | null
+    removedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type EvidenceTagMaxAggregateOutputType = {
+    id: string | null
+    itemId: string | null
+    category: $Enums.TagCategory | null
+    addedBy: string | null
+    addedAt: Date | null
+    removedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type EvidenceTagCountAggregateOutputType = {
+    id: number
+    itemId: number
+    category: number
+    addedBy: number
+    addedAt: number
+    removedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type EvidenceTagMinAggregateInputType = {
+    id?: true
+    itemId?: true
+    category?: true
+    addedBy?: true
+    addedAt?: true
+    removedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type EvidenceTagMaxAggregateInputType = {
+    id?: true
+    itemId?: true
+    category?: true
+    addedBy?: true
+    addedAt?: true
+    removedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type EvidenceTagCountAggregateInputType = {
+    id?: true
+    itemId?: true
+    category?: true
+    addedBy?: true
+    addedAt?: true
+    removedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type EvidenceTagAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EvidenceTag to aggregate.
+     */
+    where?: EvidenceTagWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EvidenceTags to fetch.
+     */
+    orderBy?: EvidenceTagOrderByWithRelationInput | EvidenceTagOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EvidenceTagWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EvidenceTags from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EvidenceTags.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned EvidenceTags
+    **/
+    _count?: true | EvidenceTagCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EvidenceTagMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EvidenceTagMaxAggregateInputType
+  }
+
+  export type GetEvidenceTagAggregateType<T extends EvidenceTagAggregateArgs> = {
+        [P in keyof T & keyof AggregateEvidenceTag]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEvidenceTag[P]>
+      : GetScalarType<T[P], AggregateEvidenceTag[P]>
+  }
+
+
+
+
+  export type EvidenceTagGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EvidenceTagWhereInput
+    orderBy?: EvidenceTagOrderByWithAggregationInput | EvidenceTagOrderByWithAggregationInput[]
+    by: EvidenceTagScalarFieldEnum[] | EvidenceTagScalarFieldEnum
+    having?: EvidenceTagScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EvidenceTagCountAggregateInputType | true
+    _min?: EvidenceTagMinAggregateInputType
+    _max?: EvidenceTagMaxAggregateInputType
+  }
+
+  export type EvidenceTagGroupByOutputType = {
+    id: string
+    itemId: string
+    category: $Enums.TagCategory
+    addedBy: string
+    addedAt: Date
+    removedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: EvidenceTagCountAggregateOutputType | null
+    _min: EvidenceTagMinAggregateOutputType | null
+    _max: EvidenceTagMaxAggregateOutputType | null
+  }
+
+  type GetEvidenceTagGroupByPayload<T extends EvidenceTagGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EvidenceTagGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EvidenceTagGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EvidenceTagGroupByOutputType[P]>
+            : GetScalarType<T[P], EvidenceTagGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EvidenceTagSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    itemId?: boolean
+    category?: boolean
+    addedBy?: boolean
+    addedAt?: boolean
+    removedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    item?: boolean | EvidenceItemDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["evidenceTag"]>
+
+  export type EvidenceTagSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    itemId?: boolean
+    category?: boolean
+    addedBy?: boolean
+    addedAt?: boolean
+    removedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    item?: boolean | EvidenceItemDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["evidenceTag"]>
+
+  export type EvidenceTagSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    itemId?: boolean
+    category?: boolean
+    addedBy?: boolean
+    addedAt?: boolean
+    removedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    item?: boolean | EvidenceItemDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["evidenceTag"]>
+
+  export type EvidenceTagSelectScalar = {
+    id?: boolean
+    itemId?: boolean
+    category?: boolean
+    addedBy?: boolean
+    addedAt?: boolean
+    removedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type EvidenceTagOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "itemId" | "category" | "addedBy" | "addedAt" | "removedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["evidenceTag"]>
+  export type EvidenceTagInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    item?: boolean | EvidenceItemDefaultArgs<ExtArgs>
+  }
+  export type EvidenceTagIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    item?: boolean | EvidenceItemDefaultArgs<ExtArgs>
+  }
+  export type EvidenceTagIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    item?: boolean | EvidenceItemDefaultArgs<ExtArgs>
+  }
+
+  export type $EvidenceTagPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "EvidenceTag"
+    objects: {
+      item: Prisma.$EvidenceItemPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      itemId: string
+      category: $Enums.TagCategory
+      addedBy: string
+      addedAt: Date
+      removedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["evidenceTag"]>
+    composites: {}
+  }
+
+  type EvidenceTagGetPayload<S extends boolean | null | undefined | EvidenceTagDefaultArgs> = $Result.GetResult<Prisma.$EvidenceTagPayload, S>
+
+  type EvidenceTagCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EvidenceTagFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EvidenceTagCountAggregateInputType | true
+    }
+
+  export interface EvidenceTagDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['EvidenceTag'], meta: { name: 'EvidenceTag' } }
+    /**
+     * Find zero or one EvidenceTag that matches the filter.
+     * @param {EvidenceTagFindUniqueArgs} args - Arguments to find a EvidenceTag
+     * @example
+     * // Get one EvidenceTag
+     * const evidenceTag = await prisma.evidenceTag.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EvidenceTagFindUniqueArgs>(args: SelectSubset<T, EvidenceTagFindUniqueArgs<ExtArgs>>): Prisma__EvidenceTagClient<$Result.GetResult<Prisma.$EvidenceTagPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one EvidenceTag that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EvidenceTagFindUniqueOrThrowArgs} args - Arguments to find a EvidenceTag
+     * @example
+     * // Get one EvidenceTag
+     * const evidenceTag = await prisma.evidenceTag.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EvidenceTagFindUniqueOrThrowArgs>(args: SelectSubset<T, EvidenceTagFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EvidenceTagClient<$Result.GetResult<Prisma.$EvidenceTagPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EvidenceTag that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceTagFindFirstArgs} args - Arguments to find a EvidenceTag
+     * @example
+     * // Get one EvidenceTag
+     * const evidenceTag = await prisma.evidenceTag.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EvidenceTagFindFirstArgs>(args?: SelectSubset<T, EvidenceTagFindFirstArgs<ExtArgs>>): Prisma__EvidenceTagClient<$Result.GetResult<Prisma.$EvidenceTagPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EvidenceTag that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceTagFindFirstOrThrowArgs} args - Arguments to find a EvidenceTag
+     * @example
+     * // Get one EvidenceTag
+     * const evidenceTag = await prisma.evidenceTag.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EvidenceTagFindFirstOrThrowArgs>(args?: SelectSubset<T, EvidenceTagFindFirstOrThrowArgs<ExtArgs>>): Prisma__EvidenceTagClient<$Result.GetResult<Prisma.$EvidenceTagPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more EvidenceTags that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceTagFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all EvidenceTags
+     * const evidenceTags = await prisma.evidenceTag.findMany()
+     * 
+     * // Get first 10 EvidenceTags
+     * const evidenceTags = await prisma.evidenceTag.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const evidenceTagWithIdOnly = await prisma.evidenceTag.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EvidenceTagFindManyArgs>(args?: SelectSubset<T, EvidenceTagFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceTagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a EvidenceTag.
+     * @param {EvidenceTagCreateArgs} args - Arguments to create a EvidenceTag.
+     * @example
+     * // Create one EvidenceTag
+     * const EvidenceTag = await prisma.evidenceTag.create({
+     *   data: {
+     *     // ... data to create a EvidenceTag
+     *   }
+     * })
+     * 
+     */
+    create<T extends EvidenceTagCreateArgs>(args: SelectSubset<T, EvidenceTagCreateArgs<ExtArgs>>): Prisma__EvidenceTagClient<$Result.GetResult<Prisma.$EvidenceTagPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many EvidenceTags.
+     * @param {EvidenceTagCreateManyArgs} args - Arguments to create many EvidenceTags.
+     * @example
+     * // Create many EvidenceTags
+     * const evidenceTag = await prisma.evidenceTag.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends EvidenceTagCreateManyArgs>(args?: SelectSubset<T, EvidenceTagCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many EvidenceTags and returns the data saved in the database.
+     * @param {EvidenceTagCreateManyAndReturnArgs} args - Arguments to create many EvidenceTags.
+     * @example
+     * // Create many EvidenceTags
+     * const evidenceTag = await prisma.evidenceTag.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many EvidenceTags and only return the `id`
+     * const evidenceTagWithIdOnly = await prisma.evidenceTag.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends EvidenceTagCreateManyAndReturnArgs>(args?: SelectSubset<T, EvidenceTagCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceTagPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a EvidenceTag.
+     * @param {EvidenceTagDeleteArgs} args - Arguments to delete one EvidenceTag.
+     * @example
+     * // Delete one EvidenceTag
+     * const EvidenceTag = await prisma.evidenceTag.delete({
+     *   where: {
+     *     // ... filter to delete one EvidenceTag
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EvidenceTagDeleteArgs>(args: SelectSubset<T, EvidenceTagDeleteArgs<ExtArgs>>): Prisma__EvidenceTagClient<$Result.GetResult<Prisma.$EvidenceTagPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one EvidenceTag.
+     * @param {EvidenceTagUpdateArgs} args - Arguments to update one EvidenceTag.
+     * @example
+     * // Update one EvidenceTag
+     * const evidenceTag = await prisma.evidenceTag.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EvidenceTagUpdateArgs>(args: SelectSubset<T, EvidenceTagUpdateArgs<ExtArgs>>): Prisma__EvidenceTagClient<$Result.GetResult<Prisma.$EvidenceTagPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more EvidenceTags.
+     * @param {EvidenceTagDeleteManyArgs} args - Arguments to filter EvidenceTags to delete.
+     * @example
+     * // Delete a few EvidenceTags
+     * const { count } = await prisma.evidenceTag.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EvidenceTagDeleteManyArgs>(args?: SelectSubset<T, EvidenceTagDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EvidenceTags.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceTagUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many EvidenceTags
+     * const evidenceTag = await prisma.evidenceTag.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EvidenceTagUpdateManyArgs>(args: SelectSubset<T, EvidenceTagUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EvidenceTags and returns the data updated in the database.
+     * @param {EvidenceTagUpdateManyAndReturnArgs} args - Arguments to update many EvidenceTags.
+     * @example
+     * // Update many EvidenceTags
+     * const evidenceTag = await prisma.evidenceTag.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more EvidenceTags and only return the `id`
+     * const evidenceTagWithIdOnly = await prisma.evidenceTag.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EvidenceTagUpdateManyAndReturnArgs>(args: SelectSubset<T, EvidenceTagUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceTagPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one EvidenceTag.
+     * @param {EvidenceTagUpsertArgs} args - Arguments to update or create a EvidenceTag.
+     * @example
+     * // Update or create a EvidenceTag
+     * const evidenceTag = await prisma.evidenceTag.upsert({
+     *   create: {
+     *     // ... data to create a EvidenceTag
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the EvidenceTag we want to update
+     *   }
+     * })
+     */
+    upsert<T extends EvidenceTagUpsertArgs>(args: SelectSubset<T, EvidenceTagUpsertArgs<ExtArgs>>): Prisma__EvidenceTagClient<$Result.GetResult<Prisma.$EvidenceTagPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of EvidenceTags.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceTagCountArgs} args - Arguments to filter EvidenceTags to count.
+     * @example
+     * // Count the number of EvidenceTags
+     * const count = await prisma.evidenceTag.count({
+     *   where: {
+     *     // ... the filter for the EvidenceTags we want to count
+     *   }
+     * })
+    **/
+    count<T extends EvidenceTagCountArgs>(
+      args?: Subset<T, EvidenceTagCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EvidenceTagCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a EvidenceTag.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceTagAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EvidenceTagAggregateArgs>(args: Subset<T, EvidenceTagAggregateArgs>): Prisma.PrismaPromise<GetEvidenceTagAggregateType<T>>
+
+    /**
+     * Group by EvidenceTag.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceTagGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EvidenceTagGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EvidenceTagGroupByArgs['orderBy'] }
+        : { orderBy?: EvidenceTagGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EvidenceTagGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEvidenceTagGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the EvidenceTag model
+   */
+  readonly fields: EvidenceTagFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for EvidenceTag.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EvidenceTagClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    item<T extends EvidenceItemDefaultArgs<ExtArgs> = {}>(args?: Subset<T, EvidenceItemDefaultArgs<ExtArgs>>): Prisma__EvidenceItemClient<$Result.GetResult<Prisma.$EvidenceItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the EvidenceTag model
+   */
+  interface EvidenceTagFieldRefs {
+    readonly id: FieldRef<"EvidenceTag", 'String'>
+    readonly itemId: FieldRef<"EvidenceTag", 'String'>
+    readonly category: FieldRef<"EvidenceTag", 'TagCategory'>
+    readonly addedBy: FieldRef<"EvidenceTag", 'String'>
+    readonly addedAt: FieldRef<"EvidenceTag", 'DateTime'>
+    readonly removedAt: FieldRef<"EvidenceTag", 'DateTime'>
+    readonly createdAt: FieldRef<"EvidenceTag", 'DateTime'>
+    readonly updatedAt: FieldRef<"EvidenceTag", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * EvidenceTag findUnique
+   */
+  export type EvidenceTagFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceTag
+     */
+    select?: EvidenceTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceTag
+     */
+    omit?: EvidenceTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceTagInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceTag to fetch.
+     */
+    where: EvidenceTagWhereUniqueInput
+  }
+
+  /**
+   * EvidenceTag findUniqueOrThrow
+   */
+  export type EvidenceTagFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceTag
+     */
+    select?: EvidenceTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceTag
+     */
+    omit?: EvidenceTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceTagInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceTag to fetch.
+     */
+    where: EvidenceTagWhereUniqueInput
+  }
+
+  /**
+   * EvidenceTag findFirst
+   */
+  export type EvidenceTagFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceTag
+     */
+    select?: EvidenceTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceTag
+     */
+    omit?: EvidenceTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceTagInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceTag to fetch.
+     */
+    where?: EvidenceTagWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EvidenceTags to fetch.
+     */
+    orderBy?: EvidenceTagOrderByWithRelationInput | EvidenceTagOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EvidenceTags.
+     */
+    cursor?: EvidenceTagWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EvidenceTags from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EvidenceTags.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EvidenceTags.
+     */
+    distinct?: EvidenceTagScalarFieldEnum | EvidenceTagScalarFieldEnum[]
+  }
+
+  /**
+   * EvidenceTag findFirstOrThrow
+   */
+  export type EvidenceTagFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceTag
+     */
+    select?: EvidenceTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceTag
+     */
+    omit?: EvidenceTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceTagInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceTag to fetch.
+     */
+    where?: EvidenceTagWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EvidenceTags to fetch.
+     */
+    orderBy?: EvidenceTagOrderByWithRelationInput | EvidenceTagOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EvidenceTags.
+     */
+    cursor?: EvidenceTagWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EvidenceTags from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EvidenceTags.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EvidenceTags.
+     */
+    distinct?: EvidenceTagScalarFieldEnum | EvidenceTagScalarFieldEnum[]
+  }
+
+  /**
+   * EvidenceTag findMany
+   */
+  export type EvidenceTagFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceTag
+     */
+    select?: EvidenceTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceTag
+     */
+    omit?: EvidenceTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceTagInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceTags to fetch.
+     */
+    where?: EvidenceTagWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EvidenceTags to fetch.
+     */
+    orderBy?: EvidenceTagOrderByWithRelationInput | EvidenceTagOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing EvidenceTags.
+     */
+    cursor?: EvidenceTagWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EvidenceTags from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EvidenceTags.
+     */
+    skip?: number
+    distinct?: EvidenceTagScalarFieldEnum | EvidenceTagScalarFieldEnum[]
+  }
+
+  /**
+   * EvidenceTag create
+   */
+  export type EvidenceTagCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceTag
+     */
+    select?: EvidenceTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceTag
+     */
+    omit?: EvidenceTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceTagInclude<ExtArgs> | null
+    /**
+     * The data needed to create a EvidenceTag.
+     */
+    data: XOR<EvidenceTagCreateInput, EvidenceTagUncheckedCreateInput>
+  }
+
+  /**
+   * EvidenceTag createMany
+   */
+  export type EvidenceTagCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many EvidenceTags.
+     */
+    data: EvidenceTagCreateManyInput | EvidenceTagCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * EvidenceTag createManyAndReturn
+   */
+  export type EvidenceTagCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceTag
+     */
+    select?: EvidenceTagSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceTag
+     */
+    omit?: EvidenceTagOmit<ExtArgs> | null
+    /**
+     * The data used to create many EvidenceTags.
+     */
+    data: EvidenceTagCreateManyInput | EvidenceTagCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceTagIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EvidenceTag update
+   */
+  export type EvidenceTagUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceTag
+     */
+    select?: EvidenceTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceTag
+     */
+    omit?: EvidenceTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceTagInclude<ExtArgs> | null
+    /**
+     * The data needed to update a EvidenceTag.
+     */
+    data: XOR<EvidenceTagUpdateInput, EvidenceTagUncheckedUpdateInput>
+    /**
+     * Choose, which EvidenceTag to update.
+     */
+    where: EvidenceTagWhereUniqueInput
+  }
+
+  /**
+   * EvidenceTag updateMany
+   */
+  export type EvidenceTagUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update EvidenceTags.
+     */
+    data: XOR<EvidenceTagUpdateManyMutationInput, EvidenceTagUncheckedUpdateManyInput>
+    /**
+     * Filter which EvidenceTags to update
+     */
+    where?: EvidenceTagWhereInput
+    /**
+     * Limit how many EvidenceTags to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * EvidenceTag updateManyAndReturn
+   */
+  export type EvidenceTagUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceTag
+     */
+    select?: EvidenceTagSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceTag
+     */
+    omit?: EvidenceTagOmit<ExtArgs> | null
+    /**
+     * The data used to update EvidenceTags.
+     */
+    data: XOR<EvidenceTagUpdateManyMutationInput, EvidenceTagUncheckedUpdateManyInput>
+    /**
+     * Filter which EvidenceTags to update
+     */
+    where?: EvidenceTagWhereInput
+    /**
+     * Limit how many EvidenceTags to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceTagIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EvidenceTag upsert
+   */
+  export type EvidenceTagUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceTag
+     */
+    select?: EvidenceTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceTag
+     */
+    omit?: EvidenceTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceTagInclude<ExtArgs> | null
+    /**
+     * The filter to search for the EvidenceTag to update in case it exists.
+     */
+    where: EvidenceTagWhereUniqueInput
+    /**
+     * In case the EvidenceTag found by the `where` argument doesn't exist, create a new EvidenceTag with this data.
+     */
+    create: XOR<EvidenceTagCreateInput, EvidenceTagUncheckedCreateInput>
+    /**
+     * In case the EvidenceTag was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EvidenceTagUpdateInput, EvidenceTagUncheckedUpdateInput>
+  }
+
+  /**
+   * EvidenceTag delete
+   */
+  export type EvidenceTagDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceTag
+     */
+    select?: EvidenceTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceTag
+     */
+    omit?: EvidenceTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceTagInclude<ExtArgs> | null
+    /**
+     * Filter which EvidenceTag to delete.
+     */
+    where: EvidenceTagWhereUniqueInput
+  }
+
+  /**
+   * EvidenceTag deleteMany
+   */
+  export type EvidenceTagDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EvidenceTags to delete
+     */
+    where?: EvidenceTagWhereInput
+    /**
+     * Limit how many EvidenceTags to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * EvidenceTag without action
+   */
+  export type EvidenceTagDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceTag
+     */
+    select?: EvidenceTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceTag
+     */
+    omit?: EvidenceTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceTagInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model CommunicationThread
+   */
+
+  export type AggregateCommunicationThread = {
+    _count: CommunicationThreadCountAggregateOutputType | null
+    _min: CommunicationThreadMinAggregateOutputType | null
+    _max: CommunicationThreadMaxAggregateOutputType | null
+  }
+
+  export type CommunicationThreadMinAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    channel: $Enums.CommunicationChannel | null
+    externalThreadId: string | null
+    subject: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type CommunicationThreadMaxAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    channel: $Enums.CommunicationChannel | null
+    externalThreadId: string | null
+    subject: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type CommunicationThreadCountAggregateOutputType = {
+    id: number
+    workspaceId: number
+    channel: number
+    externalThreadId: number
+    subject: number
+    participants: number
+    createdAt: number
+    updatedAt: number
+    deletedAt: number
+    _all: number
+  }
+
+
+  export type CommunicationThreadMinAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    channel?: true
+    externalThreadId?: true
+    subject?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type CommunicationThreadMaxAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    channel?: true
+    externalThreadId?: true
+    subject?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type CommunicationThreadCountAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    channel?: true
+    externalThreadId?: true
+    subject?: true
+    participants?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+    _all?: true
+  }
+
+  export type CommunicationThreadAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CommunicationThread to aggregate.
+     */
+    where?: CommunicationThreadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CommunicationThreads to fetch.
+     */
+    orderBy?: CommunicationThreadOrderByWithRelationInput | CommunicationThreadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CommunicationThreadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CommunicationThreads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CommunicationThreads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CommunicationThreads
+    **/
+    _count?: true | CommunicationThreadCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CommunicationThreadMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CommunicationThreadMaxAggregateInputType
+  }
+
+  export type GetCommunicationThreadAggregateType<T extends CommunicationThreadAggregateArgs> = {
+        [P in keyof T & keyof AggregateCommunicationThread]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCommunicationThread[P]>
+      : GetScalarType<T[P], AggregateCommunicationThread[P]>
+  }
+
+
+
+
+  export type CommunicationThreadGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommunicationThreadWhereInput
+    orderBy?: CommunicationThreadOrderByWithAggregationInput | CommunicationThreadOrderByWithAggregationInput[]
+    by: CommunicationThreadScalarFieldEnum[] | CommunicationThreadScalarFieldEnum
+    having?: CommunicationThreadScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CommunicationThreadCountAggregateInputType | true
+    _min?: CommunicationThreadMinAggregateInputType
+    _max?: CommunicationThreadMaxAggregateInputType
+  }
+
+  export type CommunicationThreadGroupByOutputType = {
+    id: string
+    workspaceId: string
+    channel: $Enums.CommunicationChannel
+    externalThreadId: string | null
+    subject: string | null
+    participants: JsonValue
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date | null
+    _count: CommunicationThreadCountAggregateOutputType | null
+    _min: CommunicationThreadMinAggregateOutputType | null
+    _max: CommunicationThreadMaxAggregateOutputType | null
+  }
+
+  type GetCommunicationThreadGroupByPayload<T extends CommunicationThreadGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CommunicationThreadGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CommunicationThreadGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CommunicationThreadGroupByOutputType[P]>
+            : GetScalarType<T[P], CommunicationThreadGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CommunicationThreadSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    channel?: boolean
+    externalThreadId?: boolean
+    subject?: boolean
+    participants?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    messages?: boolean | CommunicationThread$messagesArgs<ExtArgs>
+    _count?: boolean | CommunicationThreadCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["communicationThread"]>
+
+  export type CommunicationThreadSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    channel?: boolean
+    externalThreadId?: boolean
+    subject?: boolean
+    participants?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["communicationThread"]>
+
+  export type CommunicationThreadSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    channel?: boolean
+    externalThreadId?: boolean
+    subject?: boolean
+    participants?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["communicationThread"]>
+
+  export type CommunicationThreadSelectScalar = {
+    id?: boolean
+    workspaceId?: boolean
+    channel?: boolean
+    externalThreadId?: boolean
+    subject?: boolean
+    participants?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }
+
+  export type CommunicationThreadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "channel" | "externalThreadId" | "subject" | "participants" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["communicationThread"]>
+  export type CommunicationThreadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    messages?: boolean | CommunicationThread$messagesArgs<ExtArgs>
+    _count?: boolean | CommunicationThreadCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type CommunicationThreadIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+  export type CommunicationThreadIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+
+  export type $CommunicationThreadPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CommunicationThread"
+    objects: {
+      workspace: Prisma.$WorkspacePayload<ExtArgs>
+      messages: Prisma.$CommunicationPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workspaceId: string
+      channel: $Enums.CommunicationChannel
+      externalThreadId: string | null
+      subject: string | null
+      participants: Prisma.JsonValue
+      createdAt: Date
+      updatedAt: Date
+      deletedAt: Date | null
+    }, ExtArgs["result"]["communicationThread"]>
+    composites: {}
+  }
+
+  type CommunicationThreadGetPayload<S extends boolean | null | undefined | CommunicationThreadDefaultArgs> = $Result.GetResult<Prisma.$CommunicationThreadPayload, S>
+
+  type CommunicationThreadCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CommunicationThreadFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CommunicationThreadCountAggregateInputType | true
+    }
+
+  export interface CommunicationThreadDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CommunicationThread'], meta: { name: 'CommunicationThread' } }
+    /**
+     * Find zero or one CommunicationThread that matches the filter.
+     * @param {CommunicationThreadFindUniqueArgs} args - Arguments to find a CommunicationThread
+     * @example
+     * // Get one CommunicationThread
+     * const communicationThread = await prisma.communicationThread.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CommunicationThreadFindUniqueArgs>(args: SelectSubset<T, CommunicationThreadFindUniqueArgs<ExtArgs>>): Prisma__CommunicationThreadClient<$Result.GetResult<Prisma.$CommunicationThreadPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CommunicationThread that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CommunicationThreadFindUniqueOrThrowArgs} args - Arguments to find a CommunicationThread
+     * @example
+     * // Get one CommunicationThread
+     * const communicationThread = await prisma.communicationThread.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CommunicationThreadFindUniqueOrThrowArgs>(args: SelectSubset<T, CommunicationThreadFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CommunicationThreadClient<$Result.GetResult<Prisma.$CommunicationThreadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CommunicationThread that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunicationThreadFindFirstArgs} args - Arguments to find a CommunicationThread
+     * @example
+     * // Get one CommunicationThread
+     * const communicationThread = await prisma.communicationThread.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CommunicationThreadFindFirstArgs>(args?: SelectSubset<T, CommunicationThreadFindFirstArgs<ExtArgs>>): Prisma__CommunicationThreadClient<$Result.GetResult<Prisma.$CommunicationThreadPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CommunicationThread that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunicationThreadFindFirstOrThrowArgs} args - Arguments to find a CommunicationThread
+     * @example
+     * // Get one CommunicationThread
+     * const communicationThread = await prisma.communicationThread.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CommunicationThreadFindFirstOrThrowArgs>(args?: SelectSubset<T, CommunicationThreadFindFirstOrThrowArgs<ExtArgs>>): Prisma__CommunicationThreadClient<$Result.GetResult<Prisma.$CommunicationThreadPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CommunicationThreads that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunicationThreadFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CommunicationThreads
+     * const communicationThreads = await prisma.communicationThread.findMany()
+     * 
+     * // Get first 10 CommunicationThreads
+     * const communicationThreads = await prisma.communicationThread.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const communicationThreadWithIdOnly = await prisma.communicationThread.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CommunicationThreadFindManyArgs>(args?: SelectSubset<T, CommunicationThreadFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunicationThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CommunicationThread.
+     * @param {CommunicationThreadCreateArgs} args - Arguments to create a CommunicationThread.
+     * @example
+     * // Create one CommunicationThread
+     * const CommunicationThread = await prisma.communicationThread.create({
+     *   data: {
+     *     // ... data to create a CommunicationThread
+     *   }
+     * })
+     * 
+     */
+    create<T extends CommunicationThreadCreateArgs>(args: SelectSubset<T, CommunicationThreadCreateArgs<ExtArgs>>): Prisma__CommunicationThreadClient<$Result.GetResult<Prisma.$CommunicationThreadPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CommunicationThreads.
+     * @param {CommunicationThreadCreateManyArgs} args - Arguments to create many CommunicationThreads.
+     * @example
+     * // Create many CommunicationThreads
+     * const communicationThread = await prisma.communicationThread.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CommunicationThreadCreateManyArgs>(args?: SelectSubset<T, CommunicationThreadCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CommunicationThreads and returns the data saved in the database.
+     * @param {CommunicationThreadCreateManyAndReturnArgs} args - Arguments to create many CommunicationThreads.
+     * @example
+     * // Create many CommunicationThreads
+     * const communicationThread = await prisma.communicationThread.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CommunicationThreads and only return the `id`
+     * const communicationThreadWithIdOnly = await prisma.communicationThread.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CommunicationThreadCreateManyAndReturnArgs>(args?: SelectSubset<T, CommunicationThreadCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunicationThreadPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CommunicationThread.
+     * @param {CommunicationThreadDeleteArgs} args - Arguments to delete one CommunicationThread.
+     * @example
+     * // Delete one CommunicationThread
+     * const CommunicationThread = await prisma.communicationThread.delete({
+     *   where: {
+     *     // ... filter to delete one CommunicationThread
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CommunicationThreadDeleteArgs>(args: SelectSubset<T, CommunicationThreadDeleteArgs<ExtArgs>>): Prisma__CommunicationThreadClient<$Result.GetResult<Prisma.$CommunicationThreadPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CommunicationThread.
+     * @param {CommunicationThreadUpdateArgs} args - Arguments to update one CommunicationThread.
+     * @example
+     * // Update one CommunicationThread
+     * const communicationThread = await prisma.communicationThread.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CommunicationThreadUpdateArgs>(args: SelectSubset<T, CommunicationThreadUpdateArgs<ExtArgs>>): Prisma__CommunicationThreadClient<$Result.GetResult<Prisma.$CommunicationThreadPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CommunicationThreads.
+     * @param {CommunicationThreadDeleteManyArgs} args - Arguments to filter CommunicationThreads to delete.
+     * @example
+     * // Delete a few CommunicationThreads
+     * const { count } = await prisma.communicationThread.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CommunicationThreadDeleteManyArgs>(args?: SelectSubset<T, CommunicationThreadDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CommunicationThreads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunicationThreadUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CommunicationThreads
+     * const communicationThread = await prisma.communicationThread.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CommunicationThreadUpdateManyArgs>(args: SelectSubset<T, CommunicationThreadUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CommunicationThreads and returns the data updated in the database.
+     * @param {CommunicationThreadUpdateManyAndReturnArgs} args - Arguments to update many CommunicationThreads.
+     * @example
+     * // Update many CommunicationThreads
+     * const communicationThread = await prisma.communicationThread.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CommunicationThreads and only return the `id`
+     * const communicationThreadWithIdOnly = await prisma.communicationThread.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CommunicationThreadUpdateManyAndReturnArgs>(args: SelectSubset<T, CommunicationThreadUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunicationThreadPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CommunicationThread.
+     * @param {CommunicationThreadUpsertArgs} args - Arguments to update or create a CommunicationThread.
+     * @example
+     * // Update or create a CommunicationThread
+     * const communicationThread = await prisma.communicationThread.upsert({
+     *   create: {
+     *     // ... data to create a CommunicationThread
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CommunicationThread we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CommunicationThreadUpsertArgs>(args: SelectSubset<T, CommunicationThreadUpsertArgs<ExtArgs>>): Prisma__CommunicationThreadClient<$Result.GetResult<Prisma.$CommunicationThreadPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CommunicationThreads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunicationThreadCountArgs} args - Arguments to filter CommunicationThreads to count.
+     * @example
+     * // Count the number of CommunicationThreads
+     * const count = await prisma.communicationThread.count({
+     *   where: {
+     *     // ... the filter for the CommunicationThreads we want to count
+     *   }
+     * })
+    **/
+    count<T extends CommunicationThreadCountArgs>(
+      args?: Subset<T, CommunicationThreadCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CommunicationThreadCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CommunicationThread.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunicationThreadAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CommunicationThreadAggregateArgs>(args: Subset<T, CommunicationThreadAggregateArgs>): Prisma.PrismaPromise<GetCommunicationThreadAggregateType<T>>
+
+    /**
+     * Group by CommunicationThread.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunicationThreadGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CommunicationThreadGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CommunicationThreadGroupByArgs['orderBy'] }
+        : { orderBy?: CommunicationThreadGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CommunicationThreadGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCommunicationThreadGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CommunicationThread model
+   */
+  readonly fields: CommunicationThreadFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CommunicationThread.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CommunicationThreadClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    messages<T extends CommunicationThread$messagesArgs<ExtArgs> = {}>(args?: Subset<T, CommunicationThread$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CommunicationThread model
+   */
+  interface CommunicationThreadFieldRefs {
+    readonly id: FieldRef<"CommunicationThread", 'String'>
+    readonly workspaceId: FieldRef<"CommunicationThread", 'String'>
+    readonly channel: FieldRef<"CommunicationThread", 'CommunicationChannel'>
+    readonly externalThreadId: FieldRef<"CommunicationThread", 'String'>
+    readonly subject: FieldRef<"CommunicationThread", 'String'>
+    readonly participants: FieldRef<"CommunicationThread", 'Json'>
+    readonly createdAt: FieldRef<"CommunicationThread", 'DateTime'>
+    readonly updatedAt: FieldRef<"CommunicationThread", 'DateTime'>
+    readonly deletedAt: FieldRef<"CommunicationThread", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CommunicationThread findUnique
+   */
+  export type CommunicationThreadFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunicationThread
+     */
+    select?: CommunicationThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunicationThread
+     */
+    omit?: CommunicationThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationThreadInclude<ExtArgs> | null
+    /**
+     * Filter, which CommunicationThread to fetch.
+     */
+    where: CommunicationThreadWhereUniqueInput
+  }
+
+  /**
+   * CommunicationThread findUniqueOrThrow
+   */
+  export type CommunicationThreadFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunicationThread
+     */
+    select?: CommunicationThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunicationThread
+     */
+    omit?: CommunicationThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationThreadInclude<ExtArgs> | null
+    /**
+     * Filter, which CommunicationThread to fetch.
+     */
+    where: CommunicationThreadWhereUniqueInput
+  }
+
+  /**
+   * CommunicationThread findFirst
+   */
+  export type CommunicationThreadFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunicationThread
+     */
+    select?: CommunicationThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunicationThread
+     */
+    omit?: CommunicationThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationThreadInclude<ExtArgs> | null
+    /**
+     * Filter, which CommunicationThread to fetch.
+     */
+    where?: CommunicationThreadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CommunicationThreads to fetch.
+     */
+    orderBy?: CommunicationThreadOrderByWithRelationInput | CommunicationThreadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CommunicationThreads.
+     */
+    cursor?: CommunicationThreadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CommunicationThreads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CommunicationThreads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CommunicationThreads.
+     */
+    distinct?: CommunicationThreadScalarFieldEnum | CommunicationThreadScalarFieldEnum[]
+  }
+
+  /**
+   * CommunicationThread findFirstOrThrow
+   */
+  export type CommunicationThreadFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunicationThread
+     */
+    select?: CommunicationThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunicationThread
+     */
+    omit?: CommunicationThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationThreadInclude<ExtArgs> | null
+    /**
+     * Filter, which CommunicationThread to fetch.
+     */
+    where?: CommunicationThreadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CommunicationThreads to fetch.
+     */
+    orderBy?: CommunicationThreadOrderByWithRelationInput | CommunicationThreadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CommunicationThreads.
+     */
+    cursor?: CommunicationThreadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CommunicationThreads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CommunicationThreads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CommunicationThreads.
+     */
+    distinct?: CommunicationThreadScalarFieldEnum | CommunicationThreadScalarFieldEnum[]
+  }
+
+  /**
+   * CommunicationThread findMany
+   */
+  export type CommunicationThreadFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunicationThread
+     */
+    select?: CommunicationThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunicationThread
+     */
+    omit?: CommunicationThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationThreadInclude<ExtArgs> | null
+    /**
+     * Filter, which CommunicationThreads to fetch.
+     */
+    where?: CommunicationThreadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CommunicationThreads to fetch.
+     */
+    orderBy?: CommunicationThreadOrderByWithRelationInput | CommunicationThreadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CommunicationThreads.
+     */
+    cursor?: CommunicationThreadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CommunicationThreads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CommunicationThreads.
+     */
+    skip?: number
+    distinct?: CommunicationThreadScalarFieldEnum | CommunicationThreadScalarFieldEnum[]
+  }
+
+  /**
+   * CommunicationThread create
+   */
+  export type CommunicationThreadCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunicationThread
+     */
+    select?: CommunicationThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunicationThread
+     */
+    omit?: CommunicationThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationThreadInclude<ExtArgs> | null
+    /**
+     * The data needed to create a CommunicationThread.
+     */
+    data: XOR<CommunicationThreadCreateInput, CommunicationThreadUncheckedCreateInput>
+  }
+
+  /**
+   * CommunicationThread createMany
+   */
+  export type CommunicationThreadCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CommunicationThreads.
+     */
+    data: CommunicationThreadCreateManyInput | CommunicationThreadCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CommunicationThread createManyAndReturn
+   */
+  export type CommunicationThreadCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunicationThread
+     */
+    select?: CommunicationThreadSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunicationThread
+     */
+    omit?: CommunicationThreadOmit<ExtArgs> | null
+    /**
+     * The data used to create many CommunicationThreads.
+     */
+    data: CommunicationThreadCreateManyInput | CommunicationThreadCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationThreadIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CommunicationThread update
+   */
+  export type CommunicationThreadUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunicationThread
+     */
+    select?: CommunicationThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunicationThread
+     */
+    omit?: CommunicationThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationThreadInclude<ExtArgs> | null
+    /**
+     * The data needed to update a CommunicationThread.
+     */
+    data: XOR<CommunicationThreadUpdateInput, CommunicationThreadUncheckedUpdateInput>
+    /**
+     * Choose, which CommunicationThread to update.
+     */
+    where: CommunicationThreadWhereUniqueInput
+  }
+
+  /**
+   * CommunicationThread updateMany
+   */
+  export type CommunicationThreadUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CommunicationThreads.
+     */
+    data: XOR<CommunicationThreadUpdateManyMutationInput, CommunicationThreadUncheckedUpdateManyInput>
+    /**
+     * Filter which CommunicationThreads to update
+     */
+    where?: CommunicationThreadWhereInput
+    /**
+     * Limit how many CommunicationThreads to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CommunicationThread updateManyAndReturn
+   */
+  export type CommunicationThreadUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunicationThread
+     */
+    select?: CommunicationThreadSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunicationThread
+     */
+    omit?: CommunicationThreadOmit<ExtArgs> | null
+    /**
+     * The data used to update CommunicationThreads.
+     */
+    data: XOR<CommunicationThreadUpdateManyMutationInput, CommunicationThreadUncheckedUpdateManyInput>
+    /**
+     * Filter which CommunicationThreads to update
+     */
+    where?: CommunicationThreadWhereInput
+    /**
+     * Limit how many CommunicationThreads to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationThreadIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CommunicationThread upsert
+   */
+  export type CommunicationThreadUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunicationThread
+     */
+    select?: CommunicationThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunicationThread
+     */
+    omit?: CommunicationThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationThreadInclude<ExtArgs> | null
+    /**
+     * The filter to search for the CommunicationThread to update in case it exists.
+     */
+    where: CommunicationThreadWhereUniqueInput
+    /**
+     * In case the CommunicationThread found by the `where` argument doesn't exist, create a new CommunicationThread with this data.
+     */
+    create: XOR<CommunicationThreadCreateInput, CommunicationThreadUncheckedCreateInput>
+    /**
+     * In case the CommunicationThread was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CommunicationThreadUpdateInput, CommunicationThreadUncheckedUpdateInput>
+  }
+
+  /**
+   * CommunicationThread delete
+   */
+  export type CommunicationThreadDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunicationThread
+     */
+    select?: CommunicationThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunicationThread
+     */
+    omit?: CommunicationThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationThreadInclude<ExtArgs> | null
+    /**
+     * Filter which CommunicationThread to delete.
+     */
+    where: CommunicationThreadWhereUniqueInput
+  }
+
+  /**
+   * CommunicationThread deleteMany
+   */
+  export type CommunicationThreadDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CommunicationThreads to delete
+     */
+    where?: CommunicationThreadWhereInput
+    /**
+     * Limit how many CommunicationThreads to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CommunicationThread.messages
+   */
+  export type CommunicationThread$messagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Communication
+     */
+    select?: CommunicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Communication
+     */
+    omit?: CommunicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationInclude<ExtArgs> | null
+    where?: CommunicationWhereInput
+    orderBy?: CommunicationOrderByWithRelationInput | CommunicationOrderByWithRelationInput[]
+    cursor?: CommunicationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CommunicationScalarFieldEnum | CommunicationScalarFieldEnum[]
+  }
+
+  /**
+   * CommunicationThread without action
+   */
+  export type CommunicationThreadDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunicationThread
+     */
+    select?: CommunicationThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunicationThread
+     */
+    omit?: CommunicationThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationThreadInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Communication
+   */
+
+  export type AggregateCommunication = {
+    _count: CommunicationCountAggregateOutputType | null
+    _min: CommunicationMinAggregateOutputType | null
+    _max: CommunicationMaxAggregateOutputType | null
+  }
+
+  export type CommunicationMinAggregateOutputType = {
+    id: string | null
+    threadId: string | null
+    evidenceItemId: string | null
+    direction: $Enums.CommunicationDirection | null
+    sentAt: Date | null
+    fromAddress: string | null
+    internetMessageId: string | null
+    bodyText: string | null
+    bodyHtml: string | null
+    inReplyTo: string | null
+    referencesHeader: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type CommunicationMaxAggregateOutputType = {
+    id: string | null
+    threadId: string | null
+    evidenceItemId: string | null
+    direction: $Enums.CommunicationDirection | null
+    sentAt: Date | null
+    fromAddress: string | null
+    internetMessageId: string | null
+    bodyText: string | null
+    bodyHtml: string | null
+    inReplyTo: string | null
+    referencesHeader: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type CommunicationCountAggregateOutputType = {
+    id: number
+    threadId: number
+    evidenceItemId: number
+    direction: number
+    sentAt: number
+    fromAddress: number
+    toAddresses: number
+    ccAddresses: number
+    internetMessageId: number
+    bodyText: number
+    bodyHtml: number
+    inReplyTo: number
+    referencesHeader: number
+    createdAt: number
+    updatedAt: number
+    deletedAt: number
+    _all: number
+  }
+
+
+  export type CommunicationMinAggregateInputType = {
+    id?: true
+    threadId?: true
+    evidenceItemId?: true
+    direction?: true
+    sentAt?: true
+    fromAddress?: true
+    internetMessageId?: true
+    bodyText?: true
+    bodyHtml?: true
+    inReplyTo?: true
+    referencesHeader?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type CommunicationMaxAggregateInputType = {
+    id?: true
+    threadId?: true
+    evidenceItemId?: true
+    direction?: true
+    sentAt?: true
+    fromAddress?: true
+    internetMessageId?: true
+    bodyText?: true
+    bodyHtml?: true
+    inReplyTo?: true
+    referencesHeader?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type CommunicationCountAggregateInputType = {
+    id?: true
+    threadId?: true
+    evidenceItemId?: true
+    direction?: true
+    sentAt?: true
+    fromAddress?: true
+    toAddresses?: true
+    ccAddresses?: true
+    internetMessageId?: true
+    bodyText?: true
+    bodyHtml?: true
+    inReplyTo?: true
+    referencesHeader?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+    _all?: true
+  }
+
+  export type CommunicationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Communication to aggregate.
+     */
+    where?: CommunicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Communications to fetch.
+     */
+    orderBy?: CommunicationOrderByWithRelationInput | CommunicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CommunicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Communications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Communications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Communications
+    **/
+    _count?: true | CommunicationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CommunicationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CommunicationMaxAggregateInputType
+  }
+
+  export type GetCommunicationAggregateType<T extends CommunicationAggregateArgs> = {
+        [P in keyof T & keyof AggregateCommunication]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCommunication[P]>
+      : GetScalarType<T[P], AggregateCommunication[P]>
+  }
+
+
+
+
+  export type CommunicationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommunicationWhereInput
+    orderBy?: CommunicationOrderByWithAggregationInput | CommunicationOrderByWithAggregationInput[]
+    by: CommunicationScalarFieldEnum[] | CommunicationScalarFieldEnum
+    having?: CommunicationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CommunicationCountAggregateInputType | true
+    _min?: CommunicationMinAggregateInputType
+    _max?: CommunicationMaxAggregateInputType
+  }
+
+  export type CommunicationGroupByOutputType = {
+    id: string
+    threadId: string
+    evidenceItemId: string
+    direction: $Enums.CommunicationDirection
+    sentAt: Date
+    fromAddress: string
+    toAddresses: string[]
+    ccAddresses: string[]
+    internetMessageId: string | null
+    bodyText: string
+    bodyHtml: string | null
+    inReplyTo: string | null
+    referencesHeader: string | null
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date | null
+    _count: CommunicationCountAggregateOutputType | null
+    _min: CommunicationMinAggregateOutputType | null
+    _max: CommunicationMaxAggregateOutputType | null
+  }
+
+  type GetCommunicationGroupByPayload<T extends CommunicationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CommunicationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CommunicationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CommunicationGroupByOutputType[P]>
+            : GetScalarType<T[P], CommunicationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CommunicationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    threadId?: boolean
+    evidenceItemId?: boolean
+    direction?: boolean
+    sentAt?: boolean
+    fromAddress?: boolean
+    toAddresses?: boolean
+    ccAddresses?: boolean
+    internetMessageId?: boolean
+    bodyText?: boolean
+    bodyHtml?: boolean
+    inReplyTo?: boolean
+    referencesHeader?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    thread?: boolean | CommunicationThreadDefaultArgs<ExtArgs>
+    evidenceItem?: boolean | EvidenceItemDefaultArgs<ExtArgs>
+    attachments?: boolean | Communication$attachmentsArgs<ExtArgs>
+    _count?: boolean | CommunicationCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["communication"]>
+
+  export type CommunicationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    threadId?: boolean
+    evidenceItemId?: boolean
+    direction?: boolean
+    sentAt?: boolean
+    fromAddress?: boolean
+    toAddresses?: boolean
+    ccAddresses?: boolean
+    internetMessageId?: boolean
+    bodyText?: boolean
+    bodyHtml?: boolean
+    inReplyTo?: boolean
+    referencesHeader?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    thread?: boolean | CommunicationThreadDefaultArgs<ExtArgs>
+    evidenceItem?: boolean | EvidenceItemDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["communication"]>
+
+  export type CommunicationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    threadId?: boolean
+    evidenceItemId?: boolean
+    direction?: boolean
+    sentAt?: boolean
+    fromAddress?: boolean
+    toAddresses?: boolean
+    ccAddresses?: boolean
+    internetMessageId?: boolean
+    bodyText?: boolean
+    bodyHtml?: boolean
+    inReplyTo?: boolean
+    referencesHeader?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    thread?: boolean | CommunicationThreadDefaultArgs<ExtArgs>
+    evidenceItem?: boolean | EvidenceItemDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["communication"]>
+
+  export type CommunicationSelectScalar = {
+    id?: boolean
+    threadId?: boolean
+    evidenceItemId?: boolean
+    direction?: boolean
+    sentAt?: boolean
+    fromAddress?: boolean
+    toAddresses?: boolean
+    ccAddresses?: boolean
+    internetMessageId?: boolean
+    bodyText?: boolean
+    bodyHtml?: boolean
+    inReplyTo?: boolean
+    referencesHeader?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }
+
+  export type CommunicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "threadId" | "evidenceItemId" | "direction" | "sentAt" | "fromAddress" | "toAddresses" | "ccAddresses" | "internetMessageId" | "bodyText" | "bodyHtml" | "inReplyTo" | "referencesHeader" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["communication"]>
+  export type CommunicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    thread?: boolean | CommunicationThreadDefaultArgs<ExtArgs>
+    evidenceItem?: boolean | EvidenceItemDefaultArgs<ExtArgs>
+    attachments?: boolean | Communication$attachmentsArgs<ExtArgs>
+    _count?: boolean | CommunicationCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type CommunicationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    thread?: boolean | CommunicationThreadDefaultArgs<ExtArgs>
+    evidenceItem?: boolean | EvidenceItemDefaultArgs<ExtArgs>
+  }
+  export type CommunicationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    thread?: boolean | CommunicationThreadDefaultArgs<ExtArgs>
+    evidenceItem?: boolean | EvidenceItemDefaultArgs<ExtArgs>
+  }
+
+  export type $CommunicationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Communication"
+    objects: {
+      thread: Prisma.$CommunicationThreadPayload<ExtArgs>
+      evidenceItem: Prisma.$EvidenceItemPayload<ExtArgs>
+      attachments: Prisma.$AttachmentPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      threadId: string
+      evidenceItemId: string
+      direction: $Enums.CommunicationDirection
+      sentAt: Date
+      fromAddress: string
+      toAddresses: string[]
+      ccAddresses: string[]
+      internetMessageId: string | null
+      bodyText: string
+      bodyHtml: string | null
+      inReplyTo: string | null
+      referencesHeader: string | null
+      createdAt: Date
+      updatedAt: Date
+      deletedAt: Date | null
+    }, ExtArgs["result"]["communication"]>
+    composites: {}
+  }
+
+  type CommunicationGetPayload<S extends boolean | null | undefined | CommunicationDefaultArgs> = $Result.GetResult<Prisma.$CommunicationPayload, S>
+
+  type CommunicationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CommunicationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CommunicationCountAggregateInputType | true
+    }
+
+  export interface CommunicationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Communication'], meta: { name: 'Communication' } }
+    /**
+     * Find zero or one Communication that matches the filter.
+     * @param {CommunicationFindUniqueArgs} args - Arguments to find a Communication
+     * @example
+     * // Get one Communication
+     * const communication = await prisma.communication.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CommunicationFindUniqueArgs>(args: SelectSubset<T, CommunicationFindUniqueArgs<ExtArgs>>): Prisma__CommunicationClient<$Result.GetResult<Prisma.$CommunicationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Communication that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CommunicationFindUniqueOrThrowArgs} args - Arguments to find a Communication
+     * @example
+     * // Get one Communication
+     * const communication = await prisma.communication.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CommunicationFindUniqueOrThrowArgs>(args: SelectSubset<T, CommunicationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CommunicationClient<$Result.GetResult<Prisma.$CommunicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Communication that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunicationFindFirstArgs} args - Arguments to find a Communication
+     * @example
+     * // Get one Communication
+     * const communication = await prisma.communication.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CommunicationFindFirstArgs>(args?: SelectSubset<T, CommunicationFindFirstArgs<ExtArgs>>): Prisma__CommunicationClient<$Result.GetResult<Prisma.$CommunicationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Communication that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunicationFindFirstOrThrowArgs} args - Arguments to find a Communication
+     * @example
+     * // Get one Communication
+     * const communication = await prisma.communication.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CommunicationFindFirstOrThrowArgs>(args?: SelectSubset<T, CommunicationFindFirstOrThrowArgs<ExtArgs>>): Prisma__CommunicationClient<$Result.GetResult<Prisma.$CommunicationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Communications that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunicationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Communications
+     * const communications = await prisma.communication.findMany()
+     * 
+     * // Get first 10 Communications
+     * const communications = await prisma.communication.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const communicationWithIdOnly = await prisma.communication.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CommunicationFindManyArgs>(args?: SelectSubset<T, CommunicationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Communication.
+     * @param {CommunicationCreateArgs} args - Arguments to create a Communication.
+     * @example
+     * // Create one Communication
+     * const Communication = await prisma.communication.create({
+     *   data: {
+     *     // ... data to create a Communication
+     *   }
+     * })
+     * 
+     */
+    create<T extends CommunicationCreateArgs>(args: SelectSubset<T, CommunicationCreateArgs<ExtArgs>>): Prisma__CommunicationClient<$Result.GetResult<Prisma.$CommunicationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Communications.
+     * @param {CommunicationCreateManyArgs} args - Arguments to create many Communications.
+     * @example
+     * // Create many Communications
+     * const communication = await prisma.communication.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CommunicationCreateManyArgs>(args?: SelectSubset<T, CommunicationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Communications and returns the data saved in the database.
+     * @param {CommunicationCreateManyAndReturnArgs} args - Arguments to create many Communications.
+     * @example
+     * // Create many Communications
+     * const communication = await prisma.communication.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Communications and only return the `id`
+     * const communicationWithIdOnly = await prisma.communication.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CommunicationCreateManyAndReturnArgs>(args?: SelectSubset<T, CommunicationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunicationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Communication.
+     * @param {CommunicationDeleteArgs} args - Arguments to delete one Communication.
+     * @example
+     * // Delete one Communication
+     * const Communication = await prisma.communication.delete({
+     *   where: {
+     *     // ... filter to delete one Communication
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CommunicationDeleteArgs>(args: SelectSubset<T, CommunicationDeleteArgs<ExtArgs>>): Prisma__CommunicationClient<$Result.GetResult<Prisma.$CommunicationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Communication.
+     * @param {CommunicationUpdateArgs} args - Arguments to update one Communication.
+     * @example
+     * // Update one Communication
+     * const communication = await prisma.communication.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CommunicationUpdateArgs>(args: SelectSubset<T, CommunicationUpdateArgs<ExtArgs>>): Prisma__CommunicationClient<$Result.GetResult<Prisma.$CommunicationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Communications.
+     * @param {CommunicationDeleteManyArgs} args - Arguments to filter Communications to delete.
+     * @example
+     * // Delete a few Communications
+     * const { count } = await prisma.communication.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CommunicationDeleteManyArgs>(args?: SelectSubset<T, CommunicationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Communications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunicationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Communications
+     * const communication = await prisma.communication.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CommunicationUpdateManyArgs>(args: SelectSubset<T, CommunicationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Communications and returns the data updated in the database.
+     * @param {CommunicationUpdateManyAndReturnArgs} args - Arguments to update many Communications.
+     * @example
+     * // Update many Communications
+     * const communication = await prisma.communication.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Communications and only return the `id`
+     * const communicationWithIdOnly = await prisma.communication.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CommunicationUpdateManyAndReturnArgs>(args: SelectSubset<T, CommunicationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunicationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Communication.
+     * @param {CommunicationUpsertArgs} args - Arguments to update or create a Communication.
+     * @example
+     * // Update or create a Communication
+     * const communication = await prisma.communication.upsert({
+     *   create: {
+     *     // ... data to create a Communication
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Communication we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CommunicationUpsertArgs>(args: SelectSubset<T, CommunicationUpsertArgs<ExtArgs>>): Prisma__CommunicationClient<$Result.GetResult<Prisma.$CommunicationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Communications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunicationCountArgs} args - Arguments to filter Communications to count.
+     * @example
+     * // Count the number of Communications
+     * const count = await prisma.communication.count({
+     *   where: {
+     *     // ... the filter for the Communications we want to count
+     *   }
+     * })
+    **/
+    count<T extends CommunicationCountArgs>(
+      args?: Subset<T, CommunicationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CommunicationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Communication.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunicationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CommunicationAggregateArgs>(args: Subset<T, CommunicationAggregateArgs>): Prisma.PrismaPromise<GetCommunicationAggregateType<T>>
+
+    /**
+     * Group by Communication.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunicationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CommunicationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CommunicationGroupByArgs['orderBy'] }
+        : { orderBy?: CommunicationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CommunicationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCommunicationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Communication model
+   */
+  readonly fields: CommunicationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Communication.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CommunicationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    thread<T extends CommunicationThreadDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CommunicationThreadDefaultArgs<ExtArgs>>): Prisma__CommunicationThreadClient<$Result.GetResult<Prisma.$CommunicationThreadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    evidenceItem<T extends EvidenceItemDefaultArgs<ExtArgs> = {}>(args?: Subset<T, EvidenceItemDefaultArgs<ExtArgs>>): Prisma__EvidenceItemClient<$Result.GetResult<Prisma.$EvidenceItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    attachments<T extends Communication$attachmentsArgs<ExtArgs> = {}>(args?: Subset<T, Communication$attachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Communication model
+   */
+  interface CommunicationFieldRefs {
+    readonly id: FieldRef<"Communication", 'String'>
+    readonly threadId: FieldRef<"Communication", 'String'>
+    readonly evidenceItemId: FieldRef<"Communication", 'String'>
+    readonly direction: FieldRef<"Communication", 'CommunicationDirection'>
+    readonly sentAt: FieldRef<"Communication", 'DateTime'>
+    readonly fromAddress: FieldRef<"Communication", 'String'>
+    readonly toAddresses: FieldRef<"Communication", 'String[]'>
+    readonly ccAddresses: FieldRef<"Communication", 'String[]'>
+    readonly internetMessageId: FieldRef<"Communication", 'String'>
+    readonly bodyText: FieldRef<"Communication", 'String'>
+    readonly bodyHtml: FieldRef<"Communication", 'String'>
+    readonly inReplyTo: FieldRef<"Communication", 'String'>
+    readonly referencesHeader: FieldRef<"Communication", 'String'>
+    readonly createdAt: FieldRef<"Communication", 'DateTime'>
+    readonly updatedAt: FieldRef<"Communication", 'DateTime'>
+    readonly deletedAt: FieldRef<"Communication", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Communication findUnique
+   */
+  export type CommunicationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Communication
+     */
+    select?: CommunicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Communication
+     */
+    omit?: CommunicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationInclude<ExtArgs> | null
+    /**
+     * Filter, which Communication to fetch.
+     */
+    where: CommunicationWhereUniqueInput
+  }
+
+  /**
+   * Communication findUniqueOrThrow
+   */
+  export type CommunicationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Communication
+     */
+    select?: CommunicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Communication
+     */
+    omit?: CommunicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationInclude<ExtArgs> | null
+    /**
+     * Filter, which Communication to fetch.
+     */
+    where: CommunicationWhereUniqueInput
+  }
+
+  /**
+   * Communication findFirst
+   */
+  export type CommunicationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Communication
+     */
+    select?: CommunicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Communication
+     */
+    omit?: CommunicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationInclude<ExtArgs> | null
+    /**
+     * Filter, which Communication to fetch.
+     */
+    where?: CommunicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Communications to fetch.
+     */
+    orderBy?: CommunicationOrderByWithRelationInput | CommunicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Communications.
+     */
+    cursor?: CommunicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Communications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Communications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Communications.
+     */
+    distinct?: CommunicationScalarFieldEnum | CommunicationScalarFieldEnum[]
+  }
+
+  /**
+   * Communication findFirstOrThrow
+   */
+  export type CommunicationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Communication
+     */
+    select?: CommunicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Communication
+     */
+    omit?: CommunicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationInclude<ExtArgs> | null
+    /**
+     * Filter, which Communication to fetch.
+     */
+    where?: CommunicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Communications to fetch.
+     */
+    orderBy?: CommunicationOrderByWithRelationInput | CommunicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Communications.
+     */
+    cursor?: CommunicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Communications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Communications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Communications.
+     */
+    distinct?: CommunicationScalarFieldEnum | CommunicationScalarFieldEnum[]
+  }
+
+  /**
+   * Communication findMany
+   */
+  export type CommunicationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Communication
+     */
+    select?: CommunicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Communication
+     */
+    omit?: CommunicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationInclude<ExtArgs> | null
+    /**
+     * Filter, which Communications to fetch.
+     */
+    where?: CommunicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Communications to fetch.
+     */
+    orderBy?: CommunicationOrderByWithRelationInput | CommunicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Communications.
+     */
+    cursor?: CommunicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Communications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Communications.
+     */
+    skip?: number
+    distinct?: CommunicationScalarFieldEnum | CommunicationScalarFieldEnum[]
+  }
+
+  /**
+   * Communication create
+   */
+  export type CommunicationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Communication
+     */
+    select?: CommunicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Communication
+     */
+    omit?: CommunicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Communication.
+     */
+    data: XOR<CommunicationCreateInput, CommunicationUncheckedCreateInput>
+  }
+
+  /**
+   * Communication createMany
+   */
+  export type CommunicationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Communications.
+     */
+    data: CommunicationCreateManyInput | CommunicationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Communication createManyAndReturn
+   */
+  export type CommunicationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Communication
+     */
+    select?: CommunicationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Communication
+     */
+    omit?: CommunicationOmit<ExtArgs> | null
+    /**
+     * The data used to create many Communications.
+     */
+    data: CommunicationCreateManyInput | CommunicationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Communication update
+   */
+  export type CommunicationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Communication
+     */
+    select?: CommunicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Communication
+     */
+    omit?: CommunicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Communication.
+     */
+    data: XOR<CommunicationUpdateInput, CommunicationUncheckedUpdateInput>
+    /**
+     * Choose, which Communication to update.
+     */
+    where: CommunicationWhereUniqueInput
+  }
+
+  /**
+   * Communication updateMany
+   */
+  export type CommunicationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Communications.
+     */
+    data: XOR<CommunicationUpdateManyMutationInput, CommunicationUncheckedUpdateManyInput>
+    /**
+     * Filter which Communications to update
+     */
+    where?: CommunicationWhereInput
+    /**
+     * Limit how many Communications to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Communication updateManyAndReturn
+   */
+  export type CommunicationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Communication
+     */
+    select?: CommunicationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Communication
+     */
+    omit?: CommunicationOmit<ExtArgs> | null
+    /**
+     * The data used to update Communications.
+     */
+    data: XOR<CommunicationUpdateManyMutationInput, CommunicationUncheckedUpdateManyInput>
+    /**
+     * Filter which Communications to update
+     */
+    where?: CommunicationWhereInput
+    /**
+     * Limit how many Communications to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Communication upsert
+   */
+  export type CommunicationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Communication
+     */
+    select?: CommunicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Communication
+     */
+    omit?: CommunicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Communication to update in case it exists.
+     */
+    where: CommunicationWhereUniqueInput
+    /**
+     * In case the Communication found by the `where` argument doesn't exist, create a new Communication with this data.
+     */
+    create: XOR<CommunicationCreateInput, CommunicationUncheckedCreateInput>
+    /**
+     * In case the Communication was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CommunicationUpdateInput, CommunicationUncheckedUpdateInput>
+  }
+
+  /**
+   * Communication delete
+   */
+  export type CommunicationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Communication
+     */
+    select?: CommunicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Communication
+     */
+    omit?: CommunicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationInclude<ExtArgs> | null
+    /**
+     * Filter which Communication to delete.
+     */
+    where: CommunicationWhereUniqueInput
+  }
+
+  /**
+   * Communication deleteMany
+   */
+  export type CommunicationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Communications to delete
+     */
+    where?: CommunicationWhereInput
+    /**
+     * Limit how many Communications to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Communication.attachments
+   */
+  export type Communication$attachmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Attachment
+     */
+    select?: AttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Attachment
+     */
+    omit?: AttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AttachmentInclude<ExtArgs> | null
+    where?: AttachmentWhereInput
+    orderBy?: AttachmentOrderByWithRelationInput | AttachmentOrderByWithRelationInput[]
+    cursor?: AttachmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AttachmentScalarFieldEnum | AttachmentScalarFieldEnum[]
+  }
+
+  /**
+   * Communication without action
+   */
+  export type CommunicationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Communication
+     */
+    select?: CommunicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Communication
+     */
+    omit?: CommunicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunicationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Attachment
+   */
+
+  export type AggregateAttachment = {
+    _count: AttachmentCountAggregateOutputType | null
+    _avg: AttachmentAvgAggregateOutputType | null
+    _sum: AttachmentSumAggregateOutputType | null
+    _min: AttachmentMinAggregateOutputType | null
+    _max: AttachmentMaxAggregateOutputType | null
+  }
+
+  export type AttachmentAvgAggregateOutputType = {
+    sizeBytes: number | null
+  }
+
+  export type AttachmentSumAggregateOutputType = {
+    sizeBytes: number | null
+  }
+
+  export type AttachmentMinAggregateOutputType = {
+    id: string | null
+    communicationId: string | null
+    filename: string | null
+    mimeType: string | null
+    contentSha256: string | null
+    storageUri: string | null
+    sizeBytes: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type AttachmentMaxAggregateOutputType = {
+    id: string | null
+    communicationId: string | null
+    filename: string | null
+    mimeType: string | null
+    contentSha256: string | null
+    storageUri: string | null
+    sizeBytes: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type AttachmentCountAggregateOutputType = {
+    id: number
+    communicationId: number
+    filename: number
+    mimeType: number
+    contentSha256: number
+    storageUri: number
+    sizeBytes: number
+    createdAt: number
+    updatedAt: number
+    deletedAt: number
+    _all: number
+  }
+
+
+  export type AttachmentAvgAggregateInputType = {
+    sizeBytes?: true
+  }
+
+  export type AttachmentSumAggregateInputType = {
+    sizeBytes?: true
+  }
+
+  export type AttachmentMinAggregateInputType = {
+    id?: true
+    communicationId?: true
+    filename?: true
+    mimeType?: true
+    contentSha256?: true
+    storageUri?: true
+    sizeBytes?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type AttachmentMaxAggregateInputType = {
+    id?: true
+    communicationId?: true
+    filename?: true
+    mimeType?: true
+    contentSha256?: true
+    storageUri?: true
+    sizeBytes?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type AttachmentCountAggregateInputType = {
+    id?: true
+    communicationId?: true
+    filename?: true
+    mimeType?: true
+    contentSha256?: true
+    storageUri?: true
+    sizeBytes?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+    _all?: true
+  }
+
+  export type AttachmentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Attachment to aggregate.
+     */
+    where?: AttachmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Attachments to fetch.
+     */
+    orderBy?: AttachmentOrderByWithRelationInput | AttachmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AttachmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Attachments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Attachments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Attachments
+    **/
+    _count?: true | AttachmentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AttachmentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AttachmentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AttachmentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AttachmentMaxAggregateInputType
+  }
+
+  export type GetAttachmentAggregateType<T extends AttachmentAggregateArgs> = {
+        [P in keyof T & keyof AggregateAttachment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAttachment[P]>
+      : GetScalarType<T[P], AggregateAttachment[P]>
+  }
+
+
+
+
+  export type AttachmentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AttachmentWhereInput
+    orderBy?: AttachmentOrderByWithAggregationInput | AttachmentOrderByWithAggregationInput[]
+    by: AttachmentScalarFieldEnum[] | AttachmentScalarFieldEnum
+    having?: AttachmentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AttachmentCountAggregateInputType | true
+    _avg?: AttachmentAvgAggregateInputType
+    _sum?: AttachmentSumAggregateInputType
+    _min?: AttachmentMinAggregateInputType
+    _max?: AttachmentMaxAggregateInputType
+  }
+
+  export type AttachmentGroupByOutputType = {
+    id: string
+    communicationId: string
+    filename: string
+    mimeType: string
+    contentSha256: string
+    storageUri: string
+    sizeBytes: number | null
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date | null
+    _count: AttachmentCountAggregateOutputType | null
+    _avg: AttachmentAvgAggregateOutputType | null
+    _sum: AttachmentSumAggregateOutputType | null
+    _min: AttachmentMinAggregateOutputType | null
+    _max: AttachmentMaxAggregateOutputType | null
+  }
+
+  type GetAttachmentGroupByPayload<T extends AttachmentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AttachmentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AttachmentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AttachmentGroupByOutputType[P]>
+            : GetScalarType<T[P], AttachmentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AttachmentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    communicationId?: boolean
+    filename?: boolean
+    mimeType?: boolean
+    contentSha256?: boolean
+    storageUri?: boolean
+    sizeBytes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    communication?: boolean | CommunicationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["attachment"]>
+
+  export type AttachmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    communicationId?: boolean
+    filename?: boolean
+    mimeType?: boolean
+    contentSha256?: boolean
+    storageUri?: boolean
+    sizeBytes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    communication?: boolean | CommunicationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["attachment"]>
+
+  export type AttachmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    communicationId?: boolean
+    filename?: boolean
+    mimeType?: boolean
+    contentSha256?: boolean
+    storageUri?: boolean
+    sizeBytes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    communication?: boolean | CommunicationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["attachment"]>
+
+  export type AttachmentSelectScalar = {
+    id?: boolean
+    communicationId?: boolean
+    filename?: boolean
+    mimeType?: boolean
+    contentSha256?: boolean
+    storageUri?: boolean
+    sizeBytes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }
+
+  export type AttachmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "communicationId" | "filename" | "mimeType" | "contentSha256" | "storageUri" | "sizeBytes" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["attachment"]>
+  export type AttachmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    communication?: boolean | CommunicationDefaultArgs<ExtArgs>
+  }
+  export type AttachmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    communication?: boolean | CommunicationDefaultArgs<ExtArgs>
+  }
+  export type AttachmentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    communication?: boolean | CommunicationDefaultArgs<ExtArgs>
+  }
+
+  export type $AttachmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Attachment"
+    objects: {
+      communication: Prisma.$CommunicationPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      communicationId: string
+      filename: string
+      mimeType: string
+      contentSha256: string
+      storageUri: string
+      sizeBytes: number | null
+      createdAt: Date
+      updatedAt: Date
+      deletedAt: Date | null
+    }, ExtArgs["result"]["attachment"]>
+    composites: {}
+  }
+
+  type AttachmentGetPayload<S extends boolean | null | undefined | AttachmentDefaultArgs> = $Result.GetResult<Prisma.$AttachmentPayload, S>
+
+  type AttachmentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AttachmentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AttachmentCountAggregateInputType | true
+    }
+
+  export interface AttachmentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Attachment'], meta: { name: 'Attachment' } }
+    /**
+     * Find zero or one Attachment that matches the filter.
+     * @param {AttachmentFindUniqueArgs} args - Arguments to find a Attachment
+     * @example
+     * // Get one Attachment
+     * const attachment = await prisma.attachment.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AttachmentFindUniqueArgs>(args: SelectSubset<T, AttachmentFindUniqueArgs<ExtArgs>>): Prisma__AttachmentClient<$Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Attachment that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AttachmentFindUniqueOrThrowArgs} args - Arguments to find a Attachment
+     * @example
+     * // Get one Attachment
+     * const attachment = await prisma.attachment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AttachmentFindUniqueOrThrowArgs>(args: SelectSubset<T, AttachmentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AttachmentClient<$Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Attachment that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AttachmentFindFirstArgs} args - Arguments to find a Attachment
+     * @example
+     * // Get one Attachment
+     * const attachment = await prisma.attachment.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AttachmentFindFirstArgs>(args?: SelectSubset<T, AttachmentFindFirstArgs<ExtArgs>>): Prisma__AttachmentClient<$Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Attachment that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AttachmentFindFirstOrThrowArgs} args - Arguments to find a Attachment
+     * @example
+     * // Get one Attachment
+     * const attachment = await prisma.attachment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AttachmentFindFirstOrThrowArgs>(args?: SelectSubset<T, AttachmentFindFirstOrThrowArgs<ExtArgs>>): Prisma__AttachmentClient<$Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Attachments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AttachmentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Attachments
+     * const attachments = await prisma.attachment.findMany()
+     * 
+     * // Get first 10 Attachments
+     * const attachments = await prisma.attachment.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const attachmentWithIdOnly = await prisma.attachment.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AttachmentFindManyArgs>(args?: SelectSubset<T, AttachmentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Attachment.
+     * @param {AttachmentCreateArgs} args - Arguments to create a Attachment.
+     * @example
+     * // Create one Attachment
+     * const Attachment = await prisma.attachment.create({
+     *   data: {
+     *     // ... data to create a Attachment
+     *   }
+     * })
+     * 
+     */
+    create<T extends AttachmentCreateArgs>(args: SelectSubset<T, AttachmentCreateArgs<ExtArgs>>): Prisma__AttachmentClient<$Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Attachments.
+     * @param {AttachmentCreateManyArgs} args - Arguments to create many Attachments.
+     * @example
+     * // Create many Attachments
+     * const attachment = await prisma.attachment.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AttachmentCreateManyArgs>(args?: SelectSubset<T, AttachmentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Attachments and returns the data saved in the database.
+     * @param {AttachmentCreateManyAndReturnArgs} args - Arguments to create many Attachments.
+     * @example
+     * // Create many Attachments
+     * const attachment = await prisma.attachment.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Attachments and only return the `id`
+     * const attachmentWithIdOnly = await prisma.attachment.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AttachmentCreateManyAndReturnArgs>(args?: SelectSubset<T, AttachmentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Attachment.
+     * @param {AttachmentDeleteArgs} args - Arguments to delete one Attachment.
+     * @example
+     * // Delete one Attachment
+     * const Attachment = await prisma.attachment.delete({
+     *   where: {
+     *     // ... filter to delete one Attachment
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AttachmentDeleteArgs>(args: SelectSubset<T, AttachmentDeleteArgs<ExtArgs>>): Prisma__AttachmentClient<$Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Attachment.
+     * @param {AttachmentUpdateArgs} args - Arguments to update one Attachment.
+     * @example
+     * // Update one Attachment
+     * const attachment = await prisma.attachment.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AttachmentUpdateArgs>(args: SelectSubset<T, AttachmentUpdateArgs<ExtArgs>>): Prisma__AttachmentClient<$Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Attachments.
+     * @param {AttachmentDeleteManyArgs} args - Arguments to filter Attachments to delete.
+     * @example
+     * // Delete a few Attachments
+     * const { count } = await prisma.attachment.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AttachmentDeleteManyArgs>(args?: SelectSubset<T, AttachmentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Attachments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AttachmentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Attachments
+     * const attachment = await prisma.attachment.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AttachmentUpdateManyArgs>(args: SelectSubset<T, AttachmentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Attachments and returns the data updated in the database.
+     * @param {AttachmentUpdateManyAndReturnArgs} args - Arguments to update many Attachments.
+     * @example
+     * // Update many Attachments
+     * const attachment = await prisma.attachment.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Attachments and only return the `id`
+     * const attachmentWithIdOnly = await prisma.attachment.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AttachmentUpdateManyAndReturnArgs>(args: SelectSubset<T, AttachmentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Attachment.
+     * @param {AttachmentUpsertArgs} args - Arguments to update or create a Attachment.
+     * @example
+     * // Update or create a Attachment
+     * const attachment = await prisma.attachment.upsert({
+     *   create: {
+     *     // ... data to create a Attachment
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Attachment we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AttachmentUpsertArgs>(args: SelectSubset<T, AttachmentUpsertArgs<ExtArgs>>): Prisma__AttachmentClient<$Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Attachments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AttachmentCountArgs} args - Arguments to filter Attachments to count.
+     * @example
+     * // Count the number of Attachments
+     * const count = await prisma.attachment.count({
+     *   where: {
+     *     // ... the filter for the Attachments we want to count
+     *   }
+     * })
+    **/
+    count<T extends AttachmentCountArgs>(
+      args?: Subset<T, AttachmentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AttachmentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Attachment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AttachmentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AttachmentAggregateArgs>(args: Subset<T, AttachmentAggregateArgs>): Prisma.PrismaPromise<GetAttachmentAggregateType<T>>
+
+    /**
+     * Group by Attachment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AttachmentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AttachmentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AttachmentGroupByArgs['orderBy'] }
+        : { orderBy?: AttachmentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AttachmentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAttachmentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Attachment model
+   */
+  readonly fields: AttachmentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Attachment.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AttachmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    communication<T extends CommunicationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CommunicationDefaultArgs<ExtArgs>>): Prisma__CommunicationClient<$Result.GetResult<Prisma.$CommunicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Attachment model
+   */
+  interface AttachmentFieldRefs {
+    readonly id: FieldRef<"Attachment", 'String'>
+    readonly communicationId: FieldRef<"Attachment", 'String'>
+    readonly filename: FieldRef<"Attachment", 'String'>
+    readonly mimeType: FieldRef<"Attachment", 'String'>
+    readonly contentSha256: FieldRef<"Attachment", 'String'>
+    readonly storageUri: FieldRef<"Attachment", 'String'>
+    readonly sizeBytes: FieldRef<"Attachment", 'Int'>
+    readonly createdAt: FieldRef<"Attachment", 'DateTime'>
+    readonly updatedAt: FieldRef<"Attachment", 'DateTime'>
+    readonly deletedAt: FieldRef<"Attachment", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Attachment findUnique
+   */
+  export type AttachmentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Attachment
+     */
+    select?: AttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Attachment
+     */
+    omit?: AttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AttachmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Attachment to fetch.
+     */
+    where: AttachmentWhereUniqueInput
+  }
+
+  /**
+   * Attachment findUniqueOrThrow
+   */
+  export type AttachmentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Attachment
+     */
+    select?: AttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Attachment
+     */
+    omit?: AttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AttachmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Attachment to fetch.
+     */
+    where: AttachmentWhereUniqueInput
+  }
+
+  /**
+   * Attachment findFirst
+   */
+  export type AttachmentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Attachment
+     */
+    select?: AttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Attachment
+     */
+    omit?: AttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AttachmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Attachment to fetch.
+     */
+    where?: AttachmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Attachments to fetch.
+     */
+    orderBy?: AttachmentOrderByWithRelationInput | AttachmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Attachments.
+     */
+    cursor?: AttachmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Attachments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Attachments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Attachments.
+     */
+    distinct?: AttachmentScalarFieldEnum | AttachmentScalarFieldEnum[]
+  }
+
+  /**
+   * Attachment findFirstOrThrow
+   */
+  export type AttachmentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Attachment
+     */
+    select?: AttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Attachment
+     */
+    omit?: AttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AttachmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Attachment to fetch.
+     */
+    where?: AttachmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Attachments to fetch.
+     */
+    orderBy?: AttachmentOrderByWithRelationInput | AttachmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Attachments.
+     */
+    cursor?: AttachmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Attachments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Attachments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Attachments.
+     */
+    distinct?: AttachmentScalarFieldEnum | AttachmentScalarFieldEnum[]
+  }
+
+  /**
+   * Attachment findMany
+   */
+  export type AttachmentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Attachment
+     */
+    select?: AttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Attachment
+     */
+    omit?: AttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AttachmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Attachments to fetch.
+     */
+    where?: AttachmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Attachments to fetch.
+     */
+    orderBy?: AttachmentOrderByWithRelationInput | AttachmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Attachments.
+     */
+    cursor?: AttachmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Attachments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Attachments.
+     */
+    skip?: number
+    distinct?: AttachmentScalarFieldEnum | AttachmentScalarFieldEnum[]
+  }
+
+  /**
+   * Attachment create
+   */
+  export type AttachmentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Attachment
+     */
+    select?: AttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Attachment
+     */
+    omit?: AttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AttachmentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Attachment.
+     */
+    data: XOR<AttachmentCreateInput, AttachmentUncheckedCreateInput>
+  }
+
+  /**
+   * Attachment createMany
+   */
+  export type AttachmentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Attachments.
+     */
+    data: AttachmentCreateManyInput | AttachmentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Attachment createManyAndReturn
+   */
+  export type AttachmentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Attachment
+     */
+    select?: AttachmentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Attachment
+     */
+    omit?: AttachmentOmit<ExtArgs> | null
+    /**
+     * The data used to create many Attachments.
+     */
+    data: AttachmentCreateManyInput | AttachmentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AttachmentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Attachment update
+   */
+  export type AttachmentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Attachment
+     */
+    select?: AttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Attachment
+     */
+    omit?: AttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AttachmentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Attachment.
+     */
+    data: XOR<AttachmentUpdateInput, AttachmentUncheckedUpdateInput>
+    /**
+     * Choose, which Attachment to update.
+     */
+    where: AttachmentWhereUniqueInput
+  }
+
+  /**
+   * Attachment updateMany
+   */
+  export type AttachmentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Attachments.
+     */
+    data: XOR<AttachmentUpdateManyMutationInput, AttachmentUncheckedUpdateManyInput>
+    /**
+     * Filter which Attachments to update
+     */
+    where?: AttachmentWhereInput
+    /**
+     * Limit how many Attachments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Attachment updateManyAndReturn
+   */
+  export type AttachmentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Attachment
+     */
+    select?: AttachmentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Attachment
+     */
+    omit?: AttachmentOmit<ExtArgs> | null
+    /**
+     * The data used to update Attachments.
+     */
+    data: XOR<AttachmentUpdateManyMutationInput, AttachmentUncheckedUpdateManyInput>
+    /**
+     * Filter which Attachments to update
+     */
+    where?: AttachmentWhereInput
+    /**
+     * Limit how many Attachments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AttachmentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Attachment upsert
+   */
+  export type AttachmentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Attachment
+     */
+    select?: AttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Attachment
+     */
+    omit?: AttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AttachmentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Attachment to update in case it exists.
+     */
+    where: AttachmentWhereUniqueInput
+    /**
+     * In case the Attachment found by the `where` argument doesn't exist, create a new Attachment with this data.
+     */
+    create: XOR<AttachmentCreateInput, AttachmentUncheckedCreateInput>
+    /**
+     * In case the Attachment was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AttachmentUpdateInput, AttachmentUncheckedUpdateInput>
+  }
+
+  /**
+   * Attachment delete
+   */
+  export type AttachmentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Attachment
+     */
+    select?: AttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Attachment
+     */
+    omit?: AttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AttachmentInclude<ExtArgs> | null
+    /**
+     * Filter which Attachment to delete.
+     */
+    where: AttachmentWhereUniqueInput
+  }
+
+  /**
+   * Attachment deleteMany
+   */
+  export type AttachmentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Attachments to delete
+     */
+    where?: AttachmentWhereInput
+    /**
+     * Limit how many Attachments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Attachment without action
+   */
+  export type AttachmentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Attachment
+     */
+    select?: AttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Attachment
+     */
+    omit?: AttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AttachmentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model MailboxConnection
+   */
+
+  export type AggregateMailboxConnection = {
+    _count: MailboxConnectionCountAggregateOutputType | null
+    _min: MailboxConnectionMinAggregateOutputType | null
+    _max: MailboxConnectionMaxAggregateOutputType | null
+  }
+
+  export type MailboxConnectionMinAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    provider: $Enums.MailboxProvider | null
+    mailboxAddress: string | null
+    consentMode: $Enums.MailboxConsentMode | null
+    backfillFrom: Date | null
+    status: $Enums.MailboxSyncStatus | null
+    encryptedToken: string | null
+    deltaCursor: string | null
+    lastSyncAt: Date | null
+    lastErrorMessage: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type MailboxConnectionMaxAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    provider: $Enums.MailboxProvider | null
+    mailboxAddress: string | null
+    consentMode: $Enums.MailboxConsentMode | null
+    backfillFrom: Date | null
+    status: $Enums.MailboxSyncStatus | null
+    encryptedToken: string | null
+    deltaCursor: string | null
+    lastSyncAt: Date | null
+    lastErrorMessage: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type MailboxConnectionCountAggregateOutputType = {
+    id: number
+    workspaceId: number
+    provider: number
+    mailboxAddress: number
+    consentMode: number
+    scopeFolders: number
+    backfillFrom: number
+    status: number
+    encryptedToken: number
+    deltaCursor: number
+    lastSyncAt: number
+    lastErrorMessage: number
+    createdAt: number
+    updatedAt: number
+    deletedAt: number
+    _all: number
+  }
+
+
+  export type MailboxConnectionMinAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    provider?: true
+    mailboxAddress?: true
+    consentMode?: true
+    backfillFrom?: true
+    status?: true
+    encryptedToken?: true
+    deltaCursor?: true
+    lastSyncAt?: true
+    lastErrorMessage?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type MailboxConnectionMaxAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    provider?: true
+    mailboxAddress?: true
+    consentMode?: true
+    backfillFrom?: true
+    status?: true
+    encryptedToken?: true
+    deltaCursor?: true
+    lastSyncAt?: true
+    lastErrorMessage?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type MailboxConnectionCountAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    provider?: true
+    mailboxAddress?: true
+    consentMode?: true
+    scopeFolders?: true
+    backfillFrom?: true
+    status?: true
+    encryptedToken?: true
+    deltaCursor?: true
+    lastSyncAt?: true
+    lastErrorMessage?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+    _all?: true
+  }
+
+  export type MailboxConnectionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MailboxConnection to aggregate.
+     */
+    where?: MailboxConnectionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MailboxConnections to fetch.
+     */
+    orderBy?: MailboxConnectionOrderByWithRelationInput | MailboxConnectionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MailboxConnectionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MailboxConnections from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MailboxConnections.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MailboxConnections
+    **/
+    _count?: true | MailboxConnectionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MailboxConnectionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MailboxConnectionMaxAggregateInputType
+  }
+
+  export type GetMailboxConnectionAggregateType<T extends MailboxConnectionAggregateArgs> = {
+        [P in keyof T & keyof AggregateMailboxConnection]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMailboxConnection[P]>
+      : GetScalarType<T[P], AggregateMailboxConnection[P]>
+  }
+
+
+
+
+  export type MailboxConnectionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MailboxConnectionWhereInput
+    orderBy?: MailboxConnectionOrderByWithAggregationInput | MailboxConnectionOrderByWithAggregationInput[]
+    by: MailboxConnectionScalarFieldEnum[] | MailboxConnectionScalarFieldEnum
+    having?: MailboxConnectionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MailboxConnectionCountAggregateInputType | true
+    _min?: MailboxConnectionMinAggregateInputType
+    _max?: MailboxConnectionMaxAggregateInputType
+  }
+
+  export type MailboxConnectionGroupByOutputType = {
+    id: string
+    workspaceId: string
+    provider: $Enums.MailboxProvider
+    mailboxAddress: string
+    consentMode: $Enums.MailboxConsentMode
+    scopeFolders: string[]
+    backfillFrom: Date | null
+    status: $Enums.MailboxSyncStatus
+    encryptedToken: string | null
+    deltaCursor: string | null
+    lastSyncAt: Date | null
+    lastErrorMessage: string | null
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date | null
+    _count: MailboxConnectionCountAggregateOutputType | null
+    _min: MailboxConnectionMinAggregateOutputType | null
+    _max: MailboxConnectionMaxAggregateOutputType | null
+  }
+
+  type GetMailboxConnectionGroupByPayload<T extends MailboxConnectionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MailboxConnectionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MailboxConnectionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MailboxConnectionGroupByOutputType[P]>
+            : GetScalarType<T[P], MailboxConnectionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MailboxConnectionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    provider?: boolean
+    mailboxAddress?: boolean
+    consentMode?: boolean
+    scopeFolders?: boolean
+    backfillFrom?: boolean
+    status?: boolean
+    encryptedToken?: boolean
+    deltaCursor?: boolean
+    lastSyncAt?: boolean
+    lastErrorMessage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    ingestJobs?: boolean | MailboxConnection$ingestJobsArgs<ExtArgs>
+    _count?: boolean | MailboxConnectionCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mailboxConnection"]>
+
+  export type MailboxConnectionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    provider?: boolean
+    mailboxAddress?: boolean
+    consentMode?: boolean
+    scopeFolders?: boolean
+    backfillFrom?: boolean
+    status?: boolean
+    encryptedToken?: boolean
+    deltaCursor?: boolean
+    lastSyncAt?: boolean
+    lastErrorMessage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mailboxConnection"]>
+
+  export type MailboxConnectionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    provider?: boolean
+    mailboxAddress?: boolean
+    consentMode?: boolean
+    scopeFolders?: boolean
+    backfillFrom?: boolean
+    status?: boolean
+    encryptedToken?: boolean
+    deltaCursor?: boolean
+    lastSyncAt?: boolean
+    lastErrorMessage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mailboxConnection"]>
+
+  export type MailboxConnectionSelectScalar = {
+    id?: boolean
+    workspaceId?: boolean
+    provider?: boolean
+    mailboxAddress?: boolean
+    consentMode?: boolean
+    scopeFolders?: boolean
+    backfillFrom?: boolean
+    status?: boolean
+    encryptedToken?: boolean
+    deltaCursor?: boolean
+    lastSyncAt?: boolean
+    lastErrorMessage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }
+
+  export type MailboxConnectionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "provider" | "mailboxAddress" | "consentMode" | "scopeFolders" | "backfillFrom" | "status" | "encryptedToken" | "deltaCursor" | "lastSyncAt" | "lastErrorMessage" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["mailboxConnection"]>
+  export type MailboxConnectionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    ingestJobs?: boolean | MailboxConnection$ingestJobsArgs<ExtArgs>
+    _count?: boolean | MailboxConnectionCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type MailboxConnectionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+  export type MailboxConnectionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+
+  export type $MailboxConnectionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MailboxConnection"
+    objects: {
+      workspace: Prisma.$WorkspacePayload<ExtArgs>
+      ingestJobs: Prisma.$IngestJobPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workspaceId: string
+      provider: $Enums.MailboxProvider
+      mailboxAddress: string
+      consentMode: $Enums.MailboxConsentMode
+      scopeFolders: string[]
+      backfillFrom: Date | null
+      status: $Enums.MailboxSyncStatus
+      encryptedToken: string | null
+      deltaCursor: string | null
+      lastSyncAt: Date | null
+      lastErrorMessage: string | null
+      createdAt: Date
+      updatedAt: Date
+      deletedAt: Date | null
+    }, ExtArgs["result"]["mailboxConnection"]>
+    composites: {}
+  }
+
+  type MailboxConnectionGetPayload<S extends boolean | null | undefined | MailboxConnectionDefaultArgs> = $Result.GetResult<Prisma.$MailboxConnectionPayload, S>
+
+  type MailboxConnectionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MailboxConnectionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MailboxConnectionCountAggregateInputType | true
+    }
+
+  export interface MailboxConnectionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MailboxConnection'], meta: { name: 'MailboxConnection' } }
+    /**
+     * Find zero or one MailboxConnection that matches the filter.
+     * @param {MailboxConnectionFindUniqueArgs} args - Arguments to find a MailboxConnection
+     * @example
+     * // Get one MailboxConnection
+     * const mailboxConnection = await prisma.mailboxConnection.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MailboxConnectionFindUniqueArgs>(args: SelectSubset<T, MailboxConnectionFindUniqueArgs<ExtArgs>>): Prisma__MailboxConnectionClient<$Result.GetResult<Prisma.$MailboxConnectionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one MailboxConnection that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MailboxConnectionFindUniqueOrThrowArgs} args - Arguments to find a MailboxConnection
+     * @example
+     * // Get one MailboxConnection
+     * const mailboxConnection = await prisma.mailboxConnection.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MailboxConnectionFindUniqueOrThrowArgs>(args: SelectSubset<T, MailboxConnectionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MailboxConnectionClient<$Result.GetResult<Prisma.$MailboxConnectionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MailboxConnection that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MailboxConnectionFindFirstArgs} args - Arguments to find a MailboxConnection
+     * @example
+     * // Get one MailboxConnection
+     * const mailboxConnection = await prisma.mailboxConnection.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MailboxConnectionFindFirstArgs>(args?: SelectSubset<T, MailboxConnectionFindFirstArgs<ExtArgs>>): Prisma__MailboxConnectionClient<$Result.GetResult<Prisma.$MailboxConnectionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MailboxConnection that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MailboxConnectionFindFirstOrThrowArgs} args - Arguments to find a MailboxConnection
+     * @example
+     * // Get one MailboxConnection
+     * const mailboxConnection = await prisma.mailboxConnection.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MailboxConnectionFindFirstOrThrowArgs>(args?: SelectSubset<T, MailboxConnectionFindFirstOrThrowArgs<ExtArgs>>): Prisma__MailboxConnectionClient<$Result.GetResult<Prisma.$MailboxConnectionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MailboxConnections that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MailboxConnectionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MailboxConnections
+     * const mailboxConnections = await prisma.mailboxConnection.findMany()
+     * 
+     * // Get first 10 MailboxConnections
+     * const mailboxConnections = await prisma.mailboxConnection.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const mailboxConnectionWithIdOnly = await prisma.mailboxConnection.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MailboxConnectionFindManyArgs>(args?: SelectSubset<T, MailboxConnectionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MailboxConnectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a MailboxConnection.
+     * @param {MailboxConnectionCreateArgs} args - Arguments to create a MailboxConnection.
+     * @example
+     * // Create one MailboxConnection
+     * const MailboxConnection = await prisma.mailboxConnection.create({
+     *   data: {
+     *     // ... data to create a MailboxConnection
+     *   }
+     * })
+     * 
+     */
+    create<T extends MailboxConnectionCreateArgs>(args: SelectSubset<T, MailboxConnectionCreateArgs<ExtArgs>>): Prisma__MailboxConnectionClient<$Result.GetResult<Prisma.$MailboxConnectionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many MailboxConnections.
+     * @param {MailboxConnectionCreateManyArgs} args - Arguments to create many MailboxConnections.
+     * @example
+     * // Create many MailboxConnections
+     * const mailboxConnection = await prisma.mailboxConnection.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MailboxConnectionCreateManyArgs>(args?: SelectSubset<T, MailboxConnectionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MailboxConnections and returns the data saved in the database.
+     * @param {MailboxConnectionCreateManyAndReturnArgs} args - Arguments to create many MailboxConnections.
+     * @example
+     * // Create many MailboxConnections
+     * const mailboxConnection = await prisma.mailboxConnection.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MailboxConnections and only return the `id`
+     * const mailboxConnectionWithIdOnly = await prisma.mailboxConnection.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MailboxConnectionCreateManyAndReturnArgs>(args?: SelectSubset<T, MailboxConnectionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MailboxConnectionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a MailboxConnection.
+     * @param {MailboxConnectionDeleteArgs} args - Arguments to delete one MailboxConnection.
+     * @example
+     * // Delete one MailboxConnection
+     * const MailboxConnection = await prisma.mailboxConnection.delete({
+     *   where: {
+     *     // ... filter to delete one MailboxConnection
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MailboxConnectionDeleteArgs>(args: SelectSubset<T, MailboxConnectionDeleteArgs<ExtArgs>>): Prisma__MailboxConnectionClient<$Result.GetResult<Prisma.$MailboxConnectionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one MailboxConnection.
+     * @param {MailboxConnectionUpdateArgs} args - Arguments to update one MailboxConnection.
+     * @example
+     * // Update one MailboxConnection
+     * const mailboxConnection = await prisma.mailboxConnection.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MailboxConnectionUpdateArgs>(args: SelectSubset<T, MailboxConnectionUpdateArgs<ExtArgs>>): Prisma__MailboxConnectionClient<$Result.GetResult<Prisma.$MailboxConnectionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more MailboxConnections.
+     * @param {MailboxConnectionDeleteManyArgs} args - Arguments to filter MailboxConnections to delete.
+     * @example
+     * // Delete a few MailboxConnections
+     * const { count } = await prisma.mailboxConnection.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MailboxConnectionDeleteManyArgs>(args?: SelectSubset<T, MailboxConnectionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MailboxConnections.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MailboxConnectionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MailboxConnections
+     * const mailboxConnection = await prisma.mailboxConnection.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MailboxConnectionUpdateManyArgs>(args: SelectSubset<T, MailboxConnectionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MailboxConnections and returns the data updated in the database.
+     * @param {MailboxConnectionUpdateManyAndReturnArgs} args - Arguments to update many MailboxConnections.
+     * @example
+     * // Update many MailboxConnections
+     * const mailboxConnection = await prisma.mailboxConnection.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more MailboxConnections and only return the `id`
+     * const mailboxConnectionWithIdOnly = await prisma.mailboxConnection.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends MailboxConnectionUpdateManyAndReturnArgs>(args: SelectSubset<T, MailboxConnectionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MailboxConnectionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one MailboxConnection.
+     * @param {MailboxConnectionUpsertArgs} args - Arguments to update or create a MailboxConnection.
+     * @example
+     * // Update or create a MailboxConnection
+     * const mailboxConnection = await prisma.mailboxConnection.upsert({
+     *   create: {
+     *     // ... data to create a MailboxConnection
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MailboxConnection we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MailboxConnectionUpsertArgs>(args: SelectSubset<T, MailboxConnectionUpsertArgs<ExtArgs>>): Prisma__MailboxConnectionClient<$Result.GetResult<Prisma.$MailboxConnectionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of MailboxConnections.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MailboxConnectionCountArgs} args - Arguments to filter MailboxConnections to count.
+     * @example
+     * // Count the number of MailboxConnections
+     * const count = await prisma.mailboxConnection.count({
+     *   where: {
+     *     // ... the filter for the MailboxConnections we want to count
+     *   }
+     * })
+    **/
+    count<T extends MailboxConnectionCountArgs>(
+      args?: Subset<T, MailboxConnectionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MailboxConnectionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MailboxConnection.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MailboxConnectionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MailboxConnectionAggregateArgs>(args: Subset<T, MailboxConnectionAggregateArgs>): Prisma.PrismaPromise<GetMailboxConnectionAggregateType<T>>
+
+    /**
+     * Group by MailboxConnection.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MailboxConnectionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MailboxConnectionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MailboxConnectionGroupByArgs['orderBy'] }
+        : { orderBy?: MailboxConnectionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MailboxConnectionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMailboxConnectionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MailboxConnection model
+   */
+  readonly fields: MailboxConnectionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MailboxConnection.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MailboxConnectionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    ingestJobs<T extends MailboxConnection$ingestJobsArgs<ExtArgs> = {}>(args?: Subset<T, MailboxConnection$ingestJobsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IngestJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MailboxConnection model
+   */
+  interface MailboxConnectionFieldRefs {
+    readonly id: FieldRef<"MailboxConnection", 'String'>
+    readonly workspaceId: FieldRef<"MailboxConnection", 'String'>
+    readonly provider: FieldRef<"MailboxConnection", 'MailboxProvider'>
+    readonly mailboxAddress: FieldRef<"MailboxConnection", 'String'>
+    readonly consentMode: FieldRef<"MailboxConnection", 'MailboxConsentMode'>
+    readonly scopeFolders: FieldRef<"MailboxConnection", 'String[]'>
+    readonly backfillFrom: FieldRef<"MailboxConnection", 'DateTime'>
+    readonly status: FieldRef<"MailboxConnection", 'MailboxSyncStatus'>
+    readonly encryptedToken: FieldRef<"MailboxConnection", 'String'>
+    readonly deltaCursor: FieldRef<"MailboxConnection", 'String'>
+    readonly lastSyncAt: FieldRef<"MailboxConnection", 'DateTime'>
+    readonly lastErrorMessage: FieldRef<"MailboxConnection", 'String'>
+    readonly createdAt: FieldRef<"MailboxConnection", 'DateTime'>
+    readonly updatedAt: FieldRef<"MailboxConnection", 'DateTime'>
+    readonly deletedAt: FieldRef<"MailboxConnection", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MailboxConnection findUnique
+   */
+  export type MailboxConnectionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MailboxConnection
+     */
+    select?: MailboxConnectionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MailboxConnection
+     */
+    omit?: MailboxConnectionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MailboxConnectionInclude<ExtArgs> | null
+    /**
+     * Filter, which MailboxConnection to fetch.
+     */
+    where: MailboxConnectionWhereUniqueInput
+  }
+
+  /**
+   * MailboxConnection findUniqueOrThrow
+   */
+  export type MailboxConnectionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MailboxConnection
+     */
+    select?: MailboxConnectionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MailboxConnection
+     */
+    omit?: MailboxConnectionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MailboxConnectionInclude<ExtArgs> | null
+    /**
+     * Filter, which MailboxConnection to fetch.
+     */
+    where: MailboxConnectionWhereUniqueInput
+  }
+
+  /**
+   * MailboxConnection findFirst
+   */
+  export type MailboxConnectionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MailboxConnection
+     */
+    select?: MailboxConnectionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MailboxConnection
+     */
+    omit?: MailboxConnectionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MailboxConnectionInclude<ExtArgs> | null
+    /**
+     * Filter, which MailboxConnection to fetch.
+     */
+    where?: MailboxConnectionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MailboxConnections to fetch.
+     */
+    orderBy?: MailboxConnectionOrderByWithRelationInput | MailboxConnectionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MailboxConnections.
+     */
+    cursor?: MailboxConnectionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MailboxConnections from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MailboxConnections.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MailboxConnections.
+     */
+    distinct?: MailboxConnectionScalarFieldEnum | MailboxConnectionScalarFieldEnum[]
+  }
+
+  /**
+   * MailboxConnection findFirstOrThrow
+   */
+  export type MailboxConnectionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MailboxConnection
+     */
+    select?: MailboxConnectionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MailboxConnection
+     */
+    omit?: MailboxConnectionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MailboxConnectionInclude<ExtArgs> | null
+    /**
+     * Filter, which MailboxConnection to fetch.
+     */
+    where?: MailboxConnectionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MailboxConnections to fetch.
+     */
+    orderBy?: MailboxConnectionOrderByWithRelationInput | MailboxConnectionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MailboxConnections.
+     */
+    cursor?: MailboxConnectionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MailboxConnections from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MailboxConnections.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MailboxConnections.
+     */
+    distinct?: MailboxConnectionScalarFieldEnum | MailboxConnectionScalarFieldEnum[]
+  }
+
+  /**
+   * MailboxConnection findMany
+   */
+  export type MailboxConnectionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MailboxConnection
+     */
+    select?: MailboxConnectionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MailboxConnection
+     */
+    omit?: MailboxConnectionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MailboxConnectionInclude<ExtArgs> | null
+    /**
+     * Filter, which MailboxConnections to fetch.
+     */
+    where?: MailboxConnectionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MailboxConnections to fetch.
+     */
+    orderBy?: MailboxConnectionOrderByWithRelationInput | MailboxConnectionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MailboxConnections.
+     */
+    cursor?: MailboxConnectionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MailboxConnections from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MailboxConnections.
+     */
+    skip?: number
+    distinct?: MailboxConnectionScalarFieldEnum | MailboxConnectionScalarFieldEnum[]
+  }
+
+  /**
+   * MailboxConnection create
+   */
+  export type MailboxConnectionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MailboxConnection
+     */
+    select?: MailboxConnectionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MailboxConnection
+     */
+    omit?: MailboxConnectionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MailboxConnectionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MailboxConnection.
+     */
+    data: XOR<MailboxConnectionCreateInput, MailboxConnectionUncheckedCreateInput>
+  }
+
+  /**
+   * MailboxConnection createMany
+   */
+  export type MailboxConnectionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MailboxConnections.
+     */
+    data: MailboxConnectionCreateManyInput | MailboxConnectionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MailboxConnection createManyAndReturn
+   */
+  export type MailboxConnectionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MailboxConnection
+     */
+    select?: MailboxConnectionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MailboxConnection
+     */
+    omit?: MailboxConnectionOmit<ExtArgs> | null
+    /**
+     * The data used to create many MailboxConnections.
+     */
+    data: MailboxConnectionCreateManyInput | MailboxConnectionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MailboxConnectionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MailboxConnection update
+   */
+  export type MailboxConnectionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MailboxConnection
+     */
+    select?: MailboxConnectionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MailboxConnection
+     */
+    omit?: MailboxConnectionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MailboxConnectionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MailboxConnection.
+     */
+    data: XOR<MailboxConnectionUpdateInput, MailboxConnectionUncheckedUpdateInput>
+    /**
+     * Choose, which MailboxConnection to update.
+     */
+    where: MailboxConnectionWhereUniqueInput
+  }
+
+  /**
+   * MailboxConnection updateMany
+   */
+  export type MailboxConnectionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MailboxConnections.
+     */
+    data: XOR<MailboxConnectionUpdateManyMutationInput, MailboxConnectionUncheckedUpdateManyInput>
+    /**
+     * Filter which MailboxConnections to update
+     */
+    where?: MailboxConnectionWhereInput
+    /**
+     * Limit how many MailboxConnections to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MailboxConnection updateManyAndReturn
+   */
+  export type MailboxConnectionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MailboxConnection
+     */
+    select?: MailboxConnectionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MailboxConnection
+     */
+    omit?: MailboxConnectionOmit<ExtArgs> | null
+    /**
+     * The data used to update MailboxConnections.
+     */
+    data: XOR<MailboxConnectionUpdateManyMutationInput, MailboxConnectionUncheckedUpdateManyInput>
+    /**
+     * Filter which MailboxConnections to update
+     */
+    where?: MailboxConnectionWhereInput
+    /**
+     * Limit how many MailboxConnections to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MailboxConnectionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MailboxConnection upsert
+   */
+  export type MailboxConnectionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MailboxConnection
+     */
+    select?: MailboxConnectionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MailboxConnection
+     */
+    omit?: MailboxConnectionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MailboxConnectionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MailboxConnection to update in case it exists.
+     */
+    where: MailboxConnectionWhereUniqueInput
+    /**
+     * In case the MailboxConnection found by the `where` argument doesn't exist, create a new MailboxConnection with this data.
+     */
+    create: XOR<MailboxConnectionCreateInput, MailboxConnectionUncheckedCreateInput>
+    /**
+     * In case the MailboxConnection was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MailboxConnectionUpdateInput, MailboxConnectionUncheckedUpdateInput>
+  }
+
+  /**
+   * MailboxConnection delete
+   */
+  export type MailboxConnectionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MailboxConnection
+     */
+    select?: MailboxConnectionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MailboxConnection
+     */
+    omit?: MailboxConnectionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MailboxConnectionInclude<ExtArgs> | null
+    /**
+     * Filter which MailboxConnection to delete.
+     */
+    where: MailboxConnectionWhereUniqueInput
+  }
+
+  /**
+   * MailboxConnection deleteMany
+   */
+  export type MailboxConnectionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MailboxConnections to delete
+     */
+    where?: MailboxConnectionWhereInput
+    /**
+     * Limit how many MailboxConnections to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * MailboxConnection.ingestJobs
+   */
+  export type MailboxConnection$ingestJobsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IngestJob
+     */
+    select?: IngestJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IngestJob
+     */
+    omit?: IngestJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IngestJobInclude<ExtArgs> | null
+    where?: IngestJobWhereInput
+    orderBy?: IngestJobOrderByWithRelationInput | IngestJobOrderByWithRelationInput[]
+    cursor?: IngestJobWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: IngestJobScalarFieldEnum | IngestJobScalarFieldEnum[]
+  }
+
+  /**
+   * MailboxConnection without action
+   */
+  export type MailboxConnectionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MailboxConnection
+     */
+    select?: MailboxConnectionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MailboxConnection
+     */
+    omit?: MailboxConnectionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MailboxConnectionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model IngestJob
+   */
+
+  export type AggregateIngestJob = {
+    _count: IngestJobCountAggregateOutputType | null
+    _min: IngestJobMinAggregateOutputType | null
+    _max: IngestJobMaxAggregateOutputType | null
+  }
+
+  export type IngestJobMinAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    connectionId: string | null
+    importFileId: string | null
+    kind: $Enums.IngestJobKind | null
+    status: $Enums.IngestJobStatus | null
+    cursor: string | null
+    errorMessage: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type IngestJobMaxAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    connectionId: string | null
+    importFileId: string | null
+    kind: $Enums.IngestJobKind | null
+    status: $Enums.IngestJobStatus | null
+    cursor: string | null
+    errorMessage: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type IngestJobCountAggregateOutputType = {
+    id: number
+    workspaceId: number
+    connectionId: number
+    importFileId: number
+    kind: number
+    status: number
+    cursor: number
+    stats: number
+    errorMessage: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type IngestJobMinAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    connectionId?: true
+    importFileId?: true
+    kind?: true
+    status?: true
+    cursor?: true
+    errorMessage?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type IngestJobMaxAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    connectionId?: true
+    importFileId?: true
+    kind?: true
+    status?: true
+    cursor?: true
+    errorMessage?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type IngestJobCountAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    connectionId?: true
+    importFileId?: true
+    kind?: true
+    status?: true
+    cursor?: true
+    stats?: true
+    errorMessage?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type IngestJobAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which IngestJob to aggregate.
+     */
+    where?: IngestJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IngestJobs to fetch.
+     */
+    orderBy?: IngestJobOrderByWithRelationInput | IngestJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: IngestJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IngestJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IngestJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned IngestJobs
+    **/
+    _count?: true | IngestJobCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: IngestJobMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: IngestJobMaxAggregateInputType
+  }
+
+  export type GetIngestJobAggregateType<T extends IngestJobAggregateArgs> = {
+        [P in keyof T & keyof AggregateIngestJob]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateIngestJob[P]>
+      : GetScalarType<T[P], AggregateIngestJob[P]>
+  }
+
+
+
+
+  export type IngestJobGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IngestJobWhereInput
+    orderBy?: IngestJobOrderByWithAggregationInput | IngestJobOrderByWithAggregationInput[]
+    by: IngestJobScalarFieldEnum[] | IngestJobScalarFieldEnum
+    having?: IngestJobScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: IngestJobCountAggregateInputType | true
+    _min?: IngestJobMinAggregateInputType
+    _max?: IngestJobMaxAggregateInputType
+  }
+
+  export type IngestJobGroupByOutputType = {
+    id: string
+    workspaceId: string
+    connectionId: string | null
+    importFileId: string | null
+    kind: $Enums.IngestJobKind
+    status: $Enums.IngestJobStatus
+    cursor: string | null
+    stats: JsonValue
+    errorMessage: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: IngestJobCountAggregateOutputType | null
+    _min: IngestJobMinAggregateOutputType | null
+    _max: IngestJobMaxAggregateOutputType | null
+  }
+
+  type GetIngestJobGroupByPayload<T extends IngestJobGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<IngestJobGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof IngestJobGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], IngestJobGroupByOutputType[P]>
+            : GetScalarType<T[P], IngestJobGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type IngestJobSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    connectionId?: boolean
+    importFileId?: boolean
+    kind?: boolean
+    status?: boolean
+    cursor?: boolean
+    stats?: boolean
+    errorMessage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    connection?: boolean | IngestJob$connectionArgs<ExtArgs>
+  }, ExtArgs["result"]["ingestJob"]>
+
+  export type IngestJobSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    connectionId?: boolean
+    importFileId?: boolean
+    kind?: boolean
+    status?: boolean
+    cursor?: boolean
+    stats?: boolean
+    errorMessage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    connection?: boolean | IngestJob$connectionArgs<ExtArgs>
+  }, ExtArgs["result"]["ingestJob"]>
+
+  export type IngestJobSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    connectionId?: boolean
+    importFileId?: boolean
+    kind?: boolean
+    status?: boolean
+    cursor?: boolean
+    stats?: boolean
+    errorMessage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    connection?: boolean | IngestJob$connectionArgs<ExtArgs>
+  }, ExtArgs["result"]["ingestJob"]>
+
+  export type IngestJobSelectScalar = {
+    id?: boolean
+    workspaceId?: boolean
+    connectionId?: boolean
+    importFileId?: boolean
+    kind?: boolean
+    status?: boolean
+    cursor?: boolean
+    stats?: boolean
+    errorMessage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type IngestJobOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "connectionId" | "importFileId" | "kind" | "status" | "cursor" | "stats" | "errorMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["ingestJob"]>
+  export type IngestJobInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    connection?: boolean | IngestJob$connectionArgs<ExtArgs>
+  }
+  export type IngestJobIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    connection?: boolean | IngestJob$connectionArgs<ExtArgs>
+  }
+  export type IngestJobIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    connection?: boolean | IngestJob$connectionArgs<ExtArgs>
+  }
+
+  export type $IngestJobPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "IngestJob"
+    objects: {
+      workspace: Prisma.$WorkspacePayload<ExtArgs>
+      connection: Prisma.$MailboxConnectionPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workspaceId: string
+      connectionId: string | null
+      importFileId: string | null
+      kind: $Enums.IngestJobKind
+      status: $Enums.IngestJobStatus
+      cursor: string | null
+      stats: Prisma.JsonValue
+      errorMessage: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["ingestJob"]>
+    composites: {}
+  }
+
+  type IngestJobGetPayload<S extends boolean | null | undefined | IngestJobDefaultArgs> = $Result.GetResult<Prisma.$IngestJobPayload, S>
+
+  type IngestJobCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<IngestJobFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: IngestJobCountAggregateInputType | true
+    }
+
+  export interface IngestJobDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['IngestJob'], meta: { name: 'IngestJob' } }
+    /**
+     * Find zero or one IngestJob that matches the filter.
+     * @param {IngestJobFindUniqueArgs} args - Arguments to find a IngestJob
+     * @example
+     * // Get one IngestJob
+     * const ingestJob = await prisma.ingestJob.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends IngestJobFindUniqueArgs>(args: SelectSubset<T, IngestJobFindUniqueArgs<ExtArgs>>): Prisma__IngestJobClient<$Result.GetResult<Prisma.$IngestJobPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one IngestJob that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {IngestJobFindUniqueOrThrowArgs} args - Arguments to find a IngestJob
+     * @example
+     * // Get one IngestJob
+     * const ingestJob = await prisma.ingestJob.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends IngestJobFindUniqueOrThrowArgs>(args: SelectSubset<T, IngestJobFindUniqueOrThrowArgs<ExtArgs>>): Prisma__IngestJobClient<$Result.GetResult<Prisma.$IngestJobPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first IngestJob that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IngestJobFindFirstArgs} args - Arguments to find a IngestJob
+     * @example
+     * // Get one IngestJob
+     * const ingestJob = await prisma.ingestJob.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends IngestJobFindFirstArgs>(args?: SelectSubset<T, IngestJobFindFirstArgs<ExtArgs>>): Prisma__IngestJobClient<$Result.GetResult<Prisma.$IngestJobPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first IngestJob that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IngestJobFindFirstOrThrowArgs} args - Arguments to find a IngestJob
+     * @example
+     * // Get one IngestJob
+     * const ingestJob = await prisma.ingestJob.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends IngestJobFindFirstOrThrowArgs>(args?: SelectSubset<T, IngestJobFindFirstOrThrowArgs<ExtArgs>>): Prisma__IngestJobClient<$Result.GetResult<Prisma.$IngestJobPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more IngestJobs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IngestJobFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all IngestJobs
+     * const ingestJobs = await prisma.ingestJob.findMany()
+     * 
+     * // Get first 10 IngestJobs
+     * const ingestJobs = await prisma.ingestJob.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const ingestJobWithIdOnly = await prisma.ingestJob.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends IngestJobFindManyArgs>(args?: SelectSubset<T, IngestJobFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IngestJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a IngestJob.
+     * @param {IngestJobCreateArgs} args - Arguments to create a IngestJob.
+     * @example
+     * // Create one IngestJob
+     * const IngestJob = await prisma.ingestJob.create({
+     *   data: {
+     *     // ... data to create a IngestJob
+     *   }
+     * })
+     * 
+     */
+    create<T extends IngestJobCreateArgs>(args: SelectSubset<T, IngestJobCreateArgs<ExtArgs>>): Prisma__IngestJobClient<$Result.GetResult<Prisma.$IngestJobPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many IngestJobs.
+     * @param {IngestJobCreateManyArgs} args - Arguments to create many IngestJobs.
+     * @example
+     * // Create many IngestJobs
+     * const ingestJob = await prisma.ingestJob.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends IngestJobCreateManyArgs>(args?: SelectSubset<T, IngestJobCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many IngestJobs and returns the data saved in the database.
+     * @param {IngestJobCreateManyAndReturnArgs} args - Arguments to create many IngestJobs.
+     * @example
+     * // Create many IngestJobs
+     * const ingestJob = await prisma.ingestJob.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many IngestJobs and only return the `id`
+     * const ingestJobWithIdOnly = await prisma.ingestJob.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends IngestJobCreateManyAndReturnArgs>(args?: SelectSubset<T, IngestJobCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IngestJobPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a IngestJob.
+     * @param {IngestJobDeleteArgs} args - Arguments to delete one IngestJob.
+     * @example
+     * // Delete one IngestJob
+     * const IngestJob = await prisma.ingestJob.delete({
+     *   where: {
+     *     // ... filter to delete one IngestJob
+     *   }
+     * })
+     * 
+     */
+    delete<T extends IngestJobDeleteArgs>(args: SelectSubset<T, IngestJobDeleteArgs<ExtArgs>>): Prisma__IngestJobClient<$Result.GetResult<Prisma.$IngestJobPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one IngestJob.
+     * @param {IngestJobUpdateArgs} args - Arguments to update one IngestJob.
+     * @example
+     * // Update one IngestJob
+     * const ingestJob = await prisma.ingestJob.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends IngestJobUpdateArgs>(args: SelectSubset<T, IngestJobUpdateArgs<ExtArgs>>): Prisma__IngestJobClient<$Result.GetResult<Prisma.$IngestJobPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more IngestJobs.
+     * @param {IngestJobDeleteManyArgs} args - Arguments to filter IngestJobs to delete.
+     * @example
+     * // Delete a few IngestJobs
+     * const { count } = await prisma.ingestJob.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends IngestJobDeleteManyArgs>(args?: SelectSubset<T, IngestJobDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more IngestJobs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IngestJobUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many IngestJobs
+     * const ingestJob = await prisma.ingestJob.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends IngestJobUpdateManyArgs>(args: SelectSubset<T, IngestJobUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more IngestJobs and returns the data updated in the database.
+     * @param {IngestJobUpdateManyAndReturnArgs} args - Arguments to update many IngestJobs.
+     * @example
+     * // Update many IngestJobs
+     * const ingestJob = await prisma.ingestJob.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more IngestJobs and only return the `id`
+     * const ingestJobWithIdOnly = await prisma.ingestJob.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends IngestJobUpdateManyAndReturnArgs>(args: SelectSubset<T, IngestJobUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IngestJobPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one IngestJob.
+     * @param {IngestJobUpsertArgs} args - Arguments to update or create a IngestJob.
+     * @example
+     * // Update or create a IngestJob
+     * const ingestJob = await prisma.ingestJob.upsert({
+     *   create: {
+     *     // ... data to create a IngestJob
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the IngestJob we want to update
+     *   }
+     * })
+     */
+    upsert<T extends IngestJobUpsertArgs>(args: SelectSubset<T, IngestJobUpsertArgs<ExtArgs>>): Prisma__IngestJobClient<$Result.GetResult<Prisma.$IngestJobPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of IngestJobs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IngestJobCountArgs} args - Arguments to filter IngestJobs to count.
+     * @example
+     * // Count the number of IngestJobs
+     * const count = await prisma.ingestJob.count({
+     *   where: {
+     *     // ... the filter for the IngestJobs we want to count
+     *   }
+     * })
+    **/
+    count<T extends IngestJobCountArgs>(
+      args?: Subset<T, IngestJobCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], IngestJobCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a IngestJob.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IngestJobAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends IngestJobAggregateArgs>(args: Subset<T, IngestJobAggregateArgs>): Prisma.PrismaPromise<GetIngestJobAggregateType<T>>
+
+    /**
+     * Group by IngestJob.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IngestJobGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends IngestJobGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: IngestJobGroupByArgs['orderBy'] }
+        : { orderBy?: IngestJobGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, IngestJobGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetIngestJobGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the IngestJob model
+   */
+  readonly fields: IngestJobFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for IngestJob.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__IngestJobClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    connection<T extends IngestJob$connectionArgs<ExtArgs> = {}>(args?: Subset<T, IngestJob$connectionArgs<ExtArgs>>): Prisma__MailboxConnectionClient<$Result.GetResult<Prisma.$MailboxConnectionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the IngestJob model
+   */
+  interface IngestJobFieldRefs {
+    readonly id: FieldRef<"IngestJob", 'String'>
+    readonly workspaceId: FieldRef<"IngestJob", 'String'>
+    readonly connectionId: FieldRef<"IngestJob", 'String'>
+    readonly importFileId: FieldRef<"IngestJob", 'String'>
+    readonly kind: FieldRef<"IngestJob", 'IngestJobKind'>
+    readonly status: FieldRef<"IngestJob", 'IngestJobStatus'>
+    readonly cursor: FieldRef<"IngestJob", 'String'>
+    readonly stats: FieldRef<"IngestJob", 'Json'>
+    readonly errorMessage: FieldRef<"IngestJob", 'String'>
+    readonly createdAt: FieldRef<"IngestJob", 'DateTime'>
+    readonly updatedAt: FieldRef<"IngestJob", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * IngestJob findUnique
+   */
+  export type IngestJobFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IngestJob
+     */
+    select?: IngestJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IngestJob
+     */
+    omit?: IngestJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IngestJobInclude<ExtArgs> | null
+    /**
+     * Filter, which IngestJob to fetch.
+     */
+    where: IngestJobWhereUniqueInput
+  }
+
+  /**
+   * IngestJob findUniqueOrThrow
+   */
+  export type IngestJobFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IngestJob
+     */
+    select?: IngestJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IngestJob
+     */
+    omit?: IngestJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IngestJobInclude<ExtArgs> | null
+    /**
+     * Filter, which IngestJob to fetch.
+     */
+    where: IngestJobWhereUniqueInput
+  }
+
+  /**
+   * IngestJob findFirst
+   */
+  export type IngestJobFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IngestJob
+     */
+    select?: IngestJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IngestJob
+     */
+    omit?: IngestJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IngestJobInclude<ExtArgs> | null
+    /**
+     * Filter, which IngestJob to fetch.
+     */
+    where?: IngestJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IngestJobs to fetch.
+     */
+    orderBy?: IngestJobOrderByWithRelationInput | IngestJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for IngestJobs.
+     */
+    cursor?: IngestJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IngestJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IngestJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IngestJobs.
+     */
+    distinct?: IngestJobScalarFieldEnum | IngestJobScalarFieldEnum[]
+  }
+
+  /**
+   * IngestJob findFirstOrThrow
+   */
+  export type IngestJobFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IngestJob
+     */
+    select?: IngestJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IngestJob
+     */
+    omit?: IngestJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IngestJobInclude<ExtArgs> | null
+    /**
+     * Filter, which IngestJob to fetch.
+     */
+    where?: IngestJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IngestJobs to fetch.
+     */
+    orderBy?: IngestJobOrderByWithRelationInput | IngestJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for IngestJobs.
+     */
+    cursor?: IngestJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IngestJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IngestJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IngestJobs.
+     */
+    distinct?: IngestJobScalarFieldEnum | IngestJobScalarFieldEnum[]
+  }
+
+  /**
+   * IngestJob findMany
+   */
+  export type IngestJobFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IngestJob
+     */
+    select?: IngestJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IngestJob
+     */
+    omit?: IngestJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IngestJobInclude<ExtArgs> | null
+    /**
+     * Filter, which IngestJobs to fetch.
+     */
+    where?: IngestJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IngestJobs to fetch.
+     */
+    orderBy?: IngestJobOrderByWithRelationInput | IngestJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing IngestJobs.
+     */
+    cursor?: IngestJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IngestJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IngestJobs.
+     */
+    skip?: number
+    distinct?: IngestJobScalarFieldEnum | IngestJobScalarFieldEnum[]
+  }
+
+  /**
+   * IngestJob create
+   */
+  export type IngestJobCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IngestJob
+     */
+    select?: IngestJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IngestJob
+     */
+    omit?: IngestJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IngestJobInclude<ExtArgs> | null
+    /**
+     * The data needed to create a IngestJob.
+     */
+    data: XOR<IngestJobCreateInput, IngestJobUncheckedCreateInput>
+  }
+
+  /**
+   * IngestJob createMany
+   */
+  export type IngestJobCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many IngestJobs.
+     */
+    data: IngestJobCreateManyInput | IngestJobCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * IngestJob createManyAndReturn
+   */
+  export type IngestJobCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IngestJob
+     */
+    select?: IngestJobSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the IngestJob
+     */
+    omit?: IngestJobOmit<ExtArgs> | null
+    /**
+     * The data used to create many IngestJobs.
+     */
+    data: IngestJobCreateManyInput | IngestJobCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IngestJobIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * IngestJob update
+   */
+  export type IngestJobUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IngestJob
+     */
+    select?: IngestJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IngestJob
+     */
+    omit?: IngestJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IngestJobInclude<ExtArgs> | null
+    /**
+     * The data needed to update a IngestJob.
+     */
+    data: XOR<IngestJobUpdateInput, IngestJobUncheckedUpdateInput>
+    /**
+     * Choose, which IngestJob to update.
+     */
+    where: IngestJobWhereUniqueInput
+  }
+
+  /**
+   * IngestJob updateMany
+   */
+  export type IngestJobUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update IngestJobs.
+     */
+    data: XOR<IngestJobUpdateManyMutationInput, IngestJobUncheckedUpdateManyInput>
+    /**
+     * Filter which IngestJobs to update
+     */
+    where?: IngestJobWhereInput
+    /**
+     * Limit how many IngestJobs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * IngestJob updateManyAndReturn
+   */
+  export type IngestJobUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IngestJob
+     */
+    select?: IngestJobSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the IngestJob
+     */
+    omit?: IngestJobOmit<ExtArgs> | null
+    /**
+     * The data used to update IngestJobs.
+     */
+    data: XOR<IngestJobUpdateManyMutationInput, IngestJobUncheckedUpdateManyInput>
+    /**
+     * Filter which IngestJobs to update
+     */
+    where?: IngestJobWhereInput
+    /**
+     * Limit how many IngestJobs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IngestJobIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * IngestJob upsert
+   */
+  export type IngestJobUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IngestJob
+     */
+    select?: IngestJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IngestJob
+     */
+    omit?: IngestJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IngestJobInclude<ExtArgs> | null
+    /**
+     * The filter to search for the IngestJob to update in case it exists.
+     */
+    where: IngestJobWhereUniqueInput
+    /**
+     * In case the IngestJob found by the `where` argument doesn't exist, create a new IngestJob with this data.
+     */
+    create: XOR<IngestJobCreateInput, IngestJobUncheckedCreateInput>
+    /**
+     * In case the IngestJob was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<IngestJobUpdateInput, IngestJobUncheckedUpdateInput>
+  }
+
+  /**
+   * IngestJob delete
+   */
+  export type IngestJobDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IngestJob
+     */
+    select?: IngestJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IngestJob
+     */
+    omit?: IngestJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IngestJobInclude<ExtArgs> | null
+    /**
+     * Filter which IngestJob to delete.
+     */
+    where: IngestJobWhereUniqueInput
+  }
+
+  /**
+   * IngestJob deleteMany
+   */
+  export type IngestJobDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which IngestJobs to delete
+     */
+    where?: IngestJobWhereInput
+    /**
+     * Limit how many IngestJobs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * IngestJob.connection
+   */
+  export type IngestJob$connectionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MailboxConnection
+     */
+    select?: MailboxConnectionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MailboxConnection
+     */
+    omit?: MailboxConnectionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MailboxConnectionInclude<ExtArgs> | null
+    where?: MailboxConnectionWhereInput
+  }
+
+  /**
+   * IngestJob without action
+   */
+  export type IngestJobDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IngestJob
+     */
+    select?: IngestJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IngestJob
+     */
+    omit?: IngestJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IngestJobInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model EmailTriageItem
+   */
+
+  export type AggregateEmailTriageItem = {
+    _count: EmailTriageItemCountAggregateOutputType | null
+    _min: EmailTriageItemMinAggregateOutputType | null
+    _max: EmailTriageItemMaxAggregateOutputType | null
+  }
+
+  export type EmailTriageItemMinAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    address: string | null
+    status: $Enums.EmailTriageStatus | null
+    userId: string | null
+    clientId: string | null
+    resolvedBy: string | null
+    resolvedAt: Date | null
+    notes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type EmailTriageItemMaxAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    address: string | null
+    status: $Enums.EmailTriageStatus | null
+    userId: string | null
+    clientId: string | null
+    resolvedBy: string | null
+    resolvedAt: Date | null
+    notes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type EmailTriageItemCountAggregateOutputType = {
+    id: number
+    workspaceId: number
+    address: number
+    status: number
+    userId: number
+    clientId: number
+    resolvedBy: number
+    resolvedAt: number
+    notes: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type EmailTriageItemMinAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    address?: true
+    status?: true
+    userId?: true
+    clientId?: true
+    resolvedBy?: true
+    resolvedAt?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type EmailTriageItemMaxAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    address?: true
+    status?: true
+    userId?: true
+    clientId?: true
+    resolvedBy?: true
+    resolvedAt?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type EmailTriageItemCountAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    address?: true
+    status?: true
+    userId?: true
+    clientId?: true
+    resolvedBy?: true
+    resolvedAt?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type EmailTriageItemAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EmailTriageItem to aggregate.
+     */
+    where?: EmailTriageItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmailTriageItems to fetch.
+     */
+    orderBy?: EmailTriageItemOrderByWithRelationInput | EmailTriageItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EmailTriageItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmailTriageItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmailTriageItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned EmailTriageItems
+    **/
+    _count?: true | EmailTriageItemCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EmailTriageItemMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EmailTriageItemMaxAggregateInputType
+  }
+
+  export type GetEmailTriageItemAggregateType<T extends EmailTriageItemAggregateArgs> = {
+        [P in keyof T & keyof AggregateEmailTriageItem]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEmailTriageItem[P]>
+      : GetScalarType<T[P], AggregateEmailTriageItem[P]>
+  }
+
+
+
+
+  export type EmailTriageItemGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EmailTriageItemWhereInput
+    orderBy?: EmailTriageItemOrderByWithAggregationInput | EmailTriageItemOrderByWithAggregationInput[]
+    by: EmailTriageItemScalarFieldEnum[] | EmailTriageItemScalarFieldEnum
+    having?: EmailTriageItemScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EmailTriageItemCountAggregateInputType | true
+    _min?: EmailTriageItemMinAggregateInputType
+    _max?: EmailTriageItemMaxAggregateInputType
+  }
+
+  export type EmailTriageItemGroupByOutputType = {
+    id: string
+    workspaceId: string
+    address: string
+    status: $Enums.EmailTriageStatus
+    userId: string | null
+    clientId: string | null
+    resolvedBy: string | null
+    resolvedAt: Date | null
+    notes: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: EmailTriageItemCountAggregateOutputType | null
+    _min: EmailTriageItemMinAggregateOutputType | null
+    _max: EmailTriageItemMaxAggregateOutputType | null
+  }
+
+  type GetEmailTriageItemGroupByPayload<T extends EmailTriageItemGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EmailTriageItemGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EmailTriageItemGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EmailTriageItemGroupByOutputType[P]>
+            : GetScalarType<T[P], EmailTriageItemGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EmailTriageItemSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    address?: boolean
+    status?: boolean
+    userId?: boolean
+    clientId?: boolean
+    resolvedBy?: boolean
+    resolvedAt?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["emailTriageItem"]>
+
+  export type EmailTriageItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    address?: boolean
+    status?: boolean
+    userId?: boolean
+    clientId?: boolean
+    resolvedBy?: boolean
+    resolvedAt?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["emailTriageItem"]>
+
+  export type EmailTriageItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    address?: boolean
+    status?: boolean
+    userId?: boolean
+    clientId?: boolean
+    resolvedBy?: boolean
+    resolvedAt?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["emailTriageItem"]>
+
+  export type EmailTriageItemSelectScalar = {
+    id?: boolean
+    workspaceId?: boolean
+    address?: boolean
+    status?: boolean
+    userId?: boolean
+    clientId?: boolean
+    resolvedBy?: boolean
+    resolvedAt?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type EmailTriageItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "address" | "status" | "userId" | "clientId" | "resolvedBy" | "resolvedAt" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["emailTriageItem"]>
+  export type EmailTriageItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+  export type EmailTriageItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+  export type EmailTriageItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+
+  export type $EmailTriageItemPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "EmailTriageItem"
+    objects: {
+      workspace: Prisma.$WorkspacePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workspaceId: string
+      address: string
+      status: $Enums.EmailTriageStatus
+      userId: string | null
+      clientId: string | null
+      resolvedBy: string | null
+      resolvedAt: Date | null
+      notes: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["emailTriageItem"]>
+    composites: {}
+  }
+
+  type EmailTriageItemGetPayload<S extends boolean | null | undefined | EmailTriageItemDefaultArgs> = $Result.GetResult<Prisma.$EmailTriageItemPayload, S>
+
+  type EmailTriageItemCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EmailTriageItemFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EmailTriageItemCountAggregateInputType | true
+    }
+
+  export interface EmailTriageItemDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['EmailTriageItem'], meta: { name: 'EmailTriageItem' } }
+    /**
+     * Find zero or one EmailTriageItem that matches the filter.
+     * @param {EmailTriageItemFindUniqueArgs} args - Arguments to find a EmailTriageItem
+     * @example
+     * // Get one EmailTriageItem
+     * const emailTriageItem = await prisma.emailTriageItem.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EmailTriageItemFindUniqueArgs>(args: SelectSubset<T, EmailTriageItemFindUniqueArgs<ExtArgs>>): Prisma__EmailTriageItemClient<$Result.GetResult<Prisma.$EmailTriageItemPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one EmailTriageItem that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EmailTriageItemFindUniqueOrThrowArgs} args - Arguments to find a EmailTriageItem
+     * @example
+     * // Get one EmailTriageItem
+     * const emailTriageItem = await prisma.emailTriageItem.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EmailTriageItemFindUniqueOrThrowArgs>(args: SelectSubset<T, EmailTriageItemFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EmailTriageItemClient<$Result.GetResult<Prisma.$EmailTriageItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EmailTriageItem that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailTriageItemFindFirstArgs} args - Arguments to find a EmailTriageItem
+     * @example
+     * // Get one EmailTriageItem
+     * const emailTriageItem = await prisma.emailTriageItem.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EmailTriageItemFindFirstArgs>(args?: SelectSubset<T, EmailTriageItemFindFirstArgs<ExtArgs>>): Prisma__EmailTriageItemClient<$Result.GetResult<Prisma.$EmailTriageItemPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EmailTriageItem that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailTriageItemFindFirstOrThrowArgs} args - Arguments to find a EmailTriageItem
+     * @example
+     * // Get one EmailTriageItem
+     * const emailTriageItem = await prisma.emailTriageItem.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EmailTriageItemFindFirstOrThrowArgs>(args?: SelectSubset<T, EmailTriageItemFindFirstOrThrowArgs<ExtArgs>>): Prisma__EmailTriageItemClient<$Result.GetResult<Prisma.$EmailTriageItemPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more EmailTriageItems that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailTriageItemFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all EmailTriageItems
+     * const emailTriageItems = await prisma.emailTriageItem.findMany()
+     * 
+     * // Get first 10 EmailTriageItems
+     * const emailTriageItems = await prisma.emailTriageItem.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const emailTriageItemWithIdOnly = await prisma.emailTriageItem.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EmailTriageItemFindManyArgs>(args?: SelectSubset<T, EmailTriageItemFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailTriageItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a EmailTriageItem.
+     * @param {EmailTriageItemCreateArgs} args - Arguments to create a EmailTriageItem.
+     * @example
+     * // Create one EmailTriageItem
+     * const EmailTriageItem = await prisma.emailTriageItem.create({
+     *   data: {
+     *     // ... data to create a EmailTriageItem
+     *   }
+     * })
+     * 
+     */
+    create<T extends EmailTriageItemCreateArgs>(args: SelectSubset<T, EmailTriageItemCreateArgs<ExtArgs>>): Prisma__EmailTriageItemClient<$Result.GetResult<Prisma.$EmailTriageItemPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many EmailTriageItems.
+     * @param {EmailTriageItemCreateManyArgs} args - Arguments to create many EmailTriageItems.
+     * @example
+     * // Create many EmailTriageItems
+     * const emailTriageItem = await prisma.emailTriageItem.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends EmailTriageItemCreateManyArgs>(args?: SelectSubset<T, EmailTriageItemCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many EmailTriageItems and returns the data saved in the database.
+     * @param {EmailTriageItemCreateManyAndReturnArgs} args - Arguments to create many EmailTriageItems.
+     * @example
+     * // Create many EmailTriageItems
+     * const emailTriageItem = await prisma.emailTriageItem.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many EmailTriageItems and only return the `id`
+     * const emailTriageItemWithIdOnly = await prisma.emailTriageItem.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends EmailTriageItemCreateManyAndReturnArgs>(args?: SelectSubset<T, EmailTriageItemCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailTriageItemPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a EmailTriageItem.
+     * @param {EmailTriageItemDeleteArgs} args - Arguments to delete one EmailTriageItem.
+     * @example
+     * // Delete one EmailTriageItem
+     * const EmailTriageItem = await prisma.emailTriageItem.delete({
+     *   where: {
+     *     // ... filter to delete one EmailTriageItem
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EmailTriageItemDeleteArgs>(args: SelectSubset<T, EmailTriageItemDeleteArgs<ExtArgs>>): Prisma__EmailTriageItemClient<$Result.GetResult<Prisma.$EmailTriageItemPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one EmailTriageItem.
+     * @param {EmailTriageItemUpdateArgs} args - Arguments to update one EmailTriageItem.
+     * @example
+     * // Update one EmailTriageItem
+     * const emailTriageItem = await prisma.emailTriageItem.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EmailTriageItemUpdateArgs>(args: SelectSubset<T, EmailTriageItemUpdateArgs<ExtArgs>>): Prisma__EmailTriageItemClient<$Result.GetResult<Prisma.$EmailTriageItemPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more EmailTriageItems.
+     * @param {EmailTriageItemDeleteManyArgs} args - Arguments to filter EmailTriageItems to delete.
+     * @example
+     * // Delete a few EmailTriageItems
+     * const { count } = await prisma.emailTriageItem.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EmailTriageItemDeleteManyArgs>(args?: SelectSubset<T, EmailTriageItemDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EmailTriageItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailTriageItemUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many EmailTriageItems
+     * const emailTriageItem = await prisma.emailTriageItem.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EmailTriageItemUpdateManyArgs>(args: SelectSubset<T, EmailTriageItemUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EmailTriageItems and returns the data updated in the database.
+     * @param {EmailTriageItemUpdateManyAndReturnArgs} args - Arguments to update many EmailTriageItems.
+     * @example
+     * // Update many EmailTriageItems
+     * const emailTriageItem = await prisma.emailTriageItem.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more EmailTriageItems and only return the `id`
+     * const emailTriageItemWithIdOnly = await prisma.emailTriageItem.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EmailTriageItemUpdateManyAndReturnArgs>(args: SelectSubset<T, EmailTriageItemUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailTriageItemPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one EmailTriageItem.
+     * @param {EmailTriageItemUpsertArgs} args - Arguments to update or create a EmailTriageItem.
+     * @example
+     * // Update or create a EmailTriageItem
+     * const emailTriageItem = await prisma.emailTriageItem.upsert({
+     *   create: {
+     *     // ... data to create a EmailTriageItem
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the EmailTriageItem we want to update
+     *   }
+     * })
+     */
+    upsert<T extends EmailTriageItemUpsertArgs>(args: SelectSubset<T, EmailTriageItemUpsertArgs<ExtArgs>>): Prisma__EmailTriageItemClient<$Result.GetResult<Prisma.$EmailTriageItemPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of EmailTriageItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailTriageItemCountArgs} args - Arguments to filter EmailTriageItems to count.
+     * @example
+     * // Count the number of EmailTriageItems
+     * const count = await prisma.emailTriageItem.count({
+     *   where: {
+     *     // ... the filter for the EmailTriageItems we want to count
+     *   }
+     * })
+    **/
+    count<T extends EmailTriageItemCountArgs>(
+      args?: Subset<T, EmailTriageItemCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EmailTriageItemCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a EmailTriageItem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailTriageItemAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EmailTriageItemAggregateArgs>(args: Subset<T, EmailTriageItemAggregateArgs>): Prisma.PrismaPromise<GetEmailTriageItemAggregateType<T>>
+
+    /**
+     * Group by EmailTriageItem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailTriageItemGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EmailTriageItemGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EmailTriageItemGroupByArgs['orderBy'] }
+        : { orderBy?: EmailTriageItemGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EmailTriageItemGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEmailTriageItemGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the EmailTriageItem model
+   */
+  readonly fields: EmailTriageItemFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for EmailTriageItem.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EmailTriageItemClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the EmailTriageItem model
+   */
+  interface EmailTriageItemFieldRefs {
+    readonly id: FieldRef<"EmailTriageItem", 'String'>
+    readonly workspaceId: FieldRef<"EmailTriageItem", 'String'>
+    readonly address: FieldRef<"EmailTriageItem", 'String'>
+    readonly status: FieldRef<"EmailTriageItem", 'EmailTriageStatus'>
+    readonly userId: FieldRef<"EmailTriageItem", 'String'>
+    readonly clientId: FieldRef<"EmailTriageItem", 'String'>
+    readonly resolvedBy: FieldRef<"EmailTriageItem", 'String'>
+    readonly resolvedAt: FieldRef<"EmailTriageItem", 'DateTime'>
+    readonly notes: FieldRef<"EmailTriageItem", 'String'>
+    readonly createdAt: FieldRef<"EmailTriageItem", 'DateTime'>
+    readonly updatedAt: FieldRef<"EmailTriageItem", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * EmailTriageItem findUnique
+   */
+  export type EmailTriageItemFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailTriageItem
+     */
+    select?: EmailTriageItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailTriageItem
+     */
+    omit?: EmailTriageItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailTriageItemInclude<ExtArgs> | null
+    /**
+     * Filter, which EmailTriageItem to fetch.
+     */
+    where: EmailTriageItemWhereUniqueInput
+  }
+
+  /**
+   * EmailTriageItem findUniqueOrThrow
+   */
+  export type EmailTriageItemFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailTriageItem
+     */
+    select?: EmailTriageItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailTriageItem
+     */
+    omit?: EmailTriageItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailTriageItemInclude<ExtArgs> | null
+    /**
+     * Filter, which EmailTriageItem to fetch.
+     */
+    where: EmailTriageItemWhereUniqueInput
+  }
+
+  /**
+   * EmailTriageItem findFirst
+   */
+  export type EmailTriageItemFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailTriageItem
+     */
+    select?: EmailTriageItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailTriageItem
+     */
+    omit?: EmailTriageItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailTriageItemInclude<ExtArgs> | null
+    /**
+     * Filter, which EmailTriageItem to fetch.
+     */
+    where?: EmailTriageItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmailTriageItems to fetch.
+     */
+    orderBy?: EmailTriageItemOrderByWithRelationInput | EmailTriageItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EmailTriageItems.
+     */
+    cursor?: EmailTriageItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmailTriageItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmailTriageItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EmailTriageItems.
+     */
+    distinct?: EmailTriageItemScalarFieldEnum | EmailTriageItemScalarFieldEnum[]
+  }
+
+  /**
+   * EmailTriageItem findFirstOrThrow
+   */
+  export type EmailTriageItemFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailTriageItem
+     */
+    select?: EmailTriageItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailTriageItem
+     */
+    omit?: EmailTriageItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailTriageItemInclude<ExtArgs> | null
+    /**
+     * Filter, which EmailTriageItem to fetch.
+     */
+    where?: EmailTriageItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmailTriageItems to fetch.
+     */
+    orderBy?: EmailTriageItemOrderByWithRelationInput | EmailTriageItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EmailTriageItems.
+     */
+    cursor?: EmailTriageItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmailTriageItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmailTriageItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EmailTriageItems.
+     */
+    distinct?: EmailTriageItemScalarFieldEnum | EmailTriageItemScalarFieldEnum[]
+  }
+
+  /**
+   * EmailTriageItem findMany
+   */
+  export type EmailTriageItemFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailTriageItem
+     */
+    select?: EmailTriageItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailTriageItem
+     */
+    omit?: EmailTriageItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailTriageItemInclude<ExtArgs> | null
+    /**
+     * Filter, which EmailTriageItems to fetch.
+     */
+    where?: EmailTriageItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmailTriageItems to fetch.
+     */
+    orderBy?: EmailTriageItemOrderByWithRelationInput | EmailTriageItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing EmailTriageItems.
+     */
+    cursor?: EmailTriageItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmailTriageItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmailTriageItems.
+     */
+    skip?: number
+    distinct?: EmailTriageItemScalarFieldEnum | EmailTriageItemScalarFieldEnum[]
+  }
+
+  /**
+   * EmailTriageItem create
+   */
+  export type EmailTriageItemCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailTriageItem
+     */
+    select?: EmailTriageItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailTriageItem
+     */
+    omit?: EmailTriageItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailTriageItemInclude<ExtArgs> | null
+    /**
+     * The data needed to create a EmailTriageItem.
+     */
+    data: XOR<EmailTriageItemCreateInput, EmailTriageItemUncheckedCreateInput>
+  }
+
+  /**
+   * EmailTriageItem createMany
+   */
+  export type EmailTriageItemCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many EmailTriageItems.
+     */
+    data: EmailTriageItemCreateManyInput | EmailTriageItemCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * EmailTriageItem createManyAndReturn
+   */
+  export type EmailTriageItemCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailTriageItem
+     */
+    select?: EmailTriageItemSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailTriageItem
+     */
+    omit?: EmailTriageItemOmit<ExtArgs> | null
+    /**
+     * The data used to create many EmailTriageItems.
+     */
+    data: EmailTriageItemCreateManyInput | EmailTriageItemCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailTriageItemIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EmailTriageItem update
+   */
+  export type EmailTriageItemUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailTriageItem
+     */
+    select?: EmailTriageItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailTriageItem
+     */
+    omit?: EmailTriageItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailTriageItemInclude<ExtArgs> | null
+    /**
+     * The data needed to update a EmailTriageItem.
+     */
+    data: XOR<EmailTriageItemUpdateInput, EmailTriageItemUncheckedUpdateInput>
+    /**
+     * Choose, which EmailTriageItem to update.
+     */
+    where: EmailTriageItemWhereUniqueInput
+  }
+
+  /**
+   * EmailTriageItem updateMany
+   */
+  export type EmailTriageItemUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update EmailTriageItems.
+     */
+    data: XOR<EmailTriageItemUpdateManyMutationInput, EmailTriageItemUncheckedUpdateManyInput>
+    /**
+     * Filter which EmailTriageItems to update
+     */
+    where?: EmailTriageItemWhereInput
+    /**
+     * Limit how many EmailTriageItems to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * EmailTriageItem updateManyAndReturn
+   */
+  export type EmailTriageItemUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailTriageItem
+     */
+    select?: EmailTriageItemSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailTriageItem
+     */
+    omit?: EmailTriageItemOmit<ExtArgs> | null
+    /**
+     * The data used to update EmailTriageItems.
+     */
+    data: XOR<EmailTriageItemUpdateManyMutationInput, EmailTriageItemUncheckedUpdateManyInput>
+    /**
+     * Filter which EmailTriageItems to update
+     */
+    where?: EmailTriageItemWhereInput
+    /**
+     * Limit how many EmailTriageItems to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailTriageItemIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EmailTriageItem upsert
+   */
+  export type EmailTriageItemUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailTriageItem
+     */
+    select?: EmailTriageItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailTriageItem
+     */
+    omit?: EmailTriageItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailTriageItemInclude<ExtArgs> | null
+    /**
+     * The filter to search for the EmailTriageItem to update in case it exists.
+     */
+    where: EmailTriageItemWhereUniqueInput
+    /**
+     * In case the EmailTriageItem found by the `where` argument doesn't exist, create a new EmailTriageItem with this data.
+     */
+    create: XOR<EmailTriageItemCreateInput, EmailTriageItemUncheckedCreateInput>
+    /**
+     * In case the EmailTriageItem was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EmailTriageItemUpdateInput, EmailTriageItemUncheckedUpdateInput>
+  }
+
+  /**
+   * EmailTriageItem delete
+   */
+  export type EmailTriageItemDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailTriageItem
+     */
+    select?: EmailTriageItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailTriageItem
+     */
+    omit?: EmailTriageItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailTriageItemInclude<ExtArgs> | null
+    /**
+     * Filter which EmailTriageItem to delete.
+     */
+    where: EmailTriageItemWhereUniqueInput
+  }
+
+  /**
+   * EmailTriageItem deleteMany
+   */
+  export type EmailTriageItemDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EmailTriageItems to delete
+     */
+    where?: EmailTriageItemWhereInput
+    /**
+     * Limit how many EmailTriageItems to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * EmailTriageItem without action
+   */
+  export type EmailTriageItemDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailTriageItem
+     */
+    select?: EmailTriageItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailTriageItem
+     */
+    omit?: EmailTriageItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmailTriageItemInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Lead
    */
 
@@ -31423,6 +44679,178 @@ export namespace Prisma {
   export type FirmProfileVersionScalarFieldEnum = (typeof FirmProfileVersionScalarFieldEnum)[keyof typeof FirmProfileVersionScalarFieldEnum]
 
 
+  export const ClientScalarFieldEnum: {
+    id: 'id',
+    workspaceId: 'workspaceId',
+    name: 'name',
+    zohoId: 'zohoId',
+    status: 'status',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    deletedAt: 'deletedAt'
+  };
+
+  export type ClientScalarFieldEnum = (typeof ClientScalarFieldEnum)[keyof typeof ClientScalarFieldEnum]
+
+
+  export const EmailAliasScalarFieldEnum: {
+    id: 'id',
+    workspaceId: 'workspaceId',
+    address: 'address',
+    userId: 'userId',
+    clientId: 'clientId',
+    verified: 'verified',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    deletedAt: 'deletedAt'
+  };
+
+  export type EmailAliasScalarFieldEnum = (typeof EmailAliasScalarFieldEnum)[keyof typeof EmailAliasScalarFieldEnum]
+
+
+  export const EvidenceItemScalarFieldEnum: {
+    id: 'id',
+    workspaceId: 'workspaceId',
+    clientId: 'clientId',
+    createdById: 'createdById',
+    sourceType: 'sourceType',
+    title: 'title',
+    occurredAt: 'occurredAt',
+    ingestedAt: 'ingestedAt',
+    contentSha256: 'contentSha256',
+    storageUri: 'storageUri',
+    retentionRuleId: 'retentionRuleId',
+    destructionEligibleAt: 'destructionEligibleAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    deletedAt: 'deletedAt'
+  };
+
+  export type EvidenceItemScalarFieldEnum = (typeof EvidenceItemScalarFieldEnum)[keyof typeof EvidenceItemScalarFieldEnum]
+
+
+  export const EvidenceTagScalarFieldEnum: {
+    id: 'id',
+    itemId: 'itemId',
+    category: 'category',
+    addedBy: 'addedBy',
+    addedAt: 'addedAt',
+    removedAt: 'removedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type EvidenceTagScalarFieldEnum = (typeof EvidenceTagScalarFieldEnum)[keyof typeof EvidenceTagScalarFieldEnum]
+
+
+  export const CommunicationThreadScalarFieldEnum: {
+    id: 'id',
+    workspaceId: 'workspaceId',
+    channel: 'channel',
+    externalThreadId: 'externalThreadId',
+    subject: 'subject',
+    participants: 'participants',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    deletedAt: 'deletedAt'
+  };
+
+  export type CommunicationThreadScalarFieldEnum = (typeof CommunicationThreadScalarFieldEnum)[keyof typeof CommunicationThreadScalarFieldEnum]
+
+
+  export const CommunicationScalarFieldEnum: {
+    id: 'id',
+    threadId: 'threadId',
+    evidenceItemId: 'evidenceItemId',
+    direction: 'direction',
+    sentAt: 'sentAt',
+    fromAddress: 'fromAddress',
+    toAddresses: 'toAddresses',
+    ccAddresses: 'ccAddresses',
+    internetMessageId: 'internetMessageId',
+    bodyText: 'bodyText',
+    bodyHtml: 'bodyHtml',
+    inReplyTo: 'inReplyTo',
+    referencesHeader: 'referencesHeader',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    deletedAt: 'deletedAt'
+  };
+
+  export type CommunicationScalarFieldEnum = (typeof CommunicationScalarFieldEnum)[keyof typeof CommunicationScalarFieldEnum]
+
+
+  export const AttachmentScalarFieldEnum: {
+    id: 'id',
+    communicationId: 'communicationId',
+    filename: 'filename',
+    mimeType: 'mimeType',
+    contentSha256: 'contentSha256',
+    storageUri: 'storageUri',
+    sizeBytes: 'sizeBytes',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    deletedAt: 'deletedAt'
+  };
+
+  export type AttachmentScalarFieldEnum = (typeof AttachmentScalarFieldEnum)[keyof typeof AttachmentScalarFieldEnum]
+
+
+  export const MailboxConnectionScalarFieldEnum: {
+    id: 'id',
+    workspaceId: 'workspaceId',
+    provider: 'provider',
+    mailboxAddress: 'mailboxAddress',
+    consentMode: 'consentMode',
+    scopeFolders: 'scopeFolders',
+    backfillFrom: 'backfillFrom',
+    status: 'status',
+    encryptedToken: 'encryptedToken',
+    deltaCursor: 'deltaCursor',
+    lastSyncAt: 'lastSyncAt',
+    lastErrorMessage: 'lastErrorMessage',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    deletedAt: 'deletedAt'
+  };
+
+  export type MailboxConnectionScalarFieldEnum = (typeof MailboxConnectionScalarFieldEnum)[keyof typeof MailboxConnectionScalarFieldEnum]
+
+
+  export const IngestJobScalarFieldEnum: {
+    id: 'id',
+    workspaceId: 'workspaceId',
+    connectionId: 'connectionId',
+    importFileId: 'importFileId',
+    kind: 'kind',
+    status: 'status',
+    cursor: 'cursor',
+    stats: 'stats',
+    errorMessage: 'errorMessage',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type IngestJobScalarFieldEnum = (typeof IngestJobScalarFieldEnum)[keyof typeof IngestJobScalarFieldEnum]
+
+
+  export const EmailTriageItemScalarFieldEnum: {
+    id: 'id',
+    workspaceId: 'workspaceId',
+    address: 'address',
+    status: 'status',
+    userId: 'userId',
+    clientId: 'clientId',
+    resolvedBy: 'resolvedBy',
+    resolvedAt: 'resolvedAt',
+    notes: 'notes',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type EmailTriageItemScalarFieldEnum = (typeof EmailTriageItemScalarFieldEnum)[keyof typeof EmailTriageItemScalarFieldEnum]
+
+
   export const LeadScalarFieldEnum: {
     id: 'id',
     email: 'email',
@@ -31875,6 +45303,160 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'ClientStatus'
+   */
+  export type EnumClientStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ClientStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ClientStatus[]'
+   */
+  export type ListEnumClientStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ClientStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'EvidenceSourceType'
+   */
+  export type EnumEvidenceSourceTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EvidenceSourceType'>
+    
+
+
+  /**
+   * Reference to a field of type 'EvidenceSourceType[]'
+   */
+  export type ListEnumEvidenceSourceTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EvidenceSourceType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'TagCategory'
+   */
+  export type EnumTagCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TagCategory'>
+    
+
+
+  /**
+   * Reference to a field of type 'TagCategory[]'
+   */
+  export type ListEnumTagCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TagCategory[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'CommunicationChannel'
+   */
+  export type EnumCommunicationChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommunicationChannel'>
+    
+
+
+  /**
+   * Reference to a field of type 'CommunicationChannel[]'
+   */
+  export type ListEnumCommunicationChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommunicationChannel[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'CommunicationDirection'
+   */
+  export type EnumCommunicationDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommunicationDirection'>
+    
+
+
+  /**
+   * Reference to a field of type 'CommunicationDirection[]'
+   */
+  export type ListEnumCommunicationDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommunicationDirection[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'MailboxProvider'
+   */
+  export type EnumMailboxProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MailboxProvider'>
+    
+
+
+  /**
+   * Reference to a field of type 'MailboxProvider[]'
+   */
+  export type ListEnumMailboxProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MailboxProvider[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'MailboxConsentMode'
+   */
+  export type EnumMailboxConsentModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MailboxConsentMode'>
+    
+
+
+  /**
+   * Reference to a field of type 'MailboxConsentMode[]'
+   */
+  export type ListEnumMailboxConsentModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MailboxConsentMode[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'MailboxSyncStatus'
+   */
+  export type EnumMailboxSyncStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MailboxSyncStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'MailboxSyncStatus[]'
+   */
+  export type ListEnumMailboxSyncStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MailboxSyncStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'IngestJobKind'
+   */
+  export type EnumIngestJobKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IngestJobKind'>
+    
+
+
+  /**
+   * Reference to a field of type 'IngestJobKind[]'
+   */
+  export type ListEnumIngestJobKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IngestJobKind[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'IngestJobStatus'
+   */
+  export type EnumIngestJobStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IngestJobStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'IngestJobStatus[]'
+   */
+  export type ListEnumIngestJobStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IngestJobStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'EmailTriageStatus'
+   */
+  export type EnumEmailTriageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmailTriageStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'EmailTriageStatus[]'
+   */
+  export type ListEnumEmailTriageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmailTriageStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -31923,6 +45505,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialListRelationFilter
     integrationConfigs?: IntegrationConfigListRelationFilter
     firmProfile?: XOR<FirmProfileNullableScalarRelationFilter, FirmProfileWhereInput> | null
+    evidenceItems?: EvidenceItemListRelationFilter
+    clients?: ClientListRelationFilter
+    mailboxConnections?: MailboxConnectionListRelationFilter
+    communicationThreads?: CommunicationThreadListRelationFilter
+    emailAliases?: EmailAliasListRelationFilter
+    emailTriageItems?: EmailTriageItemListRelationFilter
+    ingestJobs?: IngestJobListRelationFilter
   }
 
   export type WorkspaceOrderByWithRelationInput = {
@@ -31954,6 +45543,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialOrderByRelationAggregateInput
     integrationConfigs?: IntegrationConfigOrderByRelationAggregateInput
     firmProfile?: FirmProfileOrderByWithRelationInput
+    evidenceItems?: EvidenceItemOrderByRelationAggregateInput
+    clients?: ClientOrderByRelationAggregateInput
+    mailboxConnections?: MailboxConnectionOrderByRelationAggregateInput
+    communicationThreads?: CommunicationThreadOrderByRelationAggregateInput
+    emailAliases?: EmailAliasOrderByRelationAggregateInput
+    emailTriageItems?: EmailTriageItemOrderByRelationAggregateInput
+    ingestJobs?: IngestJobOrderByRelationAggregateInput
   }
 
   export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
@@ -31988,6 +45584,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialListRelationFilter
     integrationConfigs?: IntegrationConfigListRelationFilter
     firmProfile?: XOR<FirmProfileNullableScalarRelationFilter, FirmProfileWhereInput> | null
+    evidenceItems?: EvidenceItemListRelationFilter
+    clients?: ClientListRelationFilter
+    mailboxConnections?: MailboxConnectionListRelationFilter
+    communicationThreads?: CommunicationThreadListRelationFilter
+    emailAliases?: EmailAliasListRelationFilter
+    emailTriageItems?: EmailTriageItemListRelationFilter
+    ingestJobs?: IngestJobListRelationFilter
   }, "id">
 
   export type WorkspaceOrderByWithAggregationInput = {
@@ -33151,6 +46754,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingListRelationFilter
     flagsCmTriaged?: FlagListRelationFilter
     invitationsSent?: InvitationListRelationFilter
+    emailAliases?: EmailAliasListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -33168,6 +46772,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingOrderByRelationAggregateInput
     flagsCmTriaged?: FlagOrderByRelationAggregateInput
     invitationsSent?: InvitationOrderByRelationAggregateInput
+    emailAliases?: EmailAliasOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -33188,6 +46793,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingListRelationFilter
     flagsCmTriaged?: FlagListRelationFilter
     invitationsSent?: InvitationListRelationFilter
+    emailAliases?: EmailAliasListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -33938,6 +47544,907 @@ export namespace Prisma {
     snapshot?: JsonWithAggregatesFilter<"FirmProfileVersion">
   }
 
+  export type ClientWhereInput = {
+    AND?: ClientWhereInput | ClientWhereInput[]
+    OR?: ClientWhereInput[]
+    NOT?: ClientWhereInput | ClientWhereInput[]
+    id?: StringFilter<"Client"> | string
+    workspaceId?: StringFilter<"Client"> | string
+    name?: StringFilter<"Client"> | string
+    zohoId?: StringNullableFilter<"Client"> | string | null
+    status?: EnumClientStatusFilter<"Client"> | $Enums.ClientStatus
+    createdAt?: DateTimeFilter<"Client"> | Date | string
+    updatedAt?: DateTimeFilter<"Client"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"Client"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    emailAliases?: EmailAliasListRelationFilter
+    evidenceItems?: EvidenceItemListRelationFilter
+  }
+
+  export type ClientOrderByWithRelationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    name?: SortOrder
+    zohoId?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    workspace?: WorkspaceOrderByWithRelationInput
+    emailAliases?: EmailAliasOrderByRelationAggregateInput
+    evidenceItems?: EvidenceItemOrderByRelationAggregateInput
+  }
+
+  export type ClientWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ClientWhereInput | ClientWhereInput[]
+    OR?: ClientWhereInput[]
+    NOT?: ClientWhereInput | ClientWhereInput[]
+    workspaceId?: StringFilter<"Client"> | string
+    name?: StringFilter<"Client"> | string
+    zohoId?: StringNullableFilter<"Client"> | string | null
+    status?: EnumClientStatusFilter<"Client"> | $Enums.ClientStatus
+    createdAt?: DateTimeFilter<"Client"> | Date | string
+    updatedAt?: DateTimeFilter<"Client"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"Client"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    emailAliases?: EmailAliasListRelationFilter
+    evidenceItems?: EvidenceItemListRelationFilter
+  }, "id">
+
+  export type ClientOrderByWithAggregationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    name?: SortOrder
+    zohoId?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    _count?: ClientCountOrderByAggregateInput
+    _max?: ClientMaxOrderByAggregateInput
+    _min?: ClientMinOrderByAggregateInput
+  }
+
+  export type ClientScalarWhereWithAggregatesInput = {
+    AND?: ClientScalarWhereWithAggregatesInput | ClientScalarWhereWithAggregatesInput[]
+    OR?: ClientScalarWhereWithAggregatesInput[]
+    NOT?: ClientScalarWhereWithAggregatesInput | ClientScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Client"> | string
+    workspaceId?: StringWithAggregatesFilter<"Client"> | string
+    name?: StringWithAggregatesFilter<"Client"> | string
+    zohoId?: StringNullableWithAggregatesFilter<"Client"> | string | null
+    status?: EnumClientStatusWithAggregatesFilter<"Client"> | $Enums.ClientStatus
+    createdAt?: DateTimeWithAggregatesFilter<"Client"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Client"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"Client"> | Date | string | null
+  }
+
+  export type EmailAliasWhereInput = {
+    AND?: EmailAliasWhereInput | EmailAliasWhereInput[]
+    OR?: EmailAliasWhereInput[]
+    NOT?: EmailAliasWhereInput | EmailAliasWhereInput[]
+    id?: StringFilter<"EmailAlias"> | string
+    workspaceId?: StringFilter<"EmailAlias"> | string
+    address?: StringFilter<"EmailAlias"> | string
+    userId?: StringNullableFilter<"EmailAlias"> | string | null
+    clientId?: StringNullableFilter<"EmailAlias"> | string | null
+    verified?: BoolFilter<"EmailAlias"> | boolean
+    createdAt?: DateTimeFilter<"EmailAlias"> | Date | string
+    updatedAt?: DateTimeFilter<"EmailAlias"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"EmailAlias"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    client?: XOR<ClientNullableScalarRelationFilter, ClientWhereInput> | null
+  }
+
+  export type EmailAliasOrderByWithRelationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    address?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    clientId?: SortOrderInput | SortOrder
+    verified?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    workspace?: WorkspaceOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+    client?: ClientOrderByWithRelationInput
+  }
+
+  export type EmailAliasWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    workspaceId_address_userId_clientId?: EmailAliasWorkspaceIdAddressUserIdClientIdCompoundUniqueInput
+    AND?: EmailAliasWhereInput | EmailAliasWhereInput[]
+    OR?: EmailAliasWhereInput[]
+    NOT?: EmailAliasWhereInput | EmailAliasWhereInput[]
+    workspaceId?: StringFilter<"EmailAlias"> | string
+    address?: StringFilter<"EmailAlias"> | string
+    userId?: StringNullableFilter<"EmailAlias"> | string | null
+    clientId?: StringNullableFilter<"EmailAlias"> | string | null
+    verified?: BoolFilter<"EmailAlias"> | boolean
+    createdAt?: DateTimeFilter<"EmailAlias"> | Date | string
+    updatedAt?: DateTimeFilter<"EmailAlias"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"EmailAlias"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    client?: XOR<ClientNullableScalarRelationFilter, ClientWhereInput> | null
+  }, "id" | "workspaceId_address_userId_clientId">
+
+  export type EmailAliasOrderByWithAggregationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    address?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    clientId?: SortOrderInput | SortOrder
+    verified?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    _count?: EmailAliasCountOrderByAggregateInput
+    _max?: EmailAliasMaxOrderByAggregateInput
+    _min?: EmailAliasMinOrderByAggregateInput
+  }
+
+  export type EmailAliasScalarWhereWithAggregatesInput = {
+    AND?: EmailAliasScalarWhereWithAggregatesInput | EmailAliasScalarWhereWithAggregatesInput[]
+    OR?: EmailAliasScalarWhereWithAggregatesInput[]
+    NOT?: EmailAliasScalarWhereWithAggregatesInput | EmailAliasScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"EmailAlias"> | string
+    workspaceId?: StringWithAggregatesFilter<"EmailAlias"> | string
+    address?: StringWithAggregatesFilter<"EmailAlias"> | string
+    userId?: StringNullableWithAggregatesFilter<"EmailAlias"> | string | null
+    clientId?: StringNullableWithAggregatesFilter<"EmailAlias"> | string | null
+    verified?: BoolWithAggregatesFilter<"EmailAlias"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"EmailAlias"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"EmailAlias"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"EmailAlias"> | Date | string | null
+  }
+
+  export type EvidenceItemWhereInput = {
+    AND?: EvidenceItemWhereInput | EvidenceItemWhereInput[]
+    OR?: EvidenceItemWhereInput[]
+    NOT?: EvidenceItemWhereInput | EvidenceItemWhereInput[]
+    id?: StringFilter<"EvidenceItem"> | string
+    workspaceId?: StringFilter<"EvidenceItem"> | string
+    clientId?: StringNullableFilter<"EvidenceItem"> | string | null
+    createdById?: StringNullableFilter<"EvidenceItem"> | string | null
+    sourceType?: EnumEvidenceSourceTypeFilter<"EvidenceItem"> | $Enums.EvidenceSourceType
+    title?: StringFilter<"EvidenceItem"> | string
+    occurredAt?: DateTimeFilter<"EvidenceItem"> | Date | string
+    ingestedAt?: DateTimeFilter<"EvidenceItem"> | Date | string
+    contentSha256?: StringFilter<"EvidenceItem"> | string
+    storageUri?: StringNullableFilter<"EvidenceItem"> | string | null
+    retentionRuleId?: StringNullableFilter<"EvidenceItem"> | string | null
+    destructionEligibleAt?: DateTimeNullableFilter<"EvidenceItem"> | Date | string | null
+    createdAt?: DateTimeFilter<"EvidenceItem"> | Date | string
+    updatedAt?: DateTimeFilter<"EvidenceItem"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"EvidenceItem"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    client?: XOR<ClientNullableScalarRelationFilter, ClientWhereInput> | null
+    tags?: EvidenceTagListRelationFilter
+    communication?: XOR<CommunicationNullableScalarRelationFilter, CommunicationWhereInput> | null
+  }
+
+  export type EvidenceItemOrderByWithRelationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    clientId?: SortOrderInput | SortOrder
+    createdById?: SortOrderInput | SortOrder
+    sourceType?: SortOrder
+    title?: SortOrder
+    occurredAt?: SortOrder
+    ingestedAt?: SortOrder
+    contentSha256?: SortOrder
+    storageUri?: SortOrderInput | SortOrder
+    retentionRuleId?: SortOrderInput | SortOrder
+    destructionEligibleAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    workspace?: WorkspaceOrderByWithRelationInput
+    client?: ClientOrderByWithRelationInput
+    tags?: EvidenceTagOrderByRelationAggregateInput
+    communication?: CommunicationOrderByWithRelationInput
+  }
+
+  export type EvidenceItemWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: EvidenceItemWhereInput | EvidenceItemWhereInput[]
+    OR?: EvidenceItemWhereInput[]
+    NOT?: EvidenceItemWhereInput | EvidenceItemWhereInput[]
+    workspaceId?: StringFilter<"EvidenceItem"> | string
+    clientId?: StringNullableFilter<"EvidenceItem"> | string | null
+    createdById?: StringNullableFilter<"EvidenceItem"> | string | null
+    sourceType?: EnumEvidenceSourceTypeFilter<"EvidenceItem"> | $Enums.EvidenceSourceType
+    title?: StringFilter<"EvidenceItem"> | string
+    occurredAt?: DateTimeFilter<"EvidenceItem"> | Date | string
+    ingestedAt?: DateTimeFilter<"EvidenceItem"> | Date | string
+    contentSha256?: StringFilter<"EvidenceItem"> | string
+    storageUri?: StringNullableFilter<"EvidenceItem"> | string | null
+    retentionRuleId?: StringNullableFilter<"EvidenceItem"> | string | null
+    destructionEligibleAt?: DateTimeNullableFilter<"EvidenceItem"> | Date | string | null
+    createdAt?: DateTimeFilter<"EvidenceItem"> | Date | string
+    updatedAt?: DateTimeFilter<"EvidenceItem"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"EvidenceItem"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    client?: XOR<ClientNullableScalarRelationFilter, ClientWhereInput> | null
+    tags?: EvidenceTagListRelationFilter
+    communication?: XOR<CommunicationNullableScalarRelationFilter, CommunicationWhereInput> | null
+  }, "id">
+
+  export type EvidenceItemOrderByWithAggregationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    clientId?: SortOrderInput | SortOrder
+    createdById?: SortOrderInput | SortOrder
+    sourceType?: SortOrder
+    title?: SortOrder
+    occurredAt?: SortOrder
+    ingestedAt?: SortOrder
+    contentSha256?: SortOrder
+    storageUri?: SortOrderInput | SortOrder
+    retentionRuleId?: SortOrderInput | SortOrder
+    destructionEligibleAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    _count?: EvidenceItemCountOrderByAggregateInput
+    _max?: EvidenceItemMaxOrderByAggregateInput
+    _min?: EvidenceItemMinOrderByAggregateInput
+  }
+
+  export type EvidenceItemScalarWhereWithAggregatesInput = {
+    AND?: EvidenceItemScalarWhereWithAggregatesInput | EvidenceItemScalarWhereWithAggregatesInput[]
+    OR?: EvidenceItemScalarWhereWithAggregatesInput[]
+    NOT?: EvidenceItemScalarWhereWithAggregatesInput | EvidenceItemScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"EvidenceItem"> | string
+    workspaceId?: StringWithAggregatesFilter<"EvidenceItem"> | string
+    clientId?: StringNullableWithAggregatesFilter<"EvidenceItem"> | string | null
+    createdById?: StringNullableWithAggregatesFilter<"EvidenceItem"> | string | null
+    sourceType?: EnumEvidenceSourceTypeWithAggregatesFilter<"EvidenceItem"> | $Enums.EvidenceSourceType
+    title?: StringWithAggregatesFilter<"EvidenceItem"> | string
+    occurredAt?: DateTimeWithAggregatesFilter<"EvidenceItem"> | Date | string
+    ingestedAt?: DateTimeWithAggregatesFilter<"EvidenceItem"> | Date | string
+    contentSha256?: StringWithAggregatesFilter<"EvidenceItem"> | string
+    storageUri?: StringNullableWithAggregatesFilter<"EvidenceItem"> | string | null
+    retentionRuleId?: StringNullableWithAggregatesFilter<"EvidenceItem"> | string | null
+    destructionEligibleAt?: DateTimeNullableWithAggregatesFilter<"EvidenceItem"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"EvidenceItem"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"EvidenceItem"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"EvidenceItem"> | Date | string | null
+  }
+
+  export type EvidenceTagWhereInput = {
+    AND?: EvidenceTagWhereInput | EvidenceTagWhereInput[]
+    OR?: EvidenceTagWhereInput[]
+    NOT?: EvidenceTagWhereInput | EvidenceTagWhereInput[]
+    id?: StringFilter<"EvidenceTag"> | string
+    itemId?: StringFilter<"EvidenceTag"> | string
+    category?: EnumTagCategoryFilter<"EvidenceTag"> | $Enums.TagCategory
+    addedBy?: StringFilter<"EvidenceTag"> | string
+    addedAt?: DateTimeFilter<"EvidenceTag"> | Date | string
+    removedAt?: DateTimeNullableFilter<"EvidenceTag"> | Date | string | null
+    createdAt?: DateTimeFilter<"EvidenceTag"> | Date | string
+    updatedAt?: DateTimeFilter<"EvidenceTag"> | Date | string
+    item?: XOR<EvidenceItemScalarRelationFilter, EvidenceItemWhereInput>
+  }
+
+  export type EvidenceTagOrderByWithRelationInput = {
+    id?: SortOrder
+    itemId?: SortOrder
+    category?: SortOrder
+    addedBy?: SortOrder
+    addedAt?: SortOrder
+    removedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    item?: EvidenceItemOrderByWithRelationInput
+  }
+
+  export type EvidenceTagWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: EvidenceTagWhereInput | EvidenceTagWhereInput[]
+    OR?: EvidenceTagWhereInput[]
+    NOT?: EvidenceTagWhereInput | EvidenceTagWhereInput[]
+    itemId?: StringFilter<"EvidenceTag"> | string
+    category?: EnumTagCategoryFilter<"EvidenceTag"> | $Enums.TagCategory
+    addedBy?: StringFilter<"EvidenceTag"> | string
+    addedAt?: DateTimeFilter<"EvidenceTag"> | Date | string
+    removedAt?: DateTimeNullableFilter<"EvidenceTag"> | Date | string | null
+    createdAt?: DateTimeFilter<"EvidenceTag"> | Date | string
+    updatedAt?: DateTimeFilter<"EvidenceTag"> | Date | string
+    item?: XOR<EvidenceItemScalarRelationFilter, EvidenceItemWhereInput>
+  }, "id">
+
+  export type EvidenceTagOrderByWithAggregationInput = {
+    id?: SortOrder
+    itemId?: SortOrder
+    category?: SortOrder
+    addedBy?: SortOrder
+    addedAt?: SortOrder
+    removedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: EvidenceTagCountOrderByAggregateInput
+    _max?: EvidenceTagMaxOrderByAggregateInput
+    _min?: EvidenceTagMinOrderByAggregateInput
+  }
+
+  export type EvidenceTagScalarWhereWithAggregatesInput = {
+    AND?: EvidenceTagScalarWhereWithAggregatesInput | EvidenceTagScalarWhereWithAggregatesInput[]
+    OR?: EvidenceTagScalarWhereWithAggregatesInput[]
+    NOT?: EvidenceTagScalarWhereWithAggregatesInput | EvidenceTagScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"EvidenceTag"> | string
+    itemId?: StringWithAggregatesFilter<"EvidenceTag"> | string
+    category?: EnumTagCategoryWithAggregatesFilter<"EvidenceTag"> | $Enums.TagCategory
+    addedBy?: StringWithAggregatesFilter<"EvidenceTag"> | string
+    addedAt?: DateTimeWithAggregatesFilter<"EvidenceTag"> | Date | string
+    removedAt?: DateTimeNullableWithAggregatesFilter<"EvidenceTag"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"EvidenceTag"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"EvidenceTag"> | Date | string
+  }
+
+  export type CommunicationThreadWhereInput = {
+    AND?: CommunicationThreadWhereInput | CommunicationThreadWhereInput[]
+    OR?: CommunicationThreadWhereInput[]
+    NOT?: CommunicationThreadWhereInput | CommunicationThreadWhereInput[]
+    id?: StringFilter<"CommunicationThread"> | string
+    workspaceId?: StringFilter<"CommunicationThread"> | string
+    channel?: EnumCommunicationChannelFilter<"CommunicationThread"> | $Enums.CommunicationChannel
+    externalThreadId?: StringNullableFilter<"CommunicationThread"> | string | null
+    subject?: StringNullableFilter<"CommunicationThread"> | string | null
+    participants?: JsonFilter<"CommunicationThread">
+    createdAt?: DateTimeFilter<"CommunicationThread"> | Date | string
+    updatedAt?: DateTimeFilter<"CommunicationThread"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"CommunicationThread"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    messages?: CommunicationListRelationFilter
+  }
+
+  export type CommunicationThreadOrderByWithRelationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    channel?: SortOrder
+    externalThreadId?: SortOrderInput | SortOrder
+    subject?: SortOrderInput | SortOrder
+    participants?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    workspace?: WorkspaceOrderByWithRelationInput
+    messages?: CommunicationOrderByRelationAggregateInput
+  }
+
+  export type CommunicationThreadWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: CommunicationThreadWhereInput | CommunicationThreadWhereInput[]
+    OR?: CommunicationThreadWhereInput[]
+    NOT?: CommunicationThreadWhereInput | CommunicationThreadWhereInput[]
+    workspaceId?: StringFilter<"CommunicationThread"> | string
+    channel?: EnumCommunicationChannelFilter<"CommunicationThread"> | $Enums.CommunicationChannel
+    externalThreadId?: StringNullableFilter<"CommunicationThread"> | string | null
+    subject?: StringNullableFilter<"CommunicationThread"> | string | null
+    participants?: JsonFilter<"CommunicationThread">
+    createdAt?: DateTimeFilter<"CommunicationThread"> | Date | string
+    updatedAt?: DateTimeFilter<"CommunicationThread"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"CommunicationThread"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    messages?: CommunicationListRelationFilter
+  }, "id">
+
+  export type CommunicationThreadOrderByWithAggregationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    channel?: SortOrder
+    externalThreadId?: SortOrderInput | SortOrder
+    subject?: SortOrderInput | SortOrder
+    participants?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    _count?: CommunicationThreadCountOrderByAggregateInput
+    _max?: CommunicationThreadMaxOrderByAggregateInput
+    _min?: CommunicationThreadMinOrderByAggregateInput
+  }
+
+  export type CommunicationThreadScalarWhereWithAggregatesInput = {
+    AND?: CommunicationThreadScalarWhereWithAggregatesInput | CommunicationThreadScalarWhereWithAggregatesInput[]
+    OR?: CommunicationThreadScalarWhereWithAggregatesInput[]
+    NOT?: CommunicationThreadScalarWhereWithAggregatesInput | CommunicationThreadScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"CommunicationThread"> | string
+    workspaceId?: StringWithAggregatesFilter<"CommunicationThread"> | string
+    channel?: EnumCommunicationChannelWithAggregatesFilter<"CommunicationThread"> | $Enums.CommunicationChannel
+    externalThreadId?: StringNullableWithAggregatesFilter<"CommunicationThread"> | string | null
+    subject?: StringNullableWithAggregatesFilter<"CommunicationThread"> | string | null
+    participants?: JsonWithAggregatesFilter<"CommunicationThread">
+    createdAt?: DateTimeWithAggregatesFilter<"CommunicationThread"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"CommunicationThread"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"CommunicationThread"> | Date | string | null
+  }
+
+  export type CommunicationWhereInput = {
+    AND?: CommunicationWhereInput | CommunicationWhereInput[]
+    OR?: CommunicationWhereInput[]
+    NOT?: CommunicationWhereInput | CommunicationWhereInput[]
+    id?: StringFilter<"Communication"> | string
+    threadId?: StringFilter<"Communication"> | string
+    evidenceItemId?: StringFilter<"Communication"> | string
+    direction?: EnumCommunicationDirectionFilter<"Communication"> | $Enums.CommunicationDirection
+    sentAt?: DateTimeFilter<"Communication"> | Date | string
+    fromAddress?: StringFilter<"Communication"> | string
+    toAddresses?: StringNullableListFilter<"Communication">
+    ccAddresses?: StringNullableListFilter<"Communication">
+    internetMessageId?: StringNullableFilter<"Communication"> | string | null
+    bodyText?: StringFilter<"Communication"> | string
+    bodyHtml?: StringNullableFilter<"Communication"> | string | null
+    inReplyTo?: StringNullableFilter<"Communication"> | string | null
+    referencesHeader?: StringNullableFilter<"Communication"> | string | null
+    createdAt?: DateTimeFilter<"Communication"> | Date | string
+    updatedAt?: DateTimeFilter<"Communication"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"Communication"> | Date | string | null
+    thread?: XOR<CommunicationThreadScalarRelationFilter, CommunicationThreadWhereInput>
+    evidenceItem?: XOR<EvidenceItemScalarRelationFilter, EvidenceItemWhereInput>
+    attachments?: AttachmentListRelationFilter
+  }
+
+  export type CommunicationOrderByWithRelationInput = {
+    id?: SortOrder
+    threadId?: SortOrder
+    evidenceItemId?: SortOrder
+    direction?: SortOrder
+    sentAt?: SortOrder
+    fromAddress?: SortOrder
+    toAddresses?: SortOrder
+    ccAddresses?: SortOrder
+    internetMessageId?: SortOrderInput | SortOrder
+    bodyText?: SortOrder
+    bodyHtml?: SortOrderInput | SortOrder
+    inReplyTo?: SortOrderInput | SortOrder
+    referencesHeader?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    thread?: CommunicationThreadOrderByWithRelationInput
+    evidenceItem?: EvidenceItemOrderByWithRelationInput
+    attachments?: AttachmentOrderByRelationAggregateInput
+  }
+
+  export type CommunicationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    evidenceItemId?: string
+    internetMessageId?: string
+    AND?: CommunicationWhereInput | CommunicationWhereInput[]
+    OR?: CommunicationWhereInput[]
+    NOT?: CommunicationWhereInput | CommunicationWhereInput[]
+    threadId?: StringFilter<"Communication"> | string
+    direction?: EnumCommunicationDirectionFilter<"Communication"> | $Enums.CommunicationDirection
+    sentAt?: DateTimeFilter<"Communication"> | Date | string
+    fromAddress?: StringFilter<"Communication"> | string
+    toAddresses?: StringNullableListFilter<"Communication">
+    ccAddresses?: StringNullableListFilter<"Communication">
+    bodyText?: StringFilter<"Communication"> | string
+    bodyHtml?: StringNullableFilter<"Communication"> | string | null
+    inReplyTo?: StringNullableFilter<"Communication"> | string | null
+    referencesHeader?: StringNullableFilter<"Communication"> | string | null
+    createdAt?: DateTimeFilter<"Communication"> | Date | string
+    updatedAt?: DateTimeFilter<"Communication"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"Communication"> | Date | string | null
+    thread?: XOR<CommunicationThreadScalarRelationFilter, CommunicationThreadWhereInput>
+    evidenceItem?: XOR<EvidenceItemScalarRelationFilter, EvidenceItemWhereInput>
+    attachments?: AttachmentListRelationFilter
+  }, "id" | "evidenceItemId" | "internetMessageId">
+
+  export type CommunicationOrderByWithAggregationInput = {
+    id?: SortOrder
+    threadId?: SortOrder
+    evidenceItemId?: SortOrder
+    direction?: SortOrder
+    sentAt?: SortOrder
+    fromAddress?: SortOrder
+    toAddresses?: SortOrder
+    ccAddresses?: SortOrder
+    internetMessageId?: SortOrderInput | SortOrder
+    bodyText?: SortOrder
+    bodyHtml?: SortOrderInput | SortOrder
+    inReplyTo?: SortOrderInput | SortOrder
+    referencesHeader?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    _count?: CommunicationCountOrderByAggregateInput
+    _max?: CommunicationMaxOrderByAggregateInput
+    _min?: CommunicationMinOrderByAggregateInput
+  }
+
+  export type CommunicationScalarWhereWithAggregatesInput = {
+    AND?: CommunicationScalarWhereWithAggregatesInput | CommunicationScalarWhereWithAggregatesInput[]
+    OR?: CommunicationScalarWhereWithAggregatesInput[]
+    NOT?: CommunicationScalarWhereWithAggregatesInput | CommunicationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Communication"> | string
+    threadId?: StringWithAggregatesFilter<"Communication"> | string
+    evidenceItemId?: StringWithAggregatesFilter<"Communication"> | string
+    direction?: EnumCommunicationDirectionWithAggregatesFilter<"Communication"> | $Enums.CommunicationDirection
+    sentAt?: DateTimeWithAggregatesFilter<"Communication"> | Date | string
+    fromAddress?: StringWithAggregatesFilter<"Communication"> | string
+    toAddresses?: StringNullableListFilter<"Communication">
+    ccAddresses?: StringNullableListFilter<"Communication">
+    internetMessageId?: StringNullableWithAggregatesFilter<"Communication"> | string | null
+    bodyText?: StringWithAggregatesFilter<"Communication"> | string
+    bodyHtml?: StringNullableWithAggregatesFilter<"Communication"> | string | null
+    inReplyTo?: StringNullableWithAggregatesFilter<"Communication"> | string | null
+    referencesHeader?: StringNullableWithAggregatesFilter<"Communication"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Communication"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Communication"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"Communication"> | Date | string | null
+  }
+
+  export type AttachmentWhereInput = {
+    AND?: AttachmentWhereInput | AttachmentWhereInput[]
+    OR?: AttachmentWhereInput[]
+    NOT?: AttachmentWhereInput | AttachmentWhereInput[]
+    id?: StringFilter<"Attachment"> | string
+    communicationId?: StringFilter<"Attachment"> | string
+    filename?: StringFilter<"Attachment"> | string
+    mimeType?: StringFilter<"Attachment"> | string
+    contentSha256?: StringFilter<"Attachment"> | string
+    storageUri?: StringFilter<"Attachment"> | string
+    sizeBytes?: IntNullableFilter<"Attachment"> | number | null
+    createdAt?: DateTimeFilter<"Attachment"> | Date | string
+    updatedAt?: DateTimeFilter<"Attachment"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"Attachment"> | Date | string | null
+    communication?: XOR<CommunicationScalarRelationFilter, CommunicationWhereInput>
+  }
+
+  export type AttachmentOrderByWithRelationInput = {
+    id?: SortOrder
+    communicationId?: SortOrder
+    filename?: SortOrder
+    mimeType?: SortOrder
+    contentSha256?: SortOrder
+    storageUri?: SortOrder
+    sizeBytes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    communication?: CommunicationOrderByWithRelationInput
+  }
+
+  export type AttachmentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AttachmentWhereInput | AttachmentWhereInput[]
+    OR?: AttachmentWhereInput[]
+    NOT?: AttachmentWhereInput | AttachmentWhereInput[]
+    communicationId?: StringFilter<"Attachment"> | string
+    filename?: StringFilter<"Attachment"> | string
+    mimeType?: StringFilter<"Attachment"> | string
+    contentSha256?: StringFilter<"Attachment"> | string
+    storageUri?: StringFilter<"Attachment"> | string
+    sizeBytes?: IntNullableFilter<"Attachment"> | number | null
+    createdAt?: DateTimeFilter<"Attachment"> | Date | string
+    updatedAt?: DateTimeFilter<"Attachment"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"Attachment"> | Date | string | null
+    communication?: XOR<CommunicationScalarRelationFilter, CommunicationWhereInput>
+  }, "id">
+
+  export type AttachmentOrderByWithAggregationInput = {
+    id?: SortOrder
+    communicationId?: SortOrder
+    filename?: SortOrder
+    mimeType?: SortOrder
+    contentSha256?: SortOrder
+    storageUri?: SortOrder
+    sizeBytes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    _count?: AttachmentCountOrderByAggregateInput
+    _avg?: AttachmentAvgOrderByAggregateInput
+    _max?: AttachmentMaxOrderByAggregateInput
+    _min?: AttachmentMinOrderByAggregateInput
+    _sum?: AttachmentSumOrderByAggregateInput
+  }
+
+  export type AttachmentScalarWhereWithAggregatesInput = {
+    AND?: AttachmentScalarWhereWithAggregatesInput | AttachmentScalarWhereWithAggregatesInput[]
+    OR?: AttachmentScalarWhereWithAggregatesInput[]
+    NOT?: AttachmentScalarWhereWithAggregatesInput | AttachmentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Attachment"> | string
+    communicationId?: StringWithAggregatesFilter<"Attachment"> | string
+    filename?: StringWithAggregatesFilter<"Attachment"> | string
+    mimeType?: StringWithAggregatesFilter<"Attachment"> | string
+    contentSha256?: StringWithAggregatesFilter<"Attachment"> | string
+    storageUri?: StringWithAggregatesFilter<"Attachment"> | string
+    sizeBytes?: IntNullableWithAggregatesFilter<"Attachment"> | number | null
+    createdAt?: DateTimeWithAggregatesFilter<"Attachment"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Attachment"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"Attachment"> | Date | string | null
+  }
+
+  export type MailboxConnectionWhereInput = {
+    AND?: MailboxConnectionWhereInput | MailboxConnectionWhereInput[]
+    OR?: MailboxConnectionWhereInput[]
+    NOT?: MailboxConnectionWhereInput | MailboxConnectionWhereInput[]
+    id?: StringFilter<"MailboxConnection"> | string
+    workspaceId?: StringFilter<"MailboxConnection"> | string
+    provider?: EnumMailboxProviderFilter<"MailboxConnection"> | $Enums.MailboxProvider
+    mailboxAddress?: StringFilter<"MailboxConnection"> | string
+    consentMode?: EnumMailboxConsentModeFilter<"MailboxConnection"> | $Enums.MailboxConsentMode
+    scopeFolders?: StringNullableListFilter<"MailboxConnection">
+    backfillFrom?: DateTimeNullableFilter<"MailboxConnection"> | Date | string | null
+    status?: EnumMailboxSyncStatusFilter<"MailboxConnection"> | $Enums.MailboxSyncStatus
+    encryptedToken?: StringNullableFilter<"MailboxConnection"> | string | null
+    deltaCursor?: StringNullableFilter<"MailboxConnection"> | string | null
+    lastSyncAt?: DateTimeNullableFilter<"MailboxConnection"> | Date | string | null
+    lastErrorMessage?: StringNullableFilter<"MailboxConnection"> | string | null
+    createdAt?: DateTimeFilter<"MailboxConnection"> | Date | string
+    updatedAt?: DateTimeFilter<"MailboxConnection"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"MailboxConnection"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    ingestJobs?: IngestJobListRelationFilter
+  }
+
+  export type MailboxConnectionOrderByWithRelationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    provider?: SortOrder
+    mailboxAddress?: SortOrder
+    consentMode?: SortOrder
+    scopeFolders?: SortOrder
+    backfillFrom?: SortOrderInput | SortOrder
+    status?: SortOrder
+    encryptedToken?: SortOrderInput | SortOrder
+    deltaCursor?: SortOrderInput | SortOrder
+    lastSyncAt?: SortOrderInput | SortOrder
+    lastErrorMessage?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    workspace?: WorkspaceOrderByWithRelationInput
+    ingestJobs?: IngestJobOrderByRelationAggregateInput
+  }
+
+  export type MailboxConnectionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    workspaceId_mailboxAddress?: MailboxConnectionWorkspaceIdMailboxAddressCompoundUniqueInput
+    AND?: MailboxConnectionWhereInput | MailboxConnectionWhereInput[]
+    OR?: MailboxConnectionWhereInput[]
+    NOT?: MailboxConnectionWhereInput | MailboxConnectionWhereInput[]
+    workspaceId?: StringFilter<"MailboxConnection"> | string
+    provider?: EnumMailboxProviderFilter<"MailboxConnection"> | $Enums.MailboxProvider
+    mailboxAddress?: StringFilter<"MailboxConnection"> | string
+    consentMode?: EnumMailboxConsentModeFilter<"MailboxConnection"> | $Enums.MailboxConsentMode
+    scopeFolders?: StringNullableListFilter<"MailboxConnection">
+    backfillFrom?: DateTimeNullableFilter<"MailboxConnection"> | Date | string | null
+    status?: EnumMailboxSyncStatusFilter<"MailboxConnection"> | $Enums.MailboxSyncStatus
+    encryptedToken?: StringNullableFilter<"MailboxConnection"> | string | null
+    deltaCursor?: StringNullableFilter<"MailboxConnection"> | string | null
+    lastSyncAt?: DateTimeNullableFilter<"MailboxConnection"> | Date | string | null
+    lastErrorMessage?: StringNullableFilter<"MailboxConnection"> | string | null
+    createdAt?: DateTimeFilter<"MailboxConnection"> | Date | string
+    updatedAt?: DateTimeFilter<"MailboxConnection"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"MailboxConnection"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    ingestJobs?: IngestJobListRelationFilter
+  }, "id" | "workspaceId_mailboxAddress">
+
+  export type MailboxConnectionOrderByWithAggregationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    provider?: SortOrder
+    mailboxAddress?: SortOrder
+    consentMode?: SortOrder
+    scopeFolders?: SortOrder
+    backfillFrom?: SortOrderInput | SortOrder
+    status?: SortOrder
+    encryptedToken?: SortOrderInput | SortOrder
+    deltaCursor?: SortOrderInput | SortOrder
+    lastSyncAt?: SortOrderInput | SortOrder
+    lastErrorMessage?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    _count?: MailboxConnectionCountOrderByAggregateInput
+    _max?: MailboxConnectionMaxOrderByAggregateInput
+    _min?: MailboxConnectionMinOrderByAggregateInput
+  }
+
+  export type MailboxConnectionScalarWhereWithAggregatesInput = {
+    AND?: MailboxConnectionScalarWhereWithAggregatesInput | MailboxConnectionScalarWhereWithAggregatesInput[]
+    OR?: MailboxConnectionScalarWhereWithAggregatesInput[]
+    NOT?: MailboxConnectionScalarWhereWithAggregatesInput | MailboxConnectionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MailboxConnection"> | string
+    workspaceId?: StringWithAggregatesFilter<"MailboxConnection"> | string
+    provider?: EnumMailboxProviderWithAggregatesFilter<"MailboxConnection"> | $Enums.MailboxProvider
+    mailboxAddress?: StringWithAggregatesFilter<"MailboxConnection"> | string
+    consentMode?: EnumMailboxConsentModeWithAggregatesFilter<"MailboxConnection"> | $Enums.MailboxConsentMode
+    scopeFolders?: StringNullableListFilter<"MailboxConnection">
+    backfillFrom?: DateTimeNullableWithAggregatesFilter<"MailboxConnection"> | Date | string | null
+    status?: EnumMailboxSyncStatusWithAggregatesFilter<"MailboxConnection"> | $Enums.MailboxSyncStatus
+    encryptedToken?: StringNullableWithAggregatesFilter<"MailboxConnection"> | string | null
+    deltaCursor?: StringNullableWithAggregatesFilter<"MailboxConnection"> | string | null
+    lastSyncAt?: DateTimeNullableWithAggregatesFilter<"MailboxConnection"> | Date | string | null
+    lastErrorMessage?: StringNullableWithAggregatesFilter<"MailboxConnection"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"MailboxConnection"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"MailboxConnection"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"MailboxConnection"> | Date | string | null
+  }
+
+  export type IngestJobWhereInput = {
+    AND?: IngestJobWhereInput | IngestJobWhereInput[]
+    OR?: IngestJobWhereInput[]
+    NOT?: IngestJobWhereInput | IngestJobWhereInput[]
+    id?: StringFilter<"IngestJob"> | string
+    workspaceId?: StringFilter<"IngestJob"> | string
+    connectionId?: StringNullableFilter<"IngestJob"> | string | null
+    importFileId?: StringNullableFilter<"IngestJob"> | string | null
+    kind?: EnumIngestJobKindFilter<"IngestJob"> | $Enums.IngestJobKind
+    status?: EnumIngestJobStatusFilter<"IngestJob"> | $Enums.IngestJobStatus
+    cursor?: StringNullableFilter<"IngestJob"> | string | null
+    stats?: JsonFilter<"IngestJob">
+    errorMessage?: StringNullableFilter<"IngestJob"> | string | null
+    createdAt?: DateTimeFilter<"IngestJob"> | Date | string
+    updatedAt?: DateTimeFilter<"IngestJob"> | Date | string
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    connection?: XOR<MailboxConnectionNullableScalarRelationFilter, MailboxConnectionWhereInput> | null
+  }
+
+  export type IngestJobOrderByWithRelationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    connectionId?: SortOrderInput | SortOrder
+    importFileId?: SortOrderInput | SortOrder
+    kind?: SortOrder
+    status?: SortOrder
+    cursor?: SortOrderInput | SortOrder
+    stats?: SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    workspace?: WorkspaceOrderByWithRelationInput
+    connection?: MailboxConnectionOrderByWithRelationInput
+  }
+
+  export type IngestJobWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: IngestJobWhereInput | IngestJobWhereInput[]
+    OR?: IngestJobWhereInput[]
+    NOT?: IngestJobWhereInput | IngestJobWhereInput[]
+    workspaceId?: StringFilter<"IngestJob"> | string
+    connectionId?: StringNullableFilter<"IngestJob"> | string | null
+    importFileId?: StringNullableFilter<"IngestJob"> | string | null
+    kind?: EnumIngestJobKindFilter<"IngestJob"> | $Enums.IngestJobKind
+    status?: EnumIngestJobStatusFilter<"IngestJob"> | $Enums.IngestJobStatus
+    cursor?: StringNullableFilter<"IngestJob"> | string | null
+    stats?: JsonFilter<"IngestJob">
+    errorMessage?: StringNullableFilter<"IngestJob"> | string | null
+    createdAt?: DateTimeFilter<"IngestJob"> | Date | string
+    updatedAt?: DateTimeFilter<"IngestJob"> | Date | string
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    connection?: XOR<MailboxConnectionNullableScalarRelationFilter, MailboxConnectionWhereInput> | null
+  }, "id">
+
+  export type IngestJobOrderByWithAggregationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    connectionId?: SortOrderInput | SortOrder
+    importFileId?: SortOrderInput | SortOrder
+    kind?: SortOrder
+    status?: SortOrder
+    cursor?: SortOrderInput | SortOrder
+    stats?: SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: IngestJobCountOrderByAggregateInput
+    _max?: IngestJobMaxOrderByAggregateInput
+    _min?: IngestJobMinOrderByAggregateInput
+  }
+
+  export type IngestJobScalarWhereWithAggregatesInput = {
+    AND?: IngestJobScalarWhereWithAggregatesInput | IngestJobScalarWhereWithAggregatesInput[]
+    OR?: IngestJobScalarWhereWithAggregatesInput[]
+    NOT?: IngestJobScalarWhereWithAggregatesInput | IngestJobScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"IngestJob"> | string
+    workspaceId?: StringWithAggregatesFilter<"IngestJob"> | string
+    connectionId?: StringNullableWithAggregatesFilter<"IngestJob"> | string | null
+    importFileId?: StringNullableWithAggregatesFilter<"IngestJob"> | string | null
+    kind?: EnumIngestJobKindWithAggregatesFilter<"IngestJob"> | $Enums.IngestJobKind
+    status?: EnumIngestJobStatusWithAggregatesFilter<"IngestJob"> | $Enums.IngestJobStatus
+    cursor?: StringNullableWithAggregatesFilter<"IngestJob"> | string | null
+    stats?: JsonWithAggregatesFilter<"IngestJob">
+    errorMessage?: StringNullableWithAggregatesFilter<"IngestJob"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"IngestJob"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"IngestJob"> | Date | string
+  }
+
+  export type EmailTriageItemWhereInput = {
+    AND?: EmailTriageItemWhereInput | EmailTriageItemWhereInput[]
+    OR?: EmailTriageItemWhereInput[]
+    NOT?: EmailTriageItemWhereInput | EmailTriageItemWhereInput[]
+    id?: StringFilter<"EmailTriageItem"> | string
+    workspaceId?: StringFilter<"EmailTriageItem"> | string
+    address?: StringFilter<"EmailTriageItem"> | string
+    status?: EnumEmailTriageStatusFilter<"EmailTriageItem"> | $Enums.EmailTriageStatus
+    userId?: StringNullableFilter<"EmailTriageItem"> | string | null
+    clientId?: StringNullableFilter<"EmailTriageItem"> | string | null
+    resolvedBy?: StringNullableFilter<"EmailTriageItem"> | string | null
+    resolvedAt?: DateTimeNullableFilter<"EmailTriageItem"> | Date | string | null
+    notes?: StringNullableFilter<"EmailTriageItem"> | string | null
+    createdAt?: DateTimeFilter<"EmailTriageItem"> | Date | string
+    updatedAt?: DateTimeFilter<"EmailTriageItem"> | Date | string
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+  }
+
+  export type EmailTriageItemOrderByWithRelationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    address?: SortOrder
+    status?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    clientId?: SortOrderInput | SortOrder
+    resolvedBy?: SortOrderInput | SortOrder
+    resolvedAt?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    workspace?: WorkspaceOrderByWithRelationInput
+  }
+
+  export type EmailTriageItemWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    workspaceId_address?: EmailTriageItemWorkspaceIdAddressCompoundUniqueInput
+    AND?: EmailTriageItemWhereInput | EmailTriageItemWhereInput[]
+    OR?: EmailTriageItemWhereInput[]
+    NOT?: EmailTriageItemWhereInput | EmailTriageItemWhereInput[]
+    workspaceId?: StringFilter<"EmailTriageItem"> | string
+    address?: StringFilter<"EmailTriageItem"> | string
+    status?: EnumEmailTriageStatusFilter<"EmailTriageItem"> | $Enums.EmailTriageStatus
+    userId?: StringNullableFilter<"EmailTriageItem"> | string | null
+    clientId?: StringNullableFilter<"EmailTriageItem"> | string | null
+    resolvedBy?: StringNullableFilter<"EmailTriageItem"> | string | null
+    resolvedAt?: DateTimeNullableFilter<"EmailTriageItem"> | Date | string | null
+    notes?: StringNullableFilter<"EmailTriageItem"> | string | null
+    createdAt?: DateTimeFilter<"EmailTriageItem"> | Date | string
+    updatedAt?: DateTimeFilter<"EmailTriageItem"> | Date | string
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+  }, "id" | "workspaceId_address">
+
+  export type EmailTriageItemOrderByWithAggregationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    address?: SortOrder
+    status?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    clientId?: SortOrderInput | SortOrder
+    resolvedBy?: SortOrderInput | SortOrder
+    resolvedAt?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: EmailTriageItemCountOrderByAggregateInput
+    _max?: EmailTriageItemMaxOrderByAggregateInput
+    _min?: EmailTriageItemMinOrderByAggregateInput
+  }
+
+  export type EmailTriageItemScalarWhereWithAggregatesInput = {
+    AND?: EmailTriageItemScalarWhereWithAggregatesInput | EmailTriageItemScalarWhereWithAggregatesInput[]
+    OR?: EmailTriageItemScalarWhereWithAggregatesInput[]
+    NOT?: EmailTriageItemScalarWhereWithAggregatesInput | EmailTriageItemScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"EmailTriageItem"> | string
+    workspaceId?: StringWithAggregatesFilter<"EmailTriageItem"> | string
+    address?: StringWithAggregatesFilter<"EmailTriageItem"> | string
+    status?: EnumEmailTriageStatusWithAggregatesFilter<"EmailTriageItem"> | $Enums.EmailTriageStatus
+    userId?: StringNullableWithAggregatesFilter<"EmailTriageItem"> | string | null
+    clientId?: StringNullableWithAggregatesFilter<"EmailTriageItem"> | string | null
+    resolvedBy?: StringNullableWithAggregatesFilter<"EmailTriageItem"> | string | null
+    resolvedAt?: DateTimeNullableWithAggregatesFilter<"EmailTriageItem"> | Date | string | null
+    notes?: StringNullableWithAggregatesFilter<"EmailTriageItem"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"EmailTriageItem"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"EmailTriageItem"> | Date | string
+  }
+
   export type LeadWhereInput = {
     AND?: LeadWhereInput | LeadWhereInput[]
     OR?: LeadWhereInput[]
@@ -34029,6 +48536,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateInput = {
@@ -34060,6 +48574,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUpdateInput = {
@@ -34091,6 +48612,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateInput = {
@@ -34122,6 +48650,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateManyInput = {
@@ -35420,6 +49955,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -35437,6 +49973,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -35454,6 +49991,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -35471,6 +50009,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -36294,6 +50833,1013 @@ export namespace Prisma {
     snapshot?: JsonNullValueInput | InputJsonValue
   }
 
+  export type ClientCreateInput = {
+    id?: string
+    name: string
+    zohoId?: string | null
+    status?: $Enums.ClientStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutClientsInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutClientInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutClientInput
+  }
+
+  export type ClientUncheckedCreateInput = {
+    id?: string
+    workspaceId: string
+    name: string
+    zohoId?: string | null
+    status?: $Enums.ClientStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutClientInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutClientInput
+  }
+
+  export type ClientUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    zohoId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumClientStatusFieldUpdateOperationsInput | $Enums.ClientStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutClientsNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutClientNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutClientNestedInput
+  }
+
+  export type ClientUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    zohoId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumClientStatusFieldUpdateOperationsInput | $Enums.ClientStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutClientNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutClientNestedInput
+  }
+
+  export type ClientCreateManyInput = {
+    id?: string
+    workspaceId: string
+    name: string
+    zohoId?: string | null
+    status?: $Enums.ClientStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type ClientUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    zohoId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumClientStatusFieldUpdateOperationsInput | $Enums.ClientStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type ClientUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    zohoId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumClientStatusFieldUpdateOperationsInput | $Enums.ClientStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EmailAliasCreateInput = {
+    id?: string
+    address: string
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutEmailAliasesInput
+    user?: UserCreateNestedOneWithoutEmailAliasesInput
+    client?: ClientCreateNestedOneWithoutEmailAliasesInput
+  }
+
+  export type EmailAliasUncheckedCreateInput = {
+    id?: string
+    workspaceId: string
+    address: string
+    userId?: string | null
+    clientId?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type EmailAliasUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutEmailAliasesNestedInput
+    user?: UserUpdateOneWithoutEmailAliasesNestedInput
+    client?: ClientUpdateOneWithoutEmailAliasesNestedInput
+  }
+
+  export type EmailAliasUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EmailAliasCreateManyInput = {
+    id?: string
+    workspaceId: string
+    address: string
+    userId?: string | null
+    clientId?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type EmailAliasUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EmailAliasUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EvidenceItemCreateInput = {
+    id?: string
+    createdById?: string | null
+    sourceType: $Enums.EvidenceSourceType
+    title: string
+    occurredAt: Date | string
+    ingestedAt?: Date | string
+    contentSha256: string
+    storageUri?: string | null
+    retentionRuleId?: string | null
+    destructionEligibleAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutEvidenceItemsInput
+    client?: ClientCreateNestedOneWithoutEvidenceItemsInput
+    tags?: EvidenceTagCreateNestedManyWithoutItemInput
+    communication?: CommunicationCreateNestedOneWithoutEvidenceItemInput
+  }
+
+  export type EvidenceItemUncheckedCreateInput = {
+    id?: string
+    workspaceId: string
+    clientId?: string | null
+    createdById?: string | null
+    sourceType: $Enums.EvidenceSourceType
+    title: string
+    occurredAt: Date | string
+    ingestedAt?: Date | string
+    contentSha256: string
+    storageUri?: string | null
+    retentionRuleId?: string | null
+    destructionEligibleAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    tags?: EvidenceTagUncheckedCreateNestedManyWithoutItemInput
+    communication?: CommunicationUncheckedCreateNestedOneWithoutEvidenceItemInput
+  }
+
+  export type EvidenceItemUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    title?: StringFieldUpdateOperationsInput | string
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ingestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: NullableStringFieldUpdateOperationsInput | string | null
+    retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutEvidenceItemsNestedInput
+    client?: ClientUpdateOneWithoutEvidenceItemsNestedInput
+    tags?: EvidenceTagUpdateManyWithoutItemNestedInput
+    communication?: CommunicationUpdateOneWithoutEvidenceItemNestedInput
+  }
+
+  export type EvidenceItemUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    title?: StringFieldUpdateOperationsInput | string
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ingestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: NullableStringFieldUpdateOperationsInput | string | null
+    retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tags?: EvidenceTagUncheckedUpdateManyWithoutItemNestedInput
+    communication?: CommunicationUncheckedUpdateOneWithoutEvidenceItemNestedInput
+  }
+
+  export type EvidenceItemCreateManyInput = {
+    id?: string
+    workspaceId: string
+    clientId?: string | null
+    createdById?: string | null
+    sourceType: $Enums.EvidenceSourceType
+    title: string
+    occurredAt: Date | string
+    ingestedAt?: Date | string
+    contentSha256: string
+    storageUri?: string | null
+    retentionRuleId?: string | null
+    destructionEligibleAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type EvidenceItemUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    title?: StringFieldUpdateOperationsInput | string
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ingestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: NullableStringFieldUpdateOperationsInput | string | null
+    retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EvidenceItemUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    title?: StringFieldUpdateOperationsInput | string
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ingestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: NullableStringFieldUpdateOperationsInput | string | null
+    retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EvidenceTagCreateInput = {
+    id?: string
+    category: $Enums.TagCategory
+    addedBy: string
+    addedAt?: Date | string
+    removedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    item: EvidenceItemCreateNestedOneWithoutTagsInput
+  }
+
+  export type EvidenceTagUncheckedCreateInput = {
+    id?: string
+    itemId: string
+    category: $Enums.TagCategory
+    addedBy: string
+    addedAt?: Date | string
+    removedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EvidenceTagUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumTagCategoryFieldUpdateOperationsInput | $Enums.TagCategory
+    addedBy?: StringFieldUpdateOperationsInput | string
+    addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    item?: EvidenceItemUpdateOneRequiredWithoutTagsNestedInput
+  }
+
+  export type EvidenceTagUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    itemId?: StringFieldUpdateOperationsInput | string
+    category?: EnumTagCategoryFieldUpdateOperationsInput | $Enums.TagCategory
+    addedBy?: StringFieldUpdateOperationsInput | string
+    addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EvidenceTagCreateManyInput = {
+    id?: string
+    itemId: string
+    category: $Enums.TagCategory
+    addedBy: string
+    addedAt?: Date | string
+    removedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EvidenceTagUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumTagCategoryFieldUpdateOperationsInput | $Enums.TagCategory
+    addedBy?: StringFieldUpdateOperationsInput | string
+    addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EvidenceTagUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    itemId?: StringFieldUpdateOperationsInput | string
+    category?: EnumTagCategoryFieldUpdateOperationsInput | $Enums.TagCategory
+    addedBy?: StringFieldUpdateOperationsInput | string
+    addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommunicationThreadCreateInput = {
+    id?: string
+    channel: $Enums.CommunicationChannel
+    externalThreadId?: string | null
+    subject?: string | null
+    participants: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutCommunicationThreadsInput
+    messages?: CommunicationCreateNestedManyWithoutThreadInput
+  }
+
+  export type CommunicationThreadUncheckedCreateInput = {
+    id?: string
+    workspaceId: string
+    channel: $Enums.CommunicationChannel
+    externalThreadId?: string | null
+    subject?: string | null
+    participants: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    messages?: CommunicationUncheckedCreateNestedManyWithoutThreadInput
+  }
+
+  export type CommunicationThreadUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: EnumCommunicationChannelFieldUpdateOperationsInput | $Enums.CommunicationChannel
+    externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    participants?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutCommunicationThreadsNestedInput
+    messages?: CommunicationUpdateManyWithoutThreadNestedInput
+  }
+
+  export type CommunicationThreadUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    channel?: EnumCommunicationChannelFieldUpdateOperationsInput | $Enums.CommunicationChannel
+    externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    participants?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    messages?: CommunicationUncheckedUpdateManyWithoutThreadNestedInput
+  }
+
+  export type CommunicationThreadCreateManyInput = {
+    id?: string
+    workspaceId: string
+    channel: $Enums.CommunicationChannel
+    externalThreadId?: string | null
+    subject?: string | null
+    participants: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type CommunicationThreadUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: EnumCommunicationChannelFieldUpdateOperationsInput | $Enums.CommunicationChannel
+    externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    participants?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CommunicationThreadUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    channel?: EnumCommunicationChannelFieldUpdateOperationsInput | $Enums.CommunicationChannel
+    externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    participants?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CommunicationCreateInput = {
+    id?: string
+    direction: $Enums.CommunicationDirection
+    sentAt: Date | string
+    fromAddress: string
+    toAddresses?: CommunicationCreatetoAddressesInput | string[]
+    ccAddresses?: CommunicationCreateccAddressesInput | string[]
+    internetMessageId?: string | null
+    bodyText: string
+    bodyHtml?: string | null
+    inReplyTo?: string | null
+    referencesHeader?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    thread: CommunicationThreadCreateNestedOneWithoutMessagesInput
+    evidenceItem: EvidenceItemCreateNestedOneWithoutCommunicationInput
+    attachments?: AttachmentCreateNestedManyWithoutCommunicationInput
+  }
+
+  export type CommunicationUncheckedCreateInput = {
+    id?: string
+    threadId: string
+    evidenceItemId: string
+    direction: $Enums.CommunicationDirection
+    sentAt: Date | string
+    fromAddress: string
+    toAddresses?: CommunicationCreatetoAddressesInput | string[]
+    ccAddresses?: CommunicationCreateccAddressesInput | string[]
+    internetMessageId?: string | null
+    bodyText: string
+    bodyHtml?: string | null
+    inReplyTo?: string | null
+    referencesHeader?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    attachments?: AttachmentUncheckedCreateNestedManyWithoutCommunicationInput
+  }
+
+  export type CommunicationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    direction?: EnumCommunicationDirectionFieldUpdateOperationsInput | $Enums.CommunicationDirection
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fromAddress?: StringFieldUpdateOperationsInput | string
+    toAddresses?: CommunicationUpdatetoAddressesInput | string[]
+    ccAddresses?: CommunicationUpdateccAddressesInput | string[]
+    internetMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    bodyText?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: NullableStringFieldUpdateOperationsInput | string | null
+    inReplyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    referencesHeader?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    thread?: CommunicationThreadUpdateOneRequiredWithoutMessagesNestedInput
+    evidenceItem?: EvidenceItemUpdateOneRequiredWithoutCommunicationNestedInput
+    attachments?: AttachmentUpdateManyWithoutCommunicationNestedInput
+  }
+
+  export type CommunicationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    threadId?: StringFieldUpdateOperationsInput | string
+    evidenceItemId?: StringFieldUpdateOperationsInput | string
+    direction?: EnumCommunicationDirectionFieldUpdateOperationsInput | $Enums.CommunicationDirection
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fromAddress?: StringFieldUpdateOperationsInput | string
+    toAddresses?: CommunicationUpdatetoAddressesInput | string[]
+    ccAddresses?: CommunicationUpdateccAddressesInput | string[]
+    internetMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    bodyText?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: NullableStringFieldUpdateOperationsInput | string | null
+    inReplyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    referencesHeader?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    attachments?: AttachmentUncheckedUpdateManyWithoutCommunicationNestedInput
+  }
+
+  export type CommunicationCreateManyInput = {
+    id?: string
+    threadId: string
+    evidenceItemId: string
+    direction: $Enums.CommunicationDirection
+    sentAt: Date | string
+    fromAddress: string
+    toAddresses?: CommunicationCreatetoAddressesInput | string[]
+    ccAddresses?: CommunicationCreateccAddressesInput | string[]
+    internetMessageId?: string | null
+    bodyText: string
+    bodyHtml?: string | null
+    inReplyTo?: string | null
+    referencesHeader?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type CommunicationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    direction?: EnumCommunicationDirectionFieldUpdateOperationsInput | $Enums.CommunicationDirection
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fromAddress?: StringFieldUpdateOperationsInput | string
+    toAddresses?: CommunicationUpdatetoAddressesInput | string[]
+    ccAddresses?: CommunicationUpdateccAddressesInput | string[]
+    internetMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    bodyText?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: NullableStringFieldUpdateOperationsInput | string | null
+    inReplyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    referencesHeader?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CommunicationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    threadId?: StringFieldUpdateOperationsInput | string
+    evidenceItemId?: StringFieldUpdateOperationsInput | string
+    direction?: EnumCommunicationDirectionFieldUpdateOperationsInput | $Enums.CommunicationDirection
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fromAddress?: StringFieldUpdateOperationsInput | string
+    toAddresses?: CommunicationUpdatetoAddressesInput | string[]
+    ccAddresses?: CommunicationUpdateccAddressesInput | string[]
+    internetMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    bodyText?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: NullableStringFieldUpdateOperationsInput | string | null
+    inReplyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    referencesHeader?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type AttachmentCreateInput = {
+    id?: string
+    filename: string
+    mimeType: string
+    contentSha256: string
+    storageUri: string
+    sizeBytes?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    communication: CommunicationCreateNestedOneWithoutAttachmentsInput
+  }
+
+  export type AttachmentUncheckedCreateInput = {
+    id?: string
+    communicationId: string
+    filename: string
+    mimeType: string
+    contentSha256: string
+    storageUri: string
+    sizeBytes?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type AttachmentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    mimeType?: StringFieldUpdateOperationsInput | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: StringFieldUpdateOperationsInput | string
+    sizeBytes?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    communication?: CommunicationUpdateOneRequiredWithoutAttachmentsNestedInput
+  }
+
+  export type AttachmentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    communicationId?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    mimeType?: StringFieldUpdateOperationsInput | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: StringFieldUpdateOperationsInput | string
+    sizeBytes?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type AttachmentCreateManyInput = {
+    id?: string
+    communicationId: string
+    filename: string
+    mimeType: string
+    contentSha256: string
+    storageUri: string
+    sizeBytes?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type AttachmentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    mimeType?: StringFieldUpdateOperationsInput | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: StringFieldUpdateOperationsInput | string
+    sizeBytes?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type AttachmentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    communicationId?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    mimeType?: StringFieldUpdateOperationsInput | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: StringFieldUpdateOperationsInput | string
+    sizeBytes?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type MailboxConnectionCreateInput = {
+    id?: string
+    provider?: $Enums.MailboxProvider
+    mailboxAddress: string
+    consentMode?: $Enums.MailboxConsentMode
+    scopeFolders?: MailboxConnectionCreatescopeFoldersInput | string[]
+    backfillFrom?: Date | string | null
+    status?: $Enums.MailboxSyncStatus
+    encryptedToken?: string | null
+    deltaCursor?: string | null
+    lastSyncAt?: Date | string | null
+    lastErrorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutMailboxConnectionsInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutConnectionInput
+  }
+
+  export type MailboxConnectionUncheckedCreateInput = {
+    id?: string
+    workspaceId: string
+    provider?: $Enums.MailboxProvider
+    mailboxAddress: string
+    consentMode?: $Enums.MailboxConsentMode
+    scopeFolders?: MailboxConnectionCreatescopeFoldersInput | string[]
+    backfillFrom?: Date | string | null
+    status?: $Enums.MailboxSyncStatus
+    encryptedToken?: string | null
+    deltaCursor?: string | null
+    lastSyncAt?: Date | string | null
+    lastErrorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutConnectionInput
+  }
+
+  export type MailboxConnectionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumMailboxProviderFieldUpdateOperationsInput | $Enums.MailboxProvider
+    mailboxAddress?: StringFieldUpdateOperationsInput | string
+    consentMode?: EnumMailboxConsentModeFieldUpdateOperationsInput | $Enums.MailboxConsentMode
+    scopeFolders?: MailboxConnectionUpdatescopeFoldersInput | string[]
+    backfillFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumMailboxSyncStatusFieldUpdateOperationsInput | $Enums.MailboxSyncStatus
+    encryptedToken?: NullableStringFieldUpdateOperationsInput | string | null
+    deltaCursor?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSyncAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutMailboxConnectionsNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutConnectionNestedInput
+  }
+
+  export type MailboxConnectionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    provider?: EnumMailboxProviderFieldUpdateOperationsInput | $Enums.MailboxProvider
+    mailboxAddress?: StringFieldUpdateOperationsInput | string
+    consentMode?: EnumMailboxConsentModeFieldUpdateOperationsInput | $Enums.MailboxConsentMode
+    scopeFolders?: MailboxConnectionUpdatescopeFoldersInput | string[]
+    backfillFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumMailboxSyncStatusFieldUpdateOperationsInput | $Enums.MailboxSyncStatus
+    encryptedToken?: NullableStringFieldUpdateOperationsInput | string | null
+    deltaCursor?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSyncAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutConnectionNestedInput
+  }
+
+  export type MailboxConnectionCreateManyInput = {
+    id?: string
+    workspaceId: string
+    provider?: $Enums.MailboxProvider
+    mailboxAddress: string
+    consentMode?: $Enums.MailboxConsentMode
+    scopeFolders?: MailboxConnectionCreatescopeFoldersInput | string[]
+    backfillFrom?: Date | string | null
+    status?: $Enums.MailboxSyncStatus
+    encryptedToken?: string | null
+    deltaCursor?: string | null
+    lastSyncAt?: Date | string | null
+    lastErrorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type MailboxConnectionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumMailboxProviderFieldUpdateOperationsInput | $Enums.MailboxProvider
+    mailboxAddress?: StringFieldUpdateOperationsInput | string
+    consentMode?: EnumMailboxConsentModeFieldUpdateOperationsInput | $Enums.MailboxConsentMode
+    scopeFolders?: MailboxConnectionUpdatescopeFoldersInput | string[]
+    backfillFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumMailboxSyncStatusFieldUpdateOperationsInput | $Enums.MailboxSyncStatus
+    encryptedToken?: NullableStringFieldUpdateOperationsInput | string | null
+    deltaCursor?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSyncAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type MailboxConnectionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    provider?: EnumMailboxProviderFieldUpdateOperationsInput | $Enums.MailboxProvider
+    mailboxAddress?: StringFieldUpdateOperationsInput | string
+    consentMode?: EnumMailboxConsentModeFieldUpdateOperationsInput | $Enums.MailboxConsentMode
+    scopeFolders?: MailboxConnectionUpdatescopeFoldersInput | string[]
+    backfillFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumMailboxSyncStatusFieldUpdateOperationsInput | $Enums.MailboxSyncStatus
+    encryptedToken?: NullableStringFieldUpdateOperationsInput | string | null
+    deltaCursor?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSyncAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type IngestJobCreateInput = {
+    id?: string
+    importFileId?: string | null
+    kind: $Enums.IngestJobKind
+    status?: $Enums.IngestJobStatus
+    cursor?: string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspace: WorkspaceCreateNestedOneWithoutIngestJobsInput
+    connection?: MailboxConnectionCreateNestedOneWithoutIngestJobsInput
+  }
+
+  export type IngestJobUncheckedCreateInput = {
+    id?: string
+    workspaceId: string
+    connectionId?: string | null
+    importFileId?: string | null
+    kind: $Enums.IngestJobKind
+    status?: $Enums.IngestJobStatus
+    cursor?: string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type IngestJobUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importFileId?: NullableStringFieldUpdateOperationsInput | string | null
+    kind?: EnumIngestJobKindFieldUpdateOperationsInput | $Enums.IngestJobKind
+    status?: EnumIngestJobStatusFieldUpdateOperationsInput | $Enums.IngestJobStatus
+    cursor?: NullableStringFieldUpdateOperationsInput | string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspace?: WorkspaceUpdateOneRequiredWithoutIngestJobsNestedInput
+    connection?: MailboxConnectionUpdateOneWithoutIngestJobsNestedInput
+  }
+
+  export type IngestJobUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    connectionId?: NullableStringFieldUpdateOperationsInput | string | null
+    importFileId?: NullableStringFieldUpdateOperationsInput | string | null
+    kind?: EnumIngestJobKindFieldUpdateOperationsInput | $Enums.IngestJobKind
+    status?: EnumIngestJobStatusFieldUpdateOperationsInput | $Enums.IngestJobStatus
+    cursor?: NullableStringFieldUpdateOperationsInput | string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IngestJobCreateManyInput = {
+    id?: string
+    workspaceId: string
+    connectionId?: string | null
+    importFileId?: string | null
+    kind: $Enums.IngestJobKind
+    status?: $Enums.IngestJobStatus
+    cursor?: string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type IngestJobUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importFileId?: NullableStringFieldUpdateOperationsInput | string | null
+    kind?: EnumIngestJobKindFieldUpdateOperationsInput | $Enums.IngestJobKind
+    status?: EnumIngestJobStatusFieldUpdateOperationsInput | $Enums.IngestJobStatus
+    cursor?: NullableStringFieldUpdateOperationsInput | string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IngestJobUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    connectionId?: NullableStringFieldUpdateOperationsInput | string | null
+    importFileId?: NullableStringFieldUpdateOperationsInput | string | null
+    kind?: EnumIngestJobKindFieldUpdateOperationsInput | $Enums.IngestJobKind
+    status?: EnumIngestJobStatusFieldUpdateOperationsInput | $Enums.IngestJobStatus
+    cursor?: NullableStringFieldUpdateOperationsInput | string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmailTriageItemCreateInput = {
+    id?: string
+    address: string
+    status?: $Enums.EmailTriageStatus
+    userId?: string | null
+    clientId?: string | null
+    resolvedBy?: string | null
+    resolvedAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspace: WorkspaceCreateNestedOneWithoutEmailTriageItemsInput
+  }
+
+  export type EmailTriageItemUncheckedCreateInput = {
+    id?: string
+    workspaceId: string
+    address: string
+    status?: $Enums.EmailTriageStatus
+    userId?: string | null
+    clientId?: string | null
+    resolvedBy?: string | null
+    resolvedAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EmailTriageItemUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    status?: EnumEmailTriageStatusFieldUpdateOperationsInput | $Enums.EmailTriageStatus
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspace?: WorkspaceUpdateOneRequiredWithoutEmailTriageItemsNestedInput
+  }
+
+  export type EmailTriageItemUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    status?: EnumEmailTriageStatusFieldUpdateOperationsInput | $Enums.EmailTriageStatus
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmailTriageItemCreateManyInput = {
+    id?: string
+    workspaceId: string
+    address: string
+    status?: $Enums.EmailTriageStatus
+    userId?: string | null
+    clientId?: string | null
+    resolvedBy?: string | null
+    resolvedAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EmailTriageItemUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    status?: EnumEmailTriageStatusFieldUpdateOperationsInput | $Enums.EmailTriageStatus
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmailTriageItemUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    status?: EnumEmailTriageStatusFieldUpdateOperationsInput | $Enums.EmailTriageStatus
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type LeadCreateInput = {
     id?: string
     email: string
@@ -36506,6 +52052,48 @@ export namespace Prisma {
     isNot?: FirmProfileWhereInput | null
   }
 
+  export type EvidenceItemListRelationFilter = {
+    every?: EvidenceItemWhereInput
+    some?: EvidenceItemWhereInput
+    none?: EvidenceItemWhereInput
+  }
+
+  export type ClientListRelationFilter = {
+    every?: ClientWhereInput
+    some?: ClientWhereInput
+    none?: ClientWhereInput
+  }
+
+  export type MailboxConnectionListRelationFilter = {
+    every?: MailboxConnectionWhereInput
+    some?: MailboxConnectionWhereInput
+    none?: MailboxConnectionWhereInput
+  }
+
+  export type CommunicationThreadListRelationFilter = {
+    every?: CommunicationThreadWhereInput
+    some?: CommunicationThreadWhereInput
+    none?: CommunicationThreadWhereInput
+  }
+
+  export type EmailAliasListRelationFilter = {
+    every?: EmailAliasWhereInput
+    some?: EmailAliasWhereInput
+    none?: EmailAliasWhereInput
+  }
+
+  export type EmailTriageItemListRelationFilter = {
+    every?: EmailTriageItemWhereInput
+    some?: EmailTriageItemWhereInput
+    none?: EmailTriageItemWhereInput
+  }
+
+  export type IngestJobListRelationFilter = {
+    every?: IngestJobWhereInput
+    some?: IngestJobWhereInput
+    none?: IngestJobWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -36540,6 +52128,34 @@ export namespace Prisma {
   }
 
   export type IntegrationConfigOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type EvidenceItemOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ClientOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type MailboxConnectionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CommunicationThreadOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type EmailAliasOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type EmailTriageItemOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type IngestJobOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -38352,6 +53968,694 @@ export namespace Prisma {
     _max?: NestedEnumFirmProfileVersionTypeFilter<$PrismaModel>
   }
 
+  export type EnumClientStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ClientStatus | EnumClientStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ClientStatus[] | ListEnumClientStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ClientStatus[] | ListEnumClientStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumClientStatusFilter<$PrismaModel> | $Enums.ClientStatus
+  }
+
+  export type ClientCountOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    name?: SortOrder
+    zohoId?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type ClientMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    name?: SortOrder
+    zohoId?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type ClientMinOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    name?: SortOrder
+    zohoId?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type EnumClientStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ClientStatus | EnumClientStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ClientStatus[] | ListEnumClientStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ClientStatus[] | ListEnumClientStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumClientStatusWithAggregatesFilter<$PrismaModel> | $Enums.ClientStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumClientStatusFilter<$PrismaModel>
+    _max?: NestedEnumClientStatusFilter<$PrismaModel>
+  }
+
+  export type ClientNullableScalarRelationFilter = {
+    is?: ClientWhereInput | null
+    isNot?: ClientWhereInput | null
+  }
+
+  export type EmailAliasWorkspaceIdAddressUserIdClientIdCompoundUniqueInput = {
+    workspaceId: string
+    address: string
+    userId: string
+    clientId: string
+  }
+
+  export type EmailAliasCountOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    address?: SortOrder
+    userId?: SortOrder
+    clientId?: SortOrder
+    verified?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type EmailAliasMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    address?: SortOrder
+    userId?: SortOrder
+    clientId?: SortOrder
+    verified?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type EmailAliasMinOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    address?: SortOrder
+    userId?: SortOrder
+    clientId?: SortOrder
+    verified?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type EnumEvidenceSourceTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.EvidenceSourceType | EnumEvidenceSourceTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.EvidenceSourceType[] | ListEnumEvidenceSourceTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EvidenceSourceType[] | ListEnumEvidenceSourceTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumEvidenceSourceTypeFilter<$PrismaModel> | $Enums.EvidenceSourceType
+  }
+
+  export type EvidenceTagListRelationFilter = {
+    every?: EvidenceTagWhereInput
+    some?: EvidenceTagWhereInput
+    none?: EvidenceTagWhereInput
+  }
+
+  export type CommunicationNullableScalarRelationFilter = {
+    is?: CommunicationWhereInput | null
+    isNot?: CommunicationWhereInput | null
+  }
+
+  export type EvidenceTagOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type EvidenceItemCountOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    clientId?: SortOrder
+    createdById?: SortOrder
+    sourceType?: SortOrder
+    title?: SortOrder
+    occurredAt?: SortOrder
+    ingestedAt?: SortOrder
+    contentSha256?: SortOrder
+    storageUri?: SortOrder
+    retentionRuleId?: SortOrder
+    destructionEligibleAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type EvidenceItemMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    clientId?: SortOrder
+    createdById?: SortOrder
+    sourceType?: SortOrder
+    title?: SortOrder
+    occurredAt?: SortOrder
+    ingestedAt?: SortOrder
+    contentSha256?: SortOrder
+    storageUri?: SortOrder
+    retentionRuleId?: SortOrder
+    destructionEligibleAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type EvidenceItemMinOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    clientId?: SortOrder
+    createdById?: SortOrder
+    sourceType?: SortOrder
+    title?: SortOrder
+    occurredAt?: SortOrder
+    ingestedAt?: SortOrder
+    contentSha256?: SortOrder
+    storageUri?: SortOrder
+    retentionRuleId?: SortOrder
+    destructionEligibleAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type EnumEvidenceSourceTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EvidenceSourceType | EnumEvidenceSourceTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.EvidenceSourceType[] | ListEnumEvidenceSourceTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EvidenceSourceType[] | ListEnumEvidenceSourceTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumEvidenceSourceTypeWithAggregatesFilter<$PrismaModel> | $Enums.EvidenceSourceType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumEvidenceSourceTypeFilter<$PrismaModel>
+    _max?: NestedEnumEvidenceSourceTypeFilter<$PrismaModel>
+  }
+
+  export type EnumTagCategoryFilter<$PrismaModel = never> = {
+    equals?: $Enums.TagCategory | EnumTagCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.TagCategory[] | ListEnumTagCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TagCategory[] | ListEnumTagCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumTagCategoryFilter<$PrismaModel> | $Enums.TagCategory
+  }
+
+  export type EvidenceItemScalarRelationFilter = {
+    is?: EvidenceItemWhereInput
+    isNot?: EvidenceItemWhereInput
+  }
+
+  export type EvidenceTagCountOrderByAggregateInput = {
+    id?: SortOrder
+    itemId?: SortOrder
+    category?: SortOrder
+    addedBy?: SortOrder
+    addedAt?: SortOrder
+    removedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EvidenceTagMaxOrderByAggregateInput = {
+    id?: SortOrder
+    itemId?: SortOrder
+    category?: SortOrder
+    addedBy?: SortOrder
+    addedAt?: SortOrder
+    removedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EvidenceTagMinOrderByAggregateInput = {
+    id?: SortOrder
+    itemId?: SortOrder
+    category?: SortOrder
+    addedBy?: SortOrder
+    addedAt?: SortOrder
+    removedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumTagCategoryWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TagCategory | EnumTagCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.TagCategory[] | ListEnumTagCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TagCategory[] | ListEnumTagCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumTagCategoryWithAggregatesFilter<$PrismaModel> | $Enums.TagCategory
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTagCategoryFilter<$PrismaModel>
+    _max?: NestedEnumTagCategoryFilter<$PrismaModel>
+  }
+
+  export type EnumCommunicationChannelFilter<$PrismaModel = never> = {
+    equals?: $Enums.CommunicationChannel | EnumCommunicationChannelFieldRefInput<$PrismaModel>
+    in?: $Enums.CommunicationChannel[] | ListEnumCommunicationChannelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CommunicationChannel[] | ListEnumCommunicationChannelFieldRefInput<$PrismaModel>
+    not?: NestedEnumCommunicationChannelFilter<$PrismaModel> | $Enums.CommunicationChannel
+  }
+
+  export type CommunicationListRelationFilter = {
+    every?: CommunicationWhereInput
+    some?: CommunicationWhereInput
+    none?: CommunicationWhereInput
+  }
+
+  export type CommunicationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CommunicationThreadCountOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    channel?: SortOrder
+    externalThreadId?: SortOrder
+    subject?: SortOrder
+    participants?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type CommunicationThreadMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    channel?: SortOrder
+    externalThreadId?: SortOrder
+    subject?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type CommunicationThreadMinOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    channel?: SortOrder
+    externalThreadId?: SortOrder
+    subject?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type EnumCommunicationChannelWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CommunicationChannel | EnumCommunicationChannelFieldRefInput<$PrismaModel>
+    in?: $Enums.CommunicationChannel[] | ListEnumCommunicationChannelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CommunicationChannel[] | ListEnumCommunicationChannelFieldRefInput<$PrismaModel>
+    not?: NestedEnumCommunicationChannelWithAggregatesFilter<$PrismaModel> | $Enums.CommunicationChannel
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCommunicationChannelFilter<$PrismaModel>
+    _max?: NestedEnumCommunicationChannelFilter<$PrismaModel>
+  }
+
+  export type EnumCommunicationDirectionFilter<$PrismaModel = never> = {
+    equals?: $Enums.CommunicationDirection | EnumCommunicationDirectionFieldRefInput<$PrismaModel>
+    in?: $Enums.CommunicationDirection[] | ListEnumCommunicationDirectionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CommunicationDirection[] | ListEnumCommunicationDirectionFieldRefInput<$PrismaModel>
+    not?: NestedEnumCommunicationDirectionFilter<$PrismaModel> | $Enums.CommunicationDirection
+  }
+
+  export type CommunicationThreadScalarRelationFilter = {
+    is?: CommunicationThreadWhereInput
+    isNot?: CommunicationThreadWhereInput
+  }
+
+  export type AttachmentListRelationFilter = {
+    every?: AttachmentWhereInput
+    some?: AttachmentWhereInput
+    none?: AttachmentWhereInput
+  }
+
+  export type AttachmentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CommunicationCountOrderByAggregateInput = {
+    id?: SortOrder
+    threadId?: SortOrder
+    evidenceItemId?: SortOrder
+    direction?: SortOrder
+    sentAt?: SortOrder
+    fromAddress?: SortOrder
+    toAddresses?: SortOrder
+    ccAddresses?: SortOrder
+    internetMessageId?: SortOrder
+    bodyText?: SortOrder
+    bodyHtml?: SortOrder
+    inReplyTo?: SortOrder
+    referencesHeader?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type CommunicationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    threadId?: SortOrder
+    evidenceItemId?: SortOrder
+    direction?: SortOrder
+    sentAt?: SortOrder
+    fromAddress?: SortOrder
+    internetMessageId?: SortOrder
+    bodyText?: SortOrder
+    bodyHtml?: SortOrder
+    inReplyTo?: SortOrder
+    referencesHeader?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type CommunicationMinOrderByAggregateInput = {
+    id?: SortOrder
+    threadId?: SortOrder
+    evidenceItemId?: SortOrder
+    direction?: SortOrder
+    sentAt?: SortOrder
+    fromAddress?: SortOrder
+    internetMessageId?: SortOrder
+    bodyText?: SortOrder
+    bodyHtml?: SortOrder
+    inReplyTo?: SortOrder
+    referencesHeader?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type EnumCommunicationDirectionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CommunicationDirection | EnumCommunicationDirectionFieldRefInput<$PrismaModel>
+    in?: $Enums.CommunicationDirection[] | ListEnumCommunicationDirectionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CommunicationDirection[] | ListEnumCommunicationDirectionFieldRefInput<$PrismaModel>
+    not?: NestedEnumCommunicationDirectionWithAggregatesFilter<$PrismaModel> | $Enums.CommunicationDirection
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCommunicationDirectionFilter<$PrismaModel>
+    _max?: NestedEnumCommunicationDirectionFilter<$PrismaModel>
+  }
+
+  export type CommunicationScalarRelationFilter = {
+    is?: CommunicationWhereInput
+    isNot?: CommunicationWhereInput
+  }
+
+  export type AttachmentCountOrderByAggregateInput = {
+    id?: SortOrder
+    communicationId?: SortOrder
+    filename?: SortOrder
+    mimeType?: SortOrder
+    contentSha256?: SortOrder
+    storageUri?: SortOrder
+    sizeBytes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type AttachmentAvgOrderByAggregateInput = {
+    sizeBytes?: SortOrder
+  }
+
+  export type AttachmentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    communicationId?: SortOrder
+    filename?: SortOrder
+    mimeType?: SortOrder
+    contentSha256?: SortOrder
+    storageUri?: SortOrder
+    sizeBytes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type AttachmentMinOrderByAggregateInput = {
+    id?: SortOrder
+    communicationId?: SortOrder
+    filename?: SortOrder
+    mimeType?: SortOrder
+    contentSha256?: SortOrder
+    storageUri?: SortOrder
+    sizeBytes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type AttachmentSumOrderByAggregateInput = {
+    sizeBytes?: SortOrder
+  }
+
+  export type EnumMailboxProviderFilter<$PrismaModel = never> = {
+    equals?: $Enums.MailboxProvider | EnumMailboxProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.MailboxProvider[] | ListEnumMailboxProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MailboxProvider[] | ListEnumMailboxProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumMailboxProviderFilter<$PrismaModel> | $Enums.MailboxProvider
+  }
+
+  export type EnumMailboxConsentModeFilter<$PrismaModel = never> = {
+    equals?: $Enums.MailboxConsentMode | EnumMailboxConsentModeFieldRefInput<$PrismaModel>
+    in?: $Enums.MailboxConsentMode[] | ListEnumMailboxConsentModeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MailboxConsentMode[] | ListEnumMailboxConsentModeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMailboxConsentModeFilter<$PrismaModel> | $Enums.MailboxConsentMode
+  }
+
+  export type EnumMailboxSyncStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.MailboxSyncStatus | EnumMailboxSyncStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MailboxSyncStatus[] | ListEnumMailboxSyncStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MailboxSyncStatus[] | ListEnumMailboxSyncStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMailboxSyncStatusFilter<$PrismaModel> | $Enums.MailboxSyncStatus
+  }
+
+  export type MailboxConnectionWorkspaceIdMailboxAddressCompoundUniqueInput = {
+    workspaceId: string
+    mailboxAddress: string
+  }
+
+  export type MailboxConnectionCountOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    provider?: SortOrder
+    mailboxAddress?: SortOrder
+    consentMode?: SortOrder
+    scopeFolders?: SortOrder
+    backfillFrom?: SortOrder
+    status?: SortOrder
+    encryptedToken?: SortOrder
+    deltaCursor?: SortOrder
+    lastSyncAt?: SortOrder
+    lastErrorMessage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type MailboxConnectionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    provider?: SortOrder
+    mailboxAddress?: SortOrder
+    consentMode?: SortOrder
+    backfillFrom?: SortOrder
+    status?: SortOrder
+    encryptedToken?: SortOrder
+    deltaCursor?: SortOrder
+    lastSyncAt?: SortOrder
+    lastErrorMessage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type MailboxConnectionMinOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    provider?: SortOrder
+    mailboxAddress?: SortOrder
+    consentMode?: SortOrder
+    backfillFrom?: SortOrder
+    status?: SortOrder
+    encryptedToken?: SortOrder
+    deltaCursor?: SortOrder
+    lastSyncAt?: SortOrder
+    lastErrorMessage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type EnumMailboxProviderWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MailboxProvider | EnumMailboxProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.MailboxProvider[] | ListEnumMailboxProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MailboxProvider[] | ListEnumMailboxProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumMailboxProviderWithAggregatesFilter<$PrismaModel> | $Enums.MailboxProvider
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMailboxProviderFilter<$PrismaModel>
+    _max?: NestedEnumMailboxProviderFilter<$PrismaModel>
+  }
+
+  export type EnumMailboxConsentModeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MailboxConsentMode | EnumMailboxConsentModeFieldRefInput<$PrismaModel>
+    in?: $Enums.MailboxConsentMode[] | ListEnumMailboxConsentModeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MailboxConsentMode[] | ListEnumMailboxConsentModeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMailboxConsentModeWithAggregatesFilter<$PrismaModel> | $Enums.MailboxConsentMode
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMailboxConsentModeFilter<$PrismaModel>
+    _max?: NestedEnumMailboxConsentModeFilter<$PrismaModel>
+  }
+
+  export type EnumMailboxSyncStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MailboxSyncStatus | EnumMailboxSyncStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MailboxSyncStatus[] | ListEnumMailboxSyncStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MailboxSyncStatus[] | ListEnumMailboxSyncStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMailboxSyncStatusWithAggregatesFilter<$PrismaModel> | $Enums.MailboxSyncStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMailboxSyncStatusFilter<$PrismaModel>
+    _max?: NestedEnumMailboxSyncStatusFilter<$PrismaModel>
+  }
+
+  export type EnumIngestJobKindFilter<$PrismaModel = never> = {
+    equals?: $Enums.IngestJobKind | EnumIngestJobKindFieldRefInput<$PrismaModel>
+    in?: $Enums.IngestJobKind[] | ListEnumIngestJobKindFieldRefInput<$PrismaModel>
+    notIn?: $Enums.IngestJobKind[] | ListEnumIngestJobKindFieldRefInput<$PrismaModel>
+    not?: NestedEnumIngestJobKindFilter<$PrismaModel> | $Enums.IngestJobKind
+  }
+
+  export type EnumIngestJobStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.IngestJobStatus | EnumIngestJobStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.IngestJobStatus[] | ListEnumIngestJobStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.IngestJobStatus[] | ListEnumIngestJobStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumIngestJobStatusFilter<$PrismaModel> | $Enums.IngestJobStatus
+  }
+
+  export type MailboxConnectionNullableScalarRelationFilter = {
+    is?: MailboxConnectionWhereInput | null
+    isNot?: MailboxConnectionWhereInput | null
+  }
+
+  export type IngestJobCountOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    connectionId?: SortOrder
+    importFileId?: SortOrder
+    kind?: SortOrder
+    status?: SortOrder
+    cursor?: SortOrder
+    stats?: SortOrder
+    errorMessage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type IngestJobMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    connectionId?: SortOrder
+    importFileId?: SortOrder
+    kind?: SortOrder
+    status?: SortOrder
+    cursor?: SortOrder
+    errorMessage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type IngestJobMinOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    connectionId?: SortOrder
+    importFileId?: SortOrder
+    kind?: SortOrder
+    status?: SortOrder
+    cursor?: SortOrder
+    errorMessage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumIngestJobKindWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.IngestJobKind | EnumIngestJobKindFieldRefInput<$PrismaModel>
+    in?: $Enums.IngestJobKind[] | ListEnumIngestJobKindFieldRefInput<$PrismaModel>
+    notIn?: $Enums.IngestJobKind[] | ListEnumIngestJobKindFieldRefInput<$PrismaModel>
+    not?: NestedEnumIngestJobKindWithAggregatesFilter<$PrismaModel> | $Enums.IngestJobKind
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumIngestJobKindFilter<$PrismaModel>
+    _max?: NestedEnumIngestJobKindFilter<$PrismaModel>
+  }
+
+  export type EnumIngestJobStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.IngestJobStatus | EnumIngestJobStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.IngestJobStatus[] | ListEnumIngestJobStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.IngestJobStatus[] | ListEnumIngestJobStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumIngestJobStatusWithAggregatesFilter<$PrismaModel> | $Enums.IngestJobStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumIngestJobStatusFilter<$PrismaModel>
+    _max?: NestedEnumIngestJobStatusFilter<$PrismaModel>
+  }
+
+  export type EnumEmailTriageStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.EmailTriageStatus | EnumEmailTriageStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.EmailTriageStatus[] | ListEnumEmailTriageStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EmailTriageStatus[] | ListEnumEmailTriageStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumEmailTriageStatusFilter<$PrismaModel> | $Enums.EmailTriageStatus
+  }
+
+  export type EmailTriageItemWorkspaceIdAddressCompoundUniqueInput = {
+    workspaceId: string
+    address: string
+  }
+
+  export type EmailTriageItemCountOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    address?: SortOrder
+    status?: SortOrder
+    userId?: SortOrder
+    clientId?: SortOrder
+    resolvedBy?: SortOrder
+    resolvedAt?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EmailTriageItemMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    address?: SortOrder
+    status?: SortOrder
+    userId?: SortOrder
+    clientId?: SortOrder
+    resolvedBy?: SortOrder
+    resolvedAt?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EmailTriageItemMinOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    address?: SortOrder
+    status?: SortOrder
+    userId?: SortOrder
+    clientId?: SortOrder
+    resolvedBy?: SortOrder
+    resolvedAt?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumEmailTriageStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EmailTriageStatus | EnumEmailTriageStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.EmailTriageStatus[] | ListEnumEmailTriageStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EmailTriageStatus[] | ListEnumEmailTriageStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumEmailTriageStatusWithAggregatesFilter<$PrismaModel> | $Enums.EmailTriageStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumEmailTriageStatusFilter<$PrismaModel>
+    _max?: NestedEnumEmailTriageStatusFilter<$PrismaModel>
+  }
+
   export type LeadCountOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
@@ -38444,6 +54748,55 @@ export namespace Prisma {
     connect?: FirmProfileWhereUniqueInput
   }
 
+  export type EvidenceItemCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<EvidenceItemCreateWithoutWorkspaceInput, EvidenceItemUncheckedCreateWithoutWorkspaceInput> | EvidenceItemCreateWithoutWorkspaceInput[] | EvidenceItemUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: EvidenceItemCreateOrConnectWithoutWorkspaceInput | EvidenceItemCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: EvidenceItemCreateManyWorkspaceInputEnvelope
+    connect?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+  }
+
+  export type ClientCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<ClientCreateWithoutWorkspaceInput, ClientUncheckedCreateWithoutWorkspaceInput> | ClientCreateWithoutWorkspaceInput[] | ClientUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: ClientCreateOrConnectWithoutWorkspaceInput | ClientCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: ClientCreateManyWorkspaceInputEnvelope
+    connect?: ClientWhereUniqueInput | ClientWhereUniqueInput[]
+  }
+
+  export type MailboxConnectionCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<MailboxConnectionCreateWithoutWorkspaceInput, MailboxConnectionUncheckedCreateWithoutWorkspaceInput> | MailboxConnectionCreateWithoutWorkspaceInput[] | MailboxConnectionUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: MailboxConnectionCreateOrConnectWithoutWorkspaceInput | MailboxConnectionCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: MailboxConnectionCreateManyWorkspaceInputEnvelope
+    connect?: MailboxConnectionWhereUniqueInput | MailboxConnectionWhereUniqueInput[]
+  }
+
+  export type CommunicationThreadCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<CommunicationThreadCreateWithoutWorkspaceInput, CommunicationThreadUncheckedCreateWithoutWorkspaceInput> | CommunicationThreadCreateWithoutWorkspaceInput[] | CommunicationThreadUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: CommunicationThreadCreateOrConnectWithoutWorkspaceInput | CommunicationThreadCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: CommunicationThreadCreateManyWorkspaceInputEnvelope
+    connect?: CommunicationThreadWhereUniqueInput | CommunicationThreadWhereUniqueInput[]
+  }
+
+  export type EmailAliasCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<EmailAliasCreateWithoutWorkspaceInput, EmailAliasUncheckedCreateWithoutWorkspaceInput> | EmailAliasCreateWithoutWorkspaceInput[] | EmailAliasUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: EmailAliasCreateOrConnectWithoutWorkspaceInput | EmailAliasCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: EmailAliasCreateManyWorkspaceInputEnvelope
+    connect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+  }
+
+  export type EmailTriageItemCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<EmailTriageItemCreateWithoutWorkspaceInput, EmailTriageItemUncheckedCreateWithoutWorkspaceInput> | EmailTriageItemCreateWithoutWorkspaceInput[] | EmailTriageItemUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: EmailTriageItemCreateOrConnectWithoutWorkspaceInput | EmailTriageItemCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: EmailTriageItemCreateManyWorkspaceInputEnvelope
+    connect?: EmailTriageItemWhereUniqueInput | EmailTriageItemWhereUniqueInput[]
+  }
+
+  export type IngestJobCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<IngestJobCreateWithoutWorkspaceInput, IngestJobUncheckedCreateWithoutWorkspaceInput> | IngestJobCreateWithoutWorkspaceInput[] | IngestJobUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: IngestJobCreateOrConnectWithoutWorkspaceInput | IngestJobCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: IngestJobCreateManyWorkspaceInputEnvelope
+    connect?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+  }
+
   export type UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput = {
     create?: XOR<UserWorkspaceCreateWithoutWorkspaceInput, UserWorkspaceUncheckedCreateWithoutWorkspaceInput> | UserWorkspaceCreateWithoutWorkspaceInput[] | UserWorkspaceUncheckedCreateWithoutWorkspaceInput[]
     connectOrCreate?: UserWorkspaceCreateOrConnectWithoutWorkspaceInput | UserWorkspaceCreateOrConnectWithoutWorkspaceInput[]
@@ -38504,6 +54857,55 @@ export namespace Prisma {
     create?: XOR<FirmProfileCreateWithoutWorkspaceInput, FirmProfileUncheckedCreateWithoutWorkspaceInput>
     connectOrCreate?: FirmProfileCreateOrConnectWithoutWorkspaceInput
     connect?: FirmProfileWhereUniqueInput
+  }
+
+  export type EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<EvidenceItemCreateWithoutWorkspaceInput, EvidenceItemUncheckedCreateWithoutWorkspaceInput> | EvidenceItemCreateWithoutWorkspaceInput[] | EvidenceItemUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: EvidenceItemCreateOrConnectWithoutWorkspaceInput | EvidenceItemCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: EvidenceItemCreateManyWorkspaceInputEnvelope
+    connect?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+  }
+
+  export type ClientUncheckedCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<ClientCreateWithoutWorkspaceInput, ClientUncheckedCreateWithoutWorkspaceInput> | ClientCreateWithoutWorkspaceInput[] | ClientUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: ClientCreateOrConnectWithoutWorkspaceInput | ClientCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: ClientCreateManyWorkspaceInputEnvelope
+    connect?: ClientWhereUniqueInput | ClientWhereUniqueInput[]
+  }
+
+  export type MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<MailboxConnectionCreateWithoutWorkspaceInput, MailboxConnectionUncheckedCreateWithoutWorkspaceInput> | MailboxConnectionCreateWithoutWorkspaceInput[] | MailboxConnectionUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: MailboxConnectionCreateOrConnectWithoutWorkspaceInput | MailboxConnectionCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: MailboxConnectionCreateManyWorkspaceInputEnvelope
+    connect?: MailboxConnectionWhereUniqueInput | MailboxConnectionWhereUniqueInput[]
+  }
+
+  export type CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<CommunicationThreadCreateWithoutWorkspaceInput, CommunicationThreadUncheckedCreateWithoutWorkspaceInput> | CommunicationThreadCreateWithoutWorkspaceInput[] | CommunicationThreadUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: CommunicationThreadCreateOrConnectWithoutWorkspaceInput | CommunicationThreadCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: CommunicationThreadCreateManyWorkspaceInputEnvelope
+    connect?: CommunicationThreadWhereUniqueInput | CommunicationThreadWhereUniqueInput[]
+  }
+
+  export type EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<EmailAliasCreateWithoutWorkspaceInput, EmailAliasUncheckedCreateWithoutWorkspaceInput> | EmailAliasCreateWithoutWorkspaceInput[] | EmailAliasUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: EmailAliasCreateOrConnectWithoutWorkspaceInput | EmailAliasCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: EmailAliasCreateManyWorkspaceInputEnvelope
+    connect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+  }
+
+  export type EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<EmailTriageItemCreateWithoutWorkspaceInput, EmailTriageItemUncheckedCreateWithoutWorkspaceInput> | EmailTriageItemCreateWithoutWorkspaceInput[] | EmailTriageItemUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: EmailTriageItemCreateOrConnectWithoutWorkspaceInput | EmailTriageItemCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: EmailTriageItemCreateManyWorkspaceInputEnvelope
+    connect?: EmailTriageItemWhereUniqueInput | EmailTriageItemWhereUniqueInput[]
+  }
+
+  export type IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<IngestJobCreateWithoutWorkspaceInput, IngestJobUncheckedCreateWithoutWorkspaceInput> | IngestJobCreateWithoutWorkspaceInput[] | IngestJobUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: IngestJobCreateOrConnectWithoutWorkspaceInput | IngestJobCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: IngestJobCreateManyWorkspaceInputEnvelope
+    connect?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -38668,6 +55070,104 @@ export namespace Prisma {
     update?: XOR<XOR<FirmProfileUpdateToOneWithWhereWithoutWorkspaceInput, FirmProfileUpdateWithoutWorkspaceInput>, FirmProfileUncheckedUpdateWithoutWorkspaceInput>
   }
 
+  export type EvidenceItemUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<EvidenceItemCreateWithoutWorkspaceInput, EvidenceItemUncheckedCreateWithoutWorkspaceInput> | EvidenceItemCreateWithoutWorkspaceInput[] | EvidenceItemUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: EvidenceItemCreateOrConnectWithoutWorkspaceInput | EvidenceItemCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: EvidenceItemUpsertWithWhereUniqueWithoutWorkspaceInput | EvidenceItemUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: EvidenceItemCreateManyWorkspaceInputEnvelope
+    set?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+    disconnect?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+    delete?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+    connect?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+    update?: EvidenceItemUpdateWithWhereUniqueWithoutWorkspaceInput | EvidenceItemUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: EvidenceItemUpdateManyWithWhereWithoutWorkspaceInput | EvidenceItemUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: EvidenceItemScalarWhereInput | EvidenceItemScalarWhereInput[]
+  }
+
+  export type ClientUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<ClientCreateWithoutWorkspaceInput, ClientUncheckedCreateWithoutWorkspaceInput> | ClientCreateWithoutWorkspaceInput[] | ClientUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: ClientCreateOrConnectWithoutWorkspaceInput | ClientCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: ClientUpsertWithWhereUniqueWithoutWorkspaceInput | ClientUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: ClientCreateManyWorkspaceInputEnvelope
+    set?: ClientWhereUniqueInput | ClientWhereUniqueInput[]
+    disconnect?: ClientWhereUniqueInput | ClientWhereUniqueInput[]
+    delete?: ClientWhereUniqueInput | ClientWhereUniqueInput[]
+    connect?: ClientWhereUniqueInput | ClientWhereUniqueInput[]
+    update?: ClientUpdateWithWhereUniqueWithoutWorkspaceInput | ClientUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: ClientUpdateManyWithWhereWithoutWorkspaceInput | ClientUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: ClientScalarWhereInput | ClientScalarWhereInput[]
+  }
+
+  export type MailboxConnectionUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<MailboxConnectionCreateWithoutWorkspaceInput, MailboxConnectionUncheckedCreateWithoutWorkspaceInput> | MailboxConnectionCreateWithoutWorkspaceInput[] | MailboxConnectionUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: MailboxConnectionCreateOrConnectWithoutWorkspaceInput | MailboxConnectionCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: MailboxConnectionUpsertWithWhereUniqueWithoutWorkspaceInput | MailboxConnectionUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: MailboxConnectionCreateManyWorkspaceInputEnvelope
+    set?: MailboxConnectionWhereUniqueInput | MailboxConnectionWhereUniqueInput[]
+    disconnect?: MailboxConnectionWhereUniqueInput | MailboxConnectionWhereUniqueInput[]
+    delete?: MailboxConnectionWhereUniqueInput | MailboxConnectionWhereUniqueInput[]
+    connect?: MailboxConnectionWhereUniqueInput | MailboxConnectionWhereUniqueInput[]
+    update?: MailboxConnectionUpdateWithWhereUniqueWithoutWorkspaceInput | MailboxConnectionUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: MailboxConnectionUpdateManyWithWhereWithoutWorkspaceInput | MailboxConnectionUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: MailboxConnectionScalarWhereInput | MailboxConnectionScalarWhereInput[]
+  }
+
+  export type CommunicationThreadUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<CommunicationThreadCreateWithoutWorkspaceInput, CommunicationThreadUncheckedCreateWithoutWorkspaceInput> | CommunicationThreadCreateWithoutWorkspaceInput[] | CommunicationThreadUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: CommunicationThreadCreateOrConnectWithoutWorkspaceInput | CommunicationThreadCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: CommunicationThreadUpsertWithWhereUniqueWithoutWorkspaceInput | CommunicationThreadUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: CommunicationThreadCreateManyWorkspaceInputEnvelope
+    set?: CommunicationThreadWhereUniqueInput | CommunicationThreadWhereUniqueInput[]
+    disconnect?: CommunicationThreadWhereUniqueInput | CommunicationThreadWhereUniqueInput[]
+    delete?: CommunicationThreadWhereUniqueInput | CommunicationThreadWhereUniqueInput[]
+    connect?: CommunicationThreadWhereUniqueInput | CommunicationThreadWhereUniqueInput[]
+    update?: CommunicationThreadUpdateWithWhereUniqueWithoutWorkspaceInput | CommunicationThreadUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: CommunicationThreadUpdateManyWithWhereWithoutWorkspaceInput | CommunicationThreadUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: CommunicationThreadScalarWhereInput | CommunicationThreadScalarWhereInput[]
+  }
+
+  export type EmailAliasUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<EmailAliasCreateWithoutWorkspaceInput, EmailAliasUncheckedCreateWithoutWorkspaceInput> | EmailAliasCreateWithoutWorkspaceInput[] | EmailAliasUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: EmailAliasCreateOrConnectWithoutWorkspaceInput | EmailAliasCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: EmailAliasUpsertWithWhereUniqueWithoutWorkspaceInput | EmailAliasUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: EmailAliasCreateManyWorkspaceInputEnvelope
+    set?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    disconnect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    delete?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    connect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    update?: EmailAliasUpdateWithWhereUniqueWithoutWorkspaceInput | EmailAliasUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: EmailAliasUpdateManyWithWhereWithoutWorkspaceInput | EmailAliasUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: EmailAliasScalarWhereInput | EmailAliasScalarWhereInput[]
+  }
+
+  export type EmailTriageItemUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<EmailTriageItemCreateWithoutWorkspaceInput, EmailTriageItemUncheckedCreateWithoutWorkspaceInput> | EmailTriageItemCreateWithoutWorkspaceInput[] | EmailTriageItemUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: EmailTriageItemCreateOrConnectWithoutWorkspaceInput | EmailTriageItemCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: EmailTriageItemUpsertWithWhereUniqueWithoutWorkspaceInput | EmailTriageItemUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: EmailTriageItemCreateManyWorkspaceInputEnvelope
+    set?: EmailTriageItemWhereUniqueInput | EmailTriageItemWhereUniqueInput[]
+    disconnect?: EmailTriageItemWhereUniqueInput | EmailTriageItemWhereUniqueInput[]
+    delete?: EmailTriageItemWhereUniqueInput | EmailTriageItemWhereUniqueInput[]
+    connect?: EmailTriageItemWhereUniqueInput | EmailTriageItemWhereUniqueInput[]
+    update?: EmailTriageItemUpdateWithWhereUniqueWithoutWorkspaceInput | EmailTriageItemUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: EmailTriageItemUpdateManyWithWhereWithoutWorkspaceInput | EmailTriageItemUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: EmailTriageItemScalarWhereInput | EmailTriageItemScalarWhereInput[]
+  }
+
+  export type IngestJobUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<IngestJobCreateWithoutWorkspaceInput, IngestJobUncheckedCreateWithoutWorkspaceInput> | IngestJobCreateWithoutWorkspaceInput[] | IngestJobUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: IngestJobCreateOrConnectWithoutWorkspaceInput | IngestJobCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: IngestJobUpsertWithWhereUniqueWithoutWorkspaceInput | IngestJobUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: IngestJobCreateManyWorkspaceInputEnvelope
+    set?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+    disconnect?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+    delete?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+    connect?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+    update?: IngestJobUpdateWithWhereUniqueWithoutWorkspaceInput | IngestJobUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: IngestJobUpdateManyWithWhereWithoutWorkspaceInput | IngestJobUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: IngestJobScalarWhereInput | IngestJobScalarWhereInput[]
+  }
+
   export type UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput = {
     create?: XOR<UserWorkspaceCreateWithoutWorkspaceInput, UserWorkspaceUncheckedCreateWithoutWorkspaceInput> | UserWorkspaceCreateWithoutWorkspaceInput[] | UserWorkspaceUncheckedCreateWithoutWorkspaceInput[]
     connectOrCreate?: UserWorkspaceCreateOrConnectWithoutWorkspaceInput | UserWorkspaceCreateOrConnectWithoutWorkspaceInput[]
@@ -38788,6 +55288,104 @@ export namespace Prisma {
     delete?: FirmProfileWhereInput | boolean
     connect?: FirmProfileWhereUniqueInput
     update?: XOR<XOR<FirmProfileUpdateToOneWithWhereWithoutWorkspaceInput, FirmProfileUpdateWithoutWorkspaceInput>, FirmProfileUncheckedUpdateWithoutWorkspaceInput>
+  }
+
+  export type EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<EvidenceItemCreateWithoutWorkspaceInput, EvidenceItemUncheckedCreateWithoutWorkspaceInput> | EvidenceItemCreateWithoutWorkspaceInput[] | EvidenceItemUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: EvidenceItemCreateOrConnectWithoutWorkspaceInput | EvidenceItemCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: EvidenceItemUpsertWithWhereUniqueWithoutWorkspaceInput | EvidenceItemUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: EvidenceItemCreateManyWorkspaceInputEnvelope
+    set?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+    disconnect?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+    delete?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+    connect?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+    update?: EvidenceItemUpdateWithWhereUniqueWithoutWorkspaceInput | EvidenceItemUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: EvidenceItemUpdateManyWithWhereWithoutWorkspaceInput | EvidenceItemUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: EvidenceItemScalarWhereInput | EvidenceItemScalarWhereInput[]
+  }
+
+  export type ClientUncheckedUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<ClientCreateWithoutWorkspaceInput, ClientUncheckedCreateWithoutWorkspaceInput> | ClientCreateWithoutWorkspaceInput[] | ClientUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: ClientCreateOrConnectWithoutWorkspaceInput | ClientCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: ClientUpsertWithWhereUniqueWithoutWorkspaceInput | ClientUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: ClientCreateManyWorkspaceInputEnvelope
+    set?: ClientWhereUniqueInput | ClientWhereUniqueInput[]
+    disconnect?: ClientWhereUniqueInput | ClientWhereUniqueInput[]
+    delete?: ClientWhereUniqueInput | ClientWhereUniqueInput[]
+    connect?: ClientWhereUniqueInput | ClientWhereUniqueInput[]
+    update?: ClientUpdateWithWhereUniqueWithoutWorkspaceInput | ClientUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: ClientUpdateManyWithWhereWithoutWorkspaceInput | ClientUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: ClientScalarWhereInput | ClientScalarWhereInput[]
+  }
+
+  export type MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<MailboxConnectionCreateWithoutWorkspaceInput, MailboxConnectionUncheckedCreateWithoutWorkspaceInput> | MailboxConnectionCreateWithoutWorkspaceInput[] | MailboxConnectionUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: MailboxConnectionCreateOrConnectWithoutWorkspaceInput | MailboxConnectionCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: MailboxConnectionUpsertWithWhereUniqueWithoutWorkspaceInput | MailboxConnectionUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: MailboxConnectionCreateManyWorkspaceInputEnvelope
+    set?: MailboxConnectionWhereUniqueInput | MailboxConnectionWhereUniqueInput[]
+    disconnect?: MailboxConnectionWhereUniqueInput | MailboxConnectionWhereUniqueInput[]
+    delete?: MailboxConnectionWhereUniqueInput | MailboxConnectionWhereUniqueInput[]
+    connect?: MailboxConnectionWhereUniqueInput | MailboxConnectionWhereUniqueInput[]
+    update?: MailboxConnectionUpdateWithWhereUniqueWithoutWorkspaceInput | MailboxConnectionUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: MailboxConnectionUpdateManyWithWhereWithoutWorkspaceInput | MailboxConnectionUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: MailboxConnectionScalarWhereInput | MailboxConnectionScalarWhereInput[]
+  }
+
+  export type CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<CommunicationThreadCreateWithoutWorkspaceInput, CommunicationThreadUncheckedCreateWithoutWorkspaceInput> | CommunicationThreadCreateWithoutWorkspaceInput[] | CommunicationThreadUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: CommunicationThreadCreateOrConnectWithoutWorkspaceInput | CommunicationThreadCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: CommunicationThreadUpsertWithWhereUniqueWithoutWorkspaceInput | CommunicationThreadUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: CommunicationThreadCreateManyWorkspaceInputEnvelope
+    set?: CommunicationThreadWhereUniqueInput | CommunicationThreadWhereUniqueInput[]
+    disconnect?: CommunicationThreadWhereUniqueInput | CommunicationThreadWhereUniqueInput[]
+    delete?: CommunicationThreadWhereUniqueInput | CommunicationThreadWhereUniqueInput[]
+    connect?: CommunicationThreadWhereUniqueInput | CommunicationThreadWhereUniqueInput[]
+    update?: CommunicationThreadUpdateWithWhereUniqueWithoutWorkspaceInput | CommunicationThreadUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: CommunicationThreadUpdateManyWithWhereWithoutWorkspaceInput | CommunicationThreadUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: CommunicationThreadScalarWhereInput | CommunicationThreadScalarWhereInput[]
+  }
+
+  export type EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<EmailAliasCreateWithoutWorkspaceInput, EmailAliasUncheckedCreateWithoutWorkspaceInput> | EmailAliasCreateWithoutWorkspaceInput[] | EmailAliasUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: EmailAliasCreateOrConnectWithoutWorkspaceInput | EmailAliasCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: EmailAliasUpsertWithWhereUniqueWithoutWorkspaceInput | EmailAliasUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: EmailAliasCreateManyWorkspaceInputEnvelope
+    set?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    disconnect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    delete?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    connect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    update?: EmailAliasUpdateWithWhereUniqueWithoutWorkspaceInput | EmailAliasUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: EmailAliasUpdateManyWithWhereWithoutWorkspaceInput | EmailAliasUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: EmailAliasScalarWhereInput | EmailAliasScalarWhereInput[]
+  }
+
+  export type EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<EmailTriageItemCreateWithoutWorkspaceInput, EmailTriageItemUncheckedCreateWithoutWorkspaceInput> | EmailTriageItemCreateWithoutWorkspaceInput[] | EmailTriageItemUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: EmailTriageItemCreateOrConnectWithoutWorkspaceInput | EmailTriageItemCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: EmailTriageItemUpsertWithWhereUniqueWithoutWorkspaceInput | EmailTriageItemUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: EmailTriageItemCreateManyWorkspaceInputEnvelope
+    set?: EmailTriageItemWhereUniqueInput | EmailTriageItemWhereUniqueInput[]
+    disconnect?: EmailTriageItemWhereUniqueInput | EmailTriageItemWhereUniqueInput[]
+    delete?: EmailTriageItemWhereUniqueInput | EmailTriageItemWhereUniqueInput[]
+    connect?: EmailTriageItemWhereUniqueInput | EmailTriageItemWhereUniqueInput[]
+    update?: EmailTriageItemUpdateWithWhereUniqueWithoutWorkspaceInput | EmailTriageItemUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: EmailTriageItemUpdateManyWithWhereWithoutWorkspaceInput | EmailTriageItemUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: EmailTriageItemScalarWhereInput | EmailTriageItemScalarWhereInput[]
+  }
+
+  export type IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<IngestJobCreateWithoutWorkspaceInput, IngestJobUncheckedCreateWithoutWorkspaceInput> | IngestJobCreateWithoutWorkspaceInput[] | IngestJobUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: IngestJobCreateOrConnectWithoutWorkspaceInput | IngestJobCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: IngestJobUpsertWithWhereUniqueWithoutWorkspaceInput | IngestJobUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: IngestJobCreateManyWorkspaceInputEnvelope
+    set?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+    disconnect?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+    delete?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+    connect?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+    update?: IngestJobUpdateWithWhereUniqueWithoutWorkspaceInput | IngestJobUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: IngestJobUpdateManyWithWhereWithoutWorkspaceInput | IngestJobUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: IngestJobScalarWhereInput | IngestJobScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutWorkspacesInput = {
@@ -39649,6 +56247,13 @@ export namespace Prisma {
     connect?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
   }
 
+  export type EmailAliasCreateNestedManyWithoutUserInput = {
+    create?: XOR<EmailAliasCreateWithoutUserInput, EmailAliasUncheckedCreateWithoutUserInput> | EmailAliasCreateWithoutUserInput[] | EmailAliasUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EmailAliasCreateOrConnectWithoutUserInput | EmailAliasCreateOrConnectWithoutUserInput[]
+    createMany?: EmailAliasCreateManyUserInputEnvelope
+    connect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+  }
+
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -39710,6 +56315,13 @@ export namespace Prisma {
     connectOrCreate?: InvitationCreateOrConnectWithoutInvitedByInput | InvitationCreateOrConnectWithoutInvitedByInput[]
     createMany?: InvitationCreateManyInvitedByInputEnvelope
     connect?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
+  }
+
+  export type EmailAliasUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<EmailAliasCreateWithoutUserInput, EmailAliasUncheckedCreateWithoutUserInput> | EmailAliasCreateWithoutUserInput[] | EmailAliasUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EmailAliasCreateOrConnectWithoutUserInput | EmailAliasCreateOrConnectWithoutUserInput[]
+    createMany?: EmailAliasCreateManyUserInputEnvelope
+    connect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
   }
 
   export type AccountUpdateManyWithoutUserNestedInput = {
@@ -39838,6 +56450,20 @@ export namespace Prisma {
     deleteMany?: InvitationScalarWhereInput | InvitationScalarWhereInput[]
   }
 
+  export type EmailAliasUpdateManyWithoutUserNestedInput = {
+    create?: XOR<EmailAliasCreateWithoutUserInput, EmailAliasUncheckedCreateWithoutUserInput> | EmailAliasCreateWithoutUserInput[] | EmailAliasUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EmailAliasCreateOrConnectWithoutUserInput | EmailAliasCreateOrConnectWithoutUserInput[]
+    upsert?: EmailAliasUpsertWithWhereUniqueWithoutUserInput | EmailAliasUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: EmailAliasCreateManyUserInputEnvelope
+    set?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    disconnect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    delete?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    connect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    update?: EmailAliasUpdateWithWhereUniqueWithoutUserInput | EmailAliasUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: EmailAliasUpdateManyWithWhereWithoutUserInput | EmailAliasUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: EmailAliasScalarWhereInput | EmailAliasScalarWhereInput[]
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -39962,6 +56588,20 @@ export namespace Prisma {
     update?: InvitationUpdateWithWhereUniqueWithoutInvitedByInput | InvitationUpdateWithWhereUniqueWithoutInvitedByInput[]
     updateMany?: InvitationUpdateManyWithWhereWithoutInvitedByInput | InvitationUpdateManyWithWhereWithoutInvitedByInput[]
     deleteMany?: InvitationScalarWhereInput | InvitationScalarWhereInput[]
+  }
+
+  export type EmailAliasUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<EmailAliasCreateWithoutUserInput, EmailAliasUncheckedCreateWithoutUserInput> | EmailAliasCreateWithoutUserInput[] | EmailAliasUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EmailAliasCreateOrConnectWithoutUserInput | EmailAliasCreateOrConnectWithoutUserInput[]
+    upsert?: EmailAliasUpsertWithWhereUniqueWithoutUserInput | EmailAliasUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: EmailAliasCreateManyUserInputEnvelope
+    set?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    disconnect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    delete?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    connect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    update?: EmailAliasUpdateWithWhereUniqueWithoutUserInput | EmailAliasUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: EmailAliasUpdateManyWithWhereWithoutUserInput | EmailAliasUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: EmailAliasScalarWhereInput | EmailAliasScalarWhereInput[]
   }
 
   export type WorkspaceCreateNestedOneWithoutInvitationsInput = {
@@ -40321,6 +56961,579 @@ export namespace Prisma {
     upsert?: FirmProfileUpsertWithoutVersionsInput
     connect?: FirmProfileWhereUniqueInput
     update?: XOR<XOR<FirmProfileUpdateToOneWithWhereWithoutVersionsInput, FirmProfileUpdateWithoutVersionsInput>, FirmProfileUncheckedUpdateWithoutVersionsInput>
+  }
+
+  export type WorkspaceCreateNestedOneWithoutClientsInput = {
+    create?: XOR<WorkspaceCreateWithoutClientsInput, WorkspaceUncheckedCreateWithoutClientsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutClientsInput
+    connect?: WorkspaceWhereUniqueInput
+  }
+
+  export type EmailAliasCreateNestedManyWithoutClientInput = {
+    create?: XOR<EmailAliasCreateWithoutClientInput, EmailAliasUncheckedCreateWithoutClientInput> | EmailAliasCreateWithoutClientInput[] | EmailAliasUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: EmailAliasCreateOrConnectWithoutClientInput | EmailAliasCreateOrConnectWithoutClientInput[]
+    createMany?: EmailAliasCreateManyClientInputEnvelope
+    connect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+  }
+
+  export type EvidenceItemCreateNestedManyWithoutClientInput = {
+    create?: XOR<EvidenceItemCreateWithoutClientInput, EvidenceItemUncheckedCreateWithoutClientInput> | EvidenceItemCreateWithoutClientInput[] | EvidenceItemUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: EvidenceItemCreateOrConnectWithoutClientInput | EvidenceItemCreateOrConnectWithoutClientInput[]
+    createMany?: EvidenceItemCreateManyClientInputEnvelope
+    connect?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+  }
+
+  export type EmailAliasUncheckedCreateNestedManyWithoutClientInput = {
+    create?: XOR<EmailAliasCreateWithoutClientInput, EmailAliasUncheckedCreateWithoutClientInput> | EmailAliasCreateWithoutClientInput[] | EmailAliasUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: EmailAliasCreateOrConnectWithoutClientInput | EmailAliasCreateOrConnectWithoutClientInput[]
+    createMany?: EmailAliasCreateManyClientInputEnvelope
+    connect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+  }
+
+  export type EvidenceItemUncheckedCreateNestedManyWithoutClientInput = {
+    create?: XOR<EvidenceItemCreateWithoutClientInput, EvidenceItemUncheckedCreateWithoutClientInput> | EvidenceItemCreateWithoutClientInput[] | EvidenceItemUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: EvidenceItemCreateOrConnectWithoutClientInput | EvidenceItemCreateOrConnectWithoutClientInput[]
+    createMany?: EvidenceItemCreateManyClientInputEnvelope
+    connect?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+  }
+
+  export type EnumClientStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ClientStatus
+  }
+
+  export type WorkspaceUpdateOneRequiredWithoutClientsNestedInput = {
+    create?: XOR<WorkspaceCreateWithoutClientsInput, WorkspaceUncheckedCreateWithoutClientsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutClientsInput
+    upsert?: WorkspaceUpsertWithoutClientsInput
+    connect?: WorkspaceWhereUniqueInput
+    update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutClientsInput, WorkspaceUpdateWithoutClientsInput>, WorkspaceUncheckedUpdateWithoutClientsInput>
+  }
+
+  export type EmailAliasUpdateManyWithoutClientNestedInput = {
+    create?: XOR<EmailAliasCreateWithoutClientInput, EmailAliasUncheckedCreateWithoutClientInput> | EmailAliasCreateWithoutClientInput[] | EmailAliasUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: EmailAliasCreateOrConnectWithoutClientInput | EmailAliasCreateOrConnectWithoutClientInput[]
+    upsert?: EmailAliasUpsertWithWhereUniqueWithoutClientInput | EmailAliasUpsertWithWhereUniqueWithoutClientInput[]
+    createMany?: EmailAliasCreateManyClientInputEnvelope
+    set?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    disconnect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    delete?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    connect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    update?: EmailAliasUpdateWithWhereUniqueWithoutClientInput | EmailAliasUpdateWithWhereUniqueWithoutClientInput[]
+    updateMany?: EmailAliasUpdateManyWithWhereWithoutClientInput | EmailAliasUpdateManyWithWhereWithoutClientInput[]
+    deleteMany?: EmailAliasScalarWhereInput | EmailAliasScalarWhereInput[]
+  }
+
+  export type EvidenceItemUpdateManyWithoutClientNestedInput = {
+    create?: XOR<EvidenceItemCreateWithoutClientInput, EvidenceItemUncheckedCreateWithoutClientInput> | EvidenceItemCreateWithoutClientInput[] | EvidenceItemUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: EvidenceItemCreateOrConnectWithoutClientInput | EvidenceItemCreateOrConnectWithoutClientInput[]
+    upsert?: EvidenceItemUpsertWithWhereUniqueWithoutClientInput | EvidenceItemUpsertWithWhereUniqueWithoutClientInput[]
+    createMany?: EvidenceItemCreateManyClientInputEnvelope
+    set?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+    disconnect?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+    delete?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+    connect?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+    update?: EvidenceItemUpdateWithWhereUniqueWithoutClientInput | EvidenceItemUpdateWithWhereUniqueWithoutClientInput[]
+    updateMany?: EvidenceItemUpdateManyWithWhereWithoutClientInput | EvidenceItemUpdateManyWithWhereWithoutClientInput[]
+    deleteMany?: EvidenceItemScalarWhereInput | EvidenceItemScalarWhereInput[]
+  }
+
+  export type EmailAliasUncheckedUpdateManyWithoutClientNestedInput = {
+    create?: XOR<EmailAliasCreateWithoutClientInput, EmailAliasUncheckedCreateWithoutClientInput> | EmailAliasCreateWithoutClientInput[] | EmailAliasUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: EmailAliasCreateOrConnectWithoutClientInput | EmailAliasCreateOrConnectWithoutClientInput[]
+    upsert?: EmailAliasUpsertWithWhereUniqueWithoutClientInput | EmailAliasUpsertWithWhereUniqueWithoutClientInput[]
+    createMany?: EmailAliasCreateManyClientInputEnvelope
+    set?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    disconnect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    delete?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    connect?: EmailAliasWhereUniqueInput | EmailAliasWhereUniqueInput[]
+    update?: EmailAliasUpdateWithWhereUniqueWithoutClientInput | EmailAliasUpdateWithWhereUniqueWithoutClientInput[]
+    updateMany?: EmailAliasUpdateManyWithWhereWithoutClientInput | EmailAliasUpdateManyWithWhereWithoutClientInput[]
+    deleteMany?: EmailAliasScalarWhereInput | EmailAliasScalarWhereInput[]
+  }
+
+  export type EvidenceItemUncheckedUpdateManyWithoutClientNestedInput = {
+    create?: XOR<EvidenceItemCreateWithoutClientInput, EvidenceItemUncheckedCreateWithoutClientInput> | EvidenceItemCreateWithoutClientInput[] | EvidenceItemUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: EvidenceItemCreateOrConnectWithoutClientInput | EvidenceItemCreateOrConnectWithoutClientInput[]
+    upsert?: EvidenceItemUpsertWithWhereUniqueWithoutClientInput | EvidenceItemUpsertWithWhereUniqueWithoutClientInput[]
+    createMany?: EvidenceItemCreateManyClientInputEnvelope
+    set?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+    disconnect?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+    delete?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+    connect?: EvidenceItemWhereUniqueInput | EvidenceItemWhereUniqueInput[]
+    update?: EvidenceItemUpdateWithWhereUniqueWithoutClientInput | EvidenceItemUpdateWithWhereUniqueWithoutClientInput[]
+    updateMany?: EvidenceItemUpdateManyWithWhereWithoutClientInput | EvidenceItemUpdateManyWithWhereWithoutClientInput[]
+    deleteMany?: EvidenceItemScalarWhereInput | EvidenceItemScalarWhereInput[]
+  }
+
+  export type WorkspaceCreateNestedOneWithoutEmailAliasesInput = {
+    create?: XOR<WorkspaceCreateWithoutEmailAliasesInput, WorkspaceUncheckedCreateWithoutEmailAliasesInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutEmailAliasesInput
+    connect?: WorkspaceWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutEmailAliasesInput = {
+    create?: XOR<UserCreateWithoutEmailAliasesInput, UserUncheckedCreateWithoutEmailAliasesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutEmailAliasesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ClientCreateNestedOneWithoutEmailAliasesInput = {
+    create?: XOR<ClientCreateWithoutEmailAliasesInput, ClientUncheckedCreateWithoutEmailAliasesInput>
+    connectOrCreate?: ClientCreateOrConnectWithoutEmailAliasesInput
+    connect?: ClientWhereUniqueInput
+  }
+
+  export type WorkspaceUpdateOneRequiredWithoutEmailAliasesNestedInput = {
+    create?: XOR<WorkspaceCreateWithoutEmailAliasesInput, WorkspaceUncheckedCreateWithoutEmailAliasesInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutEmailAliasesInput
+    upsert?: WorkspaceUpsertWithoutEmailAliasesInput
+    connect?: WorkspaceWhereUniqueInput
+    update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutEmailAliasesInput, WorkspaceUpdateWithoutEmailAliasesInput>, WorkspaceUncheckedUpdateWithoutEmailAliasesInput>
+  }
+
+  export type UserUpdateOneWithoutEmailAliasesNestedInput = {
+    create?: XOR<UserCreateWithoutEmailAliasesInput, UserUncheckedCreateWithoutEmailAliasesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutEmailAliasesInput
+    upsert?: UserUpsertWithoutEmailAliasesInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutEmailAliasesInput, UserUpdateWithoutEmailAliasesInput>, UserUncheckedUpdateWithoutEmailAliasesInput>
+  }
+
+  export type ClientUpdateOneWithoutEmailAliasesNestedInput = {
+    create?: XOR<ClientCreateWithoutEmailAliasesInput, ClientUncheckedCreateWithoutEmailAliasesInput>
+    connectOrCreate?: ClientCreateOrConnectWithoutEmailAliasesInput
+    upsert?: ClientUpsertWithoutEmailAliasesInput
+    disconnect?: ClientWhereInput | boolean
+    delete?: ClientWhereInput | boolean
+    connect?: ClientWhereUniqueInput
+    update?: XOR<XOR<ClientUpdateToOneWithWhereWithoutEmailAliasesInput, ClientUpdateWithoutEmailAliasesInput>, ClientUncheckedUpdateWithoutEmailAliasesInput>
+  }
+
+  export type WorkspaceCreateNestedOneWithoutEvidenceItemsInput = {
+    create?: XOR<WorkspaceCreateWithoutEvidenceItemsInput, WorkspaceUncheckedCreateWithoutEvidenceItemsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutEvidenceItemsInput
+    connect?: WorkspaceWhereUniqueInput
+  }
+
+  export type ClientCreateNestedOneWithoutEvidenceItemsInput = {
+    create?: XOR<ClientCreateWithoutEvidenceItemsInput, ClientUncheckedCreateWithoutEvidenceItemsInput>
+    connectOrCreate?: ClientCreateOrConnectWithoutEvidenceItemsInput
+    connect?: ClientWhereUniqueInput
+  }
+
+  export type EvidenceTagCreateNestedManyWithoutItemInput = {
+    create?: XOR<EvidenceTagCreateWithoutItemInput, EvidenceTagUncheckedCreateWithoutItemInput> | EvidenceTagCreateWithoutItemInput[] | EvidenceTagUncheckedCreateWithoutItemInput[]
+    connectOrCreate?: EvidenceTagCreateOrConnectWithoutItemInput | EvidenceTagCreateOrConnectWithoutItemInput[]
+    createMany?: EvidenceTagCreateManyItemInputEnvelope
+    connect?: EvidenceTagWhereUniqueInput | EvidenceTagWhereUniqueInput[]
+  }
+
+  export type CommunicationCreateNestedOneWithoutEvidenceItemInput = {
+    create?: XOR<CommunicationCreateWithoutEvidenceItemInput, CommunicationUncheckedCreateWithoutEvidenceItemInput>
+    connectOrCreate?: CommunicationCreateOrConnectWithoutEvidenceItemInput
+    connect?: CommunicationWhereUniqueInput
+  }
+
+  export type EvidenceTagUncheckedCreateNestedManyWithoutItemInput = {
+    create?: XOR<EvidenceTagCreateWithoutItemInput, EvidenceTagUncheckedCreateWithoutItemInput> | EvidenceTagCreateWithoutItemInput[] | EvidenceTagUncheckedCreateWithoutItemInput[]
+    connectOrCreate?: EvidenceTagCreateOrConnectWithoutItemInput | EvidenceTagCreateOrConnectWithoutItemInput[]
+    createMany?: EvidenceTagCreateManyItemInputEnvelope
+    connect?: EvidenceTagWhereUniqueInput | EvidenceTagWhereUniqueInput[]
+  }
+
+  export type CommunicationUncheckedCreateNestedOneWithoutEvidenceItemInput = {
+    create?: XOR<CommunicationCreateWithoutEvidenceItemInput, CommunicationUncheckedCreateWithoutEvidenceItemInput>
+    connectOrCreate?: CommunicationCreateOrConnectWithoutEvidenceItemInput
+    connect?: CommunicationWhereUniqueInput
+  }
+
+  export type EnumEvidenceSourceTypeFieldUpdateOperationsInput = {
+    set?: $Enums.EvidenceSourceType
+  }
+
+  export type WorkspaceUpdateOneRequiredWithoutEvidenceItemsNestedInput = {
+    create?: XOR<WorkspaceCreateWithoutEvidenceItemsInput, WorkspaceUncheckedCreateWithoutEvidenceItemsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutEvidenceItemsInput
+    upsert?: WorkspaceUpsertWithoutEvidenceItemsInput
+    connect?: WorkspaceWhereUniqueInput
+    update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutEvidenceItemsInput, WorkspaceUpdateWithoutEvidenceItemsInput>, WorkspaceUncheckedUpdateWithoutEvidenceItemsInput>
+  }
+
+  export type ClientUpdateOneWithoutEvidenceItemsNestedInput = {
+    create?: XOR<ClientCreateWithoutEvidenceItemsInput, ClientUncheckedCreateWithoutEvidenceItemsInput>
+    connectOrCreate?: ClientCreateOrConnectWithoutEvidenceItemsInput
+    upsert?: ClientUpsertWithoutEvidenceItemsInput
+    disconnect?: ClientWhereInput | boolean
+    delete?: ClientWhereInput | boolean
+    connect?: ClientWhereUniqueInput
+    update?: XOR<XOR<ClientUpdateToOneWithWhereWithoutEvidenceItemsInput, ClientUpdateWithoutEvidenceItemsInput>, ClientUncheckedUpdateWithoutEvidenceItemsInput>
+  }
+
+  export type EvidenceTagUpdateManyWithoutItemNestedInput = {
+    create?: XOR<EvidenceTagCreateWithoutItemInput, EvidenceTagUncheckedCreateWithoutItemInput> | EvidenceTagCreateWithoutItemInput[] | EvidenceTagUncheckedCreateWithoutItemInput[]
+    connectOrCreate?: EvidenceTagCreateOrConnectWithoutItemInput | EvidenceTagCreateOrConnectWithoutItemInput[]
+    upsert?: EvidenceTagUpsertWithWhereUniqueWithoutItemInput | EvidenceTagUpsertWithWhereUniqueWithoutItemInput[]
+    createMany?: EvidenceTagCreateManyItemInputEnvelope
+    set?: EvidenceTagWhereUniqueInput | EvidenceTagWhereUniqueInput[]
+    disconnect?: EvidenceTagWhereUniqueInput | EvidenceTagWhereUniqueInput[]
+    delete?: EvidenceTagWhereUniqueInput | EvidenceTagWhereUniqueInput[]
+    connect?: EvidenceTagWhereUniqueInput | EvidenceTagWhereUniqueInput[]
+    update?: EvidenceTagUpdateWithWhereUniqueWithoutItemInput | EvidenceTagUpdateWithWhereUniqueWithoutItemInput[]
+    updateMany?: EvidenceTagUpdateManyWithWhereWithoutItemInput | EvidenceTagUpdateManyWithWhereWithoutItemInput[]
+    deleteMany?: EvidenceTagScalarWhereInput | EvidenceTagScalarWhereInput[]
+  }
+
+  export type CommunicationUpdateOneWithoutEvidenceItemNestedInput = {
+    create?: XOR<CommunicationCreateWithoutEvidenceItemInput, CommunicationUncheckedCreateWithoutEvidenceItemInput>
+    connectOrCreate?: CommunicationCreateOrConnectWithoutEvidenceItemInput
+    upsert?: CommunicationUpsertWithoutEvidenceItemInput
+    disconnect?: CommunicationWhereInput | boolean
+    delete?: CommunicationWhereInput | boolean
+    connect?: CommunicationWhereUniqueInput
+    update?: XOR<XOR<CommunicationUpdateToOneWithWhereWithoutEvidenceItemInput, CommunicationUpdateWithoutEvidenceItemInput>, CommunicationUncheckedUpdateWithoutEvidenceItemInput>
+  }
+
+  export type EvidenceTagUncheckedUpdateManyWithoutItemNestedInput = {
+    create?: XOR<EvidenceTagCreateWithoutItemInput, EvidenceTagUncheckedCreateWithoutItemInput> | EvidenceTagCreateWithoutItemInput[] | EvidenceTagUncheckedCreateWithoutItemInput[]
+    connectOrCreate?: EvidenceTagCreateOrConnectWithoutItemInput | EvidenceTagCreateOrConnectWithoutItemInput[]
+    upsert?: EvidenceTagUpsertWithWhereUniqueWithoutItemInput | EvidenceTagUpsertWithWhereUniqueWithoutItemInput[]
+    createMany?: EvidenceTagCreateManyItemInputEnvelope
+    set?: EvidenceTagWhereUniqueInput | EvidenceTagWhereUniqueInput[]
+    disconnect?: EvidenceTagWhereUniqueInput | EvidenceTagWhereUniqueInput[]
+    delete?: EvidenceTagWhereUniqueInput | EvidenceTagWhereUniqueInput[]
+    connect?: EvidenceTagWhereUniqueInput | EvidenceTagWhereUniqueInput[]
+    update?: EvidenceTagUpdateWithWhereUniqueWithoutItemInput | EvidenceTagUpdateWithWhereUniqueWithoutItemInput[]
+    updateMany?: EvidenceTagUpdateManyWithWhereWithoutItemInput | EvidenceTagUpdateManyWithWhereWithoutItemInput[]
+    deleteMany?: EvidenceTagScalarWhereInput | EvidenceTagScalarWhereInput[]
+  }
+
+  export type CommunicationUncheckedUpdateOneWithoutEvidenceItemNestedInput = {
+    create?: XOR<CommunicationCreateWithoutEvidenceItemInput, CommunicationUncheckedCreateWithoutEvidenceItemInput>
+    connectOrCreate?: CommunicationCreateOrConnectWithoutEvidenceItemInput
+    upsert?: CommunicationUpsertWithoutEvidenceItemInput
+    disconnect?: CommunicationWhereInput | boolean
+    delete?: CommunicationWhereInput | boolean
+    connect?: CommunicationWhereUniqueInput
+    update?: XOR<XOR<CommunicationUpdateToOneWithWhereWithoutEvidenceItemInput, CommunicationUpdateWithoutEvidenceItemInput>, CommunicationUncheckedUpdateWithoutEvidenceItemInput>
+  }
+
+  export type EvidenceItemCreateNestedOneWithoutTagsInput = {
+    create?: XOR<EvidenceItemCreateWithoutTagsInput, EvidenceItemUncheckedCreateWithoutTagsInput>
+    connectOrCreate?: EvidenceItemCreateOrConnectWithoutTagsInput
+    connect?: EvidenceItemWhereUniqueInput
+  }
+
+  export type EnumTagCategoryFieldUpdateOperationsInput = {
+    set?: $Enums.TagCategory
+  }
+
+  export type EvidenceItemUpdateOneRequiredWithoutTagsNestedInput = {
+    create?: XOR<EvidenceItemCreateWithoutTagsInput, EvidenceItemUncheckedCreateWithoutTagsInput>
+    connectOrCreate?: EvidenceItemCreateOrConnectWithoutTagsInput
+    upsert?: EvidenceItemUpsertWithoutTagsInput
+    connect?: EvidenceItemWhereUniqueInput
+    update?: XOR<XOR<EvidenceItemUpdateToOneWithWhereWithoutTagsInput, EvidenceItemUpdateWithoutTagsInput>, EvidenceItemUncheckedUpdateWithoutTagsInput>
+  }
+
+  export type WorkspaceCreateNestedOneWithoutCommunicationThreadsInput = {
+    create?: XOR<WorkspaceCreateWithoutCommunicationThreadsInput, WorkspaceUncheckedCreateWithoutCommunicationThreadsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutCommunicationThreadsInput
+    connect?: WorkspaceWhereUniqueInput
+  }
+
+  export type CommunicationCreateNestedManyWithoutThreadInput = {
+    create?: XOR<CommunicationCreateWithoutThreadInput, CommunicationUncheckedCreateWithoutThreadInput> | CommunicationCreateWithoutThreadInput[] | CommunicationUncheckedCreateWithoutThreadInput[]
+    connectOrCreate?: CommunicationCreateOrConnectWithoutThreadInput | CommunicationCreateOrConnectWithoutThreadInput[]
+    createMany?: CommunicationCreateManyThreadInputEnvelope
+    connect?: CommunicationWhereUniqueInput | CommunicationWhereUniqueInput[]
+  }
+
+  export type CommunicationUncheckedCreateNestedManyWithoutThreadInput = {
+    create?: XOR<CommunicationCreateWithoutThreadInput, CommunicationUncheckedCreateWithoutThreadInput> | CommunicationCreateWithoutThreadInput[] | CommunicationUncheckedCreateWithoutThreadInput[]
+    connectOrCreate?: CommunicationCreateOrConnectWithoutThreadInput | CommunicationCreateOrConnectWithoutThreadInput[]
+    createMany?: CommunicationCreateManyThreadInputEnvelope
+    connect?: CommunicationWhereUniqueInput | CommunicationWhereUniqueInput[]
+  }
+
+  export type EnumCommunicationChannelFieldUpdateOperationsInput = {
+    set?: $Enums.CommunicationChannel
+  }
+
+  export type WorkspaceUpdateOneRequiredWithoutCommunicationThreadsNestedInput = {
+    create?: XOR<WorkspaceCreateWithoutCommunicationThreadsInput, WorkspaceUncheckedCreateWithoutCommunicationThreadsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutCommunicationThreadsInput
+    upsert?: WorkspaceUpsertWithoutCommunicationThreadsInput
+    connect?: WorkspaceWhereUniqueInput
+    update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutCommunicationThreadsInput, WorkspaceUpdateWithoutCommunicationThreadsInput>, WorkspaceUncheckedUpdateWithoutCommunicationThreadsInput>
+  }
+
+  export type CommunicationUpdateManyWithoutThreadNestedInput = {
+    create?: XOR<CommunicationCreateWithoutThreadInput, CommunicationUncheckedCreateWithoutThreadInput> | CommunicationCreateWithoutThreadInput[] | CommunicationUncheckedCreateWithoutThreadInput[]
+    connectOrCreate?: CommunicationCreateOrConnectWithoutThreadInput | CommunicationCreateOrConnectWithoutThreadInput[]
+    upsert?: CommunicationUpsertWithWhereUniqueWithoutThreadInput | CommunicationUpsertWithWhereUniqueWithoutThreadInput[]
+    createMany?: CommunicationCreateManyThreadInputEnvelope
+    set?: CommunicationWhereUniqueInput | CommunicationWhereUniqueInput[]
+    disconnect?: CommunicationWhereUniqueInput | CommunicationWhereUniqueInput[]
+    delete?: CommunicationWhereUniqueInput | CommunicationWhereUniqueInput[]
+    connect?: CommunicationWhereUniqueInput | CommunicationWhereUniqueInput[]
+    update?: CommunicationUpdateWithWhereUniqueWithoutThreadInput | CommunicationUpdateWithWhereUniqueWithoutThreadInput[]
+    updateMany?: CommunicationUpdateManyWithWhereWithoutThreadInput | CommunicationUpdateManyWithWhereWithoutThreadInput[]
+    deleteMany?: CommunicationScalarWhereInput | CommunicationScalarWhereInput[]
+  }
+
+  export type CommunicationUncheckedUpdateManyWithoutThreadNestedInput = {
+    create?: XOR<CommunicationCreateWithoutThreadInput, CommunicationUncheckedCreateWithoutThreadInput> | CommunicationCreateWithoutThreadInput[] | CommunicationUncheckedCreateWithoutThreadInput[]
+    connectOrCreate?: CommunicationCreateOrConnectWithoutThreadInput | CommunicationCreateOrConnectWithoutThreadInput[]
+    upsert?: CommunicationUpsertWithWhereUniqueWithoutThreadInput | CommunicationUpsertWithWhereUniqueWithoutThreadInput[]
+    createMany?: CommunicationCreateManyThreadInputEnvelope
+    set?: CommunicationWhereUniqueInput | CommunicationWhereUniqueInput[]
+    disconnect?: CommunicationWhereUniqueInput | CommunicationWhereUniqueInput[]
+    delete?: CommunicationWhereUniqueInput | CommunicationWhereUniqueInput[]
+    connect?: CommunicationWhereUniqueInput | CommunicationWhereUniqueInput[]
+    update?: CommunicationUpdateWithWhereUniqueWithoutThreadInput | CommunicationUpdateWithWhereUniqueWithoutThreadInput[]
+    updateMany?: CommunicationUpdateManyWithWhereWithoutThreadInput | CommunicationUpdateManyWithWhereWithoutThreadInput[]
+    deleteMany?: CommunicationScalarWhereInput | CommunicationScalarWhereInput[]
+  }
+
+  export type CommunicationCreatetoAddressesInput = {
+    set: string[]
+  }
+
+  export type CommunicationCreateccAddressesInput = {
+    set: string[]
+  }
+
+  export type CommunicationThreadCreateNestedOneWithoutMessagesInput = {
+    create?: XOR<CommunicationThreadCreateWithoutMessagesInput, CommunicationThreadUncheckedCreateWithoutMessagesInput>
+    connectOrCreate?: CommunicationThreadCreateOrConnectWithoutMessagesInput
+    connect?: CommunicationThreadWhereUniqueInput
+  }
+
+  export type EvidenceItemCreateNestedOneWithoutCommunicationInput = {
+    create?: XOR<EvidenceItemCreateWithoutCommunicationInput, EvidenceItemUncheckedCreateWithoutCommunicationInput>
+    connectOrCreate?: EvidenceItemCreateOrConnectWithoutCommunicationInput
+    connect?: EvidenceItemWhereUniqueInput
+  }
+
+  export type AttachmentCreateNestedManyWithoutCommunicationInput = {
+    create?: XOR<AttachmentCreateWithoutCommunicationInput, AttachmentUncheckedCreateWithoutCommunicationInput> | AttachmentCreateWithoutCommunicationInput[] | AttachmentUncheckedCreateWithoutCommunicationInput[]
+    connectOrCreate?: AttachmentCreateOrConnectWithoutCommunicationInput | AttachmentCreateOrConnectWithoutCommunicationInput[]
+    createMany?: AttachmentCreateManyCommunicationInputEnvelope
+    connect?: AttachmentWhereUniqueInput | AttachmentWhereUniqueInput[]
+  }
+
+  export type AttachmentUncheckedCreateNestedManyWithoutCommunicationInput = {
+    create?: XOR<AttachmentCreateWithoutCommunicationInput, AttachmentUncheckedCreateWithoutCommunicationInput> | AttachmentCreateWithoutCommunicationInput[] | AttachmentUncheckedCreateWithoutCommunicationInput[]
+    connectOrCreate?: AttachmentCreateOrConnectWithoutCommunicationInput | AttachmentCreateOrConnectWithoutCommunicationInput[]
+    createMany?: AttachmentCreateManyCommunicationInputEnvelope
+    connect?: AttachmentWhereUniqueInput | AttachmentWhereUniqueInput[]
+  }
+
+  export type EnumCommunicationDirectionFieldUpdateOperationsInput = {
+    set?: $Enums.CommunicationDirection
+  }
+
+  export type CommunicationUpdatetoAddressesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type CommunicationUpdateccAddressesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type CommunicationThreadUpdateOneRequiredWithoutMessagesNestedInput = {
+    create?: XOR<CommunicationThreadCreateWithoutMessagesInput, CommunicationThreadUncheckedCreateWithoutMessagesInput>
+    connectOrCreate?: CommunicationThreadCreateOrConnectWithoutMessagesInput
+    upsert?: CommunicationThreadUpsertWithoutMessagesInput
+    connect?: CommunicationThreadWhereUniqueInput
+    update?: XOR<XOR<CommunicationThreadUpdateToOneWithWhereWithoutMessagesInput, CommunicationThreadUpdateWithoutMessagesInput>, CommunicationThreadUncheckedUpdateWithoutMessagesInput>
+  }
+
+  export type EvidenceItemUpdateOneRequiredWithoutCommunicationNestedInput = {
+    create?: XOR<EvidenceItemCreateWithoutCommunicationInput, EvidenceItemUncheckedCreateWithoutCommunicationInput>
+    connectOrCreate?: EvidenceItemCreateOrConnectWithoutCommunicationInput
+    upsert?: EvidenceItemUpsertWithoutCommunicationInput
+    connect?: EvidenceItemWhereUniqueInput
+    update?: XOR<XOR<EvidenceItemUpdateToOneWithWhereWithoutCommunicationInput, EvidenceItemUpdateWithoutCommunicationInput>, EvidenceItemUncheckedUpdateWithoutCommunicationInput>
+  }
+
+  export type AttachmentUpdateManyWithoutCommunicationNestedInput = {
+    create?: XOR<AttachmentCreateWithoutCommunicationInput, AttachmentUncheckedCreateWithoutCommunicationInput> | AttachmentCreateWithoutCommunicationInput[] | AttachmentUncheckedCreateWithoutCommunicationInput[]
+    connectOrCreate?: AttachmentCreateOrConnectWithoutCommunicationInput | AttachmentCreateOrConnectWithoutCommunicationInput[]
+    upsert?: AttachmentUpsertWithWhereUniqueWithoutCommunicationInput | AttachmentUpsertWithWhereUniqueWithoutCommunicationInput[]
+    createMany?: AttachmentCreateManyCommunicationInputEnvelope
+    set?: AttachmentWhereUniqueInput | AttachmentWhereUniqueInput[]
+    disconnect?: AttachmentWhereUniqueInput | AttachmentWhereUniqueInput[]
+    delete?: AttachmentWhereUniqueInput | AttachmentWhereUniqueInput[]
+    connect?: AttachmentWhereUniqueInput | AttachmentWhereUniqueInput[]
+    update?: AttachmentUpdateWithWhereUniqueWithoutCommunicationInput | AttachmentUpdateWithWhereUniqueWithoutCommunicationInput[]
+    updateMany?: AttachmentUpdateManyWithWhereWithoutCommunicationInput | AttachmentUpdateManyWithWhereWithoutCommunicationInput[]
+    deleteMany?: AttachmentScalarWhereInput | AttachmentScalarWhereInput[]
+  }
+
+  export type AttachmentUncheckedUpdateManyWithoutCommunicationNestedInput = {
+    create?: XOR<AttachmentCreateWithoutCommunicationInput, AttachmentUncheckedCreateWithoutCommunicationInput> | AttachmentCreateWithoutCommunicationInput[] | AttachmentUncheckedCreateWithoutCommunicationInput[]
+    connectOrCreate?: AttachmentCreateOrConnectWithoutCommunicationInput | AttachmentCreateOrConnectWithoutCommunicationInput[]
+    upsert?: AttachmentUpsertWithWhereUniqueWithoutCommunicationInput | AttachmentUpsertWithWhereUniqueWithoutCommunicationInput[]
+    createMany?: AttachmentCreateManyCommunicationInputEnvelope
+    set?: AttachmentWhereUniqueInput | AttachmentWhereUniqueInput[]
+    disconnect?: AttachmentWhereUniqueInput | AttachmentWhereUniqueInput[]
+    delete?: AttachmentWhereUniqueInput | AttachmentWhereUniqueInput[]
+    connect?: AttachmentWhereUniqueInput | AttachmentWhereUniqueInput[]
+    update?: AttachmentUpdateWithWhereUniqueWithoutCommunicationInput | AttachmentUpdateWithWhereUniqueWithoutCommunicationInput[]
+    updateMany?: AttachmentUpdateManyWithWhereWithoutCommunicationInput | AttachmentUpdateManyWithWhereWithoutCommunicationInput[]
+    deleteMany?: AttachmentScalarWhereInput | AttachmentScalarWhereInput[]
+  }
+
+  export type CommunicationCreateNestedOneWithoutAttachmentsInput = {
+    create?: XOR<CommunicationCreateWithoutAttachmentsInput, CommunicationUncheckedCreateWithoutAttachmentsInput>
+    connectOrCreate?: CommunicationCreateOrConnectWithoutAttachmentsInput
+    connect?: CommunicationWhereUniqueInput
+  }
+
+  export type CommunicationUpdateOneRequiredWithoutAttachmentsNestedInput = {
+    create?: XOR<CommunicationCreateWithoutAttachmentsInput, CommunicationUncheckedCreateWithoutAttachmentsInput>
+    connectOrCreate?: CommunicationCreateOrConnectWithoutAttachmentsInput
+    upsert?: CommunicationUpsertWithoutAttachmentsInput
+    connect?: CommunicationWhereUniqueInput
+    update?: XOR<XOR<CommunicationUpdateToOneWithWhereWithoutAttachmentsInput, CommunicationUpdateWithoutAttachmentsInput>, CommunicationUncheckedUpdateWithoutAttachmentsInput>
+  }
+
+  export type MailboxConnectionCreatescopeFoldersInput = {
+    set: string[]
+  }
+
+  export type WorkspaceCreateNestedOneWithoutMailboxConnectionsInput = {
+    create?: XOR<WorkspaceCreateWithoutMailboxConnectionsInput, WorkspaceUncheckedCreateWithoutMailboxConnectionsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutMailboxConnectionsInput
+    connect?: WorkspaceWhereUniqueInput
+  }
+
+  export type IngestJobCreateNestedManyWithoutConnectionInput = {
+    create?: XOR<IngestJobCreateWithoutConnectionInput, IngestJobUncheckedCreateWithoutConnectionInput> | IngestJobCreateWithoutConnectionInput[] | IngestJobUncheckedCreateWithoutConnectionInput[]
+    connectOrCreate?: IngestJobCreateOrConnectWithoutConnectionInput | IngestJobCreateOrConnectWithoutConnectionInput[]
+    createMany?: IngestJobCreateManyConnectionInputEnvelope
+    connect?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+  }
+
+  export type IngestJobUncheckedCreateNestedManyWithoutConnectionInput = {
+    create?: XOR<IngestJobCreateWithoutConnectionInput, IngestJobUncheckedCreateWithoutConnectionInput> | IngestJobCreateWithoutConnectionInput[] | IngestJobUncheckedCreateWithoutConnectionInput[]
+    connectOrCreate?: IngestJobCreateOrConnectWithoutConnectionInput | IngestJobCreateOrConnectWithoutConnectionInput[]
+    createMany?: IngestJobCreateManyConnectionInputEnvelope
+    connect?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+  }
+
+  export type EnumMailboxProviderFieldUpdateOperationsInput = {
+    set?: $Enums.MailboxProvider
+  }
+
+  export type EnumMailboxConsentModeFieldUpdateOperationsInput = {
+    set?: $Enums.MailboxConsentMode
+  }
+
+  export type MailboxConnectionUpdatescopeFoldersInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type EnumMailboxSyncStatusFieldUpdateOperationsInput = {
+    set?: $Enums.MailboxSyncStatus
+  }
+
+  export type WorkspaceUpdateOneRequiredWithoutMailboxConnectionsNestedInput = {
+    create?: XOR<WorkspaceCreateWithoutMailboxConnectionsInput, WorkspaceUncheckedCreateWithoutMailboxConnectionsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutMailboxConnectionsInput
+    upsert?: WorkspaceUpsertWithoutMailboxConnectionsInput
+    connect?: WorkspaceWhereUniqueInput
+    update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutMailboxConnectionsInput, WorkspaceUpdateWithoutMailboxConnectionsInput>, WorkspaceUncheckedUpdateWithoutMailboxConnectionsInput>
+  }
+
+  export type IngestJobUpdateManyWithoutConnectionNestedInput = {
+    create?: XOR<IngestJobCreateWithoutConnectionInput, IngestJobUncheckedCreateWithoutConnectionInput> | IngestJobCreateWithoutConnectionInput[] | IngestJobUncheckedCreateWithoutConnectionInput[]
+    connectOrCreate?: IngestJobCreateOrConnectWithoutConnectionInput | IngestJobCreateOrConnectWithoutConnectionInput[]
+    upsert?: IngestJobUpsertWithWhereUniqueWithoutConnectionInput | IngestJobUpsertWithWhereUniqueWithoutConnectionInput[]
+    createMany?: IngestJobCreateManyConnectionInputEnvelope
+    set?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+    disconnect?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+    delete?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+    connect?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+    update?: IngestJobUpdateWithWhereUniqueWithoutConnectionInput | IngestJobUpdateWithWhereUniqueWithoutConnectionInput[]
+    updateMany?: IngestJobUpdateManyWithWhereWithoutConnectionInput | IngestJobUpdateManyWithWhereWithoutConnectionInput[]
+    deleteMany?: IngestJobScalarWhereInput | IngestJobScalarWhereInput[]
+  }
+
+  export type IngestJobUncheckedUpdateManyWithoutConnectionNestedInput = {
+    create?: XOR<IngestJobCreateWithoutConnectionInput, IngestJobUncheckedCreateWithoutConnectionInput> | IngestJobCreateWithoutConnectionInput[] | IngestJobUncheckedCreateWithoutConnectionInput[]
+    connectOrCreate?: IngestJobCreateOrConnectWithoutConnectionInput | IngestJobCreateOrConnectWithoutConnectionInput[]
+    upsert?: IngestJobUpsertWithWhereUniqueWithoutConnectionInput | IngestJobUpsertWithWhereUniqueWithoutConnectionInput[]
+    createMany?: IngestJobCreateManyConnectionInputEnvelope
+    set?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+    disconnect?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+    delete?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+    connect?: IngestJobWhereUniqueInput | IngestJobWhereUniqueInput[]
+    update?: IngestJobUpdateWithWhereUniqueWithoutConnectionInput | IngestJobUpdateWithWhereUniqueWithoutConnectionInput[]
+    updateMany?: IngestJobUpdateManyWithWhereWithoutConnectionInput | IngestJobUpdateManyWithWhereWithoutConnectionInput[]
+    deleteMany?: IngestJobScalarWhereInput | IngestJobScalarWhereInput[]
+  }
+
+  export type WorkspaceCreateNestedOneWithoutIngestJobsInput = {
+    create?: XOR<WorkspaceCreateWithoutIngestJobsInput, WorkspaceUncheckedCreateWithoutIngestJobsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutIngestJobsInput
+    connect?: WorkspaceWhereUniqueInput
+  }
+
+  export type MailboxConnectionCreateNestedOneWithoutIngestJobsInput = {
+    create?: XOR<MailboxConnectionCreateWithoutIngestJobsInput, MailboxConnectionUncheckedCreateWithoutIngestJobsInput>
+    connectOrCreate?: MailboxConnectionCreateOrConnectWithoutIngestJobsInput
+    connect?: MailboxConnectionWhereUniqueInput
+  }
+
+  export type EnumIngestJobKindFieldUpdateOperationsInput = {
+    set?: $Enums.IngestJobKind
+  }
+
+  export type EnumIngestJobStatusFieldUpdateOperationsInput = {
+    set?: $Enums.IngestJobStatus
+  }
+
+  export type WorkspaceUpdateOneRequiredWithoutIngestJobsNestedInput = {
+    create?: XOR<WorkspaceCreateWithoutIngestJobsInput, WorkspaceUncheckedCreateWithoutIngestJobsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutIngestJobsInput
+    upsert?: WorkspaceUpsertWithoutIngestJobsInput
+    connect?: WorkspaceWhereUniqueInput
+    update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutIngestJobsInput, WorkspaceUpdateWithoutIngestJobsInput>, WorkspaceUncheckedUpdateWithoutIngestJobsInput>
+  }
+
+  export type MailboxConnectionUpdateOneWithoutIngestJobsNestedInput = {
+    create?: XOR<MailboxConnectionCreateWithoutIngestJobsInput, MailboxConnectionUncheckedCreateWithoutIngestJobsInput>
+    connectOrCreate?: MailboxConnectionCreateOrConnectWithoutIngestJobsInput
+    upsert?: MailboxConnectionUpsertWithoutIngestJobsInput
+    disconnect?: MailboxConnectionWhereInput | boolean
+    delete?: MailboxConnectionWhereInput | boolean
+    connect?: MailboxConnectionWhereUniqueInput
+    update?: XOR<XOR<MailboxConnectionUpdateToOneWithWhereWithoutIngestJobsInput, MailboxConnectionUpdateWithoutIngestJobsInput>, MailboxConnectionUncheckedUpdateWithoutIngestJobsInput>
+  }
+
+  export type WorkspaceCreateNestedOneWithoutEmailTriageItemsInput = {
+    create?: XOR<WorkspaceCreateWithoutEmailTriageItemsInput, WorkspaceUncheckedCreateWithoutEmailTriageItemsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutEmailTriageItemsInput
+    connect?: WorkspaceWhereUniqueInput
+  }
+
+  export type EnumEmailTriageStatusFieldUpdateOperationsInput = {
+    set?: $Enums.EmailTriageStatus
+  }
+
+  export type WorkspaceUpdateOneRequiredWithoutEmailTriageItemsNestedInput = {
+    create?: XOR<WorkspaceCreateWithoutEmailTriageItemsInput, WorkspaceUncheckedCreateWithoutEmailTriageItemsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutEmailTriageItemsInput
+    upsert?: WorkspaceUpsertWithoutEmailTriageItemsInput
+    connect?: WorkspaceWhereUniqueInput
+    update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutEmailTriageItemsInput, WorkspaceUpdateWithoutEmailTriageItemsInput>, WorkspaceUncheckedUpdateWithoutEmailTriageItemsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -41005,6 +58218,193 @@ export namespace Prisma {
     _max?: NestedEnumFirmProfileVersionTypeFilter<$PrismaModel>
   }
 
+  export type NestedEnumClientStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ClientStatus | EnumClientStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ClientStatus[] | ListEnumClientStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ClientStatus[] | ListEnumClientStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumClientStatusFilter<$PrismaModel> | $Enums.ClientStatus
+  }
+
+  export type NestedEnumClientStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ClientStatus | EnumClientStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ClientStatus[] | ListEnumClientStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ClientStatus[] | ListEnumClientStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumClientStatusWithAggregatesFilter<$PrismaModel> | $Enums.ClientStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumClientStatusFilter<$PrismaModel>
+    _max?: NestedEnumClientStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumEvidenceSourceTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.EvidenceSourceType | EnumEvidenceSourceTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.EvidenceSourceType[] | ListEnumEvidenceSourceTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EvidenceSourceType[] | ListEnumEvidenceSourceTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumEvidenceSourceTypeFilter<$PrismaModel> | $Enums.EvidenceSourceType
+  }
+
+  export type NestedEnumEvidenceSourceTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EvidenceSourceType | EnumEvidenceSourceTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.EvidenceSourceType[] | ListEnumEvidenceSourceTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EvidenceSourceType[] | ListEnumEvidenceSourceTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumEvidenceSourceTypeWithAggregatesFilter<$PrismaModel> | $Enums.EvidenceSourceType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumEvidenceSourceTypeFilter<$PrismaModel>
+    _max?: NestedEnumEvidenceSourceTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumTagCategoryFilter<$PrismaModel = never> = {
+    equals?: $Enums.TagCategory | EnumTagCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.TagCategory[] | ListEnumTagCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TagCategory[] | ListEnumTagCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumTagCategoryFilter<$PrismaModel> | $Enums.TagCategory
+  }
+
+  export type NestedEnumTagCategoryWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TagCategory | EnumTagCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.TagCategory[] | ListEnumTagCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TagCategory[] | ListEnumTagCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumTagCategoryWithAggregatesFilter<$PrismaModel> | $Enums.TagCategory
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTagCategoryFilter<$PrismaModel>
+    _max?: NestedEnumTagCategoryFilter<$PrismaModel>
+  }
+
+  export type NestedEnumCommunicationChannelFilter<$PrismaModel = never> = {
+    equals?: $Enums.CommunicationChannel | EnumCommunicationChannelFieldRefInput<$PrismaModel>
+    in?: $Enums.CommunicationChannel[] | ListEnumCommunicationChannelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CommunicationChannel[] | ListEnumCommunicationChannelFieldRefInput<$PrismaModel>
+    not?: NestedEnumCommunicationChannelFilter<$PrismaModel> | $Enums.CommunicationChannel
+  }
+
+  export type NestedEnumCommunicationChannelWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CommunicationChannel | EnumCommunicationChannelFieldRefInput<$PrismaModel>
+    in?: $Enums.CommunicationChannel[] | ListEnumCommunicationChannelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CommunicationChannel[] | ListEnumCommunicationChannelFieldRefInput<$PrismaModel>
+    not?: NestedEnumCommunicationChannelWithAggregatesFilter<$PrismaModel> | $Enums.CommunicationChannel
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCommunicationChannelFilter<$PrismaModel>
+    _max?: NestedEnumCommunicationChannelFilter<$PrismaModel>
+  }
+
+  export type NestedEnumCommunicationDirectionFilter<$PrismaModel = never> = {
+    equals?: $Enums.CommunicationDirection | EnumCommunicationDirectionFieldRefInput<$PrismaModel>
+    in?: $Enums.CommunicationDirection[] | ListEnumCommunicationDirectionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CommunicationDirection[] | ListEnumCommunicationDirectionFieldRefInput<$PrismaModel>
+    not?: NestedEnumCommunicationDirectionFilter<$PrismaModel> | $Enums.CommunicationDirection
+  }
+
+  export type NestedEnumCommunicationDirectionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CommunicationDirection | EnumCommunicationDirectionFieldRefInput<$PrismaModel>
+    in?: $Enums.CommunicationDirection[] | ListEnumCommunicationDirectionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CommunicationDirection[] | ListEnumCommunicationDirectionFieldRefInput<$PrismaModel>
+    not?: NestedEnumCommunicationDirectionWithAggregatesFilter<$PrismaModel> | $Enums.CommunicationDirection
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCommunicationDirectionFilter<$PrismaModel>
+    _max?: NestedEnumCommunicationDirectionFilter<$PrismaModel>
+  }
+
+  export type NestedEnumMailboxProviderFilter<$PrismaModel = never> = {
+    equals?: $Enums.MailboxProvider | EnumMailboxProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.MailboxProvider[] | ListEnumMailboxProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MailboxProvider[] | ListEnumMailboxProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumMailboxProviderFilter<$PrismaModel> | $Enums.MailboxProvider
+  }
+
+  export type NestedEnumMailboxConsentModeFilter<$PrismaModel = never> = {
+    equals?: $Enums.MailboxConsentMode | EnumMailboxConsentModeFieldRefInput<$PrismaModel>
+    in?: $Enums.MailboxConsentMode[] | ListEnumMailboxConsentModeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MailboxConsentMode[] | ListEnumMailboxConsentModeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMailboxConsentModeFilter<$PrismaModel> | $Enums.MailboxConsentMode
+  }
+
+  export type NestedEnumMailboxSyncStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.MailboxSyncStatus | EnumMailboxSyncStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MailboxSyncStatus[] | ListEnumMailboxSyncStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MailboxSyncStatus[] | ListEnumMailboxSyncStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMailboxSyncStatusFilter<$PrismaModel> | $Enums.MailboxSyncStatus
+  }
+
+  export type NestedEnumMailboxProviderWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MailboxProvider | EnumMailboxProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.MailboxProvider[] | ListEnumMailboxProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MailboxProvider[] | ListEnumMailboxProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumMailboxProviderWithAggregatesFilter<$PrismaModel> | $Enums.MailboxProvider
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMailboxProviderFilter<$PrismaModel>
+    _max?: NestedEnumMailboxProviderFilter<$PrismaModel>
+  }
+
+  export type NestedEnumMailboxConsentModeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MailboxConsentMode | EnumMailboxConsentModeFieldRefInput<$PrismaModel>
+    in?: $Enums.MailboxConsentMode[] | ListEnumMailboxConsentModeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MailboxConsentMode[] | ListEnumMailboxConsentModeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMailboxConsentModeWithAggregatesFilter<$PrismaModel> | $Enums.MailboxConsentMode
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMailboxConsentModeFilter<$PrismaModel>
+    _max?: NestedEnumMailboxConsentModeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumMailboxSyncStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MailboxSyncStatus | EnumMailboxSyncStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MailboxSyncStatus[] | ListEnumMailboxSyncStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MailboxSyncStatus[] | ListEnumMailboxSyncStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMailboxSyncStatusWithAggregatesFilter<$PrismaModel> | $Enums.MailboxSyncStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMailboxSyncStatusFilter<$PrismaModel>
+    _max?: NestedEnumMailboxSyncStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumIngestJobKindFilter<$PrismaModel = never> = {
+    equals?: $Enums.IngestJobKind | EnumIngestJobKindFieldRefInput<$PrismaModel>
+    in?: $Enums.IngestJobKind[] | ListEnumIngestJobKindFieldRefInput<$PrismaModel>
+    notIn?: $Enums.IngestJobKind[] | ListEnumIngestJobKindFieldRefInput<$PrismaModel>
+    not?: NestedEnumIngestJobKindFilter<$PrismaModel> | $Enums.IngestJobKind
+  }
+
+  export type NestedEnumIngestJobStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.IngestJobStatus | EnumIngestJobStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.IngestJobStatus[] | ListEnumIngestJobStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.IngestJobStatus[] | ListEnumIngestJobStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumIngestJobStatusFilter<$PrismaModel> | $Enums.IngestJobStatus
+  }
+
+  export type NestedEnumIngestJobKindWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.IngestJobKind | EnumIngestJobKindFieldRefInput<$PrismaModel>
+    in?: $Enums.IngestJobKind[] | ListEnumIngestJobKindFieldRefInput<$PrismaModel>
+    notIn?: $Enums.IngestJobKind[] | ListEnumIngestJobKindFieldRefInput<$PrismaModel>
+    not?: NestedEnumIngestJobKindWithAggregatesFilter<$PrismaModel> | $Enums.IngestJobKind
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumIngestJobKindFilter<$PrismaModel>
+    _max?: NestedEnumIngestJobKindFilter<$PrismaModel>
+  }
+
+  export type NestedEnumIngestJobStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.IngestJobStatus | EnumIngestJobStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.IngestJobStatus[] | ListEnumIngestJobStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.IngestJobStatus[] | ListEnumIngestJobStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumIngestJobStatusWithAggregatesFilter<$PrismaModel> | $Enums.IngestJobStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumIngestJobStatusFilter<$PrismaModel>
+    _max?: NestedEnumIngestJobStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumEmailTriageStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.EmailTriageStatus | EnumEmailTriageStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.EmailTriageStatus[] | ListEnumEmailTriageStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EmailTriageStatus[] | ListEnumEmailTriageStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumEmailTriageStatusFilter<$PrismaModel> | $Enums.EmailTriageStatus
+  }
+
+  export type NestedEnumEmailTriageStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EmailTriageStatus | EnumEmailTriageStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.EmailTriageStatus[] | ListEnumEmailTriageStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EmailTriageStatus[] | ListEnumEmailTriageStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumEmailTriageStatusWithAggregatesFilter<$PrismaModel> | $Enums.EmailTriageStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumEmailTriageStatusFilter<$PrismaModel>
+    _max?: NestedEnumEmailTriageStatusFilter<$PrismaModel>
+  }
+
   export type UserWorkspaceCreateWithoutWorkspaceInput = {
     role: $Enums.WorkspaceRole
     onboardingDismissedAt?: Date | string | null
@@ -41418,6 +58818,272 @@ export namespace Prisma {
     create: XOR<FirmProfileCreateWithoutWorkspaceInput, FirmProfileUncheckedCreateWithoutWorkspaceInput>
   }
 
+  export type EvidenceItemCreateWithoutWorkspaceInput = {
+    id?: string
+    createdById?: string | null
+    sourceType: $Enums.EvidenceSourceType
+    title: string
+    occurredAt: Date | string
+    ingestedAt?: Date | string
+    contentSha256: string
+    storageUri?: string | null
+    retentionRuleId?: string | null
+    destructionEligibleAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    client?: ClientCreateNestedOneWithoutEvidenceItemsInput
+    tags?: EvidenceTagCreateNestedManyWithoutItemInput
+    communication?: CommunicationCreateNestedOneWithoutEvidenceItemInput
+  }
+
+  export type EvidenceItemUncheckedCreateWithoutWorkspaceInput = {
+    id?: string
+    clientId?: string | null
+    createdById?: string | null
+    sourceType: $Enums.EvidenceSourceType
+    title: string
+    occurredAt: Date | string
+    ingestedAt?: Date | string
+    contentSha256: string
+    storageUri?: string | null
+    retentionRuleId?: string | null
+    destructionEligibleAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    tags?: EvidenceTagUncheckedCreateNestedManyWithoutItemInput
+    communication?: CommunicationUncheckedCreateNestedOneWithoutEvidenceItemInput
+  }
+
+  export type EvidenceItemCreateOrConnectWithoutWorkspaceInput = {
+    where: EvidenceItemWhereUniqueInput
+    create: XOR<EvidenceItemCreateWithoutWorkspaceInput, EvidenceItemUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type EvidenceItemCreateManyWorkspaceInputEnvelope = {
+    data: EvidenceItemCreateManyWorkspaceInput | EvidenceItemCreateManyWorkspaceInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ClientCreateWithoutWorkspaceInput = {
+    id?: string
+    name: string
+    zohoId?: string | null
+    status?: $Enums.ClientStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    emailAliases?: EmailAliasCreateNestedManyWithoutClientInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutClientInput
+  }
+
+  export type ClientUncheckedCreateWithoutWorkspaceInput = {
+    id?: string
+    name: string
+    zohoId?: string | null
+    status?: $Enums.ClientStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutClientInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutClientInput
+  }
+
+  export type ClientCreateOrConnectWithoutWorkspaceInput = {
+    where: ClientWhereUniqueInput
+    create: XOR<ClientCreateWithoutWorkspaceInput, ClientUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type ClientCreateManyWorkspaceInputEnvelope = {
+    data: ClientCreateManyWorkspaceInput | ClientCreateManyWorkspaceInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type MailboxConnectionCreateWithoutWorkspaceInput = {
+    id?: string
+    provider?: $Enums.MailboxProvider
+    mailboxAddress: string
+    consentMode?: $Enums.MailboxConsentMode
+    scopeFolders?: MailboxConnectionCreatescopeFoldersInput | string[]
+    backfillFrom?: Date | string | null
+    status?: $Enums.MailboxSyncStatus
+    encryptedToken?: string | null
+    deltaCursor?: string | null
+    lastSyncAt?: Date | string | null
+    lastErrorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    ingestJobs?: IngestJobCreateNestedManyWithoutConnectionInput
+  }
+
+  export type MailboxConnectionUncheckedCreateWithoutWorkspaceInput = {
+    id?: string
+    provider?: $Enums.MailboxProvider
+    mailboxAddress: string
+    consentMode?: $Enums.MailboxConsentMode
+    scopeFolders?: MailboxConnectionCreatescopeFoldersInput | string[]
+    backfillFrom?: Date | string | null
+    status?: $Enums.MailboxSyncStatus
+    encryptedToken?: string | null
+    deltaCursor?: string | null
+    lastSyncAt?: Date | string | null
+    lastErrorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutConnectionInput
+  }
+
+  export type MailboxConnectionCreateOrConnectWithoutWorkspaceInput = {
+    where: MailboxConnectionWhereUniqueInput
+    create: XOR<MailboxConnectionCreateWithoutWorkspaceInput, MailboxConnectionUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type MailboxConnectionCreateManyWorkspaceInputEnvelope = {
+    data: MailboxConnectionCreateManyWorkspaceInput | MailboxConnectionCreateManyWorkspaceInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CommunicationThreadCreateWithoutWorkspaceInput = {
+    id?: string
+    channel: $Enums.CommunicationChannel
+    externalThreadId?: string | null
+    subject?: string | null
+    participants: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    messages?: CommunicationCreateNestedManyWithoutThreadInput
+  }
+
+  export type CommunicationThreadUncheckedCreateWithoutWorkspaceInput = {
+    id?: string
+    channel: $Enums.CommunicationChannel
+    externalThreadId?: string | null
+    subject?: string | null
+    participants: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    messages?: CommunicationUncheckedCreateNestedManyWithoutThreadInput
+  }
+
+  export type CommunicationThreadCreateOrConnectWithoutWorkspaceInput = {
+    where: CommunicationThreadWhereUniqueInput
+    create: XOR<CommunicationThreadCreateWithoutWorkspaceInput, CommunicationThreadUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type CommunicationThreadCreateManyWorkspaceInputEnvelope = {
+    data: CommunicationThreadCreateManyWorkspaceInput | CommunicationThreadCreateManyWorkspaceInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type EmailAliasCreateWithoutWorkspaceInput = {
+    id?: string
+    address: string
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    user?: UserCreateNestedOneWithoutEmailAliasesInput
+    client?: ClientCreateNestedOneWithoutEmailAliasesInput
+  }
+
+  export type EmailAliasUncheckedCreateWithoutWorkspaceInput = {
+    id?: string
+    address: string
+    userId?: string | null
+    clientId?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type EmailAliasCreateOrConnectWithoutWorkspaceInput = {
+    where: EmailAliasWhereUniqueInput
+    create: XOR<EmailAliasCreateWithoutWorkspaceInput, EmailAliasUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type EmailAliasCreateManyWorkspaceInputEnvelope = {
+    data: EmailAliasCreateManyWorkspaceInput | EmailAliasCreateManyWorkspaceInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type EmailTriageItemCreateWithoutWorkspaceInput = {
+    id?: string
+    address: string
+    status?: $Enums.EmailTriageStatus
+    userId?: string | null
+    clientId?: string | null
+    resolvedBy?: string | null
+    resolvedAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EmailTriageItemUncheckedCreateWithoutWorkspaceInput = {
+    id?: string
+    address: string
+    status?: $Enums.EmailTriageStatus
+    userId?: string | null
+    clientId?: string | null
+    resolvedBy?: string | null
+    resolvedAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EmailTriageItemCreateOrConnectWithoutWorkspaceInput = {
+    where: EmailTriageItemWhereUniqueInput
+    create: XOR<EmailTriageItemCreateWithoutWorkspaceInput, EmailTriageItemUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type EmailTriageItemCreateManyWorkspaceInputEnvelope = {
+    data: EmailTriageItemCreateManyWorkspaceInput | EmailTriageItemCreateManyWorkspaceInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type IngestJobCreateWithoutWorkspaceInput = {
+    id?: string
+    importFileId?: string | null
+    kind: $Enums.IngestJobKind
+    status?: $Enums.IngestJobStatus
+    cursor?: string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    connection?: MailboxConnectionCreateNestedOneWithoutIngestJobsInput
+  }
+
+  export type IngestJobUncheckedCreateWithoutWorkspaceInput = {
+    id?: string
+    connectionId?: string | null
+    importFileId?: string | null
+    kind: $Enums.IngestJobKind
+    status?: $Enums.IngestJobStatus
+    cursor?: string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type IngestJobCreateOrConnectWithoutWorkspaceInput = {
+    where: IngestJobWhereUniqueInput
+    create: XOR<IngestJobCreateWithoutWorkspaceInput, IngestJobUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type IngestJobCreateManyWorkspaceInputEnvelope = {
+    data: IngestJobCreateManyWorkspaceInput | IngestJobCreateManyWorkspaceInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserWorkspaceUpsertWithWhereUniqueWithoutWorkspaceInput = {
     where: UserWorkspaceWhereUniqueInput
     update: XOR<UserWorkspaceUpdateWithoutWorkspaceInput, UserWorkspaceUncheckedUpdateWithoutWorkspaceInput>
@@ -41764,6 +59430,238 @@ export namespace Prisma {
     versions?: FirmProfileVersionUncheckedUpdateManyWithoutFirmProfileNestedInput
   }
 
+  export type EvidenceItemUpsertWithWhereUniqueWithoutWorkspaceInput = {
+    where: EvidenceItemWhereUniqueInput
+    update: XOR<EvidenceItemUpdateWithoutWorkspaceInput, EvidenceItemUncheckedUpdateWithoutWorkspaceInput>
+    create: XOR<EvidenceItemCreateWithoutWorkspaceInput, EvidenceItemUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type EvidenceItemUpdateWithWhereUniqueWithoutWorkspaceInput = {
+    where: EvidenceItemWhereUniqueInput
+    data: XOR<EvidenceItemUpdateWithoutWorkspaceInput, EvidenceItemUncheckedUpdateWithoutWorkspaceInput>
+  }
+
+  export type EvidenceItemUpdateManyWithWhereWithoutWorkspaceInput = {
+    where: EvidenceItemScalarWhereInput
+    data: XOR<EvidenceItemUpdateManyMutationInput, EvidenceItemUncheckedUpdateManyWithoutWorkspaceInput>
+  }
+
+  export type EvidenceItemScalarWhereInput = {
+    AND?: EvidenceItemScalarWhereInput | EvidenceItemScalarWhereInput[]
+    OR?: EvidenceItemScalarWhereInput[]
+    NOT?: EvidenceItemScalarWhereInput | EvidenceItemScalarWhereInput[]
+    id?: StringFilter<"EvidenceItem"> | string
+    workspaceId?: StringFilter<"EvidenceItem"> | string
+    clientId?: StringNullableFilter<"EvidenceItem"> | string | null
+    createdById?: StringNullableFilter<"EvidenceItem"> | string | null
+    sourceType?: EnumEvidenceSourceTypeFilter<"EvidenceItem"> | $Enums.EvidenceSourceType
+    title?: StringFilter<"EvidenceItem"> | string
+    occurredAt?: DateTimeFilter<"EvidenceItem"> | Date | string
+    ingestedAt?: DateTimeFilter<"EvidenceItem"> | Date | string
+    contentSha256?: StringFilter<"EvidenceItem"> | string
+    storageUri?: StringNullableFilter<"EvidenceItem"> | string | null
+    retentionRuleId?: StringNullableFilter<"EvidenceItem"> | string | null
+    destructionEligibleAt?: DateTimeNullableFilter<"EvidenceItem"> | Date | string | null
+    createdAt?: DateTimeFilter<"EvidenceItem"> | Date | string
+    updatedAt?: DateTimeFilter<"EvidenceItem"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"EvidenceItem"> | Date | string | null
+  }
+
+  export type ClientUpsertWithWhereUniqueWithoutWorkspaceInput = {
+    where: ClientWhereUniqueInput
+    update: XOR<ClientUpdateWithoutWorkspaceInput, ClientUncheckedUpdateWithoutWorkspaceInput>
+    create: XOR<ClientCreateWithoutWorkspaceInput, ClientUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type ClientUpdateWithWhereUniqueWithoutWorkspaceInput = {
+    where: ClientWhereUniqueInput
+    data: XOR<ClientUpdateWithoutWorkspaceInput, ClientUncheckedUpdateWithoutWorkspaceInput>
+  }
+
+  export type ClientUpdateManyWithWhereWithoutWorkspaceInput = {
+    where: ClientScalarWhereInput
+    data: XOR<ClientUpdateManyMutationInput, ClientUncheckedUpdateManyWithoutWorkspaceInput>
+  }
+
+  export type ClientScalarWhereInput = {
+    AND?: ClientScalarWhereInput | ClientScalarWhereInput[]
+    OR?: ClientScalarWhereInput[]
+    NOT?: ClientScalarWhereInput | ClientScalarWhereInput[]
+    id?: StringFilter<"Client"> | string
+    workspaceId?: StringFilter<"Client"> | string
+    name?: StringFilter<"Client"> | string
+    zohoId?: StringNullableFilter<"Client"> | string | null
+    status?: EnumClientStatusFilter<"Client"> | $Enums.ClientStatus
+    createdAt?: DateTimeFilter<"Client"> | Date | string
+    updatedAt?: DateTimeFilter<"Client"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"Client"> | Date | string | null
+  }
+
+  export type MailboxConnectionUpsertWithWhereUniqueWithoutWorkspaceInput = {
+    where: MailboxConnectionWhereUniqueInput
+    update: XOR<MailboxConnectionUpdateWithoutWorkspaceInput, MailboxConnectionUncheckedUpdateWithoutWorkspaceInput>
+    create: XOR<MailboxConnectionCreateWithoutWorkspaceInput, MailboxConnectionUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type MailboxConnectionUpdateWithWhereUniqueWithoutWorkspaceInput = {
+    where: MailboxConnectionWhereUniqueInput
+    data: XOR<MailboxConnectionUpdateWithoutWorkspaceInput, MailboxConnectionUncheckedUpdateWithoutWorkspaceInput>
+  }
+
+  export type MailboxConnectionUpdateManyWithWhereWithoutWorkspaceInput = {
+    where: MailboxConnectionScalarWhereInput
+    data: XOR<MailboxConnectionUpdateManyMutationInput, MailboxConnectionUncheckedUpdateManyWithoutWorkspaceInput>
+  }
+
+  export type MailboxConnectionScalarWhereInput = {
+    AND?: MailboxConnectionScalarWhereInput | MailboxConnectionScalarWhereInput[]
+    OR?: MailboxConnectionScalarWhereInput[]
+    NOT?: MailboxConnectionScalarWhereInput | MailboxConnectionScalarWhereInput[]
+    id?: StringFilter<"MailboxConnection"> | string
+    workspaceId?: StringFilter<"MailboxConnection"> | string
+    provider?: EnumMailboxProviderFilter<"MailboxConnection"> | $Enums.MailboxProvider
+    mailboxAddress?: StringFilter<"MailboxConnection"> | string
+    consentMode?: EnumMailboxConsentModeFilter<"MailboxConnection"> | $Enums.MailboxConsentMode
+    scopeFolders?: StringNullableListFilter<"MailboxConnection">
+    backfillFrom?: DateTimeNullableFilter<"MailboxConnection"> | Date | string | null
+    status?: EnumMailboxSyncStatusFilter<"MailboxConnection"> | $Enums.MailboxSyncStatus
+    encryptedToken?: StringNullableFilter<"MailboxConnection"> | string | null
+    deltaCursor?: StringNullableFilter<"MailboxConnection"> | string | null
+    lastSyncAt?: DateTimeNullableFilter<"MailboxConnection"> | Date | string | null
+    lastErrorMessage?: StringNullableFilter<"MailboxConnection"> | string | null
+    createdAt?: DateTimeFilter<"MailboxConnection"> | Date | string
+    updatedAt?: DateTimeFilter<"MailboxConnection"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"MailboxConnection"> | Date | string | null
+  }
+
+  export type CommunicationThreadUpsertWithWhereUniqueWithoutWorkspaceInput = {
+    where: CommunicationThreadWhereUniqueInput
+    update: XOR<CommunicationThreadUpdateWithoutWorkspaceInput, CommunicationThreadUncheckedUpdateWithoutWorkspaceInput>
+    create: XOR<CommunicationThreadCreateWithoutWorkspaceInput, CommunicationThreadUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type CommunicationThreadUpdateWithWhereUniqueWithoutWorkspaceInput = {
+    where: CommunicationThreadWhereUniqueInput
+    data: XOR<CommunicationThreadUpdateWithoutWorkspaceInput, CommunicationThreadUncheckedUpdateWithoutWorkspaceInput>
+  }
+
+  export type CommunicationThreadUpdateManyWithWhereWithoutWorkspaceInput = {
+    where: CommunicationThreadScalarWhereInput
+    data: XOR<CommunicationThreadUpdateManyMutationInput, CommunicationThreadUncheckedUpdateManyWithoutWorkspaceInput>
+  }
+
+  export type CommunicationThreadScalarWhereInput = {
+    AND?: CommunicationThreadScalarWhereInput | CommunicationThreadScalarWhereInput[]
+    OR?: CommunicationThreadScalarWhereInput[]
+    NOT?: CommunicationThreadScalarWhereInput | CommunicationThreadScalarWhereInput[]
+    id?: StringFilter<"CommunicationThread"> | string
+    workspaceId?: StringFilter<"CommunicationThread"> | string
+    channel?: EnumCommunicationChannelFilter<"CommunicationThread"> | $Enums.CommunicationChannel
+    externalThreadId?: StringNullableFilter<"CommunicationThread"> | string | null
+    subject?: StringNullableFilter<"CommunicationThread"> | string | null
+    participants?: JsonFilter<"CommunicationThread">
+    createdAt?: DateTimeFilter<"CommunicationThread"> | Date | string
+    updatedAt?: DateTimeFilter<"CommunicationThread"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"CommunicationThread"> | Date | string | null
+  }
+
+  export type EmailAliasUpsertWithWhereUniqueWithoutWorkspaceInput = {
+    where: EmailAliasWhereUniqueInput
+    update: XOR<EmailAliasUpdateWithoutWorkspaceInput, EmailAliasUncheckedUpdateWithoutWorkspaceInput>
+    create: XOR<EmailAliasCreateWithoutWorkspaceInput, EmailAliasUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type EmailAliasUpdateWithWhereUniqueWithoutWorkspaceInput = {
+    where: EmailAliasWhereUniqueInput
+    data: XOR<EmailAliasUpdateWithoutWorkspaceInput, EmailAliasUncheckedUpdateWithoutWorkspaceInput>
+  }
+
+  export type EmailAliasUpdateManyWithWhereWithoutWorkspaceInput = {
+    where: EmailAliasScalarWhereInput
+    data: XOR<EmailAliasUpdateManyMutationInput, EmailAliasUncheckedUpdateManyWithoutWorkspaceInput>
+  }
+
+  export type EmailAliasScalarWhereInput = {
+    AND?: EmailAliasScalarWhereInput | EmailAliasScalarWhereInput[]
+    OR?: EmailAliasScalarWhereInput[]
+    NOT?: EmailAliasScalarWhereInput | EmailAliasScalarWhereInput[]
+    id?: StringFilter<"EmailAlias"> | string
+    workspaceId?: StringFilter<"EmailAlias"> | string
+    address?: StringFilter<"EmailAlias"> | string
+    userId?: StringNullableFilter<"EmailAlias"> | string | null
+    clientId?: StringNullableFilter<"EmailAlias"> | string | null
+    verified?: BoolFilter<"EmailAlias"> | boolean
+    createdAt?: DateTimeFilter<"EmailAlias"> | Date | string
+    updatedAt?: DateTimeFilter<"EmailAlias"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"EmailAlias"> | Date | string | null
+  }
+
+  export type EmailTriageItemUpsertWithWhereUniqueWithoutWorkspaceInput = {
+    where: EmailTriageItemWhereUniqueInput
+    update: XOR<EmailTriageItemUpdateWithoutWorkspaceInput, EmailTriageItemUncheckedUpdateWithoutWorkspaceInput>
+    create: XOR<EmailTriageItemCreateWithoutWorkspaceInput, EmailTriageItemUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type EmailTriageItemUpdateWithWhereUniqueWithoutWorkspaceInput = {
+    where: EmailTriageItemWhereUniqueInput
+    data: XOR<EmailTriageItemUpdateWithoutWorkspaceInput, EmailTriageItemUncheckedUpdateWithoutWorkspaceInput>
+  }
+
+  export type EmailTriageItemUpdateManyWithWhereWithoutWorkspaceInput = {
+    where: EmailTriageItemScalarWhereInput
+    data: XOR<EmailTriageItemUpdateManyMutationInput, EmailTriageItemUncheckedUpdateManyWithoutWorkspaceInput>
+  }
+
+  export type EmailTriageItemScalarWhereInput = {
+    AND?: EmailTriageItemScalarWhereInput | EmailTriageItemScalarWhereInput[]
+    OR?: EmailTriageItemScalarWhereInput[]
+    NOT?: EmailTriageItemScalarWhereInput | EmailTriageItemScalarWhereInput[]
+    id?: StringFilter<"EmailTriageItem"> | string
+    workspaceId?: StringFilter<"EmailTriageItem"> | string
+    address?: StringFilter<"EmailTriageItem"> | string
+    status?: EnumEmailTriageStatusFilter<"EmailTriageItem"> | $Enums.EmailTriageStatus
+    userId?: StringNullableFilter<"EmailTriageItem"> | string | null
+    clientId?: StringNullableFilter<"EmailTriageItem"> | string | null
+    resolvedBy?: StringNullableFilter<"EmailTriageItem"> | string | null
+    resolvedAt?: DateTimeNullableFilter<"EmailTriageItem"> | Date | string | null
+    notes?: StringNullableFilter<"EmailTriageItem"> | string | null
+    createdAt?: DateTimeFilter<"EmailTriageItem"> | Date | string
+    updatedAt?: DateTimeFilter<"EmailTriageItem"> | Date | string
+  }
+
+  export type IngestJobUpsertWithWhereUniqueWithoutWorkspaceInput = {
+    where: IngestJobWhereUniqueInput
+    update: XOR<IngestJobUpdateWithoutWorkspaceInput, IngestJobUncheckedUpdateWithoutWorkspaceInput>
+    create: XOR<IngestJobCreateWithoutWorkspaceInput, IngestJobUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type IngestJobUpdateWithWhereUniqueWithoutWorkspaceInput = {
+    where: IngestJobWhereUniqueInput
+    data: XOR<IngestJobUpdateWithoutWorkspaceInput, IngestJobUncheckedUpdateWithoutWorkspaceInput>
+  }
+
+  export type IngestJobUpdateManyWithWhereWithoutWorkspaceInput = {
+    where: IngestJobScalarWhereInput
+    data: XOR<IngestJobUpdateManyMutationInput, IngestJobUncheckedUpdateManyWithoutWorkspaceInput>
+  }
+
+  export type IngestJobScalarWhereInput = {
+    AND?: IngestJobScalarWhereInput | IngestJobScalarWhereInput[]
+    OR?: IngestJobScalarWhereInput[]
+    NOT?: IngestJobScalarWhereInput | IngestJobScalarWhereInput[]
+    id?: StringFilter<"IngestJob"> | string
+    workspaceId?: StringFilter<"IngestJob"> | string
+    connectionId?: StringNullableFilter<"IngestJob"> | string | null
+    importFileId?: StringNullableFilter<"IngestJob"> | string | null
+    kind?: EnumIngestJobKindFilter<"IngestJob"> | $Enums.IngestJobKind
+    status?: EnumIngestJobStatusFilter<"IngestJob"> | $Enums.IngestJobStatus
+    cursor?: StringNullableFilter<"IngestJob"> | string | null
+    stats?: JsonFilter<"IngestJob">
+    errorMessage?: StringNullableFilter<"IngestJob"> | string | null
+    createdAt?: DateTimeFilter<"IngestJob"> | Date | string
+    updatedAt?: DateTimeFilter<"IngestJob"> | Date | string
+  }
+
   export type UserCreateWithoutWorkspacesInput = {
     id?: string
     name?: string | null
@@ -41778,6 +59676,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutWorkspacesInput = {
@@ -41794,6 +59693,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutWorkspacesInput = {
@@ -41829,6 +59729,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutUsersInput = {
@@ -41859,6 +59766,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutUsersInput = {
@@ -41880,6 +59794,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRemovedWorkspaceMembershipsInput = {
@@ -41896,6 +59811,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRemovedWorkspaceMembershipsInput = {
@@ -41928,6 +59844,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWorkspacesInput = {
@@ -41944,6 +59861,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type WorkspaceUpsertWithoutUsersInput = {
@@ -41985,6 +59903,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutUsersInput = {
@@ -42015,6 +59940,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserUpsertWithoutRemovedWorkspaceMembershipsInput = {
@@ -42042,6 +59974,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRemovedWorkspaceMembershipsInput = {
@@ -42058,6 +59991,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type WorkspaceCreateWithoutMeetingsInput = {
@@ -42088,6 +60022,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutMeetingsInput = {
@@ -42118,6 +60059,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutMeetingsInput = {
@@ -42339,6 +60287,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutMeetingsAdvisorCertifiedInput = {
@@ -42355,6 +60304,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutMeetingsAdvisorCertifiedInput = {
@@ -42376,6 +60326,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutMeetingsCmReviewedInput = {
@@ -42392,6 +60343,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutMeetingsCmReviewedInput = {
@@ -42413,6 +60365,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutMeetingsCcoSignedOffInput = {
@@ -42429,6 +60382,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutMeetingsCcoSignedOffInput = {
@@ -42475,6 +60429,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutMeetingsInput = {
@@ -42505,6 +60466,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type VersionUpsertWithWhereUniqueWithoutMeetingInput = {
@@ -42641,6 +60609,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMeetingsAdvisorCertifiedInput = {
@@ -42657,6 +60626,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutMeetingsCmReviewedInput = {
@@ -42684,6 +60654,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMeetingsCmReviewedInput = {
@@ -42700,6 +60671,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutMeetingsCcoSignedOffInput = {
@@ -42727,6 +60699,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMeetingsCcoSignedOffInput = {
@@ -42743,6 +60716,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type MeetingCreateWithoutVersionsInput = {
@@ -43064,6 +61038,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutFlagsInput = {
@@ -43094,6 +61075,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutFlagsInput = {
@@ -43160,6 +61148,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutFlagsCmTriagedInput = {
@@ -43176,6 +61165,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutFlagsCmTriagedInput = {
@@ -43323,6 +61313,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutFlagsInput = {
@@ -43353,6 +61350,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ResolutionRecordUpsertWithoutFlagInput = {
@@ -43431,6 +61435,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFlagsCmTriagedInput = {
@@ -43447,6 +61452,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type FlagCreateWithoutResolutionRecordInput = {
@@ -43623,6 +61629,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutResolutionRecordsInput = {
@@ -43653,6 +61666,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutResolutionRecordsInput = {
@@ -43953,6 +61973,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutResolutionRecordsInput = {
@@ -43983,6 +62010,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ActionItemUpsertWithWhereUniqueWithoutResolutionInput = {
@@ -44513,6 +62547,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutAuditEventsInput = {
@@ -44543,6 +62584,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutAuditEventsInput = {
@@ -44684,6 +62732,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutAuditEventsInput = {
@@ -44714,6 +62769,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type MeetingUpsertWithoutAuditEventsInput = {
@@ -44831,6 +62893,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -44847,6 +62910,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -44879,6 +62943,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -44895,6 +62960,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -44911,6 +62977,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -44927,6 +62994,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -44959,6 +63027,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -44975,6 +63044,7 @@ export namespace Prisma {
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -45481,6 +63551,38 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type EmailAliasCreateWithoutUserInput = {
+    id?: string
+    address: string
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutEmailAliasesInput
+    client?: ClientCreateNestedOneWithoutEmailAliasesInput
+  }
+
+  export type EmailAliasUncheckedCreateWithoutUserInput = {
+    id?: string
+    workspaceId: string
+    address: string
+    clientId?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type EmailAliasCreateOrConnectWithoutUserInput = {
+    where: EmailAliasWhereUniqueInput
+    create: XOR<EmailAliasCreateWithoutUserInput, EmailAliasUncheckedCreateWithoutUserInput>
+  }
+
+  export type EmailAliasCreateManyUserInputEnvelope = {
+    data: EmailAliasCreateManyUserInput | EmailAliasCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
     where: AccountWhereUniqueInput
     update: XOR<AccountUpdateWithoutUserInput, AccountUncheckedUpdateWithoutUserInput>
@@ -45654,6 +63756,22 @@ export namespace Prisma {
     data: XOR<InvitationUpdateManyMutationInput, InvitationUncheckedUpdateManyWithoutInvitedByInput>
   }
 
+  export type EmailAliasUpsertWithWhereUniqueWithoutUserInput = {
+    where: EmailAliasWhereUniqueInput
+    update: XOR<EmailAliasUpdateWithoutUserInput, EmailAliasUncheckedUpdateWithoutUserInput>
+    create: XOR<EmailAliasCreateWithoutUserInput, EmailAliasUncheckedCreateWithoutUserInput>
+  }
+
+  export type EmailAliasUpdateWithWhereUniqueWithoutUserInput = {
+    where: EmailAliasWhereUniqueInput
+    data: XOR<EmailAliasUpdateWithoutUserInput, EmailAliasUncheckedUpdateWithoutUserInput>
+  }
+
+  export type EmailAliasUpdateManyWithWhereWithoutUserInput = {
+    where: EmailAliasScalarWhereInput
+    data: XOR<EmailAliasUpdateManyMutationInput, EmailAliasUncheckedUpdateManyWithoutUserInput>
+  }
+
   export type WorkspaceCreateWithoutInvitationsInput = {
     id?: string
     name: string
@@ -45682,6 +63800,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutInvitationsInput = {
@@ -45712,6 +63837,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutInvitationsInput = {
@@ -45733,6 +63865,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutInvitationsSentInput = {
@@ -45749,6 +63882,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutInvitationsSentInput = {
@@ -45795,6 +63929,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutInvitationsInput = {
@@ -45825,6 +63966,13 @@ export namespace Prisma {
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserUpsertWithoutInvitationsSentInput = {
@@ -45852,6 +64000,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutInvitationsSentInput = {
@@ -45868,6 +64017,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type WorkspaceCreateWithoutIntegrationCredentialsInput = {
@@ -45898,6 +64048,13 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutIntegrationCredentialsInput = {
@@ -45928,6 +64085,13 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutIntegrationCredentialsInput = {
@@ -45974,6 +64138,13 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutIntegrationCredentialsInput = {
@@ -46004,6 +64175,13 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateWithoutIntegrationConfigsInput = {
@@ -46034,6 +64212,13 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutIntegrationConfigsInput = {
@@ -46064,6 +64249,13 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
     firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutIntegrationConfigsInput = {
@@ -46144,6 +64336,13 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutIntegrationConfigsInput = {
@@ -46174,6 +64373,13 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
     firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type IntegrationSyncLogUpsertWithWhereUniqueWithoutIntegrationConfigInput = {
@@ -46480,6 +64686,13 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutFirmProfileInput = {
@@ -46510,6 +64723,13 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
     integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutFirmProfileInput = {
@@ -46654,6 +64874,13 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutFirmProfileInput = {
@@ -46684,6 +64911,13 @@ export namespace Prisma {
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
     integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type DisclosureCategoryUpsertWithWhereUniqueWithoutFirmProfileInput = {
@@ -47080,6 +65314,2262 @@ export namespace Prisma {
     suppressionLogs?: SuppressionLogEntryUncheckedUpdateManyWithoutFirmProfileNestedInput
   }
 
+  export type WorkspaceCreateWithoutClientsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceUncheckedCreateWithoutClientsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceCreateOrConnectWithoutClientsInput = {
+    where: WorkspaceWhereUniqueInput
+    create: XOR<WorkspaceCreateWithoutClientsInput, WorkspaceUncheckedCreateWithoutClientsInput>
+  }
+
+  export type EmailAliasCreateWithoutClientInput = {
+    id?: string
+    address: string
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutEmailAliasesInput
+    user?: UserCreateNestedOneWithoutEmailAliasesInput
+  }
+
+  export type EmailAliasUncheckedCreateWithoutClientInput = {
+    id?: string
+    workspaceId: string
+    address: string
+    userId?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type EmailAliasCreateOrConnectWithoutClientInput = {
+    where: EmailAliasWhereUniqueInput
+    create: XOR<EmailAliasCreateWithoutClientInput, EmailAliasUncheckedCreateWithoutClientInput>
+  }
+
+  export type EmailAliasCreateManyClientInputEnvelope = {
+    data: EmailAliasCreateManyClientInput | EmailAliasCreateManyClientInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type EvidenceItemCreateWithoutClientInput = {
+    id?: string
+    createdById?: string | null
+    sourceType: $Enums.EvidenceSourceType
+    title: string
+    occurredAt: Date | string
+    ingestedAt?: Date | string
+    contentSha256: string
+    storageUri?: string | null
+    retentionRuleId?: string | null
+    destructionEligibleAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutEvidenceItemsInput
+    tags?: EvidenceTagCreateNestedManyWithoutItemInput
+    communication?: CommunicationCreateNestedOneWithoutEvidenceItemInput
+  }
+
+  export type EvidenceItemUncheckedCreateWithoutClientInput = {
+    id?: string
+    workspaceId: string
+    createdById?: string | null
+    sourceType: $Enums.EvidenceSourceType
+    title: string
+    occurredAt: Date | string
+    ingestedAt?: Date | string
+    contentSha256: string
+    storageUri?: string | null
+    retentionRuleId?: string | null
+    destructionEligibleAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    tags?: EvidenceTagUncheckedCreateNestedManyWithoutItemInput
+    communication?: CommunicationUncheckedCreateNestedOneWithoutEvidenceItemInput
+  }
+
+  export type EvidenceItemCreateOrConnectWithoutClientInput = {
+    where: EvidenceItemWhereUniqueInput
+    create: XOR<EvidenceItemCreateWithoutClientInput, EvidenceItemUncheckedCreateWithoutClientInput>
+  }
+
+  export type EvidenceItemCreateManyClientInputEnvelope = {
+    data: EvidenceItemCreateManyClientInput | EvidenceItemCreateManyClientInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type WorkspaceUpsertWithoutClientsInput = {
+    update: XOR<WorkspaceUpdateWithoutClientsInput, WorkspaceUncheckedUpdateWithoutClientsInput>
+    create: XOR<WorkspaceCreateWithoutClientsInput, WorkspaceUncheckedCreateWithoutClientsInput>
+    where?: WorkspaceWhereInput
+  }
+
+  export type WorkspaceUpdateToOneWithWhereWithoutClientsInput = {
+    where?: WorkspaceWhereInput
+    data: XOR<WorkspaceUpdateWithoutClientsInput, WorkspaceUncheckedUpdateWithoutClientsInput>
+  }
+
+  export type WorkspaceUpdateWithoutClientsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type WorkspaceUncheckedUpdateWithoutClientsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type EmailAliasUpsertWithWhereUniqueWithoutClientInput = {
+    where: EmailAliasWhereUniqueInput
+    update: XOR<EmailAliasUpdateWithoutClientInput, EmailAliasUncheckedUpdateWithoutClientInput>
+    create: XOR<EmailAliasCreateWithoutClientInput, EmailAliasUncheckedCreateWithoutClientInput>
+  }
+
+  export type EmailAliasUpdateWithWhereUniqueWithoutClientInput = {
+    where: EmailAliasWhereUniqueInput
+    data: XOR<EmailAliasUpdateWithoutClientInput, EmailAliasUncheckedUpdateWithoutClientInput>
+  }
+
+  export type EmailAliasUpdateManyWithWhereWithoutClientInput = {
+    where: EmailAliasScalarWhereInput
+    data: XOR<EmailAliasUpdateManyMutationInput, EmailAliasUncheckedUpdateManyWithoutClientInput>
+  }
+
+  export type EvidenceItemUpsertWithWhereUniqueWithoutClientInput = {
+    where: EvidenceItemWhereUniqueInput
+    update: XOR<EvidenceItemUpdateWithoutClientInput, EvidenceItemUncheckedUpdateWithoutClientInput>
+    create: XOR<EvidenceItemCreateWithoutClientInput, EvidenceItemUncheckedCreateWithoutClientInput>
+  }
+
+  export type EvidenceItemUpdateWithWhereUniqueWithoutClientInput = {
+    where: EvidenceItemWhereUniqueInput
+    data: XOR<EvidenceItemUpdateWithoutClientInput, EvidenceItemUncheckedUpdateWithoutClientInput>
+  }
+
+  export type EvidenceItemUpdateManyWithWhereWithoutClientInput = {
+    where: EvidenceItemScalarWhereInput
+    data: XOR<EvidenceItemUpdateManyMutationInput, EvidenceItemUncheckedUpdateManyWithoutClientInput>
+  }
+
+  export type WorkspaceCreateWithoutEmailAliasesInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceUncheckedCreateWithoutEmailAliasesInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceCreateOrConnectWithoutEmailAliasesInput = {
+    where: WorkspaceWhereUniqueInput
+    create: XOR<WorkspaceCreateWithoutEmailAliasesInput, WorkspaceUncheckedCreateWithoutEmailAliasesInput>
+  }
+
+  export type UserCreateWithoutEmailAliasesInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    workspaces?: UserWorkspaceCreateNestedManyWithoutUserInput
+    removedWorkspaceMemberships?: UserWorkspaceCreateNestedManyWithoutRemovedByInput
+    meetingsAdvisorCertified?: MeetingCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
+  }
+
+  export type UserUncheckedCreateWithoutEmailAliasesInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    workspaces?: UserWorkspaceUncheckedCreateNestedManyWithoutUserInput
+    removedWorkspaceMemberships?: UserWorkspaceUncheckedCreateNestedManyWithoutRemovedByInput
+    meetingsAdvisorCertified?: MeetingUncheckedCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+  }
+
+  export type UserCreateOrConnectWithoutEmailAliasesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutEmailAliasesInput, UserUncheckedCreateWithoutEmailAliasesInput>
+  }
+
+  export type ClientCreateWithoutEmailAliasesInput = {
+    id?: string
+    name: string
+    zohoId?: string | null
+    status?: $Enums.ClientStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutClientsInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutClientInput
+  }
+
+  export type ClientUncheckedCreateWithoutEmailAliasesInput = {
+    id?: string
+    workspaceId: string
+    name: string
+    zohoId?: string | null
+    status?: $Enums.ClientStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutClientInput
+  }
+
+  export type ClientCreateOrConnectWithoutEmailAliasesInput = {
+    where: ClientWhereUniqueInput
+    create: XOR<ClientCreateWithoutEmailAliasesInput, ClientUncheckedCreateWithoutEmailAliasesInput>
+  }
+
+  export type WorkspaceUpsertWithoutEmailAliasesInput = {
+    update: XOR<WorkspaceUpdateWithoutEmailAliasesInput, WorkspaceUncheckedUpdateWithoutEmailAliasesInput>
+    create: XOR<WorkspaceCreateWithoutEmailAliasesInput, WorkspaceUncheckedCreateWithoutEmailAliasesInput>
+    where?: WorkspaceWhereInput
+  }
+
+  export type WorkspaceUpdateToOneWithWhereWithoutEmailAliasesInput = {
+    where?: WorkspaceWhereInput
+    data: XOR<WorkspaceUpdateWithoutEmailAliasesInput, WorkspaceUncheckedUpdateWithoutEmailAliasesInput>
+  }
+
+  export type WorkspaceUpdateWithoutEmailAliasesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type WorkspaceUncheckedUpdateWithoutEmailAliasesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type UserUpsertWithoutEmailAliasesInput = {
+    update: XOR<UserUpdateWithoutEmailAliasesInput, UserUncheckedUpdateWithoutEmailAliasesInput>
+    create: XOR<UserCreateWithoutEmailAliasesInput, UserUncheckedCreateWithoutEmailAliasesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutEmailAliasesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutEmailAliasesInput, UserUncheckedUpdateWithoutEmailAliasesInput>
+  }
+
+  export type UserUpdateWithoutEmailAliasesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    workspaces?: UserWorkspaceUpdateManyWithoutUserNestedInput
+    removedWorkspaceMemberships?: UserWorkspaceUpdateManyWithoutRemovedByNestedInput
+    meetingsAdvisorCertified?: MeetingUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutEmailAliasesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    workspaces?: UserWorkspaceUncheckedUpdateManyWithoutUserNestedInput
+    removedWorkspaceMemberships?: UserWorkspaceUncheckedUpdateManyWithoutRemovedByNestedInput
+    meetingsAdvisorCertified?: MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+  }
+
+  export type ClientUpsertWithoutEmailAliasesInput = {
+    update: XOR<ClientUpdateWithoutEmailAliasesInput, ClientUncheckedUpdateWithoutEmailAliasesInput>
+    create: XOR<ClientCreateWithoutEmailAliasesInput, ClientUncheckedCreateWithoutEmailAliasesInput>
+    where?: ClientWhereInput
+  }
+
+  export type ClientUpdateToOneWithWhereWithoutEmailAliasesInput = {
+    where?: ClientWhereInput
+    data: XOR<ClientUpdateWithoutEmailAliasesInput, ClientUncheckedUpdateWithoutEmailAliasesInput>
+  }
+
+  export type ClientUpdateWithoutEmailAliasesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    zohoId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumClientStatusFieldUpdateOperationsInput | $Enums.ClientStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutClientsNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutClientNestedInput
+  }
+
+  export type ClientUncheckedUpdateWithoutEmailAliasesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    zohoId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumClientStatusFieldUpdateOperationsInput | $Enums.ClientStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutClientNestedInput
+  }
+
+  export type WorkspaceCreateWithoutEvidenceItemsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceUncheckedCreateWithoutEvidenceItemsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceCreateOrConnectWithoutEvidenceItemsInput = {
+    where: WorkspaceWhereUniqueInput
+    create: XOR<WorkspaceCreateWithoutEvidenceItemsInput, WorkspaceUncheckedCreateWithoutEvidenceItemsInput>
+  }
+
+  export type ClientCreateWithoutEvidenceItemsInput = {
+    id?: string
+    name: string
+    zohoId?: string | null
+    status?: $Enums.ClientStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutClientsInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutClientInput
+  }
+
+  export type ClientUncheckedCreateWithoutEvidenceItemsInput = {
+    id?: string
+    workspaceId: string
+    name: string
+    zohoId?: string | null
+    status?: $Enums.ClientStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutClientInput
+  }
+
+  export type ClientCreateOrConnectWithoutEvidenceItemsInput = {
+    where: ClientWhereUniqueInput
+    create: XOR<ClientCreateWithoutEvidenceItemsInput, ClientUncheckedCreateWithoutEvidenceItemsInput>
+  }
+
+  export type EvidenceTagCreateWithoutItemInput = {
+    id?: string
+    category: $Enums.TagCategory
+    addedBy: string
+    addedAt?: Date | string
+    removedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EvidenceTagUncheckedCreateWithoutItemInput = {
+    id?: string
+    category: $Enums.TagCategory
+    addedBy: string
+    addedAt?: Date | string
+    removedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EvidenceTagCreateOrConnectWithoutItemInput = {
+    where: EvidenceTagWhereUniqueInput
+    create: XOR<EvidenceTagCreateWithoutItemInput, EvidenceTagUncheckedCreateWithoutItemInput>
+  }
+
+  export type EvidenceTagCreateManyItemInputEnvelope = {
+    data: EvidenceTagCreateManyItemInput | EvidenceTagCreateManyItemInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CommunicationCreateWithoutEvidenceItemInput = {
+    id?: string
+    direction: $Enums.CommunicationDirection
+    sentAt: Date | string
+    fromAddress: string
+    toAddresses?: CommunicationCreatetoAddressesInput | string[]
+    ccAddresses?: CommunicationCreateccAddressesInput | string[]
+    internetMessageId?: string | null
+    bodyText: string
+    bodyHtml?: string | null
+    inReplyTo?: string | null
+    referencesHeader?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    thread: CommunicationThreadCreateNestedOneWithoutMessagesInput
+    attachments?: AttachmentCreateNestedManyWithoutCommunicationInput
+  }
+
+  export type CommunicationUncheckedCreateWithoutEvidenceItemInput = {
+    id?: string
+    threadId: string
+    direction: $Enums.CommunicationDirection
+    sentAt: Date | string
+    fromAddress: string
+    toAddresses?: CommunicationCreatetoAddressesInput | string[]
+    ccAddresses?: CommunicationCreateccAddressesInput | string[]
+    internetMessageId?: string | null
+    bodyText: string
+    bodyHtml?: string | null
+    inReplyTo?: string | null
+    referencesHeader?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    attachments?: AttachmentUncheckedCreateNestedManyWithoutCommunicationInput
+  }
+
+  export type CommunicationCreateOrConnectWithoutEvidenceItemInput = {
+    where: CommunicationWhereUniqueInput
+    create: XOR<CommunicationCreateWithoutEvidenceItemInput, CommunicationUncheckedCreateWithoutEvidenceItemInput>
+  }
+
+  export type WorkspaceUpsertWithoutEvidenceItemsInput = {
+    update: XOR<WorkspaceUpdateWithoutEvidenceItemsInput, WorkspaceUncheckedUpdateWithoutEvidenceItemsInput>
+    create: XOR<WorkspaceCreateWithoutEvidenceItemsInput, WorkspaceUncheckedCreateWithoutEvidenceItemsInput>
+    where?: WorkspaceWhereInput
+  }
+
+  export type WorkspaceUpdateToOneWithWhereWithoutEvidenceItemsInput = {
+    where?: WorkspaceWhereInput
+    data: XOR<WorkspaceUpdateWithoutEvidenceItemsInput, WorkspaceUncheckedUpdateWithoutEvidenceItemsInput>
+  }
+
+  export type WorkspaceUpdateWithoutEvidenceItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type WorkspaceUncheckedUpdateWithoutEvidenceItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type ClientUpsertWithoutEvidenceItemsInput = {
+    update: XOR<ClientUpdateWithoutEvidenceItemsInput, ClientUncheckedUpdateWithoutEvidenceItemsInput>
+    create: XOR<ClientCreateWithoutEvidenceItemsInput, ClientUncheckedCreateWithoutEvidenceItemsInput>
+    where?: ClientWhereInput
+  }
+
+  export type ClientUpdateToOneWithWhereWithoutEvidenceItemsInput = {
+    where?: ClientWhereInput
+    data: XOR<ClientUpdateWithoutEvidenceItemsInput, ClientUncheckedUpdateWithoutEvidenceItemsInput>
+  }
+
+  export type ClientUpdateWithoutEvidenceItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    zohoId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumClientStatusFieldUpdateOperationsInput | $Enums.ClientStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutClientsNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutClientNestedInput
+  }
+
+  export type ClientUncheckedUpdateWithoutEvidenceItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    zohoId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumClientStatusFieldUpdateOperationsInput | $Enums.ClientStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutClientNestedInput
+  }
+
+  export type EvidenceTagUpsertWithWhereUniqueWithoutItemInput = {
+    where: EvidenceTagWhereUniqueInput
+    update: XOR<EvidenceTagUpdateWithoutItemInput, EvidenceTagUncheckedUpdateWithoutItemInput>
+    create: XOR<EvidenceTagCreateWithoutItemInput, EvidenceTagUncheckedCreateWithoutItemInput>
+  }
+
+  export type EvidenceTagUpdateWithWhereUniqueWithoutItemInput = {
+    where: EvidenceTagWhereUniqueInput
+    data: XOR<EvidenceTagUpdateWithoutItemInput, EvidenceTagUncheckedUpdateWithoutItemInput>
+  }
+
+  export type EvidenceTagUpdateManyWithWhereWithoutItemInput = {
+    where: EvidenceTagScalarWhereInput
+    data: XOR<EvidenceTagUpdateManyMutationInput, EvidenceTagUncheckedUpdateManyWithoutItemInput>
+  }
+
+  export type EvidenceTagScalarWhereInput = {
+    AND?: EvidenceTagScalarWhereInput | EvidenceTagScalarWhereInput[]
+    OR?: EvidenceTagScalarWhereInput[]
+    NOT?: EvidenceTagScalarWhereInput | EvidenceTagScalarWhereInput[]
+    id?: StringFilter<"EvidenceTag"> | string
+    itemId?: StringFilter<"EvidenceTag"> | string
+    category?: EnumTagCategoryFilter<"EvidenceTag"> | $Enums.TagCategory
+    addedBy?: StringFilter<"EvidenceTag"> | string
+    addedAt?: DateTimeFilter<"EvidenceTag"> | Date | string
+    removedAt?: DateTimeNullableFilter<"EvidenceTag"> | Date | string | null
+    createdAt?: DateTimeFilter<"EvidenceTag"> | Date | string
+    updatedAt?: DateTimeFilter<"EvidenceTag"> | Date | string
+  }
+
+  export type CommunicationUpsertWithoutEvidenceItemInput = {
+    update: XOR<CommunicationUpdateWithoutEvidenceItemInput, CommunicationUncheckedUpdateWithoutEvidenceItemInput>
+    create: XOR<CommunicationCreateWithoutEvidenceItemInput, CommunicationUncheckedCreateWithoutEvidenceItemInput>
+    where?: CommunicationWhereInput
+  }
+
+  export type CommunicationUpdateToOneWithWhereWithoutEvidenceItemInput = {
+    where?: CommunicationWhereInput
+    data: XOR<CommunicationUpdateWithoutEvidenceItemInput, CommunicationUncheckedUpdateWithoutEvidenceItemInput>
+  }
+
+  export type CommunicationUpdateWithoutEvidenceItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    direction?: EnumCommunicationDirectionFieldUpdateOperationsInput | $Enums.CommunicationDirection
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fromAddress?: StringFieldUpdateOperationsInput | string
+    toAddresses?: CommunicationUpdatetoAddressesInput | string[]
+    ccAddresses?: CommunicationUpdateccAddressesInput | string[]
+    internetMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    bodyText?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: NullableStringFieldUpdateOperationsInput | string | null
+    inReplyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    referencesHeader?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    thread?: CommunicationThreadUpdateOneRequiredWithoutMessagesNestedInput
+    attachments?: AttachmentUpdateManyWithoutCommunicationNestedInput
+  }
+
+  export type CommunicationUncheckedUpdateWithoutEvidenceItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    threadId?: StringFieldUpdateOperationsInput | string
+    direction?: EnumCommunicationDirectionFieldUpdateOperationsInput | $Enums.CommunicationDirection
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fromAddress?: StringFieldUpdateOperationsInput | string
+    toAddresses?: CommunicationUpdatetoAddressesInput | string[]
+    ccAddresses?: CommunicationUpdateccAddressesInput | string[]
+    internetMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    bodyText?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: NullableStringFieldUpdateOperationsInput | string | null
+    inReplyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    referencesHeader?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    attachments?: AttachmentUncheckedUpdateManyWithoutCommunicationNestedInput
+  }
+
+  export type EvidenceItemCreateWithoutTagsInput = {
+    id?: string
+    createdById?: string | null
+    sourceType: $Enums.EvidenceSourceType
+    title: string
+    occurredAt: Date | string
+    ingestedAt?: Date | string
+    contentSha256: string
+    storageUri?: string | null
+    retentionRuleId?: string | null
+    destructionEligibleAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutEvidenceItemsInput
+    client?: ClientCreateNestedOneWithoutEvidenceItemsInput
+    communication?: CommunicationCreateNestedOneWithoutEvidenceItemInput
+  }
+
+  export type EvidenceItemUncheckedCreateWithoutTagsInput = {
+    id?: string
+    workspaceId: string
+    clientId?: string | null
+    createdById?: string | null
+    sourceType: $Enums.EvidenceSourceType
+    title: string
+    occurredAt: Date | string
+    ingestedAt?: Date | string
+    contentSha256: string
+    storageUri?: string | null
+    retentionRuleId?: string | null
+    destructionEligibleAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    communication?: CommunicationUncheckedCreateNestedOneWithoutEvidenceItemInput
+  }
+
+  export type EvidenceItemCreateOrConnectWithoutTagsInput = {
+    where: EvidenceItemWhereUniqueInput
+    create: XOR<EvidenceItemCreateWithoutTagsInput, EvidenceItemUncheckedCreateWithoutTagsInput>
+  }
+
+  export type EvidenceItemUpsertWithoutTagsInput = {
+    update: XOR<EvidenceItemUpdateWithoutTagsInput, EvidenceItemUncheckedUpdateWithoutTagsInput>
+    create: XOR<EvidenceItemCreateWithoutTagsInput, EvidenceItemUncheckedCreateWithoutTagsInput>
+    where?: EvidenceItemWhereInput
+  }
+
+  export type EvidenceItemUpdateToOneWithWhereWithoutTagsInput = {
+    where?: EvidenceItemWhereInput
+    data: XOR<EvidenceItemUpdateWithoutTagsInput, EvidenceItemUncheckedUpdateWithoutTagsInput>
+  }
+
+  export type EvidenceItemUpdateWithoutTagsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    title?: StringFieldUpdateOperationsInput | string
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ingestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: NullableStringFieldUpdateOperationsInput | string | null
+    retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutEvidenceItemsNestedInput
+    client?: ClientUpdateOneWithoutEvidenceItemsNestedInput
+    communication?: CommunicationUpdateOneWithoutEvidenceItemNestedInput
+  }
+
+  export type EvidenceItemUncheckedUpdateWithoutTagsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    title?: StringFieldUpdateOperationsInput | string
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ingestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: NullableStringFieldUpdateOperationsInput | string | null
+    retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    communication?: CommunicationUncheckedUpdateOneWithoutEvidenceItemNestedInput
+  }
+
+  export type WorkspaceCreateWithoutCommunicationThreadsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceUncheckedCreateWithoutCommunicationThreadsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceCreateOrConnectWithoutCommunicationThreadsInput = {
+    where: WorkspaceWhereUniqueInput
+    create: XOR<WorkspaceCreateWithoutCommunicationThreadsInput, WorkspaceUncheckedCreateWithoutCommunicationThreadsInput>
+  }
+
+  export type CommunicationCreateWithoutThreadInput = {
+    id?: string
+    direction: $Enums.CommunicationDirection
+    sentAt: Date | string
+    fromAddress: string
+    toAddresses?: CommunicationCreatetoAddressesInput | string[]
+    ccAddresses?: CommunicationCreateccAddressesInput | string[]
+    internetMessageId?: string | null
+    bodyText: string
+    bodyHtml?: string | null
+    inReplyTo?: string | null
+    referencesHeader?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    evidenceItem: EvidenceItemCreateNestedOneWithoutCommunicationInput
+    attachments?: AttachmentCreateNestedManyWithoutCommunicationInput
+  }
+
+  export type CommunicationUncheckedCreateWithoutThreadInput = {
+    id?: string
+    evidenceItemId: string
+    direction: $Enums.CommunicationDirection
+    sentAt: Date | string
+    fromAddress: string
+    toAddresses?: CommunicationCreatetoAddressesInput | string[]
+    ccAddresses?: CommunicationCreateccAddressesInput | string[]
+    internetMessageId?: string | null
+    bodyText: string
+    bodyHtml?: string | null
+    inReplyTo?: string | null
+    referencesHeader?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    attachments?: AttachmentUncheckedCreateNestedManyWithoutCommunicationInput
+  }
+
+  export type CommunicationCreateOrConnectWithoutThreadInput = {
+    where: CommunicationWhereUniqueInput
+    create: XOR<CommunicationCreateWithoutThreadInput, CommunicationUncheckedCreateWithoutThreadInput>
+  }
+
+  export type CommunicationCreateManyThreadInputEnvelope = {
+    data: CommunicationCreateManyThreadInput | CommunicationCreateManyThreadInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type WorkspaceUpsertWithoutCommunicationThreadsInput = {
+    update: XOR<WorkspaceUpdateWithoutCommunicationThreadsInput, WorkspaceUncheckedUpdateWithoutCommunicationThreadsInput>
+    create: XOR<WorkspaceCreateWithoutCommunicationThreadsInput, WorkspaceUncheckedCreateWithoutCommunicationThreadsInput>
+    where?: WorkspaceWhereInput
+  }
+
+  export type WorkspaceUpdateToOneWithWhereWithoutCommunicationThreadsInput = {
+    where?: WorkspaceWhereInput
+    data: XOR<WorkspaceUpdateWithoutCommunicationThreadsInput, WorkspaceUncheckedUpdateWithoutCommunicationThreadsInput>
+  }
+
+  export type WorkspaceUpdateWithoutCommunicationThreadsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type WorkspaceUncheckedUpdateWithoutCommunicationThreadsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type CommunicationUpsertWithWhereUniqueWithoutThreadInput = {
+    where: CommunicationWhereUniqueInput
+    update: XOR<CommunicationUpdateWithoutThreadInput, CommunicationUncheckedUpdateWithoutThreadInput>
+    create: XOR<CommunicationCreateWithoutThreadInput, CommunicationUncheckedCreateWithoutThreadInput>
+  }
+
+  export type CommunicationUpdateWithWhereUniqueWithoutThreadInput = {
+    where: CommunicationWhereUniqueInput
+    data: XOR<CommunicationUpdateWithoutThreadInput, CommunicationUncheckedUpdateWithoutThreadInput>
+  }
+
+  export type CommunicationUpdateManyWithWhereWithoutThreadInput = {
+    where: CommunicationScalarWhereInput
+    data: XOR<CommunicationUpdateManyMutationInput, CommunicationUncheckedUpdateManyWithoutThreadInput>
+  }
+
+  export type CommunicationScalarWhereInput = {
+    AND?: CommunicationScalarWhereInput | CommunicationScalarWhereInput[]
+    OR?: CommunicationScalarWhereInput[]
+    NOT?: CommunicationScalarWhereInput | CommunicationScalarWhereInput[]
+    id?: StringFilter<"Communication"> | string
+    threadId?: StringFilter<"Communication"> | string
+    evidenceItemId?: StringFilter<"Communication"> | string
+    direction?: EnumCommunicationDirectionFilter<"Communication"> | $Enums.CommunicationDirection
+    sentAt?: DateTimeFilter<"Communication"> | Date | string
+    fromAddress?: StringFilter<"Communication"> | string
+    toAddresses?: StringNullableListFilter<"Communication">
+    ccAddresses?: StringNullableListFilter<"Communication">
+    internetMessageId?: StringNullableFilter<"Communication"> | string | null
+    bodyText?: StringFilter<"Communication"> | string
+    bodyHtml?: StringNullableFilter<"Communication"> | string | null
+    inReplyTo?: StringNullableFilter<"Communication"> | string | null
+    referencesHeader?: StringNullableFilter<"Communication"> | string | null
+    createdAt?: DateTimeFilter<"Communication"> | Date | string
+    updatedAt?: DateTimeFilter<"Communication"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"Communication"> | Date | string | null
+  }
+
+  export type CommunicationThreadCreateWithoutMessagesInput = {
+    id?: string
+    channel: $Enums.CommunicationChannel
+    externalThreadId?: string | null
+    subject?: string | null
+    participants: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutCommunicationThreadsInput
+  }
+
+  export type CommunicationThreadUncheckedCreateWithoutMessagesInput = {
+    id?: string
+    workspaceId: string
+    channel: $Enums.CommunicationChannel
+    externalThreadId?: string | null
+    subject?: string | null
+    participants: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type CommunicationThreadCreateOrConnectWithoutMessagesInput = {
+    where: CommunicationThreadWhereUniqueInput
+    create: XOR<CommunicationThreadCreateWithoutMessagesInput, CommunicationThreadUncheckedCreateWithoutMessagesInput>
+  }
+
+  export type EvidenceItemCreateWithoutCommunicationInput = {
+    id?: string
+    createdById?: string | null
+    sourceType: $Enums.EvidenceSourceType
+    title: string
+    occurredAt: Date | string
+    ingestedAt?: Date | string
+    contentSha256: string
+    storageUri?: string | null
+    retentionRuleId?: string | null
+    destructionEligibleAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutEvidenceItemsInput
+    client?: ClientCreateNestedOneWithoutEvidenceItemsInput
+    tags?: EvidenceTagCreateNestedManyWithoutItemInput
+  }
+
+  export type EvidenceItemUncheckedCreateWithoutCommunicationInput = {
+    id?: string
+    workspaceId: string
+    clientId?: string | null
+    createdById?: string | null
+    sourceType: $Enums.EvidenceSourceType
+    title: string
+    occurredAt: Date | string
+    ingestedAt?: Date | string
+    contentSha256: string
+    storageUri?: string | null
+    retentionRuleId?: string | null
+    destructionEligibleAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    tags?: EvidenceTagUncheckedCreateNestedManyWithoutItemInput
+  }
+
+  export type EvidenceItemCreateOrConnectWithoutCommunicationInput = {
+    where: EvidenceItemWhereUniqueInput
+    create: XOR<EvidenceItemCreateWithoutCommunicationInput, EvidenceItemUncheckedCreateWithoutCommunicationInput>
+  }
+
+  export type AttachmentCreateWithoutCommunicationInput = {
+    id?: string
+    filename: string
+    mimeType: string
+    contentSha256: string
+    storageUri: string
+    sizeBytes?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type AttachmentUncheckedCreateWithoutCommunicationInput = {
+    id?: string
+    filename: string
+    mimeType: string
+    contentSha256: string
+    storageUri: string
+    sizeBytes?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type AttachmentCreateOrConnectWithoutCommunicationInput = {
+    where: AttachmentWhereUniqueInput
+    create: XOR<AttachmentCreateWithoutCommunicationInput, AttachmentUncheckedCreateWithoutCommunicationInput>
+  }
+
+  export type AttachmentCreateManyCommunicationInputEnvelope = {
+    data: AttachmentCreateManyCommunicationInput | AttachmentCreateManyCommunicationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CommunicationThreadUpsertWithoutMessagesInput = {
+    update: XOR<CommunicationThreadUpdateWithoutMessagesInput, CommunicationThreadUncheckedUpdateWithoutMessagesInput>
+    create: XOR<CommunicationThreadCreateWithoutMessagesInput, CommunicationThreadUncheckedCreateWithoutMessagesInput>
+    where?: CommunicationThreadWhereInput
+  }
+
+  export type CommunicationThreadUpdateToOneWithWhereWithoutMessagesInput = {
+    where?: CommunicationThreadWhereInput
+    data: XOR<CommunicationThreadUpdateWithoutMessagesInput, CommunicationThreadUncheckedUpdateWithoutMessagesInput>
+  }
+
+  export type CommunicationThreadUpdateWithoutMessagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: EnumCommunicationChannelFieldUpdateOperationsInput | $Enums.CommunicationChannel
+    externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    participants?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutCommunicationThreadsNestedInput
+  }
+
+  export type CommunicationThreadUncheckedUpdateWithoutMessagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    channel?: EnumCommunicationChannelFieldUpdateOperationsInput | $Enums.CommunicationChannel
+    externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    participants?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EvidenceItemUpsertWithoutCommunicationInput = {
+    update: XOR<EvidenceItemUpdateWithoutCommunicationInput, EvidenceItemUncheckedUpdateWithoutCommunicationInput>
+    create: XOR<EvidenceItemCreateWithoutCommunicationInput, EvidenceItemUncheckedCreateWithoutCommunicationInput>
+    where?: EvidenceItemWhereInput
+  }
+
+  export type EvidenceItemUpdateToOneWithWhereWithoutCommunicationInput = {
+    where?: EvidenceItemWhereInput
+    data: XOR<EvidenceItemUpdateWithoutCommunicationInput, EvidenceItemUncheckedUpdateWithoutCommunicationInput>
+  }
+
+  export type EvidenceItemUpdateWithoutCommunicationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    title?: StringFieldUpdateOperationsInput | string
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ingestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: NullableStringFieldUpdateOperationsInput | string | null
+    retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutEvidenceItemsNestedInput
+    client?: ClientUpdateOneWithoutEvidenceItemsNestedInput
+    tags?: EvidenceTagUpdateManyWithoutItemNestedInput
+  }
+
+  export type EvidenceItemUncheckedUpdateWithoutCommunicationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    title?: StringFieldUpdateOperationsInput | string
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ingestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: NullableStringFieldUpdateOperationsInput | string | null
+    retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tags?: EvidenceTagUncheckedUpdateManyWithoutItemNestedInput
+  }
+
+  export type AttachmentUpsertWithWhereUniqueWithoutCommunicationInput = {
+    where: AttachmentWhereUniqueInput
+    update: XOR<AttachmentUpdateWithoutCommunicationInput, AttachmentUncheckedUpdateWithoutCommunicationInput>
+    create: XOR<AttachmentCreateWithoutCommunicationInput, AttachmentUncheckedCreateWithoutCommunicationInput>
+  }
+
+  export type AttachmentUpdateWithWhereUniqueWithoutCommunicationInput = {
+    where: AttachmentWhereUniqueInput
+    data: XOR<AttachmentUpdateWithoutCommunicationInput, AttachmentUncheckedUpdateWithoutCommunicationInput>
+  }
+
+  export type AttachmentUpdateManyWithWhereWithoutCommunicationInput = {
+    where: AttachmentScalarWhereInput
+    data: XOR<AttachmentUpdateManyMutationInput, AttachmentUncheckedUpdateManyWithoutCommunicationInput>
+  }
+
+  export type AttachmentScalarWhereInput = {
+    AND?: AttachmentScalarWhereInput | AttachmentScalarWhereInput[]
+    OR?: AttachmentScalarWhereInput[]
+    NOT?: AttachmentScalarWhereInput | AttachmentScalarWhereInput[]
+    id?: StringFilter<"Attachment"> | string
+    communicationId?: StringFilter<"Attachment"> | string
+    filename?: StringFilter<"Attachment"> | string
+    mimeType?: StringFilter<"Attachment"> | string
+    contentSha256?: StringFilter<"Attachment"> | string
+    storageUri?: StringFilter<"Attachment"> | string
+    sizeBytes?: IntNullableFilter<"Attachment"> | number | null
+    createdAt?: DateTimeFilter<"Attachment"> | Date | string
+    updatedAt?: DateTimeFilter<"Attachment"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"Attachment"> | Date | string | null
+  }
+
+  export type CommunicationCreateWithoutAttachmentsInput = {
+    id?: string
+    direction: $Enums.CommunicationDirection
+    sentAt: Date | string
+    fromAddress: string
+    toAddresses?: CommunicationCreatetoAddressesInput | string[]
+    ccAddresses?: CommunicationCreateccAddressesInput | string[]
+    internetMessageId?: string | null
+    bodyText: string
+    bodyHtml?: string | null
+    inReplyTo?: string | null
+    referencesHeader?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    thread: CommunicationThreadCreateNestedOneWithoutMessagesInput
+    evidenceItem: EvidenceItemCreateNestedOneWithoutCommunicationInput
+  }
+
+  export type CommunicationUncheckedCreateWithoutAttachmentsInput = {
+    id?: string
+    threadId: string
+    evidenceItemId: string
+    direction: $Enums.CommunicationDirection
+    sentAt: Date | string
+    fromAddress: string
+    toAddresses?: CommunicationCreatetoAddressesInput | string[]
+    ccAddresses?: CommunicationCreateccAddressesInput | string[]
+    internetMessageId?: string | null
+    bodyText: string
+    bodyHtml?: string | null
+    inReplyTo?: string | null
+    referencesHeader?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type CommunicationCreateOrConnectWithoutAttachmentsInput = {
+    where: CommunicationWhereUniqueInput
+    create: XOR<CommunicationCreateWithoutAttachmentsInput, CommunicationUncheckedCreateWithoutAttachmentsInput>
+  }
+
+  export type CommunicationUpsertWithoutAttachmentsInput = {
+    update: XOR<CommunicationUpdateWithoutAttachmentsInput, CommunicationUncheckedUpdateWithoutAttachmentsInput>
+    create: XOR<CommunicationCreateWithoutAttachmentsInput, CommunicationUncheckedCreateWithoutAttachmentsInput>
+    where?: CommunicationWhereInput
+  }
+
+  export type CommunicationUpdateToOneWithWhereWithoutAttachmentsInput = {
+    where?: CommunicationWhereInput
+    data: XOR<CommunicationUpdateWithoutAttachmentsInput, CommunicationUncheckedUpdateWithoutAttachmentsInput>
+  }
+
+  export type CommunicationUpdateWithoutAttachmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    direction?: EnumCommunicationDirectionFieldUpdateOperationsInput | $Enums.CommunicationDirection
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fromAddress?: StringFieldUpdateOperationsInput | string
+    toAddresses?: CommunicationUpdatetoAddressesInput | string[]
+    ccAddresses?: CommunicationUpdateccAddressesInput | string[]
+    internetMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    bodyText?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: NullableStringFieldUpdateOperationsInput | string | null
+    inReplyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    referencesHeader?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    thread?: CommunicationThreadUpdateOneRequiredWithoutMessagesNestedInput
+    evidenceItem?: EvidenceItemUpdateOneRequiredWithoutCommunicationNestedInput
+  }
+
+  export type CommunicationUncheckedUpdateWithoutAttachmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    threadId?: StringFieldUpdateOperationsInput | string
+    evidenceItemId?: StringFieldUpdateOperationsInput | string
+    direction?: EnumCommunicationDirectionFieldUpdateOperationsInput | $Enums.CommunicationDirection
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fromAddress?: StringFieldUpdateOperationsInput | string
+    toAddresses?: CommunicationUpdatetoAddressesInput | string[]
+    ccAddresses?: CommunicationUpdateccAddressesInput | string[]
+    internetMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    bodyText?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: NullableStringFieldUpdateOperationsInput | string | null
+    inReplyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    referencesHeader?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type WorkspaceCreateWithoutMailboxConnectionsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceUncheckedCreateWithoutMailboxConnectionsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceCreateOrConnectWithoutMailboxConnectionsInput = {
+    where: WorkspaceWhereUniqueInput
+    create: XOR<WorkspaceCreateWithoutMailboxConnectionsInput, WorkspaceUncheckedCreateWithoutMailboxConnectionsInput>
+  }
+
+  export type IngestJobCreateWithoutConnectionInput = {
+    id?: string
+    importFileId?: string | null
+    kind: $Enums.IngestJobKind
+    status?: $Enums.IngestJobStatus
+    cursor?: string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspace: WorkspaceCreateNestedOneWithoutIngestJobsInput
+  }
+
+  export type IngestJobUncheckedCreateWithoutConnectionInput = {
+    id?: string
+    workspaceId: string
+    importFileId?: string | null
+    kind: $Enums.IngestJobKind
+    status?: $Enums.IngestJobStatus
+    cursor?: string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type IngestJobCreateOrConnectWithoutConnectionInput = {
+    where: IngestJobWhereUniqueInput
+    create: XOR<IngestJobCreateWithoutConnectionInput, IngestJobUncheckedCreateWithoutConnectionInput>
+  }
+
+  export type IngestJobCreateManyConnectionInputEnvelope = {
+    data: IngestJobCreateManyConnectionInput | IngestJobCreateManyConnectionInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type WorkspaceUpsertWithoutMailboxConnectionsInput = {
+    update: XOR<WorkspaceUpdateWithoutMailboxConnectionsInput, WorkspaceUncheckedUpdateWithoutMailboxConnectionsInput>
+    create: XOR<WorkspaceCreateWithoutMailboxConnectionsInput, WorkspaceUncheckedCreateWithoutMailboxConnectionsInput>
+    where?: WorkspaceWhereInput
+  }
+
+  export type WorkspaceUpdateToOneWithWhereWithoutMailboxConnectionsInput = {
+    where?: WorkspaceWhereInput
+    data: XOR<WorkspaceUpdateWithoutMailboxConnectionsInput, WorkspaceUncheckedUpdateWithoutMailboxConnectionsInput>
+  }
+
+  export type WorkspaceUpdateWithoutMailboxConnectionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type WorkspaceUncheckedUpdateWithoutMailboxConnectionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type IngestJobUpsertWithWhereUniqueWithoutConnectionInput = {
+    where: IngestJobWhereUniqueInput
+    update: XOR<IngestJobUpdateWithoutConnectionInput, IngestJobUncheckedUpdateWithoutConnectionInput>
+    create: XOR<IngestJobCreateWithoutConnectionInput, IngestJobUncheckedCreateWithoutConnectionInput>
+  }
+
+  export type IngestJobUpdateWithWhereUniqueWithoutConnectionInput = {
+    where: IngestJobWhereUniqueInput
+    data: XOR<IngestJobUpdateWithoutConnectionInput, IngestJobUncheckedUpdateWithoutConnectionInput>
+  }
+
+  export type IngestJobUpdateManyWithWhereWithoutConnectionInput = {
+    where: IngestJobScalarWhereInput
+    data: XOR<IngestJobUpdateManyMutationInput, IngestJobUncheckedUpdateManyWithoutConnectionInput>
+  }
+
+  export type WorkspaceCreateWithoutIngestJobsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceUncheckedCreateWithoutIngestJobsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceCreateOrConnectWithoutIngestJobsInput = {
+    where: WorkspaceWhereUniqueInput
+    create: XOR<WorkspaceCreateWithoutIngestJobsInput, WorkspaceUncheckedCreateWithoutIngestJobsInput>
+  }
+
+  export type MailboxConnectionCreateWithoutIngestJobsInput = {
+    id?: string
+    provider?: $Enums.MailboxProvider
+    mailboxAddress: string
+    consentMode?: $Enums.MailboxConsentMode
+    scopeFolders?: MailboxConnectionCreatescopeFoldersInput | string[]
+    backfillFrom?: Date | string | null
+    status?: $Enums.MailboxSyncStatus
+    encryptedToken?: string | null
+    deltaCursor?: string | null
+    lastSyncAt?: Date | string | null
+    lastErrorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutMailboxConnectionsInput
+  }
+
+  export type MailboxConnectionUncheckedCreateWithoutIngestJobsInput = {
+    id?: string
+    workspaceId: string
+    provider?: $Enums.MailboxProvider
+    mailboxAddress: string
+    consentMode?: $Enums.MailboxConsentMode
+    scopeFolders?: MailboxConnectionCreatescopeFoldersInput | string[]
+    backfillFrom?: Date | string | null
+    status?: $Enums.MailboxSyncStatus
+    encryptedToken?: string | null
+    deltaCursor?: string | null
+    lastSyncAt?: Date | string | null
+    lastErrorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type MailboxConnectionCreateOrConnectWithoutIngestJobsInput = {
+    where: MailboxConnectionWhereUniqueInput
+    create: XOR<MailboxConnectionCreateWithoutIngestJobsInput, MailboxConnectionUncheckedCreateWithoutIngestJobsInput>
+  }
+
+  export type WorkspaceUpsertWithoutIngestJobsInput = {
+    update: XOR<WorkspaceUpdateWithoutIngestJobsInput, WorkspaceUncheckedUpdateWithoutIngestJobsInput>
+    create: XOR<WorkspaceCreateWithoutIngestJobsInput, WorkspaceUncheckedCreateWithoutIngestJobsInput>
+    where?: WorkspaceWhereInput
+  }
+
+  export type WorkspaceUpdateToOneWithWhereWithoutIngestJobsInput = {
+    where?: WorkspaceWhereInput
+    data: XOR<WorkspaceUpdateWithoutIngestJobsInput, WorkspaceUncheckedUpdateWithoutIngestJobsInput>
+  }
+
+  export type WorkspaceUpdateWithoutIngestJobsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type WorkspaceUncheckedUpdateWithoutIngestJobsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type MailboxConnectionUpsertWithoutIngestJobsInput = {
+    update: XOR<MailboxConnectionUpdateWithoutIngestJobsInput, MailboxConnectionUncheckedUpdateWithoutIngestJobsInput>
+    create: XOR<MailboxConnectionCreateWithoutIngestJobsInput, MailboxConnectionUncheckedCreateWithoutIngestJobsInput>
+    where?: MailboxConnectionWhereInput
+  }
+
+  export type MailboxConnectionUpdateToOneWithWhereWithoutIngestJobsInput = {
+    where?: MailboxConnectionWhereInput
+    data: XOR<MailboxConnectionUpdateWithoutIngestJobsInput, MailboxConnectionUncheckedUpdateWithoutIngestJobsInput>
+  }
+
+  export type MailboxConnectionUpdateWithoutIngestJobsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumMailboxProviderFieldUpdateOperationsInput | $Enums.MailboxProvider
+    mailboxAddress?: StringFieldUpdateOperationsInput | string
+    consentMode?: EnumMailboxConsentModeFieldUpdateOperationsInput | $Enums.MailboxConsentMode
+    scopeFolders?: MailboxConnectionUpdatescopeFoldersInput | string[]
+    backfillFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumMailboxSyncStatusFieldUpdateOperationsInput | $Enums.MailboxSyncStatus
+    encryptedToken?: NullableStringFieldUpdateOperationsInput | string | null
+    deltaCursor?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSyncAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutMailboxConnectionsNestedInput
+  }
+
+  export type MailboxConnectionUncheckedUpdateWithoutIngestJobsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    provider?: EnumMailboxProviderFieldUpdateOperationsInput | $Enums.MailboxProvider
+    mailboxAddress?: StringFieldUpdateOperationsInput | string
+    consentMode?: EnumMailboxConsentModeFieldUpdateOperationsInput | $Enums.MailboxConsentMode
+    scopeFolders?: MailboxConnectionUpdatescopeFoldersInput | string[]
+    backfillFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumMailboxSyncStatusFieldUpdateOperationsInput | $Enums.MailboxSyncStatus
+    encryptedToken?: NullableStringFieldUpdateOperationsInput | string | null
+    deltaCursor?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSyncAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type WorkspaceCreateWithoutEmailTriageItemsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceUncheckedCreateWithoutEmailTriageItemsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceCreateOrConnectWithoutEmailTriageItemsInput = {
+    where: WorkspaceWhereUniqueInput
+    create: XOR<WorkspaceCreateWithoutEmailTriageItemsInput, WorkspaceUncheckedCreateWithoutEmailTriageItemsInput>
+  }
+
+  export type WorkspaceUpsertWithoutEmailTriageItemsInput = {
+    update: XOR<WorkspaceUpdateWithoutEmailTriageItemsInput, WorkspaceUncheckedUpdateWithoutEmailTriageItemsInput>
+    create: XOR<WorkspaceCreateWithoutEmailTriageItemsInput, WorkspaceUncheckedCreateWithoutEmailTriageItemsInput>
+    where?: WorkspaceWhereInput
+  }
+
+  export type WorkspaceUpdateToOneWithWhereWithoutEmailTriageItemsInput = {
+    where?: WorkspaceWhereInput
+    data: XOR<WorkspaceUpdateWithoutEmailTriageItemsInput, WorkspaceUncheckedUpdateWithoutEmailTriageItemsInput>
+  }
+
+  export type WorkspaceUpdateWithoutEmailTriageItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type WorkspaceUncheckedUpdateWithoutEmailTriageItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
+  }
+
   export type UserWorkspaceCreateManyWorkspaceInput = {
     userId: string
     role: $Enums.WorkspaceRole
@@ -47209,6 +67699,98 @@ export namespace Prisma {
     lastSyncAt?: Date | string | null
     lastErrorAt?: Date | string | null
     lastErrorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EvidenceItemCreateManyWorkspaceInput = {
+    id?: string
+    clientId?: string | null
+    createdById?: string | null
+    sourceType: $Enums.EvidenceSourceType
+    title: string
+    occurredAt: Date | string
+    ingestedAt?: Date | string
+    contentSha256: string
+    storageUri?: string | null
+    retentionRuleId?: string | null
+    destructionEligibleAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type ClientCreateManyWorkspaceInput = {
+    id?: string
+    name: string
+    zohoId?: string | null
+    status?: $Enums.ClientStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type MailboxConnectionCreateManyWorkspaceInput = {
+    id?: string
+    provider?: $Enums.MailboxProvider
+    mailboxAddress: string
+    consentMode?: $Enums.MailboxConsentMode
+    scopeFolders?: MailboxConnectionCreatescopeFoldersInput | string[]
+    backfillFrom?: Date | string | null
+    status?: $Enums.MailboxSyncStatus
+    encryptedToken?: string | null
+    deltaCursor?: string | null
+    lastSyncAt?: Date | string | null
+    lastErrorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type CommunicationThreadCreateManyWorkspaceInput = {
+    id?: string
+    channel: $Enums.CommunicationChannel
+    externalThreadId?: string | null
+    subject?: string | null
+    participants: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type EmailAliasCreateManyWorkspaceInput = {
+    id?: string
+    address: string
+    userId?: string | null
+    clientId?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type EmailTriageItemCreateManyWorkspaceInput = {
+    id?: string
+    address: string
+    status?: $Enums.EmailTriageStatus
+    userId?: string | null
+    clientId?: string | null
+    resolvedBy?: string | null
+    resolvedAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type IngestJobCreateManyWorkspaceInput = {
+    id?: string
+    connectionId?: string | null
+    importFileId?: string | null
+    kind: $Enums.IngestJobKind
+    status?: $Enums.IngestJobStatus
+    cursor?: string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -47628,6 +68210,294 @@ export namespace Prisma {
     lastSyncAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastErrorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EvidenceItemUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    title?: StringFieldUpdateOperationsInput | string
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ingestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: NullableStringFieldUpdateOperationsInput | string | null
+    retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    client?: ClientUpdateOneWithoutEvidenceItemsNestedInput
+    tags?: EvidenceTagUpdateManyWithoutItemNestedInput
+    communication?: CommunicationUpdateOneWithoutEvidenceItemNestedInput
+  }
+
+  export type EvidenceItemUncheckedUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    title?: StringFieldUpdateOperationsInput | string
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ingestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: NullableStringFieldUpdateOperationsInput | string | null
+    retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tags?: EvidenceTagUncheckedUpdateManyWithoutItemNestedInput
+    communication?: CommunicationUncheckedUpdateOneWithoutEvidenceItemNestedInput
+  }
+
+  export type EvidenceItemUncheckedUpdateManyWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    title?: StringFieldUpdateOperationsInput | string
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ingestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: NullableStringFieldUpdateOperationsInput | string | null
+    retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type ClientUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    zohoId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumClientStatusFieldUpdateOperationsInput | $Enums.ClientStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailAliases?: EmailAliasUpdateManyWithoutClientNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutClientNestedInput
+  }
+
+  export type ClientUncheckedUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    zohoId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumClientStatusFieldUpdateOperationsInput | $Enums.ClientStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutClientNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutClientNestedInput
+  }
+
+  export type ClientUncheckedUpdateManyWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    zohoId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumClientStatusFieldUpdateOperationsInput | $Enums.ClientStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type MailboxConnectionUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumMailboxProviderFieldUpdateOperationsInput | $Enums.MailboxProvider
+    mailboxAddress?: StringFieldUpdateOperationsInput | string
+    consentMode?: EnumMailboxConsentModeFieldUpdateOperationsInput | $Enums.MailboxConsentMode
+    scopeFolders?: MailboxConnectionUpdatescopeFoldersInput | string[]
+    backfillFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumMailboxSyncStatusFieldUpdateOperationsInput | $Enums.MailboxSyncStatus
+    encryptedToken?: NullableStringFieldUpdateOperationsInput | string | null
+    deltaCursor?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSyncAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ingestJobs?: IngestJobUpdateManyWithoutConnectionNestedInput
+  }
+
+  export type MailboxConnectionUncheckedUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumMailboxProviderFieldUpdateOperationsInput | $Enums.MailboxProvider
+    mailboxAddress?: StringFieldUpdateOperationsInput | string
+    consentMode?: EnumMailboxConsentModeFieldUpdateOperationsInput | $Enums.MailboxConsentMode
+    scopeFolders?: MailboxConnectionUpdatescopeFoldersInput | string[]
+    backfillFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumMailboxSyncStatusFieldUpdateOperationsInput | $Enums.MailboxSyncStatus
+    encryptedToken?: NullableStringFieldUpdateOperationsInput | string | null
+    deltaCursor?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSyncAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutConnectionNestedInput
+  }
+
+  export type MailboxConnectionUncheckedUpdateManyWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumMailboxProviderFieldUpdateOperationsInput | $Enums.MailboxProvider
+    mailboxAddress?: StringFieldUpdateOperationsInput | string
+    consentMode?: EnumMailboxConsentModeFieldUpdateOperationsInput | $Enums.MailboxConsentMode
+    scopeFolders?: MailboxConnectionUpdatescopeFoldersInput | string[]
+    backfillFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumMailboxSyncStatusFieldUpdateOperationsInput | $Enums.MailboxSyncStatus
+    encryptedToken?: NullableStringFieldUpdateOperationsInput | string | null
+    deltaCursor?: NullableStringFieldUpdateOperationsInput | string | null
+    lastSyncAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastErrorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CommunicationThreadUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: EnumCommunicationChannelFieldUpdateOperationsInput | $Enums.CommunicationChannel
+    externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    participants?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    messages?: CommunicationUpdateManyWithoutThreadNestedInput
+  }
+
+  export type CommunicationThreadUncheckedUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: EnumCommunicationChannelFieldUpdateOperationsInput | $Enums.CommunicationChannel
+    externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    participants?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    messages?: CommunicationUncheckedUpdateManyWithoutThreadNestedInput
+  }
+
+  export type CommunicationThreadUncheckedUpdateManyWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channel?: EnumCommunicationChannelFieldUpdateOperationsInput | $Enums.CommunicationChannel
+    externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    participants?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EmailAliasUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    user?: UserUpdateOneWithoutEmailAliasesNestedInput
+    client?: ClientUpdateOneWithoutEmailAliasesNestedInput
+  }
+
+  export type EmailAliasUncheckedUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EmailAliasUncheckedUpdateManyWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EmailTriageItemUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    status?: EnumEmailTriageStatusFieldUpdateOperationsInput | $Enums.EmailTriageStatus
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmailTriageItemUncheckedUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    status?: EnumEmailTriageStatusFieldUpdateOperationsInput | $Enums.EmailTriageStatus
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmailTriageItemUncheckedUpdateManyWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    status?: EnumEmailTriageStatusFieldUpdateOperationsInput | $Enums.EmailTriageStatus
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IngestJobUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importFileId?: NullableStringFieldUpdateOperationsInput | string | null
+    kind?: EnumIngestJobKindFieldUpdateOperationsInput | $Enums.IngestJobKind
+    status?: EnumIngestJobStatusFieldUpdateOperationsInput | $Enums.IngestJobStatus
+    cursor?: NullableStringFieldUpdateOperationsInput | string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    connection?: MailboxConnectionUpdateOneWithoutIngestJobsNestedInput
+  }
+
+  export type IngestJobUncheckedUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    connectionId?: NullableStringFieldUpdateOperationsInput | string | null
+    importFileId?: NullableStringFieldUpdateOperationsInput | string | null
+    kind?: EnumIngestJobKindFieldUpdateOperationsInput | $Enums.IngestJobKind
+    status?: EnumIngestJobStatusFieldUpdateOperationsInput | $Enums.IngestJobStatus
+    cursor?: NullableStringFieldUpdateOperationsInput | string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IngestJobUncheckedUpdateManyWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    connectionId?: NullableStringFieldUpdateOperationsInput | string | null
+    importFileId?: NullableStringFieldUpdateOperationsInput | string | null
+    kind?: EnumIngestJobKindFieldUpdateOperationsInput | $Enums.IngestJobKind
+    status?: EnumIngestJobStatusFieldUpdateOperationsInput | $Enums.IngestJobStatus
+    cursor?: NullableStringFieldUpdateOperationsInput | string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -48289,6 +69159,17 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type EmailAliasCreateManyUserInput = {
+    id?: string
+    workspaceId: string
+    address: string
+    clientId?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
   export type AccountUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
@@ -48894,6 +69775,39 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type EmailAliasUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutEmailAliasesNestedInput
+    client?: ClientUpdateOneWithoutEmailAliasesNestedInput
+  }
+
+  export type EmailAliasUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EmailAliasUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type IntegrationSyncLogCreateManyIntegrationConfigInput = {
     id?: string
     meetingId?: string | null
@@ -49076,6 +69990,336 @@ export namespace Prisma {
     approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
     approvedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     snapshot?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type EmailAliasCreateManyClientInput = {
+    id?: string
+    workspaceId: string
+    address: string
+    userId?: string | null
+    verified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type EvidenceItemCreateManyClientInput = {
+    id?: string
+    workspaceId: string
+    createdById?: string | null
+    sourceType: $Enums.EvidenceSourceType
+    title: string
+    occurredAt: Date | string
+    ingestedAt?: Date | string
+    contentSha256: string
+    storageUri?: string | null
+    retentionRuleId?: string | null
+    destructionEligibleAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type EmailAliasUpdateWithoutClientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutEmailAliasesNestedInput
+    user?: UserUpdateOneWithoutEmailAliasesNestedInput
+  }
+
+  export type EmailAliasUncheckedUpdateWithoutClientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EmailAliasUncheckedUpdateManyWithoutClientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    address?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    verified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EvidenceItemUpdateWithoutClientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    title?: StringFieldUpdateOperationsInput | string
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ingestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: NullableStringFieldUpdateOperationsInput | string | null
+    retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutEvidenceItemsNestedInput
+    tags?: EvidenceTagUpdateManyWithoutItemNestedInput
+    communication?: CommunicationUpdateOneWithoutEvidenceItemNestedInput
+  }
+
+  export type EvidenceItemUncheckedUpdateWithoutClientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    title?: StringFieldUpdateOperationsInput | string
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ingestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: NullableStringFieldUpdateOperationsInput | string | null
+    retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tags?: EvidenceTagUncheckedUpdateManyWithoutItemNestedInput
+    communication?: CommunicationUncheckedUpdateOneWithoutEvidenceItemNestedInput
+  }
+
+  export type EvidenceItemUncheckedUpdateManyWithoutClientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    title?: StringFieldUpdateOperationsInput | string
+    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ingestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: NullableStringFieldUpdateOperationsInput | string | null
+    retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EvidenceTagCreateManyItemInput = {
+    id?: string
+    category: $Enums.TagCategory
+    addedBy: string
+    addedAt?: Date | string
+    removedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EvidenceTagUpdateWithoutItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumTagCategoryFieldUpdateOperationsInput | $Enums.TagCategory
+    addedBy?: StringFieldUpdateOperationsInput | string
+    addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EvidenceTagUncheckedUpdateWithoutItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumTagCategoryFieldUpdateOperationsInput | $Enums.TagCategory
+    addedBy?: StringFieldUpdateOperationsInput | string
+    addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EvidenceTagUncheckedUpdateManyWithoutItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumTagCategoryFieldUpdateOperationsInput | $Enums.TagCategory
+    addedBy?: StringFieldUpdateOperationsInput | string
+    addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommunicationCreateManyThreadInput = {
+    id?: string
+    evidenceItemId: string
+    direction: $Enums.CommunicationDirection
+    sentAt: Date | string
+    fromAddress: string
+    toAddresses?: CommunicationCreatetoAddressesInput | string[]
+    ccAddresses?: CommunicationCreateccAddressesInput | string[]
+    internetMessageId?: string | null
+    bodyText: string
+    bodyHtml?: string | null
+    inReplyTo?: string | null
+    referencesHeader?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type CommunicationUpdateWithoutThreadInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    direction?: EnumCommunicationDirectionFieldUpdateOperationsInput | $Enums.CommunicationDirection
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fromAddress?: StringFieldUpdateOperationsInput | string
+    toAddresses?: CommunicationUpdatetoAddressesInput | string[]
+    ccAddresses?: CommunicationUpdateccAddressesInput | string[]
+    internetMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    bodyText?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: NullableStringFieldUpdateOperationsInput | string | null
+    inReplyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    referencesHeader?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    evidenceItem?: EvidenceItemUpdateOneRequiredWithoutCommunicationNestedInput
+    attachments?: AttachmentUpdateManyWithoutCommunicationNestedInput
+  }
+
+  export type CommunicationUncheckedUpdateWithoutThreadInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    evidenceItemId?: StringFieldUpdateOperationsInput | string
+    direction?: EnumCommunicationDirectionFieldUpdateOperationsInput | $Enums.CommunicationDirection
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fromAddress?: StringFieldUpdateOperationsInput | string
+    toAddresses?: CommunicationUpdatetoAddressesInput | string[]
+    ccAddresses?: CommunicationUpdateccAddressesInput | string[]
+    internetMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    bodyText?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: NullableStringFieldUpdateOperationsInput | string | null
+    inReplyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    referencesHeader?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    attachments?: AttachmentUncheckedUpdateManyWithoutCommunicationNestedInput
+  }
+
+  export type CommunicationUncheckedUpdateManyWithoutThreadInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    evidenceItemId?: StringFieldUpdateOperationsInput | string
+    direction?: EnumCommunicationDirectionFieldUpdateOperationsInput | $Enums.CommunicationDirection
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fromAddress?: StringFieldUpdateOperationsInput | string
+    toAddresses?: CommunicationUpdatetoAddressesInput | string[]
+    ccAddresses?: CommunicationUpdateccAddressesInput | string[]
+    internetMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    bodyText?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: NullableStringFieldUpdateOperationsInput | string | null
+    inReplyTo?: NullableStringFieldUpdateOperationsInput | string | null
+    referencesHeader?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type AttachmentCreateManyCommunicationInput = {
+    id?: string
+    filename: string
+    mimeType: string
+    contentSha256: string
+    storageUri: string
+    sizeBytes?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type AttachmentUpdateWithoutCommunicationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    mimeType?: StringFieldUpdateOperationsInput | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: StringFieldUpdateOperationsInput | string
+    sizeBytes?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type AttachmentUncheckedUpdateWithoutCommunicationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    mimeType?: StringFieldUpdateOperationsInput | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: StringFieldUpdateOperationsInput | string
+    sizeBytes?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type AttachmentUncheckedUpdateManyWithoutCommunicationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    mimeType?: StringFieldUpdateOperationsInput | string
+    contentSha256?: StringFieldUpdateOperationsInput | string
+    storageUri?: StringFieldUpdateOperationsInput | string
+    sizeBytes?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type IngestJobCreateManyConnectionInput = {
+    id?: string
+    workspaceId: string
+    importFileId?: string | null
+    kind: $Enums.IngestJobKind
+    status?: $Enums.IngestJobStatus
+    cursor?: string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type IngestJobUpdateWithoutConnectionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    importFileId?: NullableStringFieldUpdateOperationsInput | string | null
+    kind?: EnumIngestJobKindFieldUpdateOperationsInput | $Enums.IngestJobKind
+    status?: EnumIngestJobStatusFieldUpdateOperationsInput | $Enums.IngestJobStatus
+    cursor?: NullableStringFieldUpdateOperationsInput | string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspace?: WorkspaceUpdateOneRequiredWithoutIngestJobsNestedInput
+  }
+
+  export type IngestJobUncheckedUpdateWithoutConnectionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    importFileId?: NullableStringFieldUpdateOperationsInput | string | null
+    kind?: EnumIngestJobKindFieldUpdateOperationsInput | $Enums.IngestJobKind
+    status?: EnumIngestJobStatusFieldUpdateOperationsInput | $Enums.IngestJobStatus
+    cursor?: NullableStringFieldUpdateOperationsInput | string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IngestJobUncheckedUpdateManyWithoutConnectionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    importFileId?: NullableStringFieldUpdateOperationsInput | string | null
+    kind?: EnumIngestJobKindFieldUpdateOperationsInput | $Enums.IngestJobKind
+    status?: EnumIngestJobStatusFieldUpdateOperationsInput | $Enums.IngestJobStatus
+    cursor?: NullableStringFieldUpdateOperationsInput | string | null
+    stats?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

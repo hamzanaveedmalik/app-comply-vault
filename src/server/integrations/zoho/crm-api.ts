@@ -60,6 +60,31 @@ export async function findContactIdByFullName(args: {
   return { contactId: rows[0]!.id };
 }
 
+/**
+ * Find a single Contact id by exact Email match, or null if none.
+ */
+export async function findContactIdByEmail(args: {
+  apiDomain: string;
+  accessToken: string;
+  email: string;
+}): Promise<string | null> {
+  const { apiDomain, accessToken, email } = args;
+  const q = `select id, Email from Contacts where Email = '${escapeCoqlString(email.toLowerCase())}' limit 2`;
+  const res = await fetch(`${apiDomain}/crm/v2/coql`, {
+    method: "POST",
+    headers: {
+      Authorization: `Zoho-oauthtoken ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ select_query: q }),
+  });
+  if (!res.ok) return null;
+  const data = (await res.json()) as { data?: Array<{ id: string }> };
+  const rows = data.data ?? [];
+  if (rows.length !== 1) return null;
+  return rows[0]!.id;
+}
+
 export async function createContactNote(args: {
   apiDomain: string;
   accessToken: string;

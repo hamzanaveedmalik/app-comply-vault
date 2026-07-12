@@ -72,6 +72,10 @@ export const env = createEnv({
     TEAMS_CLIENT_SECRET: z.string().optional(),
     TEAMS_TENANT_ID: z.string().optional(),
     TEAMS_WEBHOOK_CLIENT_STATE: z.string().optional(),
+    // M365 Mail OAuth (Epic B) — falls back to TEAMS_* if unset
+    M365_MAIL_CLIENT_ID: z.string().optional(),
+    M365_MAIL_CLIENT_SECRET: z.string().optional(),
+    M365_MAIL_TENANT_ID: z.string().optional(),
     // Zoho CRM OAuth (Epic 3.0) — same app can be Zoho One; use region-specific accounts host if needed
     ZOHO_CRM_CLIENT_ID: z.string().optional(),
     ZOHO_CRM_CLIENT_SECRET: z.string().optional(),
@@ -153,6 +157,9 @@ export const env = createEnv({
     TEAMS_CLIENT_SECRET: process.env.TEAMS_CLIENT_SECRET,
     TEAMS_TENANT_ID: process.env.TEAMS_TENANT_ID,
     TEAMS_WEBHOOK_CLIENT_STATE: process.env.TEAMS_WEBHOOK_CLIENT_STATE,
+    M365_MAIL_CLIENT_ID: process.env.M365_MAIL_CLIENT_ID,
+    M365_MAIL_CLIENT_SECRET: process.env.M365_MAIL_CLIENT_SECRET,
+    M365_MAIL_TENANT_ID: process.env.M365_MAIL_TENANT_ID,
     ZOHO_CRM_CLIENT_ID: process.env.ZOHO_CRM_CLIENT_ID,
     ZOHO_CRM_CLIENT_SECRET: process.env.ZOHO_CRM_CLIENT_SECRET,
     ZOHO_CRM_ACCOUNTS_DOMAIN: process.env.ZOHO_CRM_ACCOUNTS_DOMAIN,

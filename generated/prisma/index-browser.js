@@ -435,6 +435,148 @@ exports.Prisma.FirmProfileVersionScalarFieldEnum = {
   snapshot: 'snapshot'
 };
 
+exports.Prisma.ClientScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  name: 'name',
+  zohoId: 'zohoId',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.EmailAliasScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  address: 'address',
+  userId: 'userId',
+  clientId: 'clientId',
+  verified: 'verified',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.EvidenceItemScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  clientId: 'clientId',
+  createdById: 'createdById',
+  sourceType: 'sourceType',
+  title: 'title',
+  occurredAt: 'occurredAt',
+  ingestedAt: 'ingestedAt',
+  contentSha256: 'contentSha256',
+  storageUri: 'storageUri',
+  retentionRuleId: 'retentionRuleId',
+  destructionEligibleAt: 'destructionEligibleAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.EvidenceTagScalarFieldEnum = {
+  id: 'id',
+  itemId: 'itemId',
+  category: 'category',
+  addedBy: 'addedBy',
+  addedAt: 'addedAt',
+  removedAt: 'removedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CommunicationThreadScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  channel: 'channel',
+  externalThreadId: 'externalThreadId',
+  subject: 'subject',
+  participants: 'participants',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.CommunicationScalarFieldEnum = {
+  id: 'id',
+  threadId: 'threadId',
+  evidenceItemId: 'evidenceItemId',
+  direction: 'direction',
+  sentAt: 'sentAt',
+  fromAddress: 'fromAddress',
+  toAddresses: 'toAddresses',
+  ccAddresses: 'ccAddresses',
+  internetMessageId: 'internetMessageId',
+  bodyText: 'bodyText',
+  bodyHtml: 'bodyHtml',
+  inReplyTo: 'inReplyTo',
+  referencesHeader: 'referencesHeader',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.AttachmentScalarFieldEnum = {
+  id: 'id',
+  communicationId: 'communicationId',
+  filename: 'filename',
+  mimeType: 'mimeType',
+  contentSha256: 'contentSha256',
+  storageUri: 'storageUri',
+  sizeBytes: 'sizeBytes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.MailboxConnectionScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  provider: 'provider',
+  mailboxAddress: 'mailboxAddress',
+  consentMode: 'consentMode',
+  scopeFolders: 'scopeFolders',
+  backfillFrom: 'backfillFrom',
+  status: 'status',
+  encryptedToken: 'encryptedToken',
+  deltaCursor: 'deltaCursor',
+  lastSyncAt: 'lastSyncAt',
+  lastErrorMessage: 'lastErrorMessage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.IngestJobScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  connectionId: 'connectionId',
+  importFileId: 'importFileId',
+  kind: 'kind',
+  status: 'status',
+  cursor: 'cursor',
+  stats: 'stats',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EmailTriageItemScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  address: 'address',
+  status: 'status',
+  userId: 'userId',
+  clientId: 'clientId',
+  resolvedBy: 'resolvedBy',
+  resolvedAt: 'resolvedAt',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.LeadScalarFieldEnum = {
   id: 'id',
   email: 'email',
@@ -602,7 +744,16 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   DISCLOSURE_SUPPRESSION_ACTIVATED: 'DISCLOSURE_SUPPRESSION_ACTIVATED',
   DISCLOSURE_SUPPRESSION_DEACTIVATED: 'DISCLOSURE_SUPPRESSION_DEACTIVATED',
   FIRM_PROFILE_APPROVED: 'FIRM_PROFILE_APPROVED',
-  CCO_ACKNOWLEDGED_NEVER_SUPPRESS: 'CCO_ACKNOWLEDGED_NEVER_SUPPRESS'
+  CCO_ACKNOWLEDGED_NEVER_SUPPRESS: 'CCO_ACKNOWLEDGED_NEVER_SUPPRESS',
+  AI_QUERY: 'AI_QUERY',
+  MAILBOX_CONNECTED: 'MAILBOX_CONNECTED',
+  MAILBOX_DISCONNECTED: 'MAILBOX_DISCONNECTED',
+  MAILBOX_SYNC_STARTED: 'MAILBOX_SYNC_STARTED',
+  MAILBOX_SYNC_COMPLETED: 'MAILBOX_SYNC_COMPLETED',
+  EVIDENCE_VIEW: 'EVIDENCE_VIEW',
+  EVIDENCE_TAG: 'EVIDENCE_TAG',
+  EMAIL_TRIAGE_RESOLVED: 'EMAIL_TRIAGE_RESOLVED',
+  THREAD_EXPORT: 'THREAD_EXPORT'
 };
 
 exports.IntegrationProvider = exports.$Enums.IntegrationProvider = {
@@ -619,7 +770,8 @@ exports.IntegrationProvider = exports.$Enums.IntegrationProvider = {
   COMPLYSCI: 'COMPLYSCI',
   SLACK: 'SLACK',
   TEAMS_BOT: 'TEAMS_BOT',
-  ZOHO_CRM: 'ZOHO_CRM'
+  ZOHO_CRM: 'ZOHO_CRM',
+  M365_MAIL: 'M365_MAIL'
 };
 
 exports.IntegrationStatus = exports.$Enums.IntegrationStatus = {
@@ -650,6 +802,88 @@ exports.FirmProfileVersionType = exports.$Enums.FirmProfileVersionType = {
   APPROVED: 'APPROVED'
 };
 
+exports.ClientStatus = exports.$Enums.ClientStatus = {
+  CLIENT: 'CLIENT',
+  PROSPECT: 'PROSPECT',
+  FORMER: 'FORMER'
+};
+
+exports.EvidenceSourceType = exports.$Enums.EvidenceSourceType = {
+  MEETING: 'MEETING',
+  EMAIL: 'EMAIL',
+  MESSAGE: 'MESSAGE',
+  DOCUMENT: 'DOCUMENT',
+  POLICY: 'POLICY',
+  ATTESTATION: 'ATTESTATION',
+  NOTE: 'NOTE',
+  FINDING_RECORD: 'FINDING_RECORD'
+};
+
+exports.TagCategory = exports.$Enums.TagCategory = {
+  ADVICE: 'ADVICE',
+  RECOMMENDATION: 'RECOMMENDATION',
+  COMPLAINT: 'COMPLAINT',
+  FEE: 'FEE',
+  PERFORMANCE: 'PERFORMANCE',
+  MARKETING: 'MARKETING',
+  REVIEW: 'REVIEW',
+  VULNERABLE_CLIENT: 'VULNERABLE_CLIENT',
+  OFF_CHANNEL: 'OFF_CHANNEL'
+};
+
+exports.CommunicationChannel = exports.$Enums.CommunicationChannel = {
+  EMAIL_M365: 'EMAIL_M365',
+  WHATSAPP_IMPORT: 'WHATSAPP_IMPORT',
+  SMS_IMPORT: 'SMS_IMPORT',
+  TEAMS_IMPORT: 'TEAMS_IMPORT',
+  SLACK_IMPORT: 'SLACK_IMPORT',
+  OTHER_IMPORT: 'OTHER_IMPORT'
+};
+
+exports.CommunicationDirection = exports.$Enums.CommunicationDirection = {
+  INBOUND: 'INBOUND',
+  OUTBOUND: 'OUTBOUND',
+  INTERNAL: 'INTERNAL'
+};
+
+exports.MailboxProvider = exports.$Enums.MailboxProvider = {
+  M365: 'M365'
+};
+
+exports.MailboxConsentMode = exports.$Enums.MailboxConsentMode = {
+  APPLICATION: 'APPLICATION',
+  DELEGATED: 'DELEGATED'
+};
+
+exports.MailboxSyncStatus = exports.$Enums.MailboxSyncStatus = {
+  PENDING: 'PENDING',
+  BACKFILLING: 'BACKFILLING',
+  ACTIVE: 'ACTIVE',
+  ERROR: 'ERROR',
+  DISCONNECTED: 'DISCONNECTED'
+};
+
+exports.IngestJobKind = exports.$Enums.IngestJobKind = {
+  BACKFILL: 'BACKFILL',
+  DELTA: 'DELTA',
+  MESSAGE_IMPORT: 'MESSAGE_IMPORT'
+};
+
+exports.IngestJobStatus = exports.$Enums.IngestJobStatus = {
+  QUEUED: 'QUEUED',
+  RUNNING: 'RUNNING',
+  PAUSED: 'PAUSED',
+  DONE: 'DONE',
+  FAILED: 'FAILED'
+};
+
+exports.EmailTriageStatus = exports.$Enums.EmailTriageStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  EXTERNAL: 'EXTERNAL',
+  IRRELEVANT: 'IRRELEVANT'
+};
+
 exports.Prisma.ModelName = {
   Workspace: 'Workspace',
   UserWorkspace: 'UserWorkspace',
@@ -673,6 +907,16 @@ exports.Prisma.ModelName = {
   DisclosureCategory: 'DisclosureCategory',
   SuppressionLogEntry: 'SuppressionLogEntry',
   FirmProfileVersion: 'FirmProfileVersion',
+  Client: 'Client',
+  EmailAlias: 'EmailAlias',
+  EvidenceItem: 'EvidenceItem',
+  EvidenceTag: 'EvidenceTag',
+  CommunicationThread: 'CommunicationThread',
+  Communication: 'Communication',
+  Attachment: 'Attachment',
+  MailboxConnection: 'MailboxConnection',
+  IngestJob: 'IngestJob',
+  EmailTriageItem: 'EmailTriageItem',
   Lead: 'Lead'
 };
 

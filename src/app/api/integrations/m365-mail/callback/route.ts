@@ -1,0 +1,100 @@
+/**
+ * GET /api/integrations/m365-mail/callback — delegated OAuth callback
+ */
+
+import { requireAppAccess } from "~/server/auth/guards";
+import { db } from "~/server/db";
+import { encryptToken } from "~/server/integrations/crypto";
+import {
+  exchangeDelegatedCode,
+  storeWorkspaceM365Credential,
+} from "~/server/mailbox/m365-auth";
+import { STATE_COOKIE } from "../connect/route";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(request: NextRequest) {
+  const access = await requireAppAccess();
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin;
+  const redirectBase = `${base}/integrations/m365-mail`;
+
+  if (!access.ok) {
+    return NextResponse.redirect(`${redirectBase}?error=unauthorized`);
+  }
+
+  const stateCookie = request.cookies.get(STATE_COOKIE)?.value;
+  const { searchParams } = request.nextUrl;
+  const code = searchParams.get("code");
+  const state = searchParams.get("state");
+  const error = searchParams.get("error");
+
+  if (error) {
+    const res = NextResponse.redirect(
+      `${redirectBase}?error=${encodeURIComponent(error)}`
+    );
+    res.cookies.delete(STATE_COOKIE);
+    return res;
+  }
+
+  if (!code || !state || state !== stateCookie) {
+    const res = NextResponse.redirect(`${redirectBase}?error=invalid_callback`);
+    res.cookies.delete(STATE_COOKIE);
+    return res;
+  }
+
+  try {
+    const tokens = await exchangeDelegatedCode(code);
+
+    await storeWorkspaceM365Credential({
+      workspaceId: access.workspaceId,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      expiresAt: tokens.expiresAt,
+      scopes: "Mail.Read",
+    });
+
+    const connection = await db.mailboxConnection.upsert({
+      where: {
+        workspaceId_mailboxAddress: {
+          workspaceId: access.workspaceId,
+          mailboxAddress: tokens.email,
+        },
+      },
+      create: {
+        workspaceId: access.workspaceId,
+        mailboxAddress: tokens.email,
+        consentMode: "DELEGATED",
+        encryptedToken: encryptToken(tokens.accessToken),
+        status: "PENDING",
+        scopeFolders: [],
+      },
+      update: {
+        consentMode: "DELEGATED",
+        encryptedToken: encryptToken(tokens.accessToken),
+        status: "PENDING",
+        deletedAt: null,
+        lastErrorMessage: null,
+      },
+    });
+
+    await db.auditEvent.create({
+      data: {
+        workspaceId: access.workspaceId,
+        userId: access.session.user.id,
+        action: "MAILBOX_CONNECTED",
+        resourceType: "mailbox_connection",
+        resourceId: connection.id,
+        metadata: { consentMode: "DELEGATED" },
+      },
+    });
+
+    const res = NextResponse.redirect(
+      `${redirectBase}?connected=1&mailbox=${encodeURIComponent(tokens.email)}`
+    );
+    res.cookies.delete(STATE_COOKIE);
+    return res;
+  } catch {
+    const res = NextResponse.redirect(`${redirectBase}?error=connection_failed`);
+    res.cookies.delete(STATE_COOKIE);
+    return res;
+  }
+}

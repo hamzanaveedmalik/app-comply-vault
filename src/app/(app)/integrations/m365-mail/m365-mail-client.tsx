@@ -86,7 +86,6 @@ export function M365MailClient({
       return;
     }
     setFolders(json.data ?? []);
-    const conn = connections.find((c) => c.id === connectionId);
     setSelectedFolders(conn?.scopeFolders ?? []);
     setBackfillFrom(conn?.backfillFrom?.slice(0, 10) ?? "");
   }

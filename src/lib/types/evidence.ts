@@ -70,3 +70,11 @@ export type EmailTriageItemDto = {
   clientId: string | null;
   createdAt: string;
 };
+
+export type M365WorkspaceStatus = {
+  connected: boolean;
+  consentMode: "APPLICATION" | "DELEGATED" | null;
+  tenantId: string | null;
+  expiresAt: string | null;
+  oauthConfigured: boolean;
+};

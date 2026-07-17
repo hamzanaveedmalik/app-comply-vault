@@ -6,15 +6,18 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { toast } from "sonner";
 import type { MailboxConnectionDto } from "~/lib/types/evidence";
+import type { M365WorkspaceStatus } from "~/lib/types/evidence";
 
 type MailFolder = { id: string; displayName: string };
 
 export function M365MailClient({
+  workspaceStatus,
   connected,
   adminConsent,
   mailbox,
   error,
 }: {
+  workspaceStatus: M365WorkspaceStatus;
   connected?: boolean;
   adminConsent?: boolean;
   mailbox?: string;
@@ -64,6 +67,17 @@ export function M365MailClient({
   }
 
   async function loadFolders(connectionId: string): Promise<void> {
+    const conn = connections.find((c) => c.id === connectionId);
+    if (
+      conn?.consentMode === "APPLICATION" &&
+      !workspaceStatus.connected
+    ) {
+      toast.error(
+        "Complete Admin consent first — workspace M365 token is missing"
+      );
+      return;
+    }
+
     setSelectedConnection(connectionId);
     const res = await fetch(`/api/mailbox/connections/${connectionId}/folders`);
     const json = (await res.json()) as { success: boolean; data?: MailFolder[]; error?: string };
@@ -130,6 +144,46 @@ export function M365MailClient({
           Controlled ingestion — selected mailboxes, folders and date ranges only.
         </p>
       </div>
+
+      {!workspaceStatus.oauthConfigured && (
+        <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+          <p className="font-medium">Azure OAuth not configured on the server</p>
+          <p className="mt-1">
+            Set <code className="text-xs">M365_MAIL_CLIENT_ID</code> and{" "}
+            <code className="text-xs">M365_MAIL_CLIENT_SECRET</code> in Vercel (or{" "}
+            <code className="text-xs">.env</code> locally).{" "}
+            <code className="text-xs">TEAMS_*</code> is optional — only used as a fallback
+            if you already have a Teams Azure app.
+          </p>
+        </div>
+      )}
+
+      {workspaceStatus.oauthConfigured && !workspaceStatus.connected && (
+        <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+          <p className="font-medium">M365 mail integration not connected</p>
+          <p className="mt-1">
+            Before loading folders or syncing, connect once using one of the buttons below:
+          </p>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>
+              <strong>Admin consent</strong> — for application mode (add mailboxes manually,
+              then backfill multiple advisers)
+            </li>
+            <li>
+              <strong>Connect my mailbox</strong> — for delegated mode (one mailbox per OAuth
+              sign-in)
+            </li>
+          </ul>
+        </div>
+      )}
+
+      {workspaceStatus.connected && (
+        <p className="text-sm text-green-700">
+          Workspace token active
+          {workspaceStatus.consentMode ? ` (${workspaceStatus.consentMode})` : ""}
+          {workspaceStatus.tenantId ? ` · tenant ${workspaceStatus.tenantId}` : ""}
+        </p>
+      )}
 
       <div className="flex flex-wrap gap-3">
         <Button asChild className="bg-[#2ECC71] text-[#0D2818] hover:bg-[#27ae60]">

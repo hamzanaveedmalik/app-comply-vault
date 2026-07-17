@@ -227,6 +227,7 @@ async function handler(request: Request) {
           action: "UPLOAD",
           resourceType: "meeting",
           resourceId: meetingId,
+          meetingId,
           metadata: {
             action: "extraction_complete",
             status: "DRAFT_READY",

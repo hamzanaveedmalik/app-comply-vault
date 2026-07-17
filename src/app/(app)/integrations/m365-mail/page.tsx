@@ -1,6 +1,7 @@
 import { requireAppAccess } from "~/server/auth/guards";
 import { redirect } from "next/navigation";
 import { M365MailClient } from "./m365-mail-client";
+import { getWorkspaceM365Status } from "~/server/mailbox/status";
 
 export default async function M365MailPage({
   searchParams,
@@ -26,8 +27,11 @@ export default async function M365MailPage({
     return typeof v === "string" ? v : undefined;
   };
 
+  const workspaceStatus = await getWorkspaceM365Status(access.workspaceId);
+
   return (
     <M365MailClient
+      workspaceStatus={workspaceStatus}
       connected={str("connected") === "1"}
       adminConsent={str("admin_consent") === "1"}
       mailbox={str("mailbox")}

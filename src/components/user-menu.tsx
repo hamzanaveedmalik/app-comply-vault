@@ -1,9 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { Settings, Bell, LogOut, User } from "lucide-react";
+import { Settings, Bell, LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +31,6 @@ export function UserMenu({
   userRole,
   billingStatus,
 }: UserMenuProps) {
-  const router = useRouter();
   const { notificationCount } = useNotifications();
 
   const getInitials = () => {
@@ -52,7 +50,6 @@ export function UserMenu({
 
   return (
     <div className="flex items-center gap-2">
-      {/* Settings Button */}
       <Button variant="ghost" size="icon" asChild>
         <Link href="/settings">
           <Settings className="h-5 w-5" />
@@ -60,28 +57,6 @@ export function UserMenu({
         </Link>
       </Button>
 
-      {/* Notifications Button */}
-      <Button variant="ghost" size="icon" asChild className="relative">
-        <Link href="/notifications" className="relative">
-          <Bell className="h-5 w-5" />
-          {notificationCount > 0 && (
-            <>
-              {/* Red circle indicator for unread notifications */}
-              <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-background animate-pulse" />
-              {/* Counter badge */}
-              <Badge
-                variant="destructive"
-                className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs font-semibold shadow-lg z-10"
-              >
-                {notificationCount > 9 ? "9+" : notificationCount}
-              </Badge>
-            </>
-          )}
-          <span className="sr-only">Notifications</span>
-        </Link>
-      </Button>
-
-      {/* User Avatar Menu */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-9 w-9 rounded-full">
@@ -89,19 +64,6 @@ export function UserMenu({
               <AvatarImage src={userImage ?? undefined} alt={userName ?? userEmail ?? "User"} />
               <AvatarFallback>{getInitials()}</AvatarFallback>
             </Avatar>
-            {notificationCount > 0 && (
-              <>
-                {/* Red circle indicator for unread notifications */}
-                <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-background animate-pulse" />
-                {/* Counter badge */}
-                <Badge
-                  variant="destructive"
-                  className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs font-semibold border-2 border-background shadow-lg z-10"
-                >
-                  {notificationCount > 9 ? "9+" : notificationCount}
-                </Badge>
-              </>
-            )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
@@ -152,4 +114,3 @@ export function UserMenu({
     </div>
   );
 }
-

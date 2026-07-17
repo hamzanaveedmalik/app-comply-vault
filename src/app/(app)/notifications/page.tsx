@@ -5,6 +5,8 @@ import { Badge } from "~/components/ui/badge";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import { redirectPathForMissingWorkspace } from "~/server/workspace/no-workspace-redirect";
+import { listNotifications } from "~/server/notifications";
+import { cn } from "~/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -20,66 +22,14 @@ export default async function NotificationsPage() {
     );
   }
 
-  // Fetch notifications directly from database
-  const { db } = await import("~/server/db");
-  let notifications: any[] = [];
-  
+  let notifications: Awaited<ReturnType<typeof listNotifications>> = [];
+
   try {
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    
-    const events = await db.auditEvent.findMany({
-      where: {
-        workspaceId: session.user.workspaceId,
-        OR: [
-          {
-            action: "UPLOAD",
-            metadata: {
-              path: ["action"],
-              equals: "extraction_complete",
-            },
-          },
-          {
-            action: "FINALIZE",
-          },
-        ],
-        timestamp: {
-          gte: sevenDaysAgo,
-        },
-      },
-      include: {
-        meeting: {
-          select: {
-            id: true,
-            clientName: true,
-            meetingDate: true,
-            status: true,
-          },
-        },
-      },
-      orderBy: {
-        timestamp: "desc",
-      },
-      take: 50,
-    });
-
-    notifications = events.map((event) => {
-      const metadata = event.metadata as { action?: string } | null;
-      const isExtractionComplete = metadata?.action === "extraction_complete";
-
-      return {
-        id: event.id,
-        type: isExtractionComplete ? "processing_complete" : "finalized",
-        title: isExtractionComplete
-          ? "Meeting Processing Complete"
-          : "Meeting Finalized",
-        message: event.meeting
-          ? `${event.meeting.clientName} - ${isExtractionComplete ? "Ready for review" : "Finalized"}`
-          : "Status update",
-        meetingId: event.meetingId,
-        meeting: event.meeting,
-        timestamp: event.timestamp,
-      };
-    });
+    notifications = await listNotifications(
+      session.user.workspaceId,
+      session.user.id,
+      50,
+    );
   } catch (error) {
     console.error("Error fetching notifications:", error);
   }
@@ -110,7 +60,10 @@ export default async function NotificationsPage() {
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className="flex items-start justify-between gap-4 p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                  className={cn(
+                    "flex items-start justify-between gap-4 p-4 border rounded-lg hover:bg-accent/50 transition-colors",
+                    !notification.read && "border-l-4 border-l-semantic-success bg-accent/20",
+                  )}
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
@@ -125,6 +78,9 @@ export default async function NotificationsPage() {
                           ? "Processing Complete"
                           : "Finalized"}
                       </Badge>
+                      {!notification.read && (
+                        <Badge variant="outline">Unread</Badge>
+                      )}
                       <span className="text-xs text-muted-foreground">
                         {new Date(notification.timestamp).toLocaleString()}
                       </span>
@@ -150,4 +106,3 @@ export default async function NotificationsPage() {
     </div>
   );
 }
-

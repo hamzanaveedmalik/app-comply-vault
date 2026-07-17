@@ -39,6 +39,10 @@ export async function GET(
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "folder_fetch_failed";
-    return Response.json({ success: false, error: message }, { status: 502 });
+    const hint =
+      message === "M365 mail integration not connected"
+        ? "Complete Admin consent (application mode) or Connect my mailbox (delegated) on /integrations/m365-mail first."
+        : message;
+    return Response.json({ success: false, error: hint }, { status: 502 });
   }
 }

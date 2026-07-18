@@ -220,7 +220,19 @@ export const HADRIUS_PAYOFF =
 
 export type RiskFlag = {
   label: string;
+  /** Drives the status dot colour: "high" → danger, everything else → warning. */
   tone: "high" | "attention" | "info";
+  /** Short (<=5 word) reason shown right-aligned in the ranked list. */
+  reason: string;
+  /**
+   * Slug used as the Review Queue filter param (`?risk=<tag>`).
+   * TODO: once risk drivers are tied to live Flag/Meeting records, map this tag
+   * to a real flag query + surface a count. Today it is firm-metadata only.
+   */
+  riskTag: string;
+  /** Lower-case fragment used to compose the firm summary sentence. */
+  summaryPhrase: string;
+  /** Longer copy retained for reference; not rendered in the ranked list. */
   explanation: string;
 };
 
@@ -231,32 +243,88 @@ export const DEMO_FIRM = {
   aum: "$42.9M AUM",
 };
 
+/**
+ * Ordered by scrutiny impact (highest first). Derived from illustrative CRD /
+ * firm-metadata, not live Flag records — see the TODO on `riskTag`.
+ */
 export const RISK_FLAGS: RiskFlag[] = [
   {
     label: "Regulatory history",
     tone: "high",
+    reason: "tops the review queue",
+    riskTag: "regulatory-history",
+    summaryPhrase: "prior regulatory action",
     explanation:
       "Prior regulatory action means related meetings are ranked at the top of the review queue.",
   },
   {
     label: "Insurance affiliate",
     tone: "attention",
+    reason: "insurance and comp lifted",
+    riskTag: "insurance-affiliate",
+    summaryPhrase: "an insurance affiliate",
     explanation:
       "Insurance and compensation topics are lifted higher in the queue for this firm.",
   },
   {
-    label: "Multi-state",
-    tone: "info",
+    label: "Multi-state activity",
+    tone: "attention",
+    reason: "wider disclosure set",
+    riskTag: "multi-state",
+    summaryPhrase: "multi-state activity",
     explanation:
       "Cross-state activity widens the set of disclosures checked on each interaction.",
   },
   {
-    label: "Pooled vehicle",
+    label: "Pooled vehicle mentions",
     tone: "attention",
+    reason: "suitability and conflicts up",
+    riskTag: "pooled-vehicle",
+    summaryPhrase: "pooled vehicle exposure",
     explanation:
       "Private fund mentions raise the priority of suitability and conflict findings.",
   },
 ];
+
+const COUNT_WORDS = [
+  "zero",
+  "one",
+  "two",
+  "three",
+  "four",
+  "five",
+  "six",
+  "seven",
+  "eight",
+  "nine",
+];
+
+function countWord(n: number): string {
+  return COUNT_WORDS[n] ?? String(n);
+}
+
+/**
+ * Composes the single "why this firm is above baseline" sentence from whichever
+ * risk factors are active — intentionally not hard-coded per firm. Leads with
+ * the top one or two drivers, then states the total factor count.
+ */
+export function composeRiskSummary(flags: RiskFlag[]): string {
+  if (flags.length === 0) {
+    return "No elevated risk factors — this firm sits at baseline scrutiny.";
+  }
+
+  const lead = flags.slice(0, 2).map((flag) => flag.summaryPhrase);
+  const leadClause = lead.join(" and ");
+  const sentenceCaseLead =
+    leadClause.charAt(0).toUpperCase() + leadClause.slice(1);
+
+  return `${sentenceCaseLead} put this firm above baseline scrutiny — ${countWord(
+    flags.length,
+  )} factors widen what gets checked on every meeting.`;
+}
+
+/** Where per-workspace disclosure configuration is actually edited in the app. */
+export const DISCLOSURE_CONFIG_PATH = "/compliance-cockpit";
 
 export type Disclosure = {
   item: string;

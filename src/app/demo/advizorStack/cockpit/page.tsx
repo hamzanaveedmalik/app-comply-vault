@@ -1,25 +1,15 @@
-import { Building2, Lock } from "lucide-react";
-import { Badge } from "~/components/ui/badge";
+import Link from "next/link";
+import { Building2, ChevronRight, Lock } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { DisclosuresCollapse } from "~/components/demo/advizor-stack/disclosures-collapse";
 import {
   CONFIGURABLE_DISCLOSURES,
+  DEMO_BASE_PATH,
   DEMO_FIRM,
   LOCKED_DISCLOSURES,
   RISK_FLAGS,
-  type RiskFlag,
+  composeRiskSummary,
 } from "~/components/demo/advizor-stack/demo-data";
-
-function flagClassName(tone: RiskFlag["tone"]): string {
-  switch (tone) {
-    case "high":
-      return "border-red-200 bg-red-100 text-red-800";
-    case "attention":
-      return "border-amber-200 bg-amber-100 text-amber-800";
-    default:
-      return "";
-  }
-}
 
 export default function DemoCockpitPage() {
   return (
@@ -29,64 +19,69 @@ export default function DemoCockpitPage() {
         Compliance cockpit
       </h1>
 
-      <div className="mt-5 rounded-xl border bg-surface-card p-5">
-        <div className="flex items-center gap-3">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand text-white">
-            <Building2 className="h-4 w-4" />
-          </span>
-          <div>
-            <div className="text-sm font-semibold">{DEMO_FIRM.name}</div>
-            <div className="text-xs text-text-secondary">
-              {DEMO_FIRM.location} · CRD {DEMO_FIRM.crd} · {DEMO_FIRM.aum}
-            </div>
+      <div className="mt-5 flex items-center gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-light text-brand">
+          <Building2 className="h-5 w-5" />
+        </span>
+        <div>
+          <div className="text-sm font-semibold">{DEMO_FIRM.name}</div>
+          <div className="text-xs text-text-secondary">
+            {DEMO_FIRM.location} · CRD {DEMO_FIRM.crd} · {DEMO_FIRM.aum}
           </div>
         </div>
       </div>
 
-      <section className="mt-6">
-        <h2 className="mb-1 text-sm font-semibold text-text-secondary">
-          Risk flags and queue ranking
+      <p className="mt-4 mb-7 max-w-xl text-sm leading-relaxed text-text-secondary">
+        {composeRiskSummary(RISK_FLAGS)}
+      </p>
+
+      <section className="mb-6">
+        <h2 className="mb-2 text-[13px] font-semibold text-text-muted">
+          Risk drivers, ranked
         </h2>
-        <p className="mb-3 max-w-lg text-xs leading-relaxed text-text-secondary">
-          These flags raise the bar for related meetings. Findings that touch
-          them are ranked higher in the review queue automatically.
-        </p>
-        <ul className="flex flex-col gap-2">
+        {/*
+          Risk drivers are derived from illustrative CRD / firm metadata, not
+          live Flag records. Rows navigate to the review queue with a stubbed
+          `?risk=<tag>` param. TODO: once a tag-to-flag mapping exists, feed real
+          flag counts in here and have the queue filter on the tag.
+        */}
+        <div className="overflow-hidden rounded-lg border bg-surface-card">
           {RISK_FLAGS.map((flag) => (
-            <li
-              key={flag.label}
-              className="flex flex-col gap-1.5 rounded-lg border bg-surface-card px-4 py-3 sm:flex-row sm:items-center sm:gap-3"
+            <Link
+              key={flag.riskTag}
+              href={`${DEMO_BASE_PATH}/queue?risk=${flag.riskTag}`}
+              className="flex items-center gap-2.5 border-b px-4 py-3 text-sm transition-colors last:border-b-0 hover:bg-surface-hover"
             >
-              <Badge
-                variant={flag.tone === "info" ? "secondary" : "default"}
+              <span
                 className={cn(
-                  "w-fit shrink-0 sm:w-32 sm:justify-start",
-                  flagClassName(flag.tone),
+                  "h-1.5 w-1.5 shrink-0 rounded-full",
+                  flag.tone === "high"
+                    ? "bg-semantic-danger"
+                    : "bg-semantic-warning",
                 )}
-              >
-                {flag.label}
-              </Badge>
-              <span className="text-xs leading-relaxed text-text-secondary">
-                {flag.explanation}
-              </span>
-            </li>
+                aria-hidden
+              />
+              <span className="flex-1">{flag.label}</span>
+              <span className="text-xs text-text-secondary">{flag.reason}</span>
+              <ChevronRight className="h-4 w-4 shrink-0 text-text-muted" />
+            </Link>
           ))}
-        </ul>
+        </div>
       </section>
 
-      <section className="mt-6">
-        <h2 className="mb-2 text-sm font-semibold text-text-secondary">
+      <section className="mb-6">
+        <h2 className="mb-2 text-[13px] font-semibold text-text-muted">
           Always disclosed verbally, every meeting
         </h2>
-        <div className="overflow-hidden rounded-lg border bg-surface-card">
+        <div className="overflow-hidden rounded-lg border">
           {LOCKED_DISCLOSURES.map((disclosure) => (
             <div
               key={disclosure.item}
-              className="flex items-center gap-2.5 border-b px-4 py-2.5 text-[13px] last:border-b-0"
+              className="flex items-center gap-2.5 border-b bg-surface-muted px-4 py-2.5 text-sm last:border-b-0"
             >
               <Lock className="h-3.5 w-3.5 shrink-0 text-text-muted" />
               <span className="flex-1">{disclosure.item}</span>
-              <span className="text-[11px] text-text-muted">
+              <span className="text-xs text-text-muted">
                 {disclosure.reference}
               </span>
             </div>
@@ -94,13 +89,7 @@ export default function DemoCockpitPage() {
         </div>
       </section>
 
-      <section className="mt-6">
-        <h2 className="mb-2 text-sm font-semibold text-text-secondary">
-          Configurable · {CONFIGURABLE_DISCLOSURES.length} items, all currently
-          required
-        </h2>
-        <DisclosuresCollapse items={CONFIGURABLE_DISCLOSURES} />
-      </section>
+      <DisclosuresCollapse items={CONFIGURABLE_DISCLOSURES} />
     </div>
   );
 }

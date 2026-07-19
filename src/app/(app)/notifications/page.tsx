@@ -5,10 +5,17 @@ import { Badge } from "~/components/ui/badge";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import { redirectPathForMissingWorkspace } from "~/server/workspace/no-workspace-redirect";
-import { listNotifications } from "~/server/notifications";
+import { listNotifications, type NotificationType } from "~/server/notifications";
 import { cn } from "~/lib/utils";
 
 export const dynamic = "force-dynamic";
+
+const NOTIFICATION_TYPE_LABELS: Record<NotificationType, string> = {
+  processing_complete: "Processing Complete",
+  finalized: "Finalized",
+  member_joined: "Team",
+  member_removed: "Team",
+};
 
 export default async function NotificationsPage() {
   const session = await auth();
@@ -74,9 +81,7 @@ export default async function NotificationsPage() {
                             : "secondary"
                         }
                       >
-                        {notification.type === "processing_complete"
-                          ? "Processing Complete"
-                          : "Finalized"}
+                        {NOTIFICATION_TYPE_LABELS[notification.type]}
                       </Badge>
                       {!notification.read && (
                         <Badge variant="outline">Unread</Badge>
@@ -90,10 +95,10 @@ export default async function NotificationsPage() {
                       {notification.message}
                     </p>
                   </div>
-                  {notification.meetingId && (
+                  {notification.href && (
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/meetings/${notification.meetingId}`}>
-                        View
+                      <Link href={notification.href}>
+                        {notification.meetingId ? "View" : "View team"}
                       </Link>
                     </Button>
                   )}

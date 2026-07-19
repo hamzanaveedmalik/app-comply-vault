@@ -8,16 +8,42 @@ export type NotificationMeeting = Pick<
   "id" | "clientName" | "meetingDate" | "status"
 >;
 
+export type NotificationType =
+  | "processing_complete"
+  | "finalized"
+  | "member_joined"
+  | "member_removed";
+
 export type NotificationItem = {
   id: string;
-  type: "processing_complete" | "finalized";
+  type: NotificationType;
   title: string;
   message: string;
   meetingId: string | null;
   meeting: NotificationMeeting | null;
+  /** Optional in-app link (e.g. team settings for membership events) */
+  href: string | null;
   timestamp: Date;
   read: boolean;
 };
+
+const WORKSPACE_ROLE_LABELS: Record<string, string> = {
+  OWNER_CCO: "Owner / CCO",
+  MEMBER: "Compliance Manager",
+  ADVISOR: "Advisor",
+};
+
+function roleLabelFor(role: unknown): string {
+  return typeof role === "string" ? (WORKSPACE_ROLE_LABELS[role] ?? "team member") : "team member";
+}
+
+function metadataString(metadata: unknown, key: string): string | null {
+  if (metadata !== null && typeof metadata === "object" && key in metadata) {
+    const value = (metadata as Record<string, unknown>)[key];
+    return typeof value === "string" ? value : null;
+  }
+  return null;
+}
 
 export function notificationSinceDate(): Date {
   return new Date(Date.now() - NOTIFICATION_LOOKBACK_MS);
@@ -131,8 +157,102 @@ function formatNotificationItem(
       : "Status update",
     meetingId,
     meeting,
+    href: meetingId ? `/meetings/${meetingId}` : null,
     timestamp: event.timestamp,
     read,
+  };
+}
+
+// ── Team / membership notifications ─────────────────────────────
+
+type TeamEvent = Pick<
+  AuditEvent,
+  "id" | "userId" | "action" | "timestamp" | "metadata"
+>;
+
+function teamEventsWhere(
+  workspaceId: string,
+  since: Date,
+): Prisma.AuditEventWhereInput {
+  return {
+    workspaceId,
+    action: { in: ["INVITE_ACCEPTED", "MEMBER_REMOVED"] },
+    timestamp: { gte: since },
+  };
+}
+
+async function fetchTeamEvents(
+  workspaceId: string,
+  since: Date,
+  take?: number,
+): Promise<TeamEvent[]> {
+  return db.auditEvent.findMany({
+    where: teamEventsWhere(workspaceId, since),
+    select: {
+      id: true,
+      userId: true,
+      action: true,
+      timestamp: true,
+      metadata: true,
+    },
+    orderBy: { timestamp: "desc" },
+    ...(take !== undefined ? { take } : {}),
+  });
+}
+
+async function loadUserNames(userIds: string[]): Promise<Map<string, string>> {
+  if (userIds.length === 0) return new Map();
+  const users = await db.user.findMany({
+    where: { id: { in: userIds } },
+    select: { id: true, name: true, email: true },
+  });
+  return new Map(
+    users.map((u) => [u.id, u.name?.trim() || u.email || "A new member"]),
+  );
+}
+
+/**
+ * A membership event is unread for everyone except the person who performed it
+ * (the joiner for INVITE_ACCEPTED, the remover for MEMBER_REMOVED).
+ */
+function isTeamEventUnread(event: TeamEvent, currentUserId: string): boolean {
+  return event.userId !== currentUserId;
+}
+
+function formatTeamItem(
+  event: TeamEvent,
+  actorName: string,
+  currentUserId: string,
+): NotificationItem {
+  if (event.action === "MEMBER_REMOVED") {
+    const removedEmail = metadataString(event.metadata, "removedEmail");
+    const removedRole = roleLabelFor(metadataString(event.metadata, "removedRole"));
+    return {
+      id: event.id,
+      type: "member_removed",
+      title: "Team member removed",
+      message: removedEmail
+        ? `${removedEmail} (${removedRole}) was removed from the workspace`
+        : "A team member was removed from the workspace",
+      meetingId: null,
+      meeting: null,
+      href: "/settings/workspace",
+      timestamp: event.timestamp,
+      read: !isTeamEventUnread(event, currentUserId),
+    };
+  }
+
+  const role = roleLabelFor(metadataString(event.metadata, "role"));
+  return {
+    id: event.id,
+    type: "member_joined",
+    title: `New ${role} joined`,
+    message: `${actorName} joined the workspace as ${role}`,
+    meetingId: null,
+    meeting: null,
+    href: "/settings/workspace",
+    timestamp: event.timestamp,
+    read: !isTeamEventUnread(event, currentUserId),
   };
 }
 
@@ -184,9 +304,16 @@ export async function getUnreadNotificationCount(
   userId: string,
 ): Promise<number> {
   const since = notificationSinceDate();
-  const statusEvents = await fetchStatusChangeEvents(workspaceId, since);
+  const [statusEvents, teamEvents] = await Promise.all([
+    fetchStatusChangeEvents(workspaceId, since),
+    fetchTeamEvents(workspaceId, since),
+  ]);
 
-  if (statusEvents.length === 0) return 0;
+  const teamUnread = teamEvents.filter((event) =>
+    isTeamEventUnread(event, userId),
+  ).length;
+
+  if (statusEvents.length === 0) return teamUnread;
 
   const meetingIds = [
     ...new Set(
@@ -198,7 +325,11 @@ export async function getUnreadNotificationCount(
 
   const viewedMap = await buildViewedMap(workspaceId, userId, meetingIds, since);
 
-  return statusEvents.filter((event) => isEventUnread(event, viewedMap)).length;
+  const meetingUnread = statusEvents.filter((event) =>
+    isEventUnread(event, viewedMap),
+  ).length;
+
+  return meetingUnread + teamUnread;
 }
 
 export async function listNotifications(
@@ -207,9 +338,10 @@ export async function listNotifications(
   limit = 50,
 ): Promise<NotificationItem[]> {
   const since = notificationSinceDate();
-  const events = await fetchStatusChangeEvents(workspaceId, since, limit);
-
-  if (events.length === 0) return [];
+  const [events, teamEvents] = await Promise.all([
+    fetchStatusChangeEvents(workspaceId, since, limit),
+    fetchTeamEvents(workspaceId, since, limit),
+  ]);
 
   const meetingIds = [
     ...new Set(
@@ -219,14 +351,32 @@ export async function listNotifications(
     ),
   ];
 
-  const [meetingsById, viewedMap] = await Promise.all([
+  // For INVITE_ACCEPTED the acting user is the person who joined.
+  const joinerIds = [
+    ...new Set(
+      teamEvents
+        .filter((event) => event.action === "INVITE_ACCEPTED")
+        .map((event) => event.userId),
+    ),
+  ];
+
+  const [meetingsById, viewedMap, userNames] = await Promise.all([
     loadMeetingsById(workspaceId, meetingIds),
     buildViewedMap(workspaceId, userId, meetingIds, since),
+    loadUserNames(joinerIds),
   ]);
 
-  return events.map((event) => {
+  const meetingItems = events.map((event) => {
     const meetingId = resolveNotificationMeetingId(event);
     const meeting = meetingId ? (meetingsById.get(meetingId) ?? null) : null;
     return formatNotificationItem(event, meeting, !isEventUnread(event, viewedMap));
   });
+
+  const teamItems = teamEvents.map((event) =>
+    formatTeamItem(event, userNames.get(event.userId) ?? "A new member", userId),
+  );
+
+  return [...meetingItems, ...teamItems]
+    .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+    .slice(0, limit);
 }

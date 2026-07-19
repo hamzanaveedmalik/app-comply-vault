@@ -100,6 +100,24 @@ export type AuditReadiness = {
   blockedReason: string | null;
 };
 
+export type AdvisorRow = {
+  userId: string;
+  name: string;
+  /** Avatar image URL — the advisor's own image, or a deterministic face fallback */
+  avatarUrl: string;
+  /** Meetings this advisor has certified */
+  certifiedCount: number;
+  /** Open flags across this advisor's certified meetings */
+  openFlags: number;
+  /** Average time-to-finalize (days) for this advisor's finalized meetings */
+  avgFinalizeDays: number | null;
+  /** ISO date of most recent certification, or null */
+  lastActivity: string | null;
+  /** Certification activity per bucket across the range (for the sparkline) */
+  trend: number[];
+  trending: "up" | "down" | "flat";
+};
+
 export type ClientHealthRow = {
   clientName: string;
   health: number;
@@ -139,6 +157,7 @@ export type DashboardSummary = {
   finalizeStrip: FinalizeStrip;
   auditReadiness: AuditReadiness;
   clients: ClientHealthRow[];
+  advisors: AdvisorRow[];
 
   totalMeetings: number;
   pendingReview: number;

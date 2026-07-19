@@ -37,6 +37,7 @@ export default function DashboardLoading(): React.JSX.Element {
         </div>
         <CardSkeleton className="min-h-[240px]" />
         <CardSkeleton className="min-h-[200px]" />
+        <CardSkeleton className="min-h-[200px]" />
       </div>
     </div>
   );

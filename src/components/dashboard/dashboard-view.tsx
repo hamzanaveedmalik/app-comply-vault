@@ -8,6 +8,7 @@ import { DispositionsCard } from "~/components/dashboard/dispositions-card";
 import { TimeToFinalizeCard } from "~/components/dashboard/time-to-finalize-card";
 import { AuditReadinessCard } from "~/components/dashboard/audit-readiness-card";
 import { ClientsHealthTable } from "~/components/dashboard/clients-health-table";
+import { AdvisorsTable } from "~/components/dashboard/advisors-table";
 import { DashboardMeetingTable } from "~/components/dashboard/dashboard-meeting-table";
 
 type DashboardViewProps = {
@@ -92,7 +93,9 @@ export function DashboardView({ summary, workspaceName }: DashboardViewProps): R
         <AuditReadinessCard readiness={summary.auditReadiness} />
       </div>
 
-      <ClientsHealthTable clients={summary.clients} />
+      <ClientsHealthTable clients={summary.clients} rangeLabel={summary.range} />
+
+      <AdvisorsTable advisors={summary.advisors} rangeLabel={summary.range} />
 
       {summary.recentMeetings.length === 0 ? (
         <section className="rounded-[10px] border border-dashed border-[#e6e8e6] bg-white p-10 text-center shadow-[0_1px_2px_rgba(20,31,25,0.04)]">

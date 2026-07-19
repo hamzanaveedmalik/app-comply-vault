@@ -621,6 +621,105 @@ export async function buildDashboardSummary(
     })
     .sort((a, b) => b.openFlags - a.openFlags || a.health - b.health);
 
+  // ── Advisors table: workspace ADVISOR roster + their certification stats ──
+  const [advisorMembers, certifiedMeetings] = await Promise.all([
+    db.userWorkspace.findMany({
+      where: { workspaceId, role: "ADVISOR", removedAt: null },
+      select: { userId: true, user: { select: { name: true, email: true, image: true } } },
+    }),
+    db.meeting.findMany({
+      where: { workspaceId, advisorCertifiedByUserId: { not: null } },
+      select: {
+        advisorCertifiedByUserId: true,
+        advisorCertifiedAt: true,
+        status: true,
+        timeToFinalize: true,
+        flags: {
+          where: { status: { in: [...OPEN_FLAG_STATUSES] } },
+          select: { id: true },
+        },
+      },
+    }),
+  ]);
+
+  type AdvisorAccumulator = {
+    certifiedCount: number;
+    openFlags: number;
+    finalizeDaysSum: number;
+    finalizeN: number;
+    lastActivity: Date | null;
+    weekly: number[];
+  };
+  const advisorMap = new Map<string, AdvisorAccumulator>();
+  const ensureAdvisor = (userId: string): AdvisorAccumulator => {
+    let acc = advisorMap.get(userId);
+    if (!acc) {
+      acc = {
+        certifiedCount: 0,
+        openFlags: 0,
+        finalizeDaysSum: 0,
+        finalizeN: 0,
+        lastActivity: null,
+        weekly: Array.from({ length: activityPoints }, () => 0),
+      };
+      advisorMap.set(userId, acc);
+    }
+    return acc;
+  };
+  for (const m of certifiedMeetings) {
+    if (!m.advisorCertifiedByUserId) continue;
+    const acc = ensureAdvisor(m.advisorCertifiedByUserId);
+    acc.certifiedCount += 1;
+    acc.openFlags += m.flags.length;
+    if (m.status === "FINALIZED" && m.timeToFinalize != null) {
+      acc.finalizeDaysSum += m.timeToFinalize / 86400;
+      acc.finalizeN += 1;
+    }
+    if (m.advisorCertifiedAt) {
+      if (!acc.lastActivity || m.advisorCertifiedAt > acc.lastActivity) {
+        acc.lastActivity = m.advisorCertifiedAt;
+      }
+      if (m.advisorCertifiedAt >= activityStart) {
+        const idx = bucketIndex(m.advisorCertifiedAt);
+        acc.weekly[idx] = (acc.weekly[idx] ?? 0) + 1;
+      }
+    }
+  }
+  const advisors = advisorMembers
+    .map((member) => {
+      const acc = advisorMap.get(member.userId);
+      const name = member.user?.name?.trim() || member.user?.email || "Advisor";
+      // Prefer the advisor's real avatar; otherwise a deterministic placeholder
+      // face seeded by their id (stable across renders, unique per advisor).
+      const avatarUrl =
+        member.user?.image?.trim() ||
+        `https://i.pravatar.cc/80?u=${encodeURIComponent(member.userId)}`;
+      const weekly = acc?.weekly ?? Array.from({ length: activityPoints }, () => 0);
+      const mid = Math.floor(weekly.length / 2);
+      const firstHalf = weekly.slice(0, mid).reduce((a, b) => a + b, 0);
+      const secondHalf = weekly.slice(mid).reduce((a, b) => a + b, 0);
+      let trending: "up" | "down" | "flat" = "flat";
+      if (secondHalf > firstHalf) trending = "up";
+      else if (secondHalf < firstHalf) trending = "down";
+      return {
+        userId: member.userId,
+        name,
+        avatarUrl,
+        certifiedCount: acc?.certifiedCount ?? 0,
+        openFlags: acc?.openFlags ?? 0,
+        avgFinalizeDays:
+          acc && acc.finalizeN > 0
+            ? Math.round((acc.finalizeDaysSum / acc.finalizeN) * 10) / 10
+            : null,
+        lastActivity: acc?.lastActivity ? acc.lastActivity.toISOString() : null,
+        trend: weekly,
+        trending,
+      };
+    })
+    .sort(
+      (a, b) => b.openFlags - a.openFlags || b.certifiedCount - a.certifiedCount,
+    );
+
   const recentMeetings: MeetingRow[] = meetings.map((m) => {
     const openCount = m.flags.length;
     const ui = resolveUiStatus(m.status, openCount);
@@ -660,6 +759,7 @@ export async function buildDashboardSummary(
     finalizeStrip,
     auditReadiness,
     clients,
+    advisors,
     totalMeetings,
     pendingReview,
     openFlags: openFlagsCount,

@@ -5,6 +5,8 @@ import { DashboardCard } from "~/components/dashboard/dashboard-card";
 
 type ClientsHealthTableProps = {
   clients: ClientHealthRow[];
+  /** Range suffix for the trend column header, e.g. "90d" */
+  rangeLabel: string;
 };
 
 function healthChip(score: number): { className: string; label: string } {
@@ -22,7 +24,10 @@ function sparkColor(score: number): string {
 const TH = "px-[18px] py-2.5 text-[10.5px] font-semibold uppercase tracking-[0.05em] text-[#79837d] border-b border-[#e6e8e6] whitespace-nowrap";
 const TD = "px-[18px] py-[11px] border-b border-[#e6e8e6] whitespace-nowrap align-middle";
 
-export function ClientsHealthTable({ clients }: ClientsHealthTableProps): React.JSX.Element {
+export function ClientsHealthTable({
+  clients,
+  rangeLabel,
+}: ClientsHealthTableProps): React.JSX.Element {
   const dateFmt = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" });
 
   return (
@@ -46,7 +51,7 @@ export function ClientsHealthTable({ clients }: ClientsHealthTableProps): React.
                 <th className={`${TH} text-left`}>Coverage</th>
                 <th className={`${TH} text-right`}>Open flags</th>
                 <th className={`${TH} text-left`}>Last meeting</th>
-                <th className={`${TH} text-left`}>Health · 8w</th>
+                <th className={`${TH} text-left`}>Health · {rangeLabel}</th>
                 <th className={TH} />
               </tr>
             </thead>

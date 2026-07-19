@@ -35,14 +35,93 @@ export type MeetingRow = {
   flagCount: number;
 };
 
+export type HealthTrendPoint = {
+  /** Short label, e.g. "Apr" or "W3" */
+  label: string;
+  /** Reconstructed weekly health proxy (0–100) */
+  score: number;
+};
+
+export type FlagActivityWeek = {
+  week: string;
+  opened: number;
+  resolved: number;
+};
+
+export type FlagAgingBucket = {
+  label: string;
+  count: number;
+  color: string;
+};
+
+export type FlagAging = {
+  avgDaysOpen: number | null;
+  buckets: FlagAgingBucket[];
+  pastSla: number;
+  slaDays: number;
+};
+
+export type DispositionSummary = {
+  resolved: number;
+  dismissed: number;
+  escalated: number;
+  /** 0–100; dismissed as a share of all dispositions */
+  falsePositiveRate: number;
+  trending: "up" | "down" | "flat";
+};
+
+export type FinalizeStripPoint = {
+  meetingId: string;
+  clientName: string;
+  days: number;
+  late: boolean;
+};
+
+export type FinalizeStrip = {
+  points: FinalizeStripPoint[];
+  targetDays: number;
+  maxDays: number;
+};
+
+export type AuditReadiness = {
+  ready: number;
+  total: number;
+  blocked: number;
+  blockedReason: string | null;
+};
+
+export type ClientHealthRow = {
+  clientName: string;
+  health: number;
+  coverageDone: number;
+  coverageTotal: number;
+  openFlags: number;
+  /** ISO date of most recent meeting, or null */
+  lastMeeting: string | null;
+  /** 8 weekly points (relative activity) for the sparkline */
+  trend: number[];
+  trending: "up" | "down" | "flat";
+};
+
 export type DashboardSummary = {
   healthScore: number;
+  healthLabel: string;
+  healthTrend: HealthTrendPoint[];
+  healthDelta: number;
   healthBreakdown: {
     meetingCoverage: number;
     documentsFinalised: number;
     flagsResolved: number;
     signaturesComplete: number;
   };
+
+  flagActivity: FlagActivityWeek[];
+  flagsOpenedThisWeek: number;
+  flagAging: FlagAging;
+  dispositions: DispositionSummary;
+  finalizeStrip: FinalizeStrip;
+  auditReadiness: AuditReadiness;
+  clients: ClientHealthRow[];
 
   totalMeetings: number;
   pendingReview: number;

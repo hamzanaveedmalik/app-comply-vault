@@ -6,12 +6,17 @@ import Link from "next/link";
 import type { MeetingRow } from "~/lib/dashboard-types";
 import { DashboardStatusBadge } from "~/components/dashboard/dashboard-status-badge";
 import { MeetingFlagsCell } from "~/components/dashboard/meeting-flags-cell";
+import { DashboardCard } from "~/components/dashboard/dashboard-card";
 
 type DashboardMeetingTableProps = {
   totalMeetings: number;
   pendingReview: number;
   initialRows: MeetingRow[];
 };
+
+const TH =
+  "px-[18px] py-2.5 text-[10.5px] font-semibold uppercase tracking-[0.05em] text-[#79837d] border-b border-[#e6e8e6] whitespace-nowrap";
+const TD = "px-[18px] py-[11px] border-b border-[#e6e8e6] whitespace-nowrap align-middle";
 
 export function DashboardMeetingTable({
   totalMeetings,
@@ -57,43 +62,25 @@ export function DashboardMeetingTable({
   });
 
   return (
-    <section className="rounded-[14px] border border-surface-border bg-surface-card shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
-      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-surface-divider px-5 py-4">
-        <div>
-          <h2 className="text-[15px] font-semibold text-text-primary">Meetings</h2>
-          <p className="mt-0.5 text-[11px] text-text-muted">
-            {totalMeetings} meetings · {pendingReview} require your review
-          </p>
-        </div>
-        <Link
-          href="/upload"
-          className="inline-flex items-center rounded-lg bg-brand px-3 py-2 text-[12px] font-semibold text-white shadow-[0_2px_8px_rgba(17,122,75,0.15)] transition hover:bg-brand-mid"
-        >
-          + Upload Meeting
-        </Link>
-      </div>
+    <DashboardCard
+      title="Recent meetings"
+      emphasized
+      link={{ href: "/interaction-log", label: "View all" }}
+      bodyClassName="px-0 pb-0 pt-2"
+    >
+      <p className="px-[18px] pb-1 text-[11px] text-[#79837d]">
+        {totalMeetings} meetings · {pendingReview} require your review
+      </p>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[640px] table-fixed border-collapse text-left">
+        <table className="w-full border-collapse text-[12.5px]">
           <thead>
-            <tr className="border-b border-surface-divider">
-              <th className="w-[25%] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.06em] text-text-muted">
-                Client
-              </th>
-              <th className="w-[22%] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.06em] text-text-muted">
-                Type
-              </th>
-              <th className="w-[12%] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.06em] text-text-muted">
-                Date
-              </th>
-              <th className="w-[10%] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.06em] text-text-muted">
-                Flags
-              </th>
-              <th className="w-[16%] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.06em] text-text-muted">
-                Status
-              </th>
-              <th className="w-[10%] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.06em] text-text-muted">
-                Action
-              </th>
+            <tr>
+              <th className={`${TH} text-left`}>Client</th>
+              <th className={`${TH} text-left`}>Type</th>
+              <th className={`${TH} text-left`}>Date</th>
+              <th className={`${TH} text-right`}>Flags</th>
+              <th className={`${TH} text-left`}>Status</th>
+              <th className={TH} />
             </tr>
           </thead>
           <tbody>
@@ -103,37 +90,33 @@ export function DashboardMeetingTable({
               return (
                 <tr
                   key={row.id}
-                  className="cursor-pointer border-b border-surface-divider transition-colors duration-100 hover:bg-surface-hover"
+                  className="group cursor-pointer last:[&>td]:border-b-0 hover:bg-[#f8f9f8]"
                   tabIndex={0}
                   onClick={() => router.push(`/meetings/${row.id}`)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") router.push(`/meetings/${row.id}`);
                   }}
                 >
-                  <td className="px-5 py-3 text-[13px] font-semibold text-text-primary">
-                    {row.clientName}
-                  </td>
-                  <td className="px-5 py-3 text-[12px] text-text-secondary">{row.meetingType}</td>
-                  <td className="px-5 py-3 text-[12px] text-text-secondary">
-                    {dateFmt.format(new Date(row.date))}
-                  </td>
-                  <td className="px-5 py-3">
+                  <td className={`${TD} font-semibold text-[#141f19]`}>{row.clientName}</td>
+                  <td className={`${TD} text-[#79837d]`}>{row.meetingType}</td>
+                  <td className={`${TD} text-[#79837d]`}>{dateFmt.format(new Date(row.date))}</td>
+                  <td className={`${TD} text-right`}>
                     <MeetingFlagsCell flagCount={row.flagCount} />
                   </td>
-                  <td className="px-5 py-3">
+                  <td className={TD}>
                     <DashboardStatusBadge
                       status={row.status}
                       label={row.statusLabel}
                       processing={processing}
                     />
                   </td>
-                  <td className="px-5 py-3">
+                  <td className={TD}>
                     <Link
                       href={`/meetings/${row.id}`}
-                      className="text-[12px] font-semibold text-brand hover:text-brand-mid"
+                      className="text-[12px] font-semibold text-[#177a4c] opacity-0 transition group-hover:opacity-100"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      View →
+                      Open
                     </Link>
                   </td>
                 </tr>
@@ -142,6 +125,6 @@ export function DashboardMeetingTable({
           </tbody>
         </table>
       </div>
-    </section>
+    </DashboardCard>
   );
 }

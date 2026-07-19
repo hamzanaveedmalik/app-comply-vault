@@ -126,7 +126,14 @@ export async function buildDashboardSummary(
     }),
     db.flag.findMany({
       where: { workspaceId },
-      select: { createdAt: true, type: true, status: true },
+      select: {
+        createdAt: true,
+        type: true,
+        status: true,
+        resolvedAt: true,
+        resolutionType: true,
+        cmDisposition: true,
+      },
     }),
     db.flag.groupBy({
       by: ["status"],
@@ -146,7 +153,7 @@ export async function buildDashboardSummary(
         status: "FINALIZED",
         timeToFinalize: { not: null },
       },
-      select: { timeToFinalize: true, finalizedAt: true },
+      select: { id: true, clientName: true, timeToFinalize: true, finalizedAt: true },
     }),
   ]);
 
@@ -322,6 +329,256 @@ export async function buildDashboardSummary(
       signaturesComplete * 0.2,
   );
 
+  const boundedHealth = Math.max(0, Math.min(100, healthScore));
+  const healthLabel =
+    boundedHealth <= 39 ? "Critical" : boundedHealth <= 69 ? "Needs Attention" : "Healthy";
+
+  // ── Per-client rollup (drives Clients table, audit readiness, coverage) ──
+  const clientMeetingRows = await db.meeting.findMany({
+    where: { workspaceId },
+    select: {
+      clientName: true,
+      status: true,
+      meetingDate: true,
+      createdAt: true,
+      finalizedAt: true,
+      flags: {
+        where: { status: { in: [...OPEN_FLAG_STATUSES] } },
+        select: { createdAt: true },
+      },
+    },
+  });
+
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  const SLA_DAYS = 7;
+  const TARGET_DAYS = 2;
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * DAY_MS);
+  const sixtyDaysAgo = new Date(now.getTime() - 60 * DAY_MS);
+
+  // ── Flag aging (open flags only) ──
+  let aging0to2 = 0;
+  let aging3to7 = 0;
+  let aging7plus = 0;
+  let ageSum = 0;
+  let ageN = 0;
+  for (const f of flagRows) {
+    if (!OPEN_FLAG_STATUS_SET.has(f.status)) continue;
+    const ageDays = (now.getTime() - f.createdAt.getTime()) / DAY_MS;
+    ageSum += ageDays;
+    ageN += 1;
+    if (ageDays <= 2) aging0to2 += 1;
+    else if (ageDays <= SLA_DAYS) aging3to7 += 1;
+    else aging7plus += 1;
+  }
+  const flagAging = {
+    avgDaysOpen: ageN === 0 ? null : Math.round((ageSum / ageN) * 10) / 10,
+    slaDays: SLA_DAYS,
+    pastSla: aging7plus,
+    buckets: [
+      { label: "0–2d", count: aging0to2, color: dashboardColors.accent },
+      { label: "3–7d", count: aging3to7, color: dashboardColors.amber2 },
+      { label: "7d+", count: aging7plus, color: dashboardColors.red },
+    ],
+  };
+
+  // ── Flag activity: opened vs resolved per week (last 8 weeks) ──
+  const ACTIVITY_WEEKS = 8;
+  const activityStart = new Date(now.getTime() - ACTIVITY_WEEKS * WEEK_MS);
+  const openedByWeek: number[] = Array.from({ length: ACTIVITY_WEEKS }, () => 0);
+  const resolvedByWeek: number[] = Array.from({ length: ACTIVITY_WEEKS }, () => 0);
+  const weekIndex = (d: Date): number =>
+    Math.min(
+      ACTIVITY_WEEKS - 1,
+      Math.max(0, Math.floor((d.getTime() - activityStart.getTime()) / WEEK_MS)),
+    );
+  for (const f of flagRows) {
+    if (f.createdAt >= activityStart) {
+      const idx = weekIndex(f.createdAt);
+      openedByWeek[idx] = (openedByWeek[idx] ?? 0) + 1;
+    }
+    if (f.resolvedAt && f.resolvedAt >= activityStart) {
+      const idx = weekIndex(f.resolvedAt);
+      resolvedByWeek[idx] = (resolvedByWeek[idx] ?? 0) + 1;
+    }
+  }
+  const flagActivity = openedByWeek.map((opened, i) => ({
+    week: `W${i + 1}`,
+    opened,
+    resolved: resolvedByWeek[i] ?? 0,
+  }));
+  const flagsOpenedThisWeek =
+    (openedByWeek[ACTIVITY_WEEKS - 1] ?? 0) - (resolvedByWeek[ACTIVITY_WEEKS - 1] ?? 0);
+
+  // ── Dispositions (last 30d) with prior-window comparison for trend ──
+  const countDispositions = (
+    since: Date,
+    until: Date,
+  ): { resolved: number; dismissed: number; escalated: number } => {
+    let resolved = 0;
+    let dismissed = 0;
+    let escalated = 0;
+    for (const f of flagRows) {
+      if (f.cmDisposition === "ESCALATED") {
+        // Escalations are counted once against the current window.
+        if (until.getTime() === now.getTime()) escalated += 1;
+        continue;
+      }
+      if (!f.resolvedAt) continue;
+      if (f.resolvedAt < since || f.resolvedAt >= until) continue;
+      if (f.resolutionType === "DISMISSED_WITH_REASON" || f.status === "CLOSED_ACCEPTED_RISK") {
+        dismissed += 1;
+      } else {
+        resolved += 1;
+      }
+    }
+    return { resolved, dismissed, escalated };
+  };
+  const current = countDispositions(thirtyDaysAgo, now);
+  const prior = countDispositions(sixtyDaysAgo, thirtyDaysAgo);
+  const currentTotal = current.resolved + current.dismissed + current.escalated;
+  const currentFpRate =
+    currentTotal === 0 ? 0 : Math.round((current.dismissed / currentTotal) * 100);
+  const priorTotal = prior.resolved + prior.dismissed;
+  const priorFpRate = priorTotal === 0 ? currentFpRate : (prior.dismissed / priorTotal) * 100;
+  let dispTrending: "up" | "down" | "flat" = "flat";
+  if (currentFpRate > priorFpRate + 1) dispTrending = "up";
+  else if (currentFpRate < priorFpRate - 1) dispTrending = "down";
+  const dispositions = {
+    resolved: current.resolved,
+    dismissed: current.dismissed,
+    escalated: current.escalated,
+    falsePositiveRate: currentFpRate,
+    trending: dispTrending,
+  };
+
+  // ── Time to finalize strip (one dot per finalized meeting) ──
+  const finalizePoints = timeToFinalizeRows
+    .filter((r) => r.timeToFinalize != null)
+    .map((r) => ({
+      meetingId: r.id,
+      clientName: r.clientName,
+      rawDays: (r.timeToFinalize ?? 0) / 86400,
+    }))
+    .sort((a, b) => a.rawDays - b.rawDays);
+  const finalizeMax = Math.max(
+    15,
+    TARGET_DAYS,
+    ...finalizePoints.map((p) => p.rawDays),
+  );
+  const finalizeStrip = {
+    targetDays: TARGET_DAYS,
+    maxDays: Math.ceil(finalizeMax),
+    points: finalizePoints.slice(0, 24).map((p) => ({
+      meetingId: p.meetingId,
+      clientName: p.clientName,
+      days: Math.round(p.rawDays * 10) / 10,
+      late: p.rawDays > TARGET_DAYS,
+    })),
+  };
+
+  // ── Audit readiness ──
+  const blockedMeetings = clientMeetingRows.filter(
+    (m) => m.status === "CM_REVIEWED" || m.status === "CCO_SIGNED_OFF",
+  ).length;
+  const auditReadiness = {
+    ready: finalizedCount,
+    total: totalMeetings,
+    blocked: blockedMeetings,
+    blockedReason: blockedMeetings > 0 ? "awaiting CCO sign-off" : null,
+  };
+
+  // ── Health trend: weekly reconstruction from real timestamps ──
+  // Not a stored history — recomputed from cumulative finalize + flag-resolution
+  // rates as of each week boundary, so every point is reproducible from the DB.
+  const TREND_WEEKS = 12;
+  const trendStart = new Date(now.getTime() - TREND_WEEKS * WEEK_MS);
+  const monthFmt = new Intl.DateTimeFormat("en-US", { month: "short" });
+  const healthTrend = Array.from({ length: TREND_WEEKS }, (_, i) => {
+    const weekEnd = new Date(trendStart.getTime() + (i + 1) * WEEK_MS);
+    const t = weekEnd.getTime();
+    const totalToDate = clientMeetingRows.filter((m) => m.createdAt.getTime() <= t).length;
+    const finalizedToDate = clientMeetingRows.filter(
+      (m) => m.finalizedAt != null && m.finalizedAt.getTime() <= t,
+    ).length;
+    const flagsCreatedToDate = flagRows.filter((f) => f.createdAt.getTime() <= t).length;
+    const flagsResolvedToDate = flagRows.filter(
+      (f) => f.resolvedAt != null && f.resolvedAt.getTime() <= t,
+    ).length;
+    const finalizedRate = totalToDate === 0 ? 1 : finalizedToDate / totalToDate;
+    const resolvedRate = flagsCreatedToDate === 0 ? 1 : flagsResolvedToDate / flagsCreatedToDate;
+    return {
+      label: monthFmt.format(weekEnd),
+      score: Math.round(finalizedRate * 50 + resolvedRate * 50),
+    };
+  });
+  const healthDelta =
+    (healthTrend[TREND_WEEKS - 1]?.score ?? 0) - (healthTrend[0]?.score ?? 0);
+
+  // ── Clients table ──
+  type ClientAccumulator = {
+    total: number;
+    documented: number;
+    finalized: number;
+    openFlags: number;
+    lastMeeting: Date | null;
+    weekly: number[];
+  };
+  const clientMap = new Map<string, ClientAccumulator>();
+  for (const m of clientMeetingRows) {
+    const name = m.clientName.trim() || "Unknown client";
+    let acc = clientMap.get(name);
+    if (!acc) {
+      acc = {
+        total: 0,
+        documented: 0,
+        finalized: 0,
+        openFlags: 0,
+        lastMeeting: null,
+        weekly: Array.from({ length: 8 }, () => 0),
+      };
+      clientMap.set(name, acc);
+    }
+    acc.total += 1;
+    if (m.status !== "UPLOADING" && m.status !== "PROCESSING") acc.documented += 1;
+    if (m.status === "FINALIZED") acc.finalized += 1;
+    acc.openFlags += m.flags.length;
+    if (!acc.lastMeeting || m.meetingDate > acc.lastMeeting) acc.lastMeeting = m.meetingDate;
+    for (const flag of m.flags) {
+      if (flag.createdAt >= activityStart) {
+        const idx = weekIndex(flag.createdAt);
+        acc.weekly[idx] = (acc.weekly[idx] ?? 0) + 1;
+      }
+    }
+  }
+  const clients = Array.from(clientMap.entries())
+    .map(([clientName, acc]) => {
+      const coverageRate = acc.total === 0 ? 1 : acc.documented / acc.total;
+      const finalizedRate = acc.total === 0 ? 1 : acc.finalized / acc.total;
+      // Composite client health indicator derived from real signals (coverage,
+      // finalize rate, open-flag load). Weighting mirrors the workspace formula.
+      const flagPenalty = Math.min(35, acc.openFlags * 5);
+      const health = Math.max(
+        0,
+        Math.min(100, Math.round(coverageRate * 45 + finalizedRate * 35 + 20 - flagPenalty)),
+      );
+      const firstHalf = acc.weekly.slice(0, 4).reduce((a, b) => a + b, 0);
+      const secondHalf = acc.weekly.slice(4).reduce((a, b) => a + b, 0);
+      let trending: "up" | "down" | "flat" = "flat";
+      if (secondHalf > firstHalf) trending = "up";
+      else if (secondHalf < firstHalf) trending = "down";
+      return {
+        clientName,
+        health,
+        coverageDone: acc.documented,
+        coverageTotal: acc.total,
+        openFlags: acc.openFlags,
+        lastMeeting: acc.lastMeeting ? acc.lastMeeting.toISOString() : null,
+        trend: acc.weekly,
+        trending,
+      };
+    })
+    .sort((a, b) => b.openFlags - a.openFlags || a.health - b.health);
+
   const recentMeetings: MeetingRow[] = meetings.map((m) => {
     const openCount = m.flags.length;
     const ui = resolveUiStatus(m.status, openCount);
@@ -341,13 +598,23 @@ export async function buildDashboardSummary(
     totalMeetings === 0 ? 100 : Math.round((finalizedCount / totalMeetings) * 100);
 
   return {
-    healthScore: Math.max(0, Math.min(100, healthScore)),
+    healthScore: boundedHealth,
+    healthLabel,
+    healthTrend,
+    healthDelta,
     healthBreakdown: {
       meetingCoverage,
       documentsFinalised,
       flagsResolved,
       signaturesComplete,
     },
+    flagActivity,
+    flagsOpenedThisWeek,
+    flagAging,
+    dispositions,
+    finalizeStrip,
+    auditReadiness,
+    clients,
     totalMeetings,
     pendingReview,
     openFlags: openFlagsCount,

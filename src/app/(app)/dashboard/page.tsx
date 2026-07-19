@@ -60,7 +60,7 @@ export default async function DashboardPage(): Promise<React.ReactElement> {
           role={membership.role as WorkspaceRoleKey}
         />
       ) : null}
-      <DashboardView summary={summary} />
+      <DashboardView summary={summary} workspaceName={workspace?.name ?? "Your workspace"} />
     </div>
   );
 }

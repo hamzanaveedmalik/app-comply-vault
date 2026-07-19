@@ -1,87 +1,94 @@
 import Link from "next/link";
+import { Plus } from "lucide-react";
 import type { DashboardSummary } from "~/lib/dashboard-types";
-import { HealthGauge } from "~/components/dashboard/health-gauge";
-import { FlagsAreaChart } from "~/components/dashboard/flags-area-chart";
-import { FlagCategoryBars } from "~/components/dashboard/flag-category-bars";
-import { MeetingTypeDonut } from "~/components/dashboard/meeting-type-donut";
-import { FinalizeSparkline } from "~/components/dashboard/finalize-sparkline";
-import { PipelineBar } from "~/components/dashboard/pipeline-bar";
+import { ComplianceHealthCard } from "~/components/dashboard/compliance-health-card";
+import { FlagActivityCard } from "~/components/dashboard/flag-activity-card";
+import { FlagAgingCard } from "~/components/dashboard/flag-aging-card";
+import { DispositionsCard } from "~/components/dashboard/dispositions-card";
+import { TimeToFinalizeCard } from "~/components/dashboard/time-to-finalize-card";
+import { AuditReadinessCard } from "~/components/dashboard/audit-readiness-card";
+import { ClientsHealthTable } from "~/components/dashboard/clients-health-table";
 import { DashboardMeetingTable } from "~/components/dashboard/dashboard-meeting-table";
 
 type DashboardViewProps = {
   summary: DashboardSummary;
+  workspaceName: string;
 };
 
-export function DashboardView({ summary }: DashboardViewProps): React.JSX.Element {
-  const pendingCard = (
-    <div className="flex h-full min-h-[140px] flex-col justify-between rounded-[14px] border-y border-r border-surface-border border-l-[3px] border-l-semantic-orange bg-surface-card p-4 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
-      <span className="text-[11px] font-semibold uppercase tracking-[0.05em] text-text-secondary">
-        Pending review
-      </span>
-      <div>
-        <div className="text-[36px] font-bold leading-none text-semantic-orange">{summary.pendingReview}</div>
-        <p className="mt-1 text-[12px] text-text-muted">meetings</p>
-      </div>
-      <Link
-        href="/review"
-        className="mt-2 text-[11px] font-semibold text-semantic-orange hover:underline"
-      >
-        Review now →
-      </Link>
-    </div>
-  );
+function weekOfLabel(): string {
+  const now = new Date();
+  const day = now.getDay();
+  const diff = (day + 6) % 7; // days since Monday
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - diff);
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(monday);
+}
 
-  const auditCard = (
-    <div className="flex h-full min-h-[140px] flex-col justify-between rounded-[14px] border-y border-r border-surface-border border-l-[3px] border-l-brand bg-surface-card p-4 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
-      <span className="text-[11px] font-semibold uppercase tracking-[0.05em] text-text-secondary">
-        Audit packs
-      </span>
-      <div>
-        <div className="text-[36px] font-bold leading-none text-brand">{summary.auditPacksGenerated}</div>
-        <p className="mt-1 text-[12px] text-text-muted">SEC-ready</p>
-      </div>
-      <Link href="/audit-packs" className="mt-2 text-[11px] font-semibold text-brand hover:underline">
-        View pack →
-      </Link>
-    </div>
-  );
-
+export function DashboardView({ summary, workspaceName }: DashboardViewProps): React.JSX.Element {
   return (
-    <div className="space-y-4 pb-10">
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-[240px_minmax(0,1fr)_minmax(0,1fr)]">
-        <div className="md:col-span-2 xl:col-span-1">
-          <HealthGauge
-            score={summary.healthScore}
-            openFlags={summary.openFlags}
-            unfinalizedCount={summary.unfinalizedCount}
-          />
+    <div className="mx-auto w-full max-w-[1240px] space-y-3.5 pb-10">
+      <div className="mb-1 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-[18px] font-[650] tracking-[-0.01em] text-[#141f19]">Dashboard</h1>
+          <p className="mt-0.5 text-[12.5px] text-[#79837d]">
+            {workspaceName} · Week of {weekOfLabel()}
+          </p>
         </div>
-        <FlagsAreaChart
-          data={summary.flagsTrend}
-          openFlags={summary.openFlags}
-          flagsDelta={summary.flagsDelta}
-          flagsTrending={summary.flagsTrending}
-        />
-        <FlagCategoryBars categories={summary.flagsByCategory} />
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-[1.3fr_1fr_0.55fr_0.55fr]">
-        <MeetingTypeDonut data={summary.meetingsByType} />
-        <FinalizeSparkline data={summary.finalizeTrend} avgDays={summary.avgTimeToFinalize} />
-        {pendingCard}
-        {auditCard}
-      </div>
-
-      <PipelineBar pipeline={summary.pipeline} />
-
-      {summary.recentMeetings.length === 0 ? (
-        <section className="rounded-[14px] border border-dashed border-surface-border bg-surface-card p-10 text-center shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
-          <p className="text-text-secondary">No meetings yet.</p>
+        <div className="flex items-center gap-2.5">
+          <div className="flex rounded-[8px] border border-[#e6e8e6] bg-white p-0.5">
+            {["30d", "90d", "12m"].map((r) => (
+              <span
+                key={r}
+                className={`rounded-[6px] px-[11px] py-[5px] text-[12px] font-medium ${
+                  r === "90d" ? "bg-[#12382a] font-semibold text-white" : "text-[#79837d]"
+                }`}
+              >
+                {r}
+              </span>
+            ))}
+          </div>
           <Link
             href="/upload"
-            className="mt-4 inline-flex rounded-lg bg-brand px-4 py-2 text-[12px] font-semibold text-white shadow-[0_2px_8px_rgba(17,122,75,0.15)]"
+            className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#12382a] px-3.5 py-2 text-[12.5px] font-semibold text-white transition hover:bg-[#1c4a37]"
           >
-            Upload Meeting
+            <Plus className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+            Upload meeting
+          </Link>
+        </div>
+      </div>
+
+      <div className="grid gap-3.5 lg:grid-cols-2 xl:grid-cols-[5fr_4fr_3fr]">
+        <ComplianceHealthCard
+          score={summary.healthScore}
+          label={summary.healthLabel}
+          delta={summary.healthDelta}
+          breakdown={summary.healthBreakdown}
+          trend={summary.healthTrend}
+        />
+        <FlagActivityCard
+          data={summary.flagActivity}
+          openFlags={summary.openFlags}
+          openedDelta={summary.flagsOpenedThisWeek}
+        />
+        <FlagAgingCard aging={summary.flagAging} />
+      </div>
+
+      <div className="grid gap-3.5 lg:grid-cols-2 xl:grid-cols-3">
+        <DispositionsCard dispositions={summary.dispositions} />
+        <TimeToFinalizeCard strip={summary.finalizeStrip} avgDays={summary.avgTimeToFinalize} />
+        <AuditReadinessCard readiness={summary.auditReadiness} />
+      </div>
+
+      <ClientsHealthTable clients={summary.clients} />
+
+      {summary.recentMeetings.length === 0 ? (
+        <section className="rounded-[10px] border border-dashed border-[#e6e8e6] bg-white p-10 text-center shadow-[0_1px_2px_rgba(20,31,25,0.04)]">
+          <p className="text-[13px] text-[#3f4b45]">No meetings yet.</p>
+          <Link
+            href="/upload"
+            className="mt-4 inline-flex rounded-[8px] bg-[#12382a] px-4 py-2 text-[12px] font-semibold text-white transition hover:bg-[#1c4a37]"
+          >
+            Upload meeting
           </Link>
         </section>
       ) : (

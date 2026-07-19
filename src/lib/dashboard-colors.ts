@@ -10,6 +10,25 @@ export const dashboardColors = {
   semanticCritical: "#DC2626",
   textMuted: "#94A3B8",
   barTrack: "#F1F5F9",
+  /**
+   * Dashboard v2 palette — matches the approved dashboard mock. Kept distinct from
+   * the brand tokens above so the redesigned surfaces render exactly as designed.
+   */
+  forest: "#12382a",
+  forest2: "#1c4a37",
+  accent: "#177a4c",
+  accentSoft: "#e9f4ee",
+  amber: "#b26a12",
+  amber2: "#e0a53f",
+  amberSoft: "#fdf4e6",
+  red: "#c13a2a",
+  redSoft: "#fcedeb",
+  slate: "#6b7c86",
+  slate2: "#8fa1ab",
+  track: "#eff1ef",
+  inkStrong: "#141f19",
+  ink2: "#3f4b45",
+  ink3: "#79837d",
   meetingTypes: {
     "Annual Review": "#117A4B",
     "Portfolio Review": "#3B82F6",

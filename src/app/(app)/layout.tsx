@@ -3,6 +3,7 @@ import { requireAuthAndEmailVerified } from "~/server/auth/guards";
 import { db } from "~/server/db";
 import { redirect } from "next/navigation";
 import { AppSidebar } from "~/components/app-sidebar";
+import { AppShell } from "~/components/layout/app-shell";
 import { TopBar } from "~/components/top-bar";
 import { listWorkspacesForUser } from "~/server/workspace/list-workspaces-for-user";
 import type { WorkspaceListItemDto } from "~/lib/workspace-types";
@@ -50,24 +51,29 @@ export default async function AppLayout({
 
   return (
     <div className="min-h-screen bg-surface-page">
-      <AppSidebar
-        userEmail={session.user.email}
-        userName={session.user.name}
-        userRole={session.user.role}
-        activeWorkspaceId={session.user.workspaceId ?? ""}
-        workspaces={workspaces}
-        reviewQueueCount={reviewQueueCount}
-      />
-      <div className="lg:pl-[244px]">
-        <TopBar
-          userEmail={session.user.email}
-          userName={session.user.name}
-          userImage={session.user.image}
-          userRole={session.user.role}
-          billingStatus={billingStatus}
-        />
-      </div>
-      <main className="min-h-screen pt-14 lg:pl-[244px]">{children}</main>
+      <AppShell
+        sidebar={
+          <AppSidebar
+            userEmail={session.user.email}
+            userName={session.user.name}
+            userRole={session.user.role}
+            activeWorkspaceId={session.user.workspaceId ?? ""}
+            workspaces={workspaces}
+            reviewQueueCount={reviewQueueCount}
+          />
+        }
+        topBar={
+          <TopBar
+            userEmail={session.user.email}
+            userName={session.user.name}
+            userImage={session.user.image}
+            userRole={session.user.role}
+            billingStatus={billingStatus}
+          />
+        }
+      >
+        {children}
+      </AppShell>
     </div>
   );
 }

@@ -3,9 +3,14 @@ import { DashboardCard } from "~/components/dashboard/dashboard-card";
 
 type DispositionsCardProps = {
   dispositions: DispositionSummary;
+  /** Range suffix shown in the card title, e.g. "30d" */
+  rangeLabel: string;
 };
 
-export function DispositionsCard({ dispositions }: DispositionsCardProps): React.JSX.Element {
+export function DispositionsCard({
+  dispositions,
+  rangeLabel,
+}: DispositionsCardProps): React.JSX.Element {
   const rows = [
     { label: "Resolved", count: dispositions.resolved, color: "#177a4c" },
     { label: "Dismissed", count: dispositions.dismissed, color: "#8fa1ab" },
@@ -21,7 +26,7 @@ export function DispositionsCard({ dispositions }: DispositionsCardProps): React
         : "steady";
 
   return (
-    <DashboardCard title="Dispositions · 30d">
+    <DashboardCard title={`Dispositions · ${rangeLabel}`}>
       {rows.map((r) => (
         <div key={r.label} className="mb-[11px] grid grid-cols-[82px_1fr_28px] items-center gap-2.5">
           <span className="text-[11.5px] text-[#3f4b45]">{r.label}</span>

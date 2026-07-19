@@ -8,6 +8,7 @@ type ComplianceHealthCardProps = {
   delta: number;
   breakdown: DashboardSummary["healthBreakdown"];
   trend: DashboardSummary["healthTrend"];
+  caption: string;
 };
 
 const RING_R = 36;
@@ -31,6 +32,7 @@ export function ComplianceHealthCard({
   delta,
   breakdown,
   trend,
+  caption,
 }: ComplianceHealthCardProps): React.JSX.Element {
   const dashOffset = RING_CIRC * (1 - Math.max(0, Math.min(100, score)) / 100);
   const color = arcColor(score);
@@ -99,13 +101,13 @@ export function ComplianceHealthCard({
       <div className="mt-[14px] border-t border-[#e6e8e6] pt-3">
         <div className="mb-1.5 flex items-baseline justify-between">
           <span className="text-[10.5px] font-semibold uppercase tracking-[0.05em] text-[#79837d]">
-            12-week trend
+            {caption}
           </span>
           <span
             className={`text-[11.5px] font-semibold ${delta >= 0 ? "text-[#177a4c]" : "text-[#c13a2a]"}`}
           >
             {delta >= 0 ? "+" : ""}
-            {delta} vs Q1
+            {delta} vs start
           </span>
         </div>
         <svg width="100%" height="46" viewBox="0 0 320 46" preserveAspectRatio="none">

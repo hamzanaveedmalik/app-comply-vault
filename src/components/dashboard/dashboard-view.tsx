@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import type { DashboardSummary } from "~/lib/dashboard-types";
+import { DASHBOARD_RANGES, type DashboardSummary } from "~/lib/dashboard-types";
 import { ComplianceHealthCard } from "~/components/dashboard/compliance-health-card";
 import { FlagActivityCard } from "~/components/dashboard/flag-activity-card";
 import { FlagAgingCard } from "~/components/dashboard/flag-aging-card";
@@ -35,17 +35,29 @@ export function DashboardView({ summary, workspaceName }: DashboardViewProps): R
           </p>
         </div>
         <div className="flex items-center gap-2.5">
-          <div className="flex rounded-[8px] border border-[#e6e8e6] bg-white p-0.5">
-            {["30d", "90d", "12m"].map((r) => (
-              <span
-                key={r}
-                className={`rounded-[6px] px-[11px] py-[5px] text-[12px] font-medium ${
-                  r === "90d" ? "bg-[#12382a] font-semibold text-white" : "text-[#79837d]"
-                }`}
-              >
-                {r}
-              </span>
-            ))}
+          <div
+            className="flex rounded-[8px] border border-[#e6e8e6] bg-white p-0.5"
+            role="group"
+            aria-label="Time range"
+          >
+            {DASHBOARD_RANGES.map((r) => {
+              const active = r === summary.range;
+              return (
+                <Link
+                  key={r}
+                  href={`/dashboard?range=${r}`}
+                  scroll={false}
+                  aria-current={active ? "true" : undefined}
+                  className={`rounded-[6px] px-[11px] py-[5px] text-[12px] transition ${
+                    active
+                      ? "bg-[#12382a] font-semibold text-white"
+                      : "font-medium text-[#79837d] hover:text-[#141f19]"
+                  }`}
+                >
+                  {r}
+                </Link>
+              );
+            })}
           </div>
           <Link
             href="/upload"
@@ -64,6 +76,7 @@ export function DashboardView({ summary, workspaceName }: DashboardViewProps): R
           delta={summary.healthDelta}
           breakdown={summary.healthBreakdown}
           trend={summary.healthTrend}
+          caption={summary.trendCaption}
         />
         <FlagActivityCard
           data={summary.flagActivity}
@@ -74,8 +87,8 @@ export function DashboardView({ summary, workspaceName }: DashboardViewProps): R
       </div>
 
       <div className="grid gap-3.5 lg:grid-cols-2 xl:grid-cols-3">
-        <DispositionsCard dispositions={summary.dispositions} />
-        <TimeToFinalizeCard strip={summary.finalizeStrip} avgDays={summary.avgTimeToFinalize} />
+        <DispositionsCard dispositions={summary.dispositions} rangeLabel={summary.range} />
+        <TimeToFinalizeCard strip={summary.finalizeStrip} avgDays={summary.finalizeStrip.avgDays} />
         <AuditReadinessCard readiness={summary.auditReadiness} />
       </div>
 

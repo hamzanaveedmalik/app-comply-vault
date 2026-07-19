@@ -81,7 +81,17 @@ export type FinalizeStrip = {
   points: FinalizeStripPoint[];
   targetDays: number;
   maxDays: number;
+  /** Average time-to-finalize (days) for meetings finalized within the range */
+  avgDays: number | null;
 };
+
+export type DashboardRange = "30d" | "90d" | "12m";
+
+export const DASHBOARD_RANGES: readonly DashboardRange[] = ["30d", "90d", "12m"] as const;
+
+export function isDashboardRange(value: unknown): value is DashboardRange {
+  return value === "30d" || value === "90d" || value === "12m";
+}
 
 export type AuditReadiness = {
   ready: number;
@@ -104,6 +114,13 @@ export type ClientHealthRow = {
 };
 
 export type DashboardSummary = {
+  /** The time range this summary was computed for */
+  range: DashboardRange;
+  /** Human-readable range window, e.g. "Last 90 days" */
+  rangeLabel: string;
+  /** Caption for the health trend chart, e.g. "13-week trend" */
+  trendCaption: string;
+
   healthScore: number;
   healthLabel: string;
   healthTrend: HealthTrendPoint[];

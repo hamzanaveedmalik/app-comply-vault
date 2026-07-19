@@ -7,8 +7,15 @@ import { WelcomeBanner } from "./components/welcome-banner";
 import type { WorkspaceRoleKey } from "~/lib/role-config";
 import { redirectPathForMissingWorkspace } from "~/server/workspace/no-workspace-redirect";
 import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
+import { isDashboardRange, type DashboardRange } from "~/lib/dashboard-types";
 
-export default async function DashboardPage(): Promise<React.ReactElement> {
+export const dynamic = "force-dynamic";
+
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ range?: string | string[] }>;
+}): Promise<React.ReactElement> {
   const session = await auth();
 
   if (!session?.user?.workspaceId || session.user.workspaceId === "") {
@@ -22,8 +29,11 @@ export default async function DashboardPage(): Promise<React.ReactElement> {
 
   const workspaceId = session.user.workspaceId;
 
+  const rawRange = (await searchParams).range;
+  const range: DashboardRange = isDashboardRange(rawRange) ? rawRange : "90d";
+
   const [summary, membership, workspace, inviteAccepted] = await Promise.all([
-    buildDashboardSummary(db, workspaceId),
+    buildDashboardSummary(db, workspaceId, range),
     db.userWorkspace.findFirst({
       where: {
         userId: session.user.id,

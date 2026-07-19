@@ -1,4 +1,5 @@
 import type {
+  DashboardRange,
   DashboardSummary,
   FinalizeTimeData,
   FlagCategoryData,
@@ -14,8 +15,29 @@ import type { PrismaClient } from "../../../generated/prisma";
 const OPEN_FLAG_STATUSES = ["OPEN", "IN_REMEDIATION", "PENDING_VERIFICATION"] as const;
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 const OPEN_FLAG_STATUS_SET = new Set<string>(OPEN_FLAG_STATUSES);
+
+/**
+ * Per-range configuration for time-windowed cards. `days` is the lookback
+ * window; the chart cards bucket that window into `trendPoints` / `activityPoints`
+ * evenly-sized intervals so they render consistently at any range.
+ */
+const RANGE_CONFIG: Record<
+  DashboardRange,
+  {
+    days: number;
+    trendPoints: number;
+    activityPoints: number;
+    rangeLabel: string;
+    granularity: "day" | "month";
+  }
+> = {
+  "30d": { days: 30, trendPoints: 10, activityPoints: 6, rangeLabel: "Last 30 days", granularity: "day" },
+  "90d": { days: 90, trendPoints: 12, activityPoints: 9, rangeLabel: "Last 90 days", granularity: "day" },
+  "12m": { days: 365, trendPoints: 12, activityPoints: 12, rangeLabel: "Last 12 months", granularity: "month" },
+};
 
 function formatWeekLabel(weekStart: Date, index: number): string {
   return `W${index + 1}`;
@@ -78,8 +100,12 @@ function pipelineCategory(
 export async function buildDashboardSummary(
   db: PrismaClient,
   workspaceId: string,
+  range: DashboardRange = "90d",
 ): Promise<DashboardSummary> {
   const now = new Date();
+  const rangeCfg = RANGE_CONFIG[range];
+  const windowMs = rangeCfg.days * DAY_MS;
+  const windowStart = new Date(now.getTime() - windowMs);
 
   const [
     meetings,
@@ -349,11 +375,12 @@ export async function buildDashboardSummary(
     },
   });
 
-  const DAY_MS = 24 * 60 * 60 * 1000;
   const SLA_DAYS = 7;
   const TARGET_DAYS = 2;
-  const thirtyDaysAgo = new Date(now.getTime() - 30 * DAY_MS);
-  const sixtyDaysAgo = new Date(now.getTime() - 60 * DAY_MS);
+  // Dispositions use the selected range as the current window and the immediately
+  // preceding window of the same length for the trend comparison.
+  const dispCurrentStart = windowStart;
+  const dispPriorStart = new Date(now.getTime() - 2 * windowMs);
 
   // ── Flag aging (open flags only) ──
   let aging0to2 = 0;
@@ -381,33 +408,37 @@ export async function buildDashboardSummary(
     ],
   };
 
-  // ── Flag activity: opened vs resolved per week (last 8 weeks) ──
-  const ACTIVITY_WEEKS = 8;
-  const activityStart = new Date(now.getTime() - ACTIVITY_WEEKS * WEEK_MS);
-  const openedByWeek: number[] = Array.from({ length: ACTIVITY_WEEKS }, () => 0);
-  const resolvedByWeek: number[] = Array.from({ length: ACTIVITY_WEEKS }, () => 0);
-  const weekIndex = (d: Date): number =>
+  // ── Flag activity: opened vs resolved, bucketed across the selected range ──
+  const activityPoints = rangeCfg.activityPoints;
+  const activityStart = windowStart;
+  const activityBucketMs = windowMs / activityPoints;
+  const dayLabelFmt = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" });
+  const monthLabelFmt = new Intl.DateTimeFormat("en-US", { month: "short" });
+  const bucketLabelFmt = rangeCfg.granularity === "month" ? monthLabelFmt : dayLabelFmt;
+  const openedByBucket: number[] = Array.from({ length: activityPoints }, () => 0);
+  const resolvedByBucket: number[] = Array.from({ length: activityPoints }, () => 0);
+  const bucketIndex = (d: Date): number =>
     Math.min(
-      ACTIVITY_WEEKS - 1,
-      Math.max(0, Math.floor((d.getTime() - activityStart.getTime()) / WEEK_MS)),
+      activityPoints - 1,
+      Math.max(0, Math.floor((d.getTime() - activityStart.getTime()) / activityBucketMs)),
     );
   for (const f of flagRows) {
     if (f.createdAt >= activityStart) {
-      const idx = weekIndex(f.createdAt);
-      openedByWeek[idx] = (openedByWeek[idx] ?? 0) + 1;
+      const idx = bucketIndex(f.createdAt);
+      openedByBucket[idx] = (openedByBucket[idx] ?? 0) + 1;
     }
     if (f.resolvedAt && f.resolvedAt >= activityStart) {
-      const idx = weekIndex(f.resolvedAt);
-      resolvedByWeek[idx] = (resolvedByWeek[idx] ?? 0) + 1;
+      const idx = bucketIndex(f.resolvedAt);
+      resolvedByBucket[idx] = (resolvedByBucket[idx] ?? 0) + 1;
     }
   }
-  const flagActivity = openedByWeek.map((opened, i) => ({
-    week: `W${i + 1}`,
+  const flagActivity = openedByBucket.map((opened, i) => ({
+    week: bucketLabelFmt.format(new Date(activityStart.getTime() + i * activityBucketMs)),
     opened,
-    resolved: resolvedByWeek[i] ?? 0,
+    resolved: resolvedByBucket[i] ?? 0,
   }));
   const flagsOpenedThisWeek =
-    (openedByWeek[ACTIVITY_WEEKS - 1] ?? 0) - (resolvedByWeek[ACTIVITY_WEEKS - 1] ?? 0);
+    (openedByBucket[activityPoints - 1] ?? 0) - (resolvedByBucket[activityPoints - 1] ?? 0);
 
   // ── Dispositions (last 30d) with prior-window comparison for trend ──
   const countDispositions = (
@@ -433,8 +464,8 @@ export async function buildDashboardSummary(
     }
     return { resolved, dismissed, escalated };
   };
-  const current = countDispositions(thirtyDaysAgo, now);
-  const prior = countDispositions(sixtyDaysAgo, thirtyDaysAgo);
+  const current = countDispositions(dispCurrentStart, now);
+  const prior = countDispositions(dispPriorStart, dispCurrentStart);
   const currentTotal = current.resolved + current.dismissed + current.escalated;
   const currentFpRate =
     currentTotal === 0 ? 0 : Math.round((current.dismissed / currentTotal) * 100);
@@ -451,9 +482,9 @@ export async function buildDashboardSummary(
     trending: dispTrending,
   };
 
-  // ── Time to finalize strip (one dot per finalized meeting) ──
+  // ── Time to finalize strip (one dot per meeting finalized within range) ──
   const finalizePoints = timeToFinalizeRows
-    .filter((r) => r.timeToFinalize != null)
+    .filter((r) => r.timeToFinalize != null && r.finalizedAt != null && r.finalizedAt >= windowStart)
     .map((r) => ({
       meetingId: r.id,
       clientName: r.clientName,
@@ -465,9 +496,16 @@ export async function buildDashboardSummary(
     TARGET_DAYS,
     ...finalizePoints.map((p) => p.rawDays),
   );
+  const finalizeAvg =
+    finalizePoints.length === 0
+      ? null
+      : Math.round(
+          (finalizePoints.reduce((sum, p) => sum + p.rawDays, 0) / finalizePoints.length) * 10,
+        ) / 10;
   const finalizeStrip = {
     targetDays: TARGET_DAYS,
     maxDays: Math.ceil(finalizeMax),
+    avgDays: finalizeAvg,
     points: finalizePoints.slice(0, 24).map((p) => ({
       meetingId: p.meetingId,
       clientName: p.clientName,
@@ -487,15 +525,14 @@ export async function buildDashboardSummary(
     blockedReason: blockedMeetings > 0 ? "awaiting CCO sign-off" : null,
   };
 
-  // ── Health trend: weekly reconstruction from real timestamps ──
+  // ── Health trend: reconstruction from real timestamps across the range ──
   // Not a stored history — recomputed from cumulative finalize + flag-resolution
-  // rates as of each week boundary, so every point is reproducible from the DB.
-  const TREND_WEEKS = 12;
-  const trendStart = new Date(now.getTime() - TREND_WEEKS * WEEK_MS);
-  const monthFmt = new Intl.DateTimeFormat("en-US", { month: "short" });
-  const healthTrend = Array.from({ length: TREND_WEEKS }, (_, i) => {
-    const weekEnd = new Date(trendStart.getTime() + (i + 1) * WEEK_MS);
-    const t = weekEnd.getTime();
+  // rates as of each bucket boundary, so every point is reproducible from the DB.
+  const trendPoints = rangeCfg.trendPoints;
+  const trendBucketMs = windowMs / trendPoints;
+  const healthTrend = Array.from({ length: trendPoints }, (_, i) => {
+    const bucketEnd = new Date(windowStart.getTime() + (i + 1) * trendBucketMs);
+    const t = bucketEnd.getTime();
     const totalToDate = clientMeetingRows.filter((m) => m.createdAt.getTime() <= t).length;
     const finalizedToDate = clientMeetingRows.filter(
       (m) => m.finalizedAt != null && m.finalizedAt.getTime() <= t,
@@ -507,12 +544,16 @@ export async function buildDashboardSummary(
     const finalizedRate = totalToDate === 0 ? 1 : finalizedToDate / totalToDate;
     const resolvedRate = flagsCreatedToDate === 0 ? 1 : flagsResolvedToDate / flagsCreatedToDate;
     return {
-      label: monthFmt.format(weekEnd),
+      label: bucketLabelFmt.format(bucketEnd),
       score: Math.round(finalizedRate * 50 + resolvedRate * 50),
     };
   });
   const healthDelta =
-    (healthTrend[TREND_WEEKS - 1]?.score ?? 0) - (healthTrend[0]?.score ?? 0);
+    (healthTrend[trendPoints - 1]?.score ?? 0) - (healthTrend[0]?.score ?? 0);
+  const trendCaption =
+    range === "12m"
+      ? "12-month trend"
+      : `${Math.round(rangeCfg.days / 7)}-week trend`;
 
   // ── Clients table ──
   type ClientAccumulator = {
@@ -534,7 +575,7 @@ export async function buildDashboardSummary(
         finalized: 0,
         openFlags: 0,
         lastMeeting: null,
-        weekly: Array.from({ length: 8 }, () => 0),
+        weekly: Array.from({ length: activityPoints }, () => 0),
       };
       clientMap.set(name, acc);
     }
@@ -545,7 +586,7 @@ export async function buildDashboardSummary(
     if (!acc.lastMeeting || m.meetingDate > acc.lastMeeting) acc.lastMeeting = m.meetingDate;
     for (const flag of m.flags) {
       if (flag.createdAt >= activityStart) {
-        const idx = weekIndex(flag.createdAt);
+        const idx = bucketIndex(flag.createdAt);
         acc.weekly[idx] = (acc.weekly[idx] ?? 0) + 1;
       }
     }
@@ -561,8 +602,9 @@ export async function buildDashboardSummary(
         0,
         Math.min(100, Math.round(coverageRate * 45 + finalizedRate * 35 + 20 - flagPenalty)),
       );
-      const firstHalf = acc.weekly.slice(0, 4).reduce((a, b) => a + b, 0);
-      const secondHalf = acc.weekly.slice(4).reduce((a, b) => a + b, 0);
+      const mid = Math.floor(acc.weekly.length / 2);
+      const firstHalf = acc.weekly.slice(0, mid).reduce((a, b) => a + b, 0);
+      const secondHalf = acc.weekly.slice(mid).reduce((a, b) => a + b, 0);
       let trending: "up" | "down" | "flat" = "flat";
       if (secondHalf > firstHalf) trending = "up";
       else if (secondHalf < firstHalf) trending = "down";
@@ -598,6 +640,9 @@ export async function buildDashboardSummary(
     totalMeetings === 0 ? 100 : Math.round((finalizedCount / totalMeetings) * 100);
 
   return {
+    range,
+    rangeLabel: rangeCfg.rangeLabel,
+    trendCaption,
     healthScore: boundedHealth,
     healthLabel,
     healthTrend,

@@ -15,12 +15,20 @@ export function CommunicationsClient({
           <h1 className="text-2xl font-semibold text-[#0D2818]">Communications</h1>
           <p className="text-sm text-muted-foreground">Email threads ingested from M365</p>
         </div>
-        <Link
-          href="/integrations/m365-mail"
-          className="text-sm text-[#2ECC71] hover:underline"
-        >
-          Manage mailboxes
-        </Link>
+        <div className="flex gap-4">
+          <Link
+            href="/integrations/m365-mail"
+            className="text-sm text-[#2ECC71] hover:underline"
+          >
+            Manage M365
+          </Link>
+          <Link
+            href="/integrations/gmail-mail"
+            className="text-sm text-[#2ECC71] hover:underline"
+          >
+            Manage Gmail
+          </Link>
+        </div>
       </div>
 
       {threads.length === 0 ? (

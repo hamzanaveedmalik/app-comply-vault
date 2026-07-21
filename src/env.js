@@ -76,6 +76,9 @@ export const env = createEnv({
     M365_MAIL_CLIENT_ID: z.string().optional(),
     M365_MAIL_CLIENT_SECRET: z.string().optional(),
     M365_MAIL_TENANT_ID: z.string().optional(),
+    // Gmail Mail OAuth — dedicated Google Cloud OAuth app (gmail.readonly scope)
+    GMAIL_MAIL_CLIENT_ID: z.string().optional(),
+    GMAIL_MAIL_CLIENT_SECRET: z.string().optional(),
     // Zoho CRM OAuth (Epic 3.0) — same app can be Zoho One; use region-specific accounts host if needed
     ZOHO_CRM_CLIENT_ID: z.string().optional(),
     ZOHO_CRM_CLIENT_SECRET: z.string().optional(),
@@ -160,6 +163,8 @@ export const env = createEnv({
     M365_MAIL_CLIENT_ID: process.env.M365_MAIL_CLIENT_ID,
     M365_MAIL_CLIENT_SECRET: process.env.M365_MAIL_CLIENT_SECRET,
     M365_MAIL_TENANT_ID: process.env.M365_MAIL_TENANT_ID,
+    GMAIL_MAIL_CLIENT_ID: process.env.GMAIL_MAIL_CLIENT_ID,
+    GMAIL_MAIL_CLIENT_SECRET: process.env.GMAIL_MAIL_CLIENT_SECRET,
     ZOHO_CRM_CLIENT_ID: process.env.ZOHO_CRM_CLIENT_ID,
     ZOHO_CRM_CLIENT_SECRET: process.env.ZOHO_CRM_CLIENT_SECRET,
     ZOHO_CRM_ACCOUNTS_DOMAIN: process.env.ZOHO_CRM_ACCOUNTS_DOMAIN,

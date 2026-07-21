@@ -1,18 +1,15 @@
 /**
- * Persist a single Graph message as EvidenceItem + Communication.
+ * Persist a single email message (any provider) as EvidenceItem + Communication.
  * Epic B CV-B-03, CV-B-05
  */
 
 import { db } from "~/server/db";
-import type { GraphMailMessage } from "./graph-client";
 import {
   collectParticipantAddresses,
   extractHeader,
-  listMessageAttachments,
-  fetchAttachmentContent,
-  fetchMessageMime,
   normalizeAddress,
 } from "./graph-client";
+import type { MailMessage, MailProviderAdapter } from "./providers/types";
 import { threadKeyFromMessage } from "./thread-grouping";
 import {
   matchParticipantAddress,
@@ -38,12 +35,13 @@ function inferDirection(
   return "INBOUND";
 }
 
-export async function ingestGraphMessage(args: {
+export async function ingestEmailMessage(args: {
   workspaceId: string;
   connectionId: string;
   mailboxAddress: string;
   accessToken: string;
-  message: GraphMailMessage;
+  adapter: MailProviderAdapter;
+  message: MailMessage;
   allowedFolderIds: string[];
   currentFolderId: string;
 }): Promise<IngestMessageResult> {
@@ -85,7 +83,7 @@ export async function ingestGraphMessage(args: {
         ? args.message.body.content ?? args.message.bodyPreview ?? ""
         : args.message.bodyPreview ?? "";
 
-    const mime = await fetchMessageMime({
+    const mime = await args.adapter.fetchMessageMime({
       accessToken: args.accessToken,
       mailboxAddress: args.mailboxAddress,
       messageId: args.message.id,
@@ -130,7 +128,7 @@ export async function ingestGraphMessage(args: {
         thread = await tx.communicationThread.create({
           data: {
             workspaceId: args.workspaceId,
-            channel: "EMAIL_M365",
+            channel: args.adapter.channel,
             externalThreadId,
             subject,
             participants: participantMatches.map((p) => ({
@@ -187,14 +185,14 @@ export async function ingestGraphMessage(args: {
       });
 
       if (args.message.hasAttachments) {
-        const attachments = await listMessageAttachments({
+        const attachments = await args.adapter.listMessageAttachments({
           accessToken: args.accessToken,
           mailboxAddress: args.mailboxAddress,
           messageId: args.message.id,
         });
 
         for (const att of attachments) {
-          const content = await fetchAttachmentContent({
+          const content = await args.adapter.fetchAttachmentContent({
             accessToken: args.accessToken,
             mailboxAddress: args.mailboxAddress,
             messageId: args.message.id,

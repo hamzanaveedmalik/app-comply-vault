@@ -548,6 +548,7 @@ enum IntegrationProvider {
   TEAMS_BOT
   ZOHO_CRM
   M365_MAIL
+  GMAIL_MAIL
 }
 
 enum IntegrationStatus {
@@ -747,6 +748,7 @@ enum TagCategory {
 
 enum CommunicationChannel {
   EMAIL_M365
+  EMAIL_GMAIL
   WHATSAPP_IMPORT
   SMS_IMPORT
   TEAMS_IMPORT
@@ -768,6 +770,7 @@ enum ClientStatus {
 
 enum MailboxProvider {
   M365
+  GMAIL
 }
 
 enum MailboxSyncStatus {

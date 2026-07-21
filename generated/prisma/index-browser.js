@@ -771,7 +771,8 @@ exports.IntegrationProvider = exports.$Enums.IntegrationProvider = {
   SLACK: 'SLACK',
   TEAMS_BOT: 'TEAMS_BOT',
   ZOHO_CRM: 'ZOHO_CRM',
-  M365_MAIL: 'M365_MAIL'
+  M365_MAIL: 'M365_MAIL',
+  GMAIL_MAIL: 'GMAIL_MAIL'
 };
 
 exports.IntegrationStatus = exports.$Enums.IntegrationStatus = {
@@ -833,6 +834,7 @@ exports.TagCategory = exports.$Enums.TagCategory = {
 
 exports.CommunicationChannel = exports.$Enums.CommunicationChannel = {
   EMAIL_M365: 'EMAIL_M365',
+  EMAIL_GMAIL: 'EMAIL_GMAIL',
   WHATSAPP_IMPORT: 'WHATSAPP_IMPORT',
   SMS_IMPORT: 'SMS_IMPORT',
   TEAMS_IMPORT: 'TEAMS_IMPORT',
@@ -847,7 +849,8 @@ exports.CommunicationDirection = exports.$Enums.CommunicationDirection = {
 };
 
 exports.MailboxProvider = exports.$Enums.MailboxProvider = {
-  M365: 'M365'
+  M365: 'M365',
+  GMAIL: 'GMAIL'
 };
 
 exports.MailboxConsentMode = exports.$Enums.MailboxConsentMode = {

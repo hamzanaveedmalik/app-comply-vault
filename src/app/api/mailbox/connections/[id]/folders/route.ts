@@ -1,7 +1,6 @@
 import { requireAppAccess } from "~/server/auth/guards";
 import { db } from "~/server/db";
-import { getConnectionAccessToken } from "~/server/mailbox/m365-auth";
-import { listMailFolders } from "~/server/mailbox/graph-client";
+import { getMailProvider } from "~/server/mailbox/providers";
 
 export async function GET(
   _request: Request,
@@ -21,11 +20,12 @@ export async function GET(
   }
 
   try {
-    const token = await getConnectionAccessToken({
+    const adapter = getMailProvider(connection.provider);
+    const token = await adapter.getAccessToken({
       workspaceId: access.workspaceId,
       connectionId: connection.id,
     });
-    const folders = await listMailFolders({
+    const folders = await adapter.listFolders({
       accessToken: token,
       mailboxAddress: connection.mailboxAddress,
     });
@@ -42,7 +42,9 @@ export async function GET(
     const hint =
       message === "M365 mail integration not connected"
         ? "Complete Admin consent (application mode) or Connect my mailbox (delegated) on /integrations/m365-mail first."
-        : message;
+        : message === "Gmail mail integration not connected"
+          ? "Connect your mailbox on /integrations/gmail-mail first."
+          : message;
     return Response.json({ success: false, error: hint }, { status: 502 });
   }
 }

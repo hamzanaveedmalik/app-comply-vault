@@ -9,6 +9,7 @@ import { sendIntegrationReconnectEmail } from "~/server/email";
 import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
 import type { IntegrationProvider } from "../../../generated/prisma";
 import { exchangeZohoRefreshToken } from "./zoho/crm-token";
+import { refreshGmailToken } from "~/server/mailbox/gmail-auth";
 
 const REFRESH_BUFFER_MS = 15 * 60 * 1000; // Refresh if expiring within 15 mins
 
@@ -203,6 +204,10 @@ async function refreshTokenForProvider(
     case "SHAREPOINT":
       // Same Azure AD app + refresh contract as Microsoft Teams
       return refreshTeamsToken(refreshToken);
+    case "GMAIL_MAIL":
+      // Workspace-level Gmail credential. Per-connection delegated tokens are
+      // refreshed on demand in gmail-auth.getConnectionAccessToken.
+      return refreshGmailToken(refreshToken);
     case "ZOHO_CRM": {
       const intConf = await db.integrationConfig.findUnique({
         where: { workspaceId_provider: { workspaceId: _workspaceId, provider: "ZOHO_CRM" } },

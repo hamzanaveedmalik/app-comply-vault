@@ -386,7 +386,8 @@ export const IntegrationProvider: {
   SLACK: 'SLACK',
   TEAMS_BOT: 'TEAMS_BOT',
   ZOHO_CRM: 'ZOHO_CRM',
-  M365_MAIL: 'M365_MAIL'
+  M365_MAIL: 'M365_MAIL',
+  GMAIL_MAIL: 'GMAIL_MAIL'
 };
 
 export type IntegrationProvider = (typeof IntegrationProvider)[keyof typeof IntegrationProvider]
@@ -466,6 +467,7 @@ export type TagCategory = (typeof TagCategory)[keyof typeof TagCategory]
 
 export const CommunicationChannel: {
   EMAIL_M365: 'EMAIL_M365',
+  EMAIL_GMAIL: 'EMAIL_GMAIL',
   WHATSAPP_IMPORT: 'WHATSAPP_IMPORT',
   SMS_IMPORT: 'SMS_IMPORT',
   TEAMS_IMPORT: 'TEAMS_IMPORT',
@@ -495,7 +497,8 @@ export type ClientStatus = (typeof ClientStatus)[keyof typeof ClientStatus]
 
 
 export const MailboxProvider: {
-  M365: 'M365'
+  M365: 'M365',
+  GMAIL: 'GMAIL'
 };
 
 export type MailboxProvider = (typeof MailboxProvider)[keyof typeof MailboxProvider]

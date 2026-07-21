@@ -4,13 +4,10 @@
  */
 
 import { db } from "~/server/db";
-import {
-  fetchMessagesPage,
-  fetchDeltaPage,
-} from "./graph-client";
 import { isFolderInScope } from "./scope";
-import { getConnectionAccessToken } from "./m365-auth";
-import { ingestGraphMessage } from "./ingest-message";
+import { getMailProvider } from "./providers";
+import type { MailProviderAdapter } from "./providers/types";
+import { ingestEmailMessage } from "./ingest-message";
 
 export type IngestJobStats = {
   processed: number;
@@ -81,10 +78,13 @@ export async function processIngestJob(jobId: string): Promise<void> {
   let stats = (job.stats as IngestJobStats | null) ?? emptyStats();
 
   try {
-    const accessToken = await getConnectionAccessToken({
+    const adapter = getMailProvider(connection.provider);
+    const accessToken = await adapter.getAccessToken({
       workspaceId: job.workspaceId,
       connectionId: connection.id,
     });
+
+    const storedCursors = parseStoredFolderCursors(connection.deltaCursor);
 
     const allowedFolders = connection.scopeFolders.filter(Boolean);
     if (allowedFolders.length === 0) {
@@ -100,6 +100,7 @@ export async function processIngestJob(jobId: string): Promise<void> {
       if (job.kind === "BACKFILL") {
         stats = await runBackfillForFolder({
           jobId,
+          adapter,
           workspaceId: job.workspaceId,
           connectionId: connection.id,
           mailboxAddress: connection.mailboxAddress,
@@ -110,6 +111,7 @@ export async function processIngestJob(jobId: string): Promise<void> {
         });
       } else if (job.kind === "DELTA") {
         stats = await runDeltaForFolder({
+          adapter,
           workspaceId: job.workspaceId,
           connectionId: connection.id,
           mailboxAddress: connection.mailboxAddress,
@@ -117,7 +119,8 @@ export async function processIngestJob(jobId: string): Promise<void> {
           folderId,
           deltaLink:
             stats.folderCursors[folderId]?.deltaLink ??
-            connection.deltaCursor,
+            storedCursors[folderId]?.deltaLink ??
+            null,
           stats,
         });
       }
@@ -160,6 +163,7 @@ export async function processIngestJob(jobId: string): Promise<void> {
 
 async function runBackfillForFolder(args: {
   jobId: string;
+  adapter: MailProviderAdapter;
   workspaceId: string;
   connectionId: string;
   mailboxAddress: string;
@@ -174,7 +178,7 @@ async function runBackfillForFolder(args: {
   let pages = 0;
 
   while (pages < 200) {
-    const page = await fetchMessagesPage({
+    const page = await args.adapter.fetchMessagesPage({
       accessToken: args.accessToken,
       mailboxAddress: args.mailboxAddress,
       folderId: args.folderId,
@@ -184,11 +188,12 @@ async function runBackfillForFolder(args: {
 
     for (const message of page.value) {
       stats.processed += 1;
-      const result = await ingestGraphMessage({
+      const result = await ingestEmailMessage({
         workspaceId: args.workspaceId,
         connectionId: args.connectionId,
         mailboxAddress: args.mailboxAddress,
         accessToken: args.accessToken,
+        adapter: args.adapter,
         message,
         allowedFolderIds: [args.folderId],
         currentFolderId: args.folderId,
@@ -201,11 +206,11 @@ async function runBackfillForFolder(args: {
       else stats.errors += 1;
     }
 
-    nextLink = page["@odata.nextLink"] ?? null;
+    nextLink = page.nextLink ?? null;
     stats.folderCursors[args.folderId] = {
       ...stats.folderCursors[args.folderId],
       nextLink,
-      deltaLink: page["@odata.deltaLink"] ?? cursor.deltaLink,
+      deltaLink: page.deltaLink ?? cursor.deltaLink,
     };
 
     await db.ingestJob.update({
@@ -221,6 +226,7 @@ async function runBackfillForFolder(args: {
 }
 
 async function runDeltaForFolder(args: {
+  adapter: MailProviderAdapter;
   workspaceId: string;
   connectionId: string;
   mailboxAddress: string;
@@ -234,7 +240,7 @@ async function runDeltaForFolder(args: {
   let pages = 0;
 
   while (pages < 50) {
-    const page = await fetchDeltaPage({
+    const page = await args.adapter.fetchDeltaPage({
       accessToken: args.accessToken,
       mailboxAddress: args.mailboxAddress,
       folderId: args.folderId,
@@ -243,11 +249,12 @@ async function runDeltaForFolder(args: {
 
     for (const message of page.value) {
       stats.processed += 1;
-      const result = await ingestGraphMessage({
+      const result = await ingestEmailMessage({
         workspaceId: args.workspaceId,
         connectionId: args.connectionId,
         mailboxAddress: args.mailboxAddress,
         accessToken: args.accessToken,
+        adapter: args.adapter,
         message,
         allowedFolderIds: [args.folderId],
         currentFolderId: args.folderId,
@@ -257,17 +264,39 @@ async function runDeltaForFolder(args: {
       else stats.errors += 1;
     }
 
-    deltaLink = page["@odata.deltaLink"] ?? page["@odata.nextLink"] ?? null;
+    deltaLink = page.deltaLink ?? page.nextLink ?? null;
     stats.folderCursors[args.folderId] = {
       deltaLink,
       nextLink: null,
     };
 
-    if (!page["@odata.nextLink"]) break;
+    if (!page.nextLink) break;
     pages += 1;
   }
 
   return stats;
+}
+
+/**
+ * Safely parses the stored per-folder cursor JSON (connection.deltaCursor)
+ * into a folderId -> cursor map. Returns an empty map on any parse failure.
+ */
+function parseStoredFolderCursors(
+  raw: string | null
+): Record<string, { nextLink?: string | null; deltaLink?: string | null }> {
+  if (!raw) return {};
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (parsed && typeof parsed === "object") {
+      return parsed as Record<
+        string,
+        { nextLink?: string | null; deltaLink?: string | null }
+      >;
+    }
+  } catch {
+    // Legacy or non-JSON cursor value — ignore and start fresh.
+  }
+  return {};
 }
 
 export async function startMailboxSync(args: {

@@ -78,3 +78,9 @@ export type M365WorkspaceStatus = {
   expiresAt: string | null;
   oauthConfigured: boolean;
 };
+
+export type GmailWorkspaceStatus = {
+  connected: boolean;
+  expiresAt: string | null;
+  oauthConfigured: boolean;
+};

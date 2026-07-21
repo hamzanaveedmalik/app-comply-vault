@@ -1,25 +1,21 @@
 /**
- * Ask ComplyVault — orchestrator (CV-FEAT-014, Phase 1).
+ * Ask ComplyVault — orchestrator (CV-FEAT-014, Phase 1 + Email Intelligence Phase 3).
  *
  * Pipeline:
  *   1. Extract keywords from the question.
- *   2. Query `Meeting.searchableText` scoped to the user's workspace
- *      (HARD compliance boundary — PRD §6.1).
+ *   2. Query Meeting.searchableText + (when enabled) EvidenceItem.searchableText
+ *      scoped to the user's workspace (HARD compliance boundary — PRD §6.1).
  *   3. Rank + excerpt → evidence block.
- *   4. If no evidence: short-circuit with NO_EVIDENCE_ANSWER (no LLM call,
- *      saves cost — PRD §7).
+ *   4. If no evidence: short-circuit (no LLM call).
  *   5. Call LLM with locked system prompt.
  *   6. Post-filter the answer for banned regulatory citations (PRD §6.2).
- *   7. Write an append-only audit event (questionHash only — never the
- *      raw question or any client name — PRD §6.4).
- *
- * All compliance guarantees live in this file. Tests in `index.test.ts`
- * pin them in place.
+ *   7. Write an append-only audit event (questionHash only — PRD §6.4).
  */
 
 import crypto from "node:crypto";
 
 import type { db as defaultDb } from "~/server/db";
+import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
 import { extractKeywords } from "./keywords";
 import {
   rankAndExcerpt,
@@ -29,6 +25,7 @@ import {
 import {
   SYSTEM_PROMPT,
   NO_EVIDENCE_ANSWER,
+  NO_CORRESPONDENCE_ANSWER,
   BLOCKED_REGULATORY_ANSWER,
   buildUserMessage,
 } from "./prompt";
@@ -42,6 +39,30 @@ import type {
   ScoredEvidence,
 } from "./types";
 
+type MeetingRow = {
+  id: string;
+  clientName: string;
+  meetingDate: Date;
+  meetingType: string;
+  transcript: unknown;
+  extraction: unknown;
+  searchableText: string | null;
+};
+
+type EmailEvidenceRow = {
+  id: string;
+  title: string;
+  occurredAt: Date;
+  contentSha256: string;
+  searchableText: string | null;
+  client: { name: string } | null;
+  communication: {
+    id: string;
+    threadId: string;
+    direction: string;
+  } | null;
+};
+
 type PrismaLike = {
   meeting: {
     findMany: (args: {
@@ -49,7 +70,15 @@ type PrismaLike = {
       select: Record<string, true>;
       take: number;
       orderBy: Array<Record<string, "asc" | "desc">>;
-    }) => Promise<RetrievalCandidate[]>;
+    }) => Promise<MeetingRow[]>;
+  };
+  evidenceItem?: {
+    findMany: (args: {
+      where: Record<string, unknown>;
+      select: Record<string, unknown>;
+      take: number;
+      orderBy: Array<Record<string, "asc" | "desc">>;
+    }) => Promise<EmailEvidenceRow[]>;
   };
   auditEvent: {
     create: (args: {
@@ -78,12 +107,11 @@ export type AskDependencies = {
   completion?: AskCompletionFn;
   model?: string;
   now?: () => Date;
+  emailIntelligenceEnabled?: boolean;
 };
 
 /**
  * SHA-256 hash of the raw question, truncated to 16 hex chars.
- * Operators can correlate by hash if a user reports a bad answer; the
- * audit log never contains the question text itself (PRD §6.4).
  */
 export function hashQuestion(question: string): string {
   return crypto
@@ -91,6 +119,37 @@ export function hashQuestion(question: string): string {
     .update(question.trim().toLowerCase())
     .digest("hex")
     .slice(0, 16);
+}
+
+function meetingToCandidate(row: MeetingRow): RetrievalCandidate {
+  return {
+    id: row.id,
+    sourceType: "MEETING",
+    clientName: row.clientName,
+    meetingDate: row.meetingDate,
+    meetingType: row.meetingType,
+    transcript: row.transcript,
+    extraction: row.extraction,
+    searchableText: row.searchableText,
+  };
+}
+
+function emailToCandidate(row: EmailEvidenceRow): RetrievalCandidate | null {
+  if (!row.communication) return null;
+  return {
+    id: row.id,
+    sourceType: "EMAIL",
+    clientName: row.client?.name ?? "Unknown client",
+    meetingDate: row.occurredAt,
+    meetingType: "Email",
+    transcript: null,
+    extraction: null,
+    searchableText: row.searchableText,
+    threadId: row.communication.threadId,
+    messageId: row.communication.id,
+    contentSha256: row.contentSha256,
+    direction: row.communication.direction,
+  };
 }
 
 export async function askComplyVault(
@@ -102,14 +161,13 @@ export async function askComplyVault(
   const model = deps.model ?? resolveAskModel();
   const now = deps.now ? deps.now() : new Date();
   const startedAt = Date.now();
+  const emailIntel =
+    deps.emailIntelligenceEnabled ?? isEmailIntelligenceEnabled();
 
   const keywords = extractKeywords(input.question);
 
-  // Build the Prisma where clause. Workspace boundary is non-negotiable —
-  // every branch below MUST include workspaceId from the caller's session.
   const where: Record<string, unknown> = {
     workspaceId: input.workspaceId,
-    // PRD §6.3 — only finalised / draft-ready meetings are queryable.
     status: { in: ["DRAFT_READY", "FINALIZED"] },
   };
   if (input.meetingId) {
@@ -125,9 +183,9 @@ export async function askComplyVault(
     }));
   }
 
-  let candidates: RetrievalCandidate[] = [];
+  let meetingRows: MeetingRow[] = [];
   try {
-    candidates = await prisma.meeting.findMany({
+    meetingRows = await prisma.meeting.findMany({
       where,
       select: {
         id: true,
@@ -142,14 +200,13 @@ export async function askComplyVault(
       orderBy: [{ meetingDate: "desc" }],
     });
   } catch (err) {
-    // Retrieval failures are operational, not user-facing — but we still
-    // need to log an audit event so an operator can correlate.
     await safeAudit(prisma, {
       workspaceId: input.workspaceId,
       userId: input.userId,
       questionHash: hashQuestion(input.question),
       questionLength: input.question.length,
       retrievedMeetingIds: [],
+      retrievedEmailIds: [],
       candidatesScanned: 0,
       candidatesUsed: 0,
       model,
@@ -169,21 +226,53 @@ export async function askComplyVault(
     };
   }
 
+  const candidates: RetrievalCandidate[] = meetingRows.map(meetingToCandidate);
+
+  if (emailIntel && !input.meetingId && prisma.evidenceItem) {
+    const emailWhere: Record<string, unknown> = {
+      workspaceId: input.workspaceId,
+      sourceType: "EMAIL",
+      deletedAt: null,
+      searchableText: { not: null },
+    };
+    if (input.windowDays) {
+      const cutoff = new Date(now.getTime() - input.windowDays * 24 * 60 * 60 * 1000);
+      emailWhere.occurredAt = { gte: cutoff };
+    }
+    if (keywords.length > 0) {
+      emailWhere.OR = keywords.map((kw) => ({
+        searchableText: { contains: kw, mode: "insensitive" },
+      }));
+    }
+
+    try {
+      const emailRows = await prisma.evidenceItem.findMany({
+        where: emailWhere,
+        select: {
+          id: true,
+          title: true,
+          occurredAt: true,
+          contentSha256: true,
+          searchableText: true,
+          client: { select: { name: true } },
+          communication: {
+            select: { id: true, threadId: true, direction: true },
+          },
+        },
+        take: RETRIEVAL_LIMITS.candidateLimit,
+        orderBy: [{ occurredAt: "desc" }],
+      });
+      for (const row of emailRows) {
+        const c = emailToCandidate(row);
+        if (c) candidates.push(c);
+      }
+    } catch {
+      // Email retrieval is additive; meeting-only answers still work.
+    }
+  }
+
   const candidatesScanned = candidates.length;
-
-  // Enforce the workspace boundary defensively, even though the where
-  // clause already filters. Belt-and-braces: a future refactor that
-  // accidentally widens the query won't slip past this check.
-  const safeCandidates = candidates.filter(
-    (c) =>
-      // The select doesn't include workspaceId, but if a future change
-      // adds it we want this filter to catch a mismatch.
-      !("workspaceId" in c) ||
-      (c as RetrievalCandidate & { workspaceId?: string }).workspaceId ===
-        input.workspaceId
-  );
-
-  const evidence = rankAndExcerpt(safeCandidates, keywords, now);
+  const evidence = rankAndExcerpt(candidates, keywords, now);
   const retrieval: RetrievalMeta = {
     candidatesScanned,
     candidatesUsed: evidence.length,
@@ -191,12 +280,20 @@ export async function askComplyVault(
   };
 
   if (evidence.length === 0) {
+    const reason = emailIntel
+      ? candidatesScanned === 0
+        ? "no-correspondence"
+        : "no-matches"
+      : candidatesScanned === 0
+        ? "no-meetings"
+        : "no-matches";
     await safeAudit(prisma, {
       workspaceId: input.workspaceId,
       userId: input.userId,
       questionHash: hashQuestion(input.question),
       questionLength: input.question.length,
       retrievedMeetingIds: [],
+      retrievedEmailIds: [],
       candidatesScanned,
       candidatesUsed: 0,
       model,
@@ -208,7 +305,7 @@ export async function askComplyVault(
     });
     return {
       kind: "no-evidence",
-      reason: candidatesScanned === 0 ? "no-meetings" : "no-matches",
+      reason,
       retrieval,
       model,
       latencyMs: Date.now() - startedAt,
@@ -229,7 +326,12 @@ export async function askComplyVault(
       userId: input.userId,
       questionHash: hashQuestion(input.question),
       questionLength: input.question.length,
-      retrievedMeetingIds: evidence.map((e) => e.candidate.id),
+      retrievedMeetingIds: evidence
+        .filter((e) => e.candidate.sourceType === "MEETING")
+        .map((e) => e.candidate.id),
+      retrievedEmailIds: evidence
+        .filter((e) => e.candidate.sourceType === "EMAIL")
+        .map((e) => e.candidate.id),
       candidatesScanned,
       candidatesUsed: evidence.length,
       model,
@@ -248,8 +350,6 @@ export async function askComplyVault(
     };
   }
 
-  // Defence in depth: even though the system prompt forbids regulatory
-  // citations, scan the output for them and block on a hit.
   const scan = scanForRegulatoryCitations(rawAnswer);
   if (scan.blocked) {
     await safeAudit(prisma, {
@@ -257,7 +357,12 @@ export async function askComplyVault(
       userId: input.userId,
       questionHash: hashQuestion(input.question),
       questionLength: input.question.length,
-      retrievedMeetingIds: evidence.map((e) => e.candidate.id),
+      retrievedMeetingIds: evidence
+        .filter((e) => e.candidate.sourceType === "MEETING")
+        .map((e) => e.candidate.id),
+      retrievedEmailIds: evidence
+        .filter((e) => e.candidate.sourceType === "EMAIL")
+        .map((e) => e.candidate.id),
       candidatesScanned,
       candidatesUsed: evidence.length,
       model,
@@ -284,7 +389,12 @@ export async function askComplyVault(
     userId: input.userId,
     questionHash: hashQuestion(input.question),
     questionLength: input.question.length,
-    retrievedMeetingIds: citations.map((c) => c.meetingId),
+    retrievedMeetingIds: citations
+      .filter((c) => c.sourceType === "MEETING")
+      .map((c) => c.meetingId),
+    retrievedEmailIds: citations
+      .filter((c) => c.sourceType === "EMAIL")
+      .map((c) => c.messageId ?? c.meetingId),
     candidatesScanned,
     candidatesUsed: evidence.length,
     model,
@@ -306,19 +416,33 @@ export async function askComplyVault(
 }
 
 /**
- * Build the citation list from the evidence we actually shipped to the
- * LLM. Critical: citations are STRUCTURAL — extracted from the evidence
- * block, not parsed out of the model's prose. This prevents a
- * hallucinated meeting reference from leaking through into the UI.
+ * Citations are STRUCTURAL — extracted from evidence, not parsed from model prose.
  */
 function buildCitations(evidence: ScoredEvidence[]): Citation[] {
   return evidence.map((item) => {
     const firstExcerpt = item.excerpts[0];
     const snippetSource = firstExcerpt?.text ?? "";
-    const snippet = snippetSource.length > 240
-      ? snippetSource.slice(0, 239).trimEnd() + "…"
-      : snippetSource;
+    const snippet =
+      snippetSource.length > 240
+        ? snippetSource.slice(0, 239).trimEnd() + "…"
+        : snippetSource;
+    const sourceType = item.candidate.sourceType ?? "MEETING";
+    if (sourceType === "EMAIL") {
+      const threadId = item.candidate.threadId ?? item.candidate.id;
+      return {
+        sourceType: "EMAIL",
+        meetingId: threadId,
+        threadId,
+        messageId: item.candidate.messageId,
+        contentSha256: item.candidate.contentSha256,
+        clientName: item.candidate.clientName,
+        meetingDate: item.candidate.meetingDate.toISOString(),
+        meetingType: "Email",
+        snippet,
+      };
+    }
     return {
+      sourceType: "MEETING",
       meetingId: item.candidate.id,
       clientName: item.candidate.clientName,
       meetingDate: item.candidate.meetingDate.toISOString(),
@@ -331,11 +455,6 @@ function buildCitations(evidence: ScoredEvidence[]): Citation[] {
   });
 }
 
-/**
- * Audit writes are best-effort: if the DB hiccups we still want to
- * return the user's answer. Failures are logged with a generic scrubbed
- * message — never the raw question.
- */
 async function safeAudit(
   prisma: PrismaLike,
   metadata: Record<string, unknown> & {
@@ -355,22 +474,20 @@ async function safeAudit(
       },
     });
   } catch (err) {
-    // Scrub: never log the raw question, evidence, or client names — the
-    // metadata object already only contains hashes/ids/counts per PRD
-    // §6.4, but we log only the error class here to stay extra safe.
     const errName = err instanceof Error ? err.name : "UnknownError";
     console.warn(`[ask] audit log write failed (${errName})`);
   }
 }
 
-/**
- * Lazy default-db import so unit tests can construct the orchestrator
- * without pulling in `@prisma/client`.
- */
 async function getDefaultDb(): Promise<typeof defaultDb> {
   const mod = await import("~/server/db");
   return mod.db;
 }
 
-export { SYSTEM_PROMPT, NO_EVIDENCE_ANSWER, BLOCKED_REGULATORY_ANSWER };
+export {
+  SYSTEM_PROMPT,
+  NO_EVIDENCE_ANSWER,
+  NO_CORRESPONDENCE_ANSWER,
+  BLOCKED_REGULATORY_ANSWER,
+};
 export { RETRIEVAL_LIMITS, RETRIEVAL_MODE };

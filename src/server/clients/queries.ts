@@ -1,0 +1,173 @@
+/**
+ * Client detail + list queries for Email Intelligence Phase 1.
+ */
+
+import { db } from "~/server/db";
+import { getHouseholdClientIds } from "./household";
+import { countCorrespondenceInPeriod } from "./activity";
+import type {
+  ClientCorrespondenceRowDto,
+  ClientDetailDto,
+  ClientListItemDto,
+} from "~/lib/types/clients";
+
+export type {
+  ClientCorrespondenceRowDto,
+  ClientDetailDto,
+  ClientListItemDto,
+} from "~/lib/types/clients";
+
+export async function listClientsForWorkspace(
+  workspaceId: string
+): Promise<ClientListItemDto[]> {
+  const clients = await db.client.findMany({
+    where: { workspaceId, deletedAt: null },
+    orderBy: { name: "asc" },
+    take: 500,
+    select: { id: true, name: true, status: true, lastContactAt: true },
+  });
+  return clients.map((c) => ({
+    id: c.id,
+    name: c.name,
+    status: c.status,
+    lastContactAt: c.lastContactAt?.toISOString() ?? null,
+  }));
+}
+
+export async function getClientDetail(args: {
+  workspaceId: string;
+  clientId: string;
+  periodDays?: number;
+}): Promise<ClientDetailDto | null> {
+  const client = await db.client.findFirst({
+    where: {
+      id: args.clientId,
+      workspaceId: args.workspaceId,
+      deletedAt: null,
+    },
+    select: {
+      id: true,
+      name: true,
+      status: true,
+      lastContactAt: true,
+    },
+  });
+  if (!client) return null;
+
+  const periodDays = args.periodDays ?? 90;
+  const periodEnd = new Date();
+  const periodStart = new Date(periodEnd.getTime() - periodDays * 24 * 60 * 60 * 1000);
+
+  const clientIds = await getHouseholdClientIds({
+    workspaceId: args.workspaceId,
+    clientId: client.id,
+  });
+
+  const memberships = await db.clientHouseholdMember.findMany({
+    where: {
+      clientId: { in: clientIds },
+      deletedAt: null,
+      household: { workspaceId: args.workspaceId, deletedAt: null },
+    },
+    select: {
+      clientId: true,
+      role: true,
+      client: { select: { name: true } },
+    },
+  });
+
+  const nameById = new Map<string, string>();
+  nameById.set(client.id, client.name);
+  for (const m of memberships) {
+    nameById.set(m.clientId, m.client.name);
+  }
+  if (clientIds.length > 1) {
+    const peers = await db.client.findMany({
+      where: { id: { in: clientIds }, workspaceId: args.workspaceId },
+      select: { id: true, name: true },
+    });
+    for (const p of peers) nameById.set(p.id, p.name);
+  }
+
+  const householdMembers = memberships
+    .filter((m) => m.clientId !== client.id)
+    .map((m) => ({
+      clientId: m.clientId,
+      name: m.client.name,
+      role: m.role,
+    }));
+
+  const correspondenceCountPeriod = await countCorrespondenceInPeriod({
+    workspaceId: args.workspaceId,
+    clientIds,
+    from: periodStart,
+    to: periodEnd,
+  });
+
+  const activities = await db.clientActivity.findMany({
+    where: {
+      workspaceId: args.workspaceId,
+      clientId: { in: clientIds },
+      deletedAt: null,
+    },
+    orderBy: { occurredAt: "desc" },
+    take: 100,
+  });
+
+  const correspondence: ClientCorrespondenceRowDto[] = activities.map((a) => ({
+    id: a.id,
+    type: a.type,
+    direction: a.direction,
+    title: a.title,
+    counterparties: a.counterparties,
+    occurredAt: a.occurredAt.toISOString(),
+    contentSha256: a.contentSha256,
+    threadId: a.threadId,
+    evidenceItemId: a.evidenceItemId,
+    viaHouseholdMember: a.clientId !== client.id,
+    memberClientName:
+      a.clientId !== client.id ? (nameById.get(a.clientId) ?? null) : null,
+  }));
+
+  return {
+    id: client.id,
+    name: client.name,
+    status: client.status,
+    lastContactAt: client.lastContactAt?.toISOString() ?? null,
+    correspondenceCountPeriod,
+    periodLabel: `Last ${periodDays} days`,
+    householdMembers,
+    correspondence,
+  };
+}
+
+/**
+ * Latest email activity timestamps keyed by normalized client name (for dashboard merge).
+ */
+export async function getEmailLastContactByClientName(
+  workspaceId: string
+): Promise<Map<string, { clientId: string; name: string; lastContactAt: Date }>> {
+  const clients = await db.client.findMany({
+    where: {
+      workspaceId,
+      deletedAt: null,
+      lastContactAt: { not: null },
+    },
+    select: { id: true, name: true, lastContactAt: true },
+  });
+
+  const map = new Map<string, { clientId: string; name: string; lastContactAt: Date }>();
+  for (const c of clients) {
+    if (!c.lastContactAt) continue;
+    const key = c.name.trim().toLowerCase();
+    const existing = map.get(key);
+    if (!existing || c.lastContactAt > existing.lastContactAt) {
+      map.set(key, {
+        clientId: c.id,
+        name: c.name,
+        lastContactAt: c.lastContactAt,
+      });
+    }
+  }
+  return map;
+}

@@ -210,6 +210,8 @@ async function handler(request: Request) {
           data: missingDisclosureFlags.map((flag) => ({
             workspaceId,
             meetingId,
+            sourceType: "MEETING",
+            sourceId: meetingId,
             type: flag.type,
             severity: flag.severity,
             status: "OPEN",

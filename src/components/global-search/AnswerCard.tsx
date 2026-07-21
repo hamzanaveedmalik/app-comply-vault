@@ -1,12 +1,17 @@
 "use client";
 
 import { Fragment, useEffect, useState } from "react";
-import { ArrowUpRight, Loader2, Sparkles } from "lucide-react";
+import { ArrowUpRight, Loader2, Mail, Sparkles, Video } from "lucide-react";
 
 import { cn } from "~/lib/utils";
+import { Badge } from "~/components/ui/badge";
 
 export type AnswerCitation = {
+  sourceType?: "MEETING" | "EMAIL";
   meetingId: string;
+  threadId?: string;
+  messageId?: string;
+  contentSha256?: string;
   clientName: string;
   meetingDate: string;
   meetingType: string;
@@ -30,13 +35,14 @@ export type AnswerCardProps = {
     | { kind: "rate-limited"; retryAfterSec: number }
     | { kind: "error"; message: string };
   onOpenMeeting: (meetingId: string) => void;
+  onOpenCitation?: (citation: AnswerCitation) => void;
   className?: string;
 };
 
 const LOADING_PHRASES = [
   "Searching meetings…",
   "Reading transcripts…",
-  "Checking flags and disclosures…",
+  "Checking correspondence…",
   "Synthesising answer…",
 ] as const;
 
@@ -59,10 +65,16 @@ function formatLatency(ms: number): string {
   return `${(ms / 1000).toFixed(1)}s`;
 }
 
+function shortHash(hash: string | undefined): string | null {
+  if (!hash) return null;
+  return `${hash.slice(0, 8)}…`;
+}
+
 export function AnswerCard({
   question,
   state,
   onOpenMeeting,
+  onOpenCitation,
   className,
 }: AnswerCardProps): React.JSX.Element {
   const [phraseIdx, setPhraseIdx] = useState(0);
@@ -74,6 +86,14 @@ export function AnswerCard({
     }, 1800);
     return () => clearInterval(interval);
   }, [state.kind]);
+
+  function openCitation(cite: AnswerCitation): void {
+    if (onOpenCitation) {
+      onOpenCitation(cite);
+      return;
+    }
+    onOpenMeeting(cite.meetingId);
+  }
 
   return (
     <div
@@ -128,33 +148,58 @@ export function AnswerCard({
             Evidence
           </div>
           <ul className="mt-2 space-y-2">
-            {state.citations.map((cite) => (
-              <li key={cite.meetingId}>
-                <button
-                  type="button"
-                  onClick={() => onOpenMeeting(cite.meetingId)}
-                  className="group flex w-full items-start gap-2 rounded-md px-2 py-2 text-left transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <span className="font-medium text-foreground">
-                        {cite.clientName}
-                      </span>
-                      <span>·</span>
-                      <span>{cite.meetingType}</span>
-                      <span>·</span>
-                      <span>{formatMeetingDate(cite.meetingDate)}</span>
-                    </div>
-                    {cite.snippet && (
-                      <div className="mt-1 text-xs italic text-muted-foreground line-clamp-2">
-                        &ldquo;{cite.snippet}&rdquo;
+            {state.citations.map((cite) => {
+              const isEmail = cite.sourceType === "EMAIL";
+              const key = isEmail
+                ? `email:${cite.threadId ?? cite.meetingId}:${cite.messageId ?? ""}`
+                : cite.meetingId;
+              return (
+                <li key={key}>
+                  <button
+                    type="button"
+                    onClick={() => openCitation(cite)}
+                    className="group flex w-full items-start gap-2 rounded-md px-2 py-2 text-left transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                        {isEmail ? (
+                          <Badge variant="outline" className="gap-1 font-normal">
+                            <Mail className="h-3 w-3" aria-hidden />
+                            EMAIL
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="gap-1 font-normal">
+                            <Video className="h-3 w-3" aria-hidden />
+                            MEETING
+                          </Badge>
+                        )}
+                        <span className="font-medium text-foreground">
+                          {cite.clientName}
+                        </span>
+                        <span>·</span>
+                        <span>{cite.meetingType}</span>
+                        <span>·</span>
+                        <span>{formatMeetingDate(cite.meetingDate)}</span>
+                        {shortHash(cite.contentSha256) ? (
+                          <>
+                            <span>·</span>
+                            <span className="font-mono" title={cite.contentSha256}>
+                              {shortHash(cite.contentSha256)}
+                            </span>
+                          </>
+                        ) : null}
                       </div>
-                    )}
-                  </div>
-                  <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground opacity-70 transition-opacity group-hover:opacity-100" />
-                </button>
-              </li>
-            ))}
+                      {cite.snippet && (
+                        <div className="mt-1 text-xs italic text-muted-foreground line-clamp-2">
+                          &ldquo;{cite.snippet}&rdquo;
+                        </div>
+                      )}
+                    </div>
+                    <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground opacity-70 transition-opacity group-hover:opacity-100" />
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}
@@ -164,7 +209,7 @@ export function AnswerCard({
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <Fragment>
               <span>
-                Answered from {state.retrieval.candidatesUsed} meeting
+                Answered from {state.retrieval.candidatesUsed} source
                 {state.retrieval.candidatesUsed === 1 ? "" : "s"} in your
                 workspace
               </span>

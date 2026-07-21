@@ -27,6 +27,13 @@ export async function PATCH(
     return Response.json({ success: false, error: "Invalid input" }, { status: 400 });
   }
 
+  if (parsed.data.status === "CONFIRMED" && !parsed.data.clientId && !parsed.data.userId) {
+    return Response.json(
+      { success: false, error: "clientId or userId is required to confirm" },
+      { status: 400 }
+    );
+  }
+
   const item = await db.emailTriageItem.findFirst({
     where: { id, workspaceId: access.workspaceId },
   });
@@ -44,8 +51,9 @@ export async function PATCH(
     notes: parsed.data.notes,
   });
 
+  let backfill: { threadsUpdated: number; evidenceAttached: number } | null = null;
   if (parsed.data.status === "CONFIRMED") {
-    await backfillParticipantLinks({
+    backfill = await backfillParticipantLinks({
       workspaceId: access.workspaceId,
       address: item.address,
       userId: parsed.data.userId,
@@ -60,9 +68,21 @@ export async function PATCH(
       action: "EMAIL_TRIAGE_RESOLVED",
       resourceType: "email_triage",
       resourceId: id,
-      metadata: { status: parsed.data.status },
+      metadata: {
+        status: parsed.data.status,
+        threadsUpdated: backfill?.threadsUpdated ?? 0,
+        evidenceAttached: backfill?.evidenceAttached ?? 0,
+      },
     },
   });
 
-  return Response.json({ success: true });
+  return Response.json({
+    success: true,
+    data: backfill
+      ? {
+          threadsUpdated: backfill.threadsUpdated,
+          evidenceAttached: backfill.evidenceAttached,
+        }
+      : undefined,
+  });
 }

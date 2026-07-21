@@ -35,7 +35,8 @@ interface GlobalSearchProps {
 
 const EXAMPLE_QUERIES = [
   "Did Rob discuss fee changes?",
-  "Show suitability flags from last week",
+  "Show me every email where a client mentioned fees since April",
+  "Has any advisor promised performance in writing?",
 ] as const;
 
 const EXAMPLE_CHIP_CLASS =
@@ -223,6 +224,18 @@ export function GlobalSearch({ className }: GlobalSearchProps): React.JSX.Elemen
     router.push(`/meetings/${meetingId}`);
   };
 
+  const handleOpenCitation = (cite: AnswerCitation) => {
+    setOpen(false);
+    setQuery("");
+    setAskState(null);
+    if (cite.sourceType === "EMAIL") {
+      const threadId = cite.threadId ?? cite.meetingId;
+      router.push(`/communications/threads/${threadId}`);
+      return;
+    }
+    router.push(`/meetings/${cite.meetingId}`);
+  };
+
   const handleExampleClick = (example: string) => {
     setQuery(example);
     // Examples are all questions — submit immediately.
@@ -306,7 +319,7 @@ export function GlobalSearch({ className }: GlobalSearchProps): React.JSX.Elemen
       <CommandDialog open={open} onOpenChange={setOpen} className="sm:max-w-5xl">
         <div onKeyDownCapture={handleKeyDown}>
           <CommandInput
-            placeholder="Ask anything across your meetings... (end with ? to ask)"
+            placeholder="Ask anything across meetings and email... (end with ? to ask)"
             value={query}
             onValueChange={setQuery}
           />
@@ -317,6 +330,7 @@ export function GlobalSearch({ className }: GlobalSearchProps): React.JSX.Elemen
               question={askedQuestion}
               state={askState}
               onOpenMeeting={handleSelect}
+              onOpenCitation={handleOpenCitation}
             />
           )}
 

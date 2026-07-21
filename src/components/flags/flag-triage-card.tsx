@@ -59,6 +59,9 @@ export type FlagTriageCardFlag = {
   cmTriageNote?: string | null;
   resolutionNote?: string | null;
   resolutionRecord: FlagResolutionRecordDTO | null;
+  sourceType?: "MEETING" | "EMAIL";
+  sourceHref?: string | null;
+  sourceLabel?: string | null;
 };
 
 const severityBadgeClass = (severity: string): string =>
@@ -94,8 +97,12 @@ function formatTypeLabel(type: string): string {
 }
 
 function getEvidenceQuote(flag: FlagTriageCardFlag): string | null {
-  const ev = flag.evidence as { recommendation?: { snippet?: string; text?: string } } | null;
-  return ev?.recommendation?.snippet ?? null;
+  const ev = flag.evidence as {
+    recommendation?: { snippet?: string; text?: string };
+    excerpt?: string;
+    rationale?: string;
+  } | null;
+  return ev?.excerpt ?? ev?.recommendation?.snippet ?? ev?.rationale ?? null;
 }
 
 function getRecommendationText(flag: FlagTriageCardFlag): string | null {
@@ -158,7 +165,7 @@ export function FlagTriageCard({
   const dispositionForSummary = cmSummaryDisposition(flag);
   const showCmTriage =
     isComplianceActor(userRole as never) &&
-    meetingAllowsCmTriage(meetingStatus as never) &&
+    (flag.sourceType === "EMAIL" || meetingAllowsCmTriage(meetingStatus as never)) &&
     flag.status === "OPEN" &&
     flag.cmDisposition === "NONE" &&
     !flag.resolutionRecord &&
@@ -263,6 +270,11 @@ export function FlagTriageCard({
         <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-medium", typeBadgeClass)}>
           {formatTypeLabel(flag.type)}
         </span>
+        {flag.sourceType === "EMAIL" ? (
+          <span className="rounded-full border border-border bg-background px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+            EMAIL
+          </span>
+        ) : null}
         <span
           className={cn(
             "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium",
@@ -274,6 +286,14 @@ export function FlagTriageCard({
           {stBadge.label}
         </span>
       </div>
+
+      {flag.sourceType === "EMAIL" && flag.sourceHref ? (
+        <p className="mt-2 text-[12px]">
+          <a href={flag.sourceHref} className="font-semibold text-[#177a4c] hover:underline">
+            {flag.sourceLabel ?? "Open thread"}
+          </a>
+        </p>
+      ) : null}
 
       {recommendation ? <p className="mt-3 text-[14px] font-medium leading-snug">{recommendation}</p> : null}
 

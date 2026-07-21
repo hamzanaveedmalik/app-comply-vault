@@ -13,11 +13,15 @@ import type { MailMessage, MailProviderAdapter } from "./providers/types";
 import { threadKeyFromMessage } from "./thread-grouping";
 import {
   matchParticipantAddress,
+  selectClientIdFromMatches,
   type ParticipantMatch,
 } from "./participant-matching";
 import { uploadMailboxContent } from "./storage";
 import { enqueueClassification } from "~/server/classification/enqueue";
 import { sha256FromBuffer } from "~/server/hash";
+import { recordEmailCorrespondenceActivity } from "~/server/clients/activity";
+import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
+import { generateEmailSearchableText } from "~/server/search/email-searchable-text";
 
 export type IngestMessageResult =
   | { status: "created"; evidenceItemId: string }
@@ -109,8 +113,7 @@ export async function ingestEmailMessage(args: {
       );
     }
 
-    const clientId =
-      participantMatches.find((p) => p.clientId)?.clientId ?? null;
+    const clientId = selectClientIdFromMatches(participantMatches);
 
     const externalThreadId = threadKeyFromMessage(args.message);
     const subject = args.message.subject ?? "(no subject)";
@@ -155,6 +158,14 @@ export async function ingestEmailMessage(args: {
         });
       }
 
+      const { searchableText } = generateEmailSearchableText({
+        bodyText,
+        fromAddress,
+        toAddresses,
+        subject,
+        direction: inferDirection(fromAddress, args.mailboxAddress),
+      });
+
       const evidenceItem = await tx.evidenceItem.create({
         data: {
           workspaceId: args.workspaceId,
@@ -164,6 +175,7 @@ export async function ingestEmailMessage(args: {
           occurredAt: sentAt,
           contentSha256,
           storageUri,
+          searchableText,
         },
       });
 
@@ -219,15 +231,40 @@ export async function ingestEmailMessage(args: {
         }
       }
 
-      return evidenceItem.id;
+      return {
+        evidenceItemId: evidenceItem.id,
+        threadId: thread.id,
+        direction: communication.direction,
+        contentSha256,
+        sentAt,
+        subject,
+      };
     });
+
+    if (clientId && isEmailIntelligenceEnabled()) {
+      const counterparties =
+        result.direction === "OUTBOUND"
+          ? [...toAddresses, ...ccAddresses]
+          : [fromAddress];
+      await recordEmailCorrespondenceActivity({
+        workspaceId: args.workspaceId,
+        clientId,
+        direction: result.direction,
+        occurredAt: result.sentAt,
+        title: result.subject,
+        counterparties,
+        evidenceItemId: result.evidenceItemId,
+        threadId: result.threadId,
+        contentSha256: result.contentSha256,
+      });
+    }
 
     await enqueueClassification({
       workspaceId: args.workspaceId,
-      evidenceItemId: result,
+      evidenceItemId: result.evidenceItemId,
     });
 
-    return { status: "created", evidenceItemId: result };
+    return { status: "created", evidenceItemId: result.evidenceItemId };
   } catch (err) {
     const reason = err instanceof Error ? err.message : "unknown_error";
     return { status: "error", reason };

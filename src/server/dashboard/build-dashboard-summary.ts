@@ -1,4 +1,5 @@
 import type {
+  ClientHealthRow,
   DashboardRange,
   DashboardSummary,
   FinalizeTimeData,
@@ -11,6 +12,8 @@ import type {
 import { dashboardColors } from "~/lib/dashboard-colors";
 import type { FlagType, MeetingStatus } from "../../../generated/prisma";
 import type { PrismaClient } from "../../../generated/prisma";
+import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
+import { getEmailLastContactByClientName } from "~/server/clients/queries";
 
 const OPEN_FLAG_STATUSES = ["OPEN", "IN_REMEDIATION", "PENDING_VERIFICATION"] as const;
 
@@ -50,6 +53,18 @@ function mapFlagTypeToCategory(type: FlagType): keyof typeof dashboardColors.fla
     case "MISSING_DISCLOSURE":
       return "Disclosure";
     case "CONFLICT_LANGUAGE":
+      return "Documentation";
+    case "GUARANTEED_RETURN":
+    case "PERFORMANCE_CLAIM":
+    case "UNAPPROVED_MARKETING":
+      return "Documentation";
+    case "CLIENT_COMPLAINT":
+    case "FEE_DISPUTE":
+      return "Suitability";
+    case "TRADE_INSTRUCTION":
+    case "OFF_CHANNEL_REFERENCE":
+    case "SENSITIVE_PII_SHARE":
+    case "GIFTS_ENTERTAINMENT":
       return "Documentation";
     default:
       return "Documentation";
@@ -591,7 +606,7 @@ export async function buildDashboardSummary(
       }
     }
   }
-  const clients = Array.from(clientMap.entries())
+  const clients: ClientHealthRow[] = Array.from(clientMap.entries())
     .map(([clientName, acc]) => {
       const coverageRate = acc.total === 0 ? 1 : acc.documented / acc.total;
       const finalizedRate = acc.total === 0 ? 1 : acc.finalized / acc.total;
@@ -610,16 +625,54 @@ export async function buildDashboardSummary(
       else if (secondHalf < firstHalf) trending = "down";
       return {
         clientName,
+        clientId: null,
         health,
         coverageDone: acc.documented,
         coverageTotal: acc.total,
         openFlags: acc.openFlags,
         lastMeeting: acc.lastMeeting ? acc.lastMeeting.toISOString() : null,
+        lastActivity: acc.lastMeeting ? acc.lastMeeting.toISOString() : null,
+        lastActivityType: acc.lastMeeting ? ("meeting" as const) : null,
         trend: acc.weekly,
         trending,
       };
     })
     .sort((a, b) => b.openFlags - a.openFlags || a.health - b.health);
+
+  if (isEmailIntelligenceEnabled()) {
+    const emailByName = await getEmailLastContactByClientName(workspaceId);
+    for (const row of clients) {
+      const email = emailByName.get(row.clientName.trim().toLowerCase());
+      if (!email) continue;
+      row.clientId = email.clientId;
+      const meetingAt = row.lastMeeting ? new Date(row.lastMeeting) : null;
+      if (!meetingAt || email.lastContactAt > meetingAt) {
+        row.lastActivity = email.lastContactAt.toISOString();
+        row.lastActivityType = "email";
+      } else {
+        row.lastActivity = row.lastMeeting;
+        row.lastActivityType = "meeting";
+      }
+      emailByName.delete(row.clientName.trim().toLowerCase());
+    }
+    // Email-only clients (no meetings in range) still appear when they have contact.
+    for (const [, email] of emailByName) {
+      clients.push({
+        clientName: email.name,
+        clientId: email.clientId,
+        health: 70,
+        coverageDone: 0,
+        coverageTotal: 0,
+        openFlags: 0,
+        lastMeeting: null,
+        lastActivity: email.lastContactAt.toISOString(),
+        lastActivityType: "email",
+        trend: Array.from({ length: activityPoints }, () => 0),
+        trending: "flat",
+      });
+    }
+    clients.sort((a, b) => b.openFlags - a.openFlags || a.health - b.health);
+  }
 
   // ── Advisors table: workspace ADVISOR roster + their certification stats ──
   const [advisorMembers, certifiedMeetings] = await Promise.all([

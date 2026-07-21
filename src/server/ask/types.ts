@@ -2,6 +2,7 @@
  * Ask ComplyVault — type definitions (CV-FEAT-014)
  *
  * Phase 1 retrieval mode is "keyword" — Phase 2 will add "hybrid" and "semantic".
+ * Email Intelligence Phase 3 extends candidates/citations to EMAIL sources.
  */
 
 import { z } from "zod";
@@ -16,8 +17,15 @@ export type AskRequest = z.infer<typeof AskRequestSchema>;
 
 export type RetrievalMode = "keyword" | "hybrid" | "semantic";
 
+export type CitationSourceType = "MEETING" | "EMAIL";
+
 export type Citation = {
+  sourceType: CitationSourceType;
+  /** Meeting id for MEETING; thread id for EMAIL (deep-link target). */
   meetingId: string;
+  threadId?: string;
+  messageId?: string;
+  contentSha256?: string;
   clientName: string;
   meetingDate: string;
   meetingType: string;
@@ -42,7 +50,7 @@ export type AskOutcome =
     }
   | {
       kind: "no-evidence";
-      reason: "no-meetings" | "no-matches";
+      reason: "no-meetings" | "no-matches" | "no-correspondence";
       retrieval: RetrievalMeta;
       model: string;
       latencyMs: number;
@@ -98,12 +106,18 @@ export type AskResponse = AskResponseSuccess | AskResponseError;
  */
 export type RetrievalCandidate = {
   id: string;
+  sourceType: CitationSourceType;
   clientName: string;
   meetingDate: Date;
   meetingType: string;
   transcript: unknown;
   extraction: unknown;
   searchableText: string | null;
+  /** EMAIL only */
+  threadId?: string;
+  messageId?: string;
+  contentSha256?: string;
+  direction?: string;
 };
 
 /**

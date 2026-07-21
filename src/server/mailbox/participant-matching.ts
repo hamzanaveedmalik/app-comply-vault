@@ -1,29 +1,42 @@
 /**
  * Participant matching — exact address auto-link; fuzzy → triage queue.
- * Epic B CV-B-06
+ * Epic B CV-B-06 + Email Intelligence Phase 1 (household, retroactive attach).
  */
 
 import { db } from "~/server/db";
 import { getValidZohoCrmContext } from "~/server/integrations/zoho/crm-token";
 import { findContactIdByEmail } from "~/server/integrations/zoho/crm-api";
+import { recordEmailCorrespondenceActivity } from "~/server/clients/activity";
+import { getHouseholdClientIds } from "~/server/clients/household";
+import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
 
 export type ParticipantMatch = {
   address: string;
   userId: string | null;
   clientId: string | null;
   verified: boolean;
-  source: "alias" | "user" | "client" | "zoho" | "triage";
+  source: "alias" | "user" | "client" | "household" | "zoho" | "triage";
 };
 
-function normalizeAddress(addr: string): string {
+export function normalizeParticipantAddress(addr: string): string {
   return addr.trim().toLowerCase();
+}
+
+/**
+ * Prefer the first matched client; when email intelligence is on, household
+ * peers are already independent Client rows with their own aliases.
+ */
+export function selectClientIdFromMatches(
+  matches: ParticipantMatch[]
+): string | null {
+  return matches.find((p) => p.clientId)?.clientId ?? null;
 }
 
 export async function matchParticipantAddress(args: {
   workspaceId: string;
   address: string;
 }): Promise<ParticipantMatch> {
-  const address = normalizeAddress(args.address);
+  const address = normalizeParticipantAddress(args.address);
 
   const verifiedAlias = await db.emailAlias.findFirst({
     where: {
@@ -80,12 +93,22 @@ export async function matchParticipantAddress(args: {
       userId: null,
       clientId: clientAlias.clientId,
     });
+
+    let source: ParticipantMatch["source"] = "client";
+    if (isEmailIntelligenceEnabled()) {
+      const household = await getHouseholdClientIds({
+        workspaceId: args.workspaceId,
+        clientId: clientAlias.clientId,
+      });
+      if (household.length > 1) source = "household";
+    }
+
     return {
       address,
       userId: null,
       clientId: clientAlias.clientId,
       verified: true,
-      source: "client",
+      source,
     };
   }
 
@@ -275,13 +298,47 @@ export async function resolveTriageItem(args: {
   });
 }
 
+export type BackfillResult = {
+  threadsUpdated: number;
+  evidenceAttached: number;
+};
+
+/**
+ * Count distinct threads that include this address (for triage confirmation UI).
+ */
+export async function countHistoricalThreadsForAddress(args: {
+  workspaceId: string;
+  address: string;
+}): Promise<number> {
+  const address = normalizeParticipantAddress(args.address);
+  const threads = await db.communicationThread.findMany({
+    where: { workspaceId: args.workspaceId, deletedAt: null },
+    select: { participants: true },
+  });
+
+  let count = 0;
+  for (const thread of threads) {
+    const participants = thread.participants as Array<{ address: string }>;
+    if (
+      participants.some((p) => normalizeParticipantAddress(p.address) === address)
+    ) {
+      count += 1;
+    }
+  }
+  return count;
+}
+
+/**
+ * After triage confirms an address → client: update thread participant JSON and
+ * retroactively set EvidenceItem.clientId on unmatched messages involving that address.
+ */
 export async function backfillParticipantLinks(args: {
   workspaceId: string;
   address: string;
   userId?: string | null;
   clientId?: string | null;
-}): Promise<number> {
-  const address = normalizeAddress(args.address);
+}): Promise<BackfillResult> {
+  const address = normalizeParticipantAddress(args.address);
   const threads = await db.communicationThread.findMany({
     where: {
       workspaceId: args.workspaceId,
@@ -290,7 +347,7 @@ export async function backfillParticipantLinks(args: {
     select: { id: true, participants: true },
   });
 
-  let updated = 0;
+  let threadsUpdated = 0;
   for (const thread of threads) {
     const participants = thread.participants as Array<{
       address: string;
@@ -299,7 +356,7 @@ export async function backfillParticipantLinks(args: {
     }>;
     let changed = false;
     const next = participants.map((p) => {
-      if (normalizeAddress(p.address) !== address) return p;
+      if (normalizeParticipantAddress(p.address) !== address) return p;
       changed = true;
       return {
         ...p,
@@ -312,8 +369,74 @@ export async function backfillParticipantLinks(args: {
         where: { id: thread.id },
         data: { participants: next },
       });
-      updated += 1;
+      threadsUpdated += 1;
     }
   }
-  return updated;
+
+  let evidenceAttached = 0;
+  if (args.clientId) {
+    const messages = await db.communication.findMany({
+      where: {
+        deletedAt: null,
+        thread: { workspaceId: args.workspaceId, deletedAt: null },
+        OR: [
+          { fromAddress: address },
+          { toAddresses: { has: address } },
+          { ccAddresses: { has: address } },
+        ],
+        evidenceItem: {
+          deletedAt: null,
+          clientId: null,
+        },
+      },
+      select: {
+        id: true,
+        threadId: true,
+        direction: true,
+        sentAt: true,
+        fromAddress: true,
+        toAddresses: true,
+        ccAddresses: true,
+        evidenceItem: {
+          select: {
+            id: true,
+            title: true,
+            contentSha256: true,
+            occurredAt: true,
+          },
+        },
+      },
+    });
+
+    for (const message of messages) {
+      await db.evidenceItem.update({
+        where: { id: message.evidenceItem.id },
+        data: { clientId: args.clientId },
+      });
+      evidenceAttached += 1;
+
+      if (isEmailIntelligenceEnabled()) {
+        const counterparties = [
+          message.fromAddress,
+          ...message.toAddresses,
+          ...message.ccAddresses,
+        ].filter((a) => normalizeParticipantAddress(a) !== address);
+
+        await recordEmailCorrespondenceActivity({
+          workspaceId: args.workspaceId,
+          clientId: args.clientId,
+          direction: message.direction,
+          occurredAt: message.sentAt,
+          title: message.evidenceItem.title,
+          counterparties,
+          evidenceItemId: message.evidenceItem.id,
+          threadId: message.threadId,
+          contentSha256: message.evidenceItem.contentSha256,
+          fromTriage: true,
+        });
+      }
+    }
+  }
+
+  return { threadsUpdated, evidenceAttached };
 }

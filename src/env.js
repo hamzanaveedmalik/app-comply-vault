@@ -89,6 +89,8 @@ export const env = createEnv({
     ASK_RATE_LIMIT_PER_MIN: z.coerce.number().int().positive().optional(),
     // Optional override for context-block size cap (in chars); defaults baked into retrieval.ts.
     ASK_MAX_CONTEXT_TOKENS: z.coerce.number().int().positive().optional(),
+    /** Email Intelligence Phases 1–3 (correspondence, classify, Ask over email). */
+    EMAIL_INTELLIGENCE_ENABLED: z.string().optional(),
   },
 
   /**
@@ -99,6 +101,7 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_APP_URL: z.string().optional(),
     NEXT_PUBLIC_DEMO_MODE: z.string().optional(),
+    NEXT_PUBLIC_EMAIL_INTELLIGENCE: z.string().optional(),
   },
 
   /**
@@ -171,7 +174,9 @@ export const env = createEnv({
     SEC_API_KEY: process.env.SEC_API_KEY,
     ASK_RATE_LIMIT_PER_MIN: process.env.ASK_RATE_LIMIT_PER_MIN,
     ASK_MAX_CONTEXT_TOKENS: process.env.ASK_MAX_CONTEXT_TOKENS,
+    EMAIL_INTELLIGENCE_ENABLED: process.env.EMAIL_INTELLIGENCE_ENABLED,
     NEXT_PUBLIC_DEMO_MODE: process.env.NEXT_PUBLIC_DEMO_MODE,
+    NEXT_PUBLIC_EMAIL_INTELLIGENCE: process.env.NEXT_PUBLIC_EMAIL_INTELLIGENCE,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

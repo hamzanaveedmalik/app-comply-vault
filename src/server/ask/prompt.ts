@@ -19,25 +19,29 @@ import { topicToString, type TopicEntry } from "~/lib/topics";
  */
 export const SYSTEM_PROMPT = `You are ComplyVault, a compliance assistant for Registered Investment Advisors.
 
-You answer questions ONLY about the meeting evidence provided to you below. Follow these
+You answer questions ONLY about the meeting and email evidence provided to you below. Follow these
 rules without exception:
 
 1. NEVER invent facts. If the evidence does not answer the question, reply exactly:
    "I don't have evidence for that in your meeting records."
+   When the evidence block contains only email correspondence and still does not answer, reply exactly:
+   "No matching correspondence found in your workspace."
 
 2. NEVER cite SEC rules, CFR sections, or external regulations. You may only quote
    text that appears in the evidence block.
 
-3. Every factual claim in your answer must correspond to at least one of the meetings
-   in the evidence. When you make a claim, mention the client name and meeting date
-   inline (e.g. "On May 14 with Rob Cabrera, ...").
+3. Every factual claim in your answer must correspond to at least one of the sources
+   in the evidence. When you make a claim, mention the client name and date
+   inline (e.g. "On May 14 with Rob Cabrera, ..."). For email, mention that it was
+   an email and include the evidence hash when provided.
 
 4. Keep answers under 120 words. Plain prose. No markdown headers, no bullet points
    unless the user explicitly asks for a list.
 
 5. If the evidence is conflicting or ambiguous, say so plainly. Do not pick a side.
 
-6. Never repeat or summarise the user's question.`;
+6. Never repeat or summarise the user's question.
+7. Never answer from general knowledge about a client. Only use the evidence block.`;
 
 /**
  * Verbatim string the model must produce when retrieval is empty. We also
@@ -46,6 +50,12 @@ rules without exception:
  */
 export const NO_EVIDENCE_ANSWER =
   "I don't have evidence for that in your meeting records.";
+
+/**
+ * Used when Email Intelligence is on and retrieval finds no meetings or email.
+ */
+export const NO_CORRESPONDENCE_ANSWER =
+  "No matching correspondence found in your workspace.";
 
 /**
  * Verbatim string we substitute when the LLM output trips the regulatory
@@ -95,7 +105,9 @@ export function buildUserMessage(
       : [];
 
     lines.push(
-      `[meeting:${candidate.id}] ${candidate.clientName} · ${candidate.meetingType} · ${date}`
+      candidate.sourceType === "EMAIL"
+        ? `[email:${candidate.threadId ?? candidate.id}] ${candidate.clientName} · Email · ${date}${candidate.contentSha256 ? ` · hash:${candidate.contentSha256.slice(0, 12)}` : ""}`
+        : `[meeting:${candidate.id}] ${candidate.clientName} · ${candidate.meetingType} · ${date}`
     );
     if (topics.length > 0) {
       lines.push(`  topics: ${topics.map((t) => shorten(t, 80)).join("; ")}`);

@@ -5,6 +5,7 @@ import {
   isComplianceActor,
   meetingAllowsCmTriage,
 } from "~/lib/meeting-workflow";
+import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
 
 export const runtime = "nodejs";
 
@@ -12,6 +13,13 @@ const triageSchema = z.discriminatedUnion("action", [
   z.object({
     action: z.literal("resolve"),
     resolutionNote: z.string().min(10, "Resolution note required"),
+    /** Optional remediation evidence link (meeting or communication id). */
+    linkedEvidence: z
+      .object({
+        type: z.enum(["MEETING", "COMMUNICATION", "THREAD"]),
+        id: z.string().min(1),
+      })
+      .optional(),
   }),
   z.object({
     action: z.literal("note"),
@@ -53,17 +61,30 @@ export async function POST(
       return Response.json({ success: false, error: "Flag not found" }, { status: 404 });
     }
 
-    const meeting = await db.meeting.findFirst({
-      where: { id: flag.meetingId, workspaceId },
-    });
-    if (!meeting || !meetingAllowsCmTriage(meeting.status)) {
-      return Response.json(
-        {
-          success: false,
-          error: "CM triage is only allowed when the meeting is ADVISOR_CERTIFIED",
-        },
-        { status: 400 }
-      );
+    const sourceType = flag.sourceType ?? "MEETING";
+    let meetingIdForAudit: string | null = flag.meetingId;
+
+    if (sourceType === "EMAIL") {
+      if (!isEmailIntelligenceEnabled()) {
+        return Response.json({ success: false, error: "Feature disabled" }, { status: 404 });
+      }
+    } else {
+      if (!flag.meetingId) {
+        return Response.json({ success: false, error: "Flag missing meeting" }, { status: 400 });
+      }
+      const meeting = await db.meeting.findFirst({
+        where: { id: flag.meetingId, workspaceId },
+      });
+      if (!meeting || !meetingAllowsCmTriage(meeting.status)) {
+        return Response.json(
+          {
+            success: false,
+            error: "CM triage is only allowed when the meeting is ADVISOR_CERTIFIED",
+          },
+          { status: 400 }
+        );
+      }
+      meetingIdForAudit = meeting.id;
     }
 
     if (flag.cmDisposition !== "NONE") {
@@ -114,8 +135,13 @@ export async function POST(
             action: "REMEDIATION_UPDATE",
             resourceType: "flag",
             resourceId: flag.id,
-            meetingId: meeting.id,
-            metadata: { cmTriage: "resolve", flagId: flag.id },
+            meetingId: meetingIdForAudit,
+            metadata: {
+              cmTriage: "resolve",
+              flagId: flag.id,
+              sourceType,
+              linkedEvidence: body.linkedEvidence ?? null,
+            },
           },
         });
         return f;
@@ -141,8 +167,8 @@ export async function POST(
             action: "REMEDIATION_UPDATE",
             resourceType: "flag",
             resourceId: flag.id,
-            meetingId: meeting.id,
-            metadata: { cmTriage: "note", flagId: flag.id },
+            meetingId: meetingIdForAudit,
+            metadata: { cmTriage: "note", flagId: flag.id, sourceType },
           },
         });
         return f;
@@ -161,7 +187,7 @@ export async function POST(
           rationale: body.escalationReason,
           createdByUserId: session.user.id,
           submittedForVerificationAt: now,
-          metadata: { cmEscalation: true },
+          metadata: { cmEscalation: true, sourceType },
         },
       });
 
@@ -183,11 +209,12 @@ export async function POST(
           action: "REMEDIATION_START",
           resourceType: "flag",
           resourceId: flag.id,
-          meetingId: meeting.id,
+          meetingId: meetingIdForAudit,
           metadata: {
             cmTriage: "escalate",
             flagId: flag.id,
             resolutionRecordId: rr.id,
+            sourceType,
           },
         },
       });

@@ -8,6 +8,11 @@ import type { ExtractionData } from "~/server/extraction/types";
 import type { TranscriptSegment } from "~/server/transcription/types";
 import type { Meeting, User } from "~/server/export/types";
 import { getEntitlements, isTrialExpired } from "~/server/billing/entitlements";
+import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
+import {
+  buildEmailCorrespondenceSection,
+  emailCorrespondenceSectionToCsv,
+} from "~/server/export/email-correspondence-section";
 
 export type BuildAuditPackResult =
   | { success: true; buffer: Buffer; filename: string }
@@ -122,6 +127,31 @@ export async function buildAuditPackZipForMeeting(args: {
     ccoSignedOffByUser: ccoSignedOffByUser ?? undefined,
   } as Meeting & { finalizedBy?: User | null };
 
+  let emailCorrespondenceCsv: string | null = null;
+  if (isEmailIntelligenceEnabled()) {
+    const matchedClient = await db.client.findFirst({
+      where: {
+        workspaceId,
+        deletedAt: null,
+        name: { equals: meeting.clientName, mode: "insensitive" },
+      },
+      select: { id: true },
+    });
+    if (matchedClient) {
+      const to = meeting.meetingDate;
+      const from = new Date(to.getTime() - 365 * 24 * 60 * 60 * 1000);
+      const section = await buildEmailCorrespondenceSection({
+        workspaceId,
+        clientId: matchedClient.id,
+        from,
+        to,
+      });
+      if (section && section.rows.length > 0) {
+        emailCorrespondenceCsv = emailCorrespondenceSectionToCsv(section);
+      }
+    }
+  }
+
   const buffer = await generateAuditPack({
     meeting: meetingForExport,
     extraction,
@@ -131,6 +161,7 @@ export async function buildAuditPackZipForMeeting(args: {
     flags,
     watermarked,
     exportingUserName,
+    emailCorrespondenceCsv,
   });
 
   const filename = generateExportFilename(workspace.name, meeting.clientName, { watermarked });

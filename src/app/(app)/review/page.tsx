@@ -9,6 +9,8 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import ReviewQueueClient from "./review-queue-client";
 import { redirectPathForMissingWorkspace } from "~/server/workspace/no-workspace-redirect";
+import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
+import { listOpenEmailFlagsForReview } from "~/server/flags/list-email-flags-for-review";
 
 // Force dynamic rendering since we use searchParams
 export const dynamic = "force-dynamic";
@@ -162,17 +164,25 @@ export default async function ReviewQueuePage({
       })
     );
 
+    const emailFlags =
+      isEmailIntelligenceEnabled()
+        ? await listOpenEmailFlagsForReview(session.user.workspaceId)
+        : [];
+
     return (
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold">Review Queue</h1>
           <p className="text-muted-foreground mt-2">
-            Review and edit draft meeting records
+            Review draft meetings and email compliance signals
           </p>
         </div>
 
         <ReviewQueueClient
           initialMeetings={meetingsWithLastEdited}
+          initialEmailFlags={emailFlags}
+          userRole={session.user.role}
+          currentUserId={session.user.id}
           initialFilters={{
             clientName: clientName || "",
             status: status || "",
@@ -189,7 +199,7 @@ export default async function ReviewQueuePage({
         <div className="mb-8">
           <h1 className="text-3xl font-bold">Review Queue</h1>
           <p className="text-muted-foreground mt-2">
-            Review and edit draft meeting records
+            Review draft meetings and email compliance signals
           </p>
         </div>
         <div className="rounded-lg border border-destructive bg-destructive/10 p-4">

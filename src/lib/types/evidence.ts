@@ -69,6 +69,8 @@ export type EmailTriageItemDto = {
   userId: string | null;
   clientId: string | null;
   createdAt: string;
+  /** Threads that include this address (for confirm preview). */
+  historicalThreadCount: number;
 };
 
 export type M365WorkspaceStatus = {

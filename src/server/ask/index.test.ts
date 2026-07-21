@@ -15,6 +15,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { askComplyVault, hashQuestion } from "./index";
 import type { RetrievalCandidate } from "./types";
+import type { AskCompletionInput } from "./provider";
 
 type StubMeetingRow = RetrievalCandidate & {
   workspaceId: string;
@@ -93,6 +94,7 @@ function buildStubPrisma(meetings: StubMeetingRow[]) {
 function meeting(overrides: Partial<StubMeetingRow>): StubMeetingRow {
   return {
     id: "m1",
+    sourceType: "MEETING",
     workspaceId: "wA",
     status: "FINALIZED",
     deletedAt: null,
@@ -155,7 +157,7 @@ describe("askComplyVault — happy path", () => {
         workspaceId: "wA",
         userId: "user-1",
       },
-      { prisma, completion, model: "gpt-4o-mini" }
+      { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
     );
 
     expect(outcome.kind).toBe("answer");
@@ -169,7 +171,10 @@ describe("askComplyVault — happy path", () => {
     expect(outcome.retrieval.candidatesUsed).toBe(1);
 
     expect(completion).toHaveBeenCalledOnce();
-    const call = completion.mock.calls[0]?.[0];
+    const firstCallArgs = completion.mock.calls.at(0) as
+      | [AskCompletionInput]
+      | undefined;
+    const call = firstCallArgs?.[0];
     expect(call?.userMessage).toContain("<evidence>");
     expect(call?.userMessage).toContain(QUESTION_FEE);
 
@@ -190,7 +195,7 @@ describe("askComplyVault — happy path", () => {
 
     const outcome = await askComplyVault(
       { question: QUESTION_FEE, workspaceId: "wA", userId: "user-1" },
-      { prisma, completion, model: "gpt-4o-mini" }
+      { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
     );
 
     expect(outcome.kind).toBe("answer");
@@ -214,7 +219,7 @@ describe("askComplyVault — no evidence", () => {
         workspaceId: "wA",
         userId: "user-1",
       },
-      { prisma, completion, model: "gpt-4o-mini" }
+      { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
     );
 
     expect(outcome.kind).toBe("no-evidence");
@@ -230,7 +235,7 @@ describe("askComplyVault — no evidence", () => {
 
     const outcome = await askComplyVault(
       { question: QUESTION_FEE, workspaceId: "wA", userId: "user-1" },
-      { prisma, completion, model: "gpt-4o-mini" }
+      { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
     );
 
     expect(outcome.kind).toBe("no-evidence");
@@ -252,7 +257,7 @@ describe("askComplyVault — workspace isolation (PRD §6.1)", () => {
 
     const outcome = await askComplyVault(
       { question: QUESTION_FEE, workspaceId: "wA", userId: "user-a" },
-      { prisma, completion, model: "gpt-4o-mini" }
+      { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
     );
 
     expect(outcome.kind).toBe("no-evidence");
@@ -281,7 +286,7 @@ describe("askComplyVault — workspace isolation (PRD §6.1)", () => {
 
     const outcome = await askComplyVault(
       { question: QUESTION_FEE, workspaceId: "wA", userId: "user-a" },
-      { prisma, completion, model: "gpt-4o-mini" }
+      { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
     );
 
     expect(outcome.kind).toBe("answer");
@@ -290,7 +295,10 @@ describe("askComplyVault — workspace isolation (PRD §6.1)", () => {
     expect(meetingIds).toEqual(["m-a"]);
     expect(meetingIds).not.toContain("m-b");
 
-    const userMessage = completion.mock.calls[0]?.[0]?.userMessage ?? "";
+    const firstCallArgs = completion.mock.calls.at(0) as
+      | [AskCompletionInput]
+      | undefined;
+    const userMessage = firstCallArgs?.[0]?.userMessage ?? "";
     expect(userMessage).not.toContain("m-b");
     expect(userMessage).not.toContain("B Client (LEAK)");
   });
@@ -304,7 +312,7 @@ describe("askComplyVault — status filtering (PRD §6.3)", () => {
 
     const outcome = await askComplyVault(
       { question: QUESTION_FEE, workspaceId: "wA", userId: "user-1" },
-      { prisma, completion, model: "gpt-4o-mini" }
+      { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
     );
 
     expect(outcome.kind).toBe("no-evidence");
@@ -322,7 +330,7 @@ describe("askComplyVault — status filtering (PRD §6.3)", () => {
 
     const outcome = await askComplyVault(
       { question: QUESTION_FEE, workspaceId: "wA", userId: "user-1" },
-      { prisma, completion, model: "gpt-4o-mini" }
+      { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
     );
     expect(outcome.kind).toBe("answer");
   });
@@ -338,7 +346,7 @@ describe("askComplyVault — regulatory-citation post-filter (PRD §6.2)", () =>
 
     const outcome = await askComplyVault(
       { question: QUESTION_FEE, workspaceId: "wA", userId: "user-1" },
-      { prisma, completion, model: "gpt-4o-mini" }
+      { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
     );
 
     expect(outcome.kind).toBe("blocked");
@@ -356,7 +364,7 @@ describe("askComplyVault — regulatory-citation post-filter (PRD §6.2)", () =>
 
     const outcome = await askComplyVault(
       { question: QUESTION_FEE, workspaceId: "wA", userId: "user-1" },
-      { prisma, completion, model: "gpt-4o-mini" }
+      { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
     );
     expect(outcome.kind).toBe("blocked");
   });
@@ -371,7 +379,7 @@ describe("askComplyVault — provider error handling (PRD §7)", () => {
 
     const outcome = await askComplyVault(
       { question: QUESTION_FEE, workspaceId: "wA", userId: "user-1" },
-      { prisma, completion, model: "gpt-4o-mini" }
+      { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
     );
 
     expect(outcome.kind).toBe("provider-error");
@@ -392,7 +400,7 @@ describe("askComplyVault — audit metadata PII scrubbing (PRD §6.4)", () => {
     const question = "Did Sarah Johnson agree to the 1.25 fee change at the May review?";
     await askComplyVault(
       { question, workspaceId: "wA", userId: "user-1" },
-      { prisma, completion, model: "gpt-4o-mini" }
+      { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
     );
 
     const audit = auditCalls[0];
@@ -425,7 +433,7 @@ describe("askComplyVault — input scoping", () => {
         userId: "user-1",
         meetingId: "m-b",
       },
-      { prisma, completion, model: "gpt-4o-mini" }
+      { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
     );
     expect(outcome.kind).toBe("answer");
     if (outcome.kind !== "answer") throw new Error("unreachable");
@@ -453,7 +461,7 @@ describe("askComplyVault — input scoping", () => {
         userId: "user-1",
         windowDays: 30,
       },
-      { prisma, completion, model: "gpt-4o-mini", now: () => now }
+      { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false, now: () => now }
     );
     expect(outcome.kind).toBe("answer");
     if (outcome.kind !== "answer") throw new Error("unreachable");

@@ -53,11 +53,14 @@ model Workspace {
   firmProfile           FirmProfile?
   evidenceItems         EvidenceItem[]
   clients               Client[]
+  clientHouseholds      ClientHousehold[]
+  clientActivities      ClientActivity[]
   mailboxConnections    MailboxConnection[]
   communicationThreads  CommunicationThread[]
   emailAliases          EmailAlias[]
   emailTriageItems      EmailTriageItem[]
   ingestJobs            IngestJob[]
+  evidenceClassifications EvidenceClassification[]
 
   @@index([createdAt])
 }
@@ -252,6 +255,26 @@ enum FlagType {
   MISSING_DISCLOSURE
   CONFLICT_LANGUAGE
   MISSING_SUITABILITY_BASIS
+  /// Email intelligence taxonomy (Phase 2)
+  GUARANTEED_RETURN
+  PERFORMANCE_CLAIM
+  CLIENT_COMPLAINT
+  UNAPPROVED_MARKETING
+  TRADE_INSTRUCTION
+  FEE_DISPUTE
+  OFF_CHANNEL_REFERENCE
+  SENSITIVE_PII_SHARE
+  GIFTS_ENTERTAINMENT
+}
+
+enum FlagSourceType {
+  MEETING
+  EMAIL
+}
+
+enum EvidenceClassificationResult {
+  CLEAN
+  FLAGGED
 }
 
 enum FlagSeverity {
@@ -311,7 +334,15 @@ enum CmFlagDisposition {
 model Flag {
   id            String      @id @default(cuid())
   workspaceId   String
-  meetingId     String
+  /// Required when sourceType = MEETING; null for EMAIL-sourced flags.
+  meetingId     String?
+  sourceType    FlagSourceType @default(MEETING)
+  /// Meeting.id when MEETING; CommunicationThread.id when EMAIL.
+  sourceId      String
+  /// Message-level pointer for email-sourced flags.
+  communicationId String?
+  /// Idempotency key (email: `email:{communicationId}:{type}`); null for meeting flags.
+  dedupeKey     String?
   type          FlagType
   severity      FlagSeverity @default(WARN)
   status        FlagStatus   @default(OPEN)
@@ -331,21 +362,26 @@ model Flag {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
-  meeting   Meeting   @relation(fields: [meetingId], references: [id], onDelete: Cascade)
-  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  meeting       Meeting?       @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  communication Communication? @relation(fields: [communicationId], references: [id], onDelete: SetNull)
+  workspace     Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   resolutionRecord ResolutionRecord?
   cmTriagedByUser  User?    @relation("FlagCmTriagedBy", fields: [cmTriagedByUserId], references: [id], onDelete: SetNull)
 
   @@index([workspaceId])
   @@index([workspaceId, meetingId])
   @@index([workspaceId, status])
+  @@index([workspaceId, sourceType, sourceId])
   @@index([meetingId, type])
+  @@index([communicationId])
+  @@unique([workspaceId, dedupeKey])
 }
 
 model ResolutionRecord {
   id             String   @id @default(cuid())
   workspaceId    String
-  meetingId      String
+  /// Nullable for email-sourced flag remediation.
+  meetingId      String?
   flagId         String   @unique
   resolutionType FlagResolutionType
   rationale      String
@@ -360,7 +396,7 @@ model ResolutionRecord {
   overrideCategory String?
 
   flag      Flag      @relation(fields: [flagId], references: [id], onDelete: Cascade)
-  meeting   Meeting   @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  meeting   Meeting?  @relation(fields: [meetingId], references: [id], onDelete: Cascade)
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   tasks     ActionItem[]
   evidence  EvidenceLink[]
@@ -368,6 +404,29 @@ model ResolutionRecord {
 
   @@index([workspaceId])
   @@index([meetingId])
+}
+
+/// Classification outcome for an evidence item (email CLEAN is itself audit evidence).
+model EvidenceClassification {
+  id              String                       @id @default(cuid())
+  workspaceId     String
+  evidenceItemId  String
+  communicationId String?
+  contentHash     String
+  result          EvidenceClassificationResult
+  modelId         String?
+  promptVersion   String?
+  signalCount     Int                          @default(0)
+  rawResponse     Json?
+  createdAt       DateTime                     @default(now())
+  updatedAt       DateTime                     @updatedAt
+  deletedAt       DateTime?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, evidenceItemId, contentHash])
+  @@index([workspaceId, result])
+  @@index([evidenceItemId])
 }
 
 model ActionItem {
@@ -808,21 +867,98 @@ enum EmailTriageStatus {
 }
 
 model Client {
-  id          String       @id @default(cuid())
-  workspaceId String
-  name        String
-  zohoId      String?
-  status      ClientStatus @default(CLIENT)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  deletedAt   DateTime?
+  id             String       @id @default(cuid())
+  workspaceId    String
+  name           String
+  zohoId         String?
+  status         ClientStatus @default(CLIENT)
+  /// Max of last meeting / last email correspondence (denormalized for dashboards).
+  lastContactAt  DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  deletedAt      DateTime?
 
-  workspace     Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspace     Workspace               @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   emailAliases  EmailAlias[]
   evidenceItems EvidenceItem[]
+  activities    ClientActivity[]
+  householdMemberships ClientHouseholdMember[]
 
   @@index([workspaceId])
   @@index([workspaceId, name])
+  @@index([workspaceId, lastContactAt])
+}
+
+enum HouseholdMemberRole {
+  PRIMARY
+  SPOUSE
+  JOINT
+}
+
+/// Links related clients (spouse, joint account holders) for correspondence matching.
+model ClientHousehold {
+  id          String   @id @default(cuid())
+  workspaceId String
+  name        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+
+  workspace Workspace               @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  members   ClientHouseholdMember[]
+
+  @@index([workspaceId])
+}
+
+model ClientHouseholdMember {
+  id          String              @id @default(cuid())
+  householdId String
+  clientId    String
+  role        HouseholdMemberRole @default(PRIMARY)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  deletedAt   DateTime?
+
+  household ClientHousehold @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  client    Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@unique([householdId, clientId])
+  @@index([clientId])
+  @@index([householdId, role])
+}
+
+enum ClientActivityType {
+  EMAIL_RECEIVED
+  EMAIL_SENT
+  EMAIL_INTERNAL
+  TRIAGE_ATTACHED
+}
+
+/// Client correspondence / activity timeline (email intelligence Phase 1).
+model ClientActivity {
+  id              String                 @id @default(cuid())
+  workspaceId     String
+  clientId        String
+  type            ClientActivityType
+  occurredAt      DateTime
+  title           String?
+  direction       CommunicationDirection?
+  counterparties  String[]
+  evidenceItemId  String?
+  threadId        String?
+  contentSha256   String?
+  metadata        Json?
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  deletedAt       DateTime?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  client    Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, evidenceItemId, clientId])
+  @@index([workspaceId, clientId, occurredAt])
+  @@index([workspaceId, occurredAt])
+  @@index([threadId])
 }
 
 model EmailAlias {
@@ -855,6 +991,8 @@ model EvidenceItem {
   ingestedAt            DateTime           @default(now())
   contentSha256         String
   storageUri            String?
+  /// Keyword index for Ask / search (redacted for EMAIL). Mirrors Meeting.searchableText.
+  searchableText        String?            @db.Text
   retentionRuleId       String?
   destructionEligibleAt DateTime?
   createdAt             DateTime           @default(now())
@@ -925,6 +1063,7 @@ model Communication {
   thread       CommunicationThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
   evidenceItem EvidenceItem        @relation(fields: [evidenceItemId], references: [id], onDelete: Cascade)
   attachments  Attachment[]
+  flags        Flag[]
 
   @@index([threadId, sentAt])
 }

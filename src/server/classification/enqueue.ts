@@ -1,10 +1,12 @@
 /**
- * Classification enqueue stub — consumed by Epic C.
- * Epic B CV-B-03 (queue hook) + CV-B-09 redaction guard.
+ * Classification enqueue — Email Intelligence Phase 2.
+ * Redacts via guard, then runs classify → flag pipeline when feature flag is on.
  */
 
 import { db } from "~/server/db";
 import { redactForLlm } from "./redaction-guard";
+import { classifyEmailEvidence } from "./persist-email-classification";
+import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
 
 export type ClassificationEnqueuePayload = {
   workspaceId: string;
@@ -37,6 +39,15 @@ export async function enqueueClassification(args: {
   pendingClassification.add(
     `${args.workspaceId}:${args.evidenceItemId}:${redacted.contentHash}`
   );
+
+  if (!isEmailIntelligenceEnabled()) return;
+
+  // Run inline with the same retry semantics as meeting extraction.
+  // Failures are recorded as error status; ingest itself already succeeded.
+  await classifyEmailEvidence({
+    workspaceId: args.workspaceId,
+    evidenceItemId: args.evidenceItemId,
+  });
 }
 
 /** Test-only: verify redaction ran before enqueue */

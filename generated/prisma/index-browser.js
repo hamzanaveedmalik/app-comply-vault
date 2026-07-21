@@ -207,6 +207,10 @@ exports.Prisma.FlagScalarFieldEnum = {
   id: 'id',
   workspaceId: 'workspaceId',
   meetingId: 'meetingId',
+  sourceType: 'sourceType',
+  sourceId: 'sourceId',
+  communicationId: 'communicationId',
+  dedupeKey: 'dedupeKey',
   type: 'type',
   severity: 'severity',
   status: 'status',
@@ -242,6 +246,22 @@ exports.Prisma.ResolutionRecordScalarFieldEnum = {
   closedByUserId: 'closedByUserId',
   overrideReason: 'overrideReason',
   overrideCategory: 'overrideCategory'
+};
+
+exports.Prisma.EvidenceClassificationScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  evidenceItemId: 'evidenceItemId',
+  communicationId: 'communicationId',
+  contentHash: 'contentHash',
+  result: 'result',
+  modelId: 'modelId',
+  promptVersion: 'promptVersion',
+  signalCount: 'signalCount',
+  rawResponse: 'rawResponse',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.ActionItemScalarFieldEnum = {
@@ -441,6 +461,44 @@ exports.Prisma.ClientScalarFieldEnum = {
   name: 'name',
   zohoId: 'zohoId',
   status: 'status',
+  lastContactAt: 'lastContactAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.ClientHouseholdScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.ClientHouseholdMemberScalarFieldEnum = {
+  id: 'id',
+  householdId: 'householdId',
+  clientId: 'clientId',
+  role: 'role',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.ClientActivityScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  clientId: 'clientId',
+  type: 'type',
+  occurredAt: 'occurredAt',
+  title: 'title',
+  direction: 'direction',
+  counterparties: 'counterparties',
+  evidenceItemId: 'evidenceItemId',
+  threadId: 'threadId',
+  contentSha256: 'contentSha256',
+  metadata: 'metadata',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
@@ -469,6 +527,7 @@ exports.Prisma.EvidenceItemScalarFieldEnum = {
   ingestedAt: 'ingestedAt',
   contentSha256: 'contentSha256',
   storageUri: 'storageUri',
+  searchableText: 'searchableText',
   retentionRuleId: 'retentionRuleId',
   destructionEligibleAt: 'destructionEligibleAt',
   createdAt: 'createdAt',
@@ -659,10 +718,24 @@ exports.FinalizeReason = exports.$Enums.FinalizeReason = {
   OTHER: 'OTHER'
 };
 
+exports.FlagSourceType = exports.$Enums.FlagSourceType = {
+  MEETING: 'MEETING',
+  EMAIL: 'EMAIL'
+};
+
 exports.FlagType = exports.$Enums.FlagType = {
   MISSING_DISCLOSURE: 'MISSING_DISCLOSURE',
   CONFLICT_LANGUAGE: 'CONFLICT_LANGUAGE',
-  MISSING_SUITABILITY_BASIS: 'MISSING_SUITABILITY_BASIS'
+  MISSING_SUITABILITY_BASIS: 'MISSING_SUITABILITY_BASIS',
+  GUARANTEED_RETURN: 'GUARANTEED_RETURN',
+  PERFORMANCE_CLAIM: 'PERFORMANCE_CLAIM',
+  CLIENT_COMPLAINT: 'CLIENT_COMPLAINT',
+  UNAPPROVED_MARKETING: 'UNAPPROVED_MARKETING',
+  TRADE_INSTRUCTION: 'TRADE_INSTRUCTION',
+  FEE_DISPUTE: 'FEE_DISPUTE',
+  OFF_CHANNEL_REFERENCE: 'OFF_CHANNEL_REFERENCE',
+  SENSITIVE_PII_SHARE: 'SENSITIVE_PII_SHARE',
+  GIFTS_ENTERTAINMENT: 'GIFTS_ENTERTAINMENT'
 };
 
 exports.FlagSeverity = exports.$Enums.FlagSeverity = {
@@ -697,6 +770,11 @@ exports.CmFlagDisposition = exports.$Enums.CmFlagDisposition = {
   RESOLVED: 'RESOLVED',
   NOTED: 'NOTED',
   ESCALATED: 'ESCALATED'
+};
+
+exports.EvidenceClassificationResult = exports.$Enums.EvidenceClassificationResult = {
+  CLEAN: 'CLEAN',
+  FLAGGED: 'FLAGGED'
 };
 
 exports.RemediationTaskStatus = exports.$Enums.RemediationTaskStatus = {
@@ -809,6 +887,25 @@ exports.ClientStatus = exports.$Enums.ClientStatus = {
   FORMER: 'FORMER'
 };
 
+exports.HouseholdMemberRole = exports.$Enums.HouseholdMemberRole = {
+  PRIMARY: 'PRIMARY',
+  SPOUSE: 'SPOUSE',
+  JOINT: 'JOINT'
+};
+
+exports.ClientActivityType = exports.$Enums.ClientActivityType = {
+  EMAIL_RECEIVED: 'EMAIL_RECEIVED',
+  EMAIL_SENT: 'EMAIL_SENT',
+  EMAIL_INTERNAL: 'EMAIL_INTERNAL',
+  TRIAGE_ATTACHED: 'TRIAGE_ATTACHED'
+};
+
+exports.CommunicationDirection = exports.$Enums.CommunicationDirection = {
+  INBOUND: 'INBOUND',
+  OUTBOUND: 'OUTBOUND',
+  INTERNAL: 'INTERNAL'
+};
+
 exports.EvidenceSourceType = exports.$Enums.EvidenceSourceType = {
   MEETING: 'MEETING',
   EMAIL: 'EMAIL',
@@ -840,12 +937,6 @@ exports.CommunicationChannel = exports.$Enums.CommunicationChannel = {
   TEAMS_IMPORT: 'TEAMS_IMPORT',
   SLACK_IMPORT: 'SLACK_IMPORT',
   OTHER_IMPORT: 'OTHER_IMPORT'
-};
-
-exports.CommunicationDirection = exports.$Enums.CommunicationDirection = {
-  INBOUND: 'INBOUND',
-  OUTBOUND: 'OUTBOUND',
-  INTERNAL: 'INTERNAL'
 };
 
 exports.MailboxProvider = exports.$Enums.MailboxProvider = {
@@ -894,6 +985,7 @@ exports.Prisma.ModelName = {
   Version: 'Version',
   Flag: 'Flag',
   ResolutionRecord: 'ResolutionRecord',
+  EvidenceClassification: 'EvidenceClassification',
   ActionItem: 'ActionItem',
   EvidenceLink: 'EvidenceLink',
   Verification: 'Verification',
@@ -911,6 +1003,9 @@ exports.Prisma.ModelName = {
   SuppressionLogEntry: 'SuppressionLogEntry',
   FirmProfileVersion: 'FirmProfileVersion',
   Client: 'Client',
+  ClientHousehold: 'ClientHousehold',
+  ClientHouseholdMember: 'ClientHouseholdMember',
+  ClientActivity: 'ClientActivity',
   EmailAlias: 'EmailAlias',
   EvidenceItem: 'EvidenceItem',
   EvidenceTag: 'EvidenceTag',

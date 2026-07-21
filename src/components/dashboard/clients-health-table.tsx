@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { Mail, Video } from "lucide-react";
 import type { ClientHealthRow } from "~/lib/dashboard-types";
 import { buildSparkline } from "~/lib/sparkline";
 import { DashboardCard } from "~/components/dashboard/dashboard-card";
+import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
 
 type ClientsHealthTableProps = {
   clients: ClientHealthRow[];
@@ -29,6 +31,8 @@ export function ClientsHealthTable({
   rangeLabel,
 }: ClientsHealthTableProps): React.JSX.Element {
   const dateFmt = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" });
+  const emailIntel = isEmailIntelligenceEnabled();
+  const activityHeader = emailIntel ? "Last activity" : "Last meeting";
 
   return (
     <DashboardCard
@@ -50,7 +54,7 @@ export function ClientsHealthTable({
                 <th className={`${TH} text-left`}>Health</th>
                 <th className={`${TH} text-left`}>Coverage</th>
                 <th className={`${TH} text-right`}>Open flags</th>
-                <th className={`${TH} text-left`}>Last meeting</th>
+                <th className={`${TH} text-left`}>{activityHeader}</th>
                 <th className={`${TH} text-left`}>Health · {rangeLabel}</th>
                 <th className={TH} />
               </tr>
@@ -64,8 +68,13 @@ export function ClientsHealthTable({
                   c.trend.map((v) => -v),
                   { width: 68, height: 18, pad: 2 },
                 );
+                const activityIso = emailIntel ? c.lastActivity : c.lastMeeting;
+                const openHref =
+                  emailIntel && c.clientId
+                    ? `/clients/${c.clientId}`
+                    : `/interaction-log?client=${encodeURIComponent(c.clientName)}`;
                 return (
-                  <tr key={c.clientName} className="group last:[&>td]:border-b-0 hover:bg-[#f8f9f8]">
+                  <tr key={`${c.clientId ?? c.clientName}`} className="group last:[&>td]:border-b-0 hover:bg-[#f8f9f8]">
                     <td className={`${TD} font-semibold text-[#141f19]`}>{c.clientName}</td>
                     <td className={TD}>
                       <span
@@ -94,7 +103,18 @@ export function ClientsHealthTable({
                       {c.openFlags}
                     </td>
                     <td className={`${TD} text-[#79837d]`}>
-                      {c.lastMeeting ? dateFmt.format(new Date(c.lastMeeting)) : "—"}
+                      {activityIso ? (
+                        <span className="inline-flex items-center gap-1.5">
+                          {emailIntel && c.lastActivityType === "email" ? (
+                            <Mail className="h-3.5 w-3.5 shrink-0 text-[#5F5E5A]" aria-label="Email" />
+                          ) : emailIntel && c.lastActivityType === "meeting" ? (
+                            <Video className="h-3.5 w-3.5 shrink-0 text-[#5F5E5A]" aria-label="Meeting" />
+                          ) : null}
+                          {dateFmt.format(new Date(activityIso))}
+                        </span>
+                      ) : (
+                        "—"
+                      )}
                     </td>
                     <td className={TD}>
                       <svg width="72" height="22" viewBox="0 0 72 22" className="block">
@@ -113,7 +133,7 @@ export function ClientsHealthTable({
                     </td>
                     <td className={TD}>
                       <Link
-                        href={`/interaction-log?client=${encodeURIComponent(c.clientName)}`}
+                        href={openHref}
                         className="text-[12px] font-semibold text-[#177a4c] opacity-0 transition group-hover:opacity-100"
                       >
                         Open

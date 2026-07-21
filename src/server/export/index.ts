@@ -24,6 +24,8 @@ interface ExportData {
   flags: ExportFlag[];
   watermarked?: boolean;
   exportingUserName?: string;
+  /** Optional Email Correspondence CSV (Email Intelligence Phase 2). */
+  emailCorrespondenceCsv?: string | null;
 }
 
 /**
@@ -58,6 +60,7 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
           flags,
           watermarked = false,
           exportingUserName,
+          emailCorrespondenceCsv = null,
         } = data;
 
         // Slugify: lowercase, letters/numbers/underscores only, spaces → underscores
@@ -117,8 +120,18 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
           });
         }
 
-        // 5. README.txt
-        const readmeText = generateReadmeTXT(watermarked);
+        // 5. Email Correspondence (optional)
+        if (emailCorrespondenceCsv) {
+          const emailContent = watermarked
+            ? `TRIAL EXPORT - WATERMARKED\n${emailCorrespondenceCsv}`
+            : emailCorrespondenceCsv;
+          archive.append(Buffer.from(emailContent, "utf-8"), {
+            name: "05_Email_Correspondence.csv",
+          });
+        }
+
+        // README.txt
+        const readmeText = generateReadmeTXT(watermarked, Boolean(emailCorrespondenceCsv));
         archive.append(Buffer.from(readmeText, "utf-8"), { name: "README.txt" });
 
         // Finalize the archive
@@ -156,7 +169,7 @@ export function generateExportFilename(
   return `${slugify(clientName)}_${exportDate}_AuditPack${suffix}.zip`;
 }
 
-function generateReadmeTXT(watermarked: boolean): string {
+function generateReadmeTXT(watermarked: boolean, includeEmail = false): string {
   const prefix = watermarked ? "TRIAL EXPORT - WATERMARKED\n\n" : "";
   return (
     prefix +
@@ -171,6 +184,11 @@ function generateReadmeTXT(watermarked: boolean): string {
     "  Full audit trail of edits to the compliance note.\n\n" +
     "04_Transcript.txt\n" +
     "  Speaker-labeled, timestamped transcript in [HH:MM:SS] Speaker: text format.\n\n" +
+    (includeEmail
+      ? "05_Email_Correspondence.csv\n" +
+        "  Client email threads in range with SHA-256 hashes, classification results,\n" +
+        "  flags, dispositions, and reviewer identity.\n\n"
+      : "") +
     "This pack is designed to satisfy examiner requests for source documentation.\n" +
     "complyvault.co"
   );

@@ -5,6 +5,11 @@ import type { ExtractionData } from "~/server/extraction/types";
 import type { TranscriptSegment } from "~/server/transcription/types";
 import type { Meeting, User } from "~/server/export/types";
 import { getEntitlements, isTrialExpired } from "~/server/billing/entitlements";
+import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
+import {
+  buildEmailCorrespondenceSection,
+  emailCorrespondenceSectionToCsv,
+} from "~/server/export/email-correspondence-section";
 
 // Force Node.js runtime for this route (needed for Buffer, archiver, PDFKit)
 export const runtime = "nodejs";
@@ -190,6 +195,31 @@ const EXPORTABLE_MEETING_STATUSES = new Set([
       (sessionUser as { email?: string })?.email ??
       "System";
 
+    let emailCorrespondenceCsv: string | null = null;
+    if (isEmailIntelligenceEnabled()) {
+      const matchedClient = await db.client.findFirst({
+        where: {
+          workspaceId,
+          deletedAt: null,
+          name: { equals: meeting.clientName, mode: "insensitive" },
+        },
+        select: { id: true },
+      });
+      if (matchedClient) {
+        const rangeTo = meeting.meetingDate;
+        const rangeFrom = new Date(rangeTo.getTime() - 365 * 24 * 60 * 60 * 1000);
+        const section = await buildEmailCorrespondenceSection({
+          workspaceId,
+          clientId: matchedClient.id,
+          from: rangeFrom,
+          to: rangeTo,
+        });
+        if (section && section.rows.length > 0) {
+          emailCorrespondenceCsv = emailCorrespondenceSectionToCsv(section);
+        }
+      }
+    }
+
     const zipBuffer = await generateAuditPack({
       meeting: meetingForExport,
       extraction,
@@ -199,6 +229,7 @@ const EXPORTABLE_MEETING_STATUSES = new Set([
       flags,
       watermarked,
       exportingUserName,
+      emailCorrespondenceCsv,
     });
 
     // Generate filename

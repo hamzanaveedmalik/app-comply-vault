@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import Link from "next/link";
+import { FlagTriageCard, type FlagTriageCardFlag } from "~/components/flags/flag-triage-card";
 
 interface Meeting {
   id: string;
@@ -37,6 +38,9 @@ interface Meeting {
 
 interface ReviewQueueClientProps {
   initialMeetings: Meeting[];
+  initialEmailFlags?: FlagTriageCardFlag[];
+  userRole?: string | null;
+  currentUserId?: string | null;
   initialFilters: {
     clientName: string;
     status: string;
@@ -70,10 +74,14 @@ const getStatusLabel = (status: string) => {
 
 export default function ReviewQueueClient({
   initialMeetings,
+  initialEmailFlags = [],
+  userRole,
+  currentUserId,
   initialFilters,
 }: ReviewQueueClientProps) {
   const router = useRouter();
   const [meetings] = useState<Meeting[]>(initialMeetings);
+  const [emailFlags] = useState<FlagTriageCardFlag[]>(initialEmailFlags);
   const [filters, setFilters] = useState(initialFilters);
 
   const handleFilterChange = (key: string, value: string) => {
@@ -231,6 +239,28 @@ export default function ReviewQueueClient({
           )}
         </CardContent>
       </Card>
+
+      {emailFlags.length > 0 ? (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              Email signals ({emailFlags.length})
+              <Badge variant="outline">EMAIL</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {emailFlags.map((flag) => (
+              <FlagTriageCard
+                key={flag.id}
+                flag={flag}
+                meetingStatus="ADVISOR_CERTIFIED"
+                userRole={userRole}
+                currentUserId={currentUserId}
+              />
+            ))}
+          </CardContent>
+        </Card>
+      ) : null}
     </div>
   );
 }

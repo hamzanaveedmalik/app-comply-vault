@@ -48,7 +48,7 @@ async function run(): Promise<Response> {
       }),
       db.flag.count({
         where: {
-          meeting: { workspaceId: ws.id },
+          workspaceId: ws.id,
           status: { in: ["OPEN", "IN_REMEDIATION", "PENDING_VERIFICATION"] },
         },
       }),

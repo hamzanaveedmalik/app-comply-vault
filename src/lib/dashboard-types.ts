@@ -120,12 +120,18 @@ export type AdvisorRow = {
 
 export type ClientHealthRow = {
   clientName: string;
+  /** Linked Client record when email intelligence matched a CRM/client row. */
+  clientId: string | null;
   health: number;
   coverageDone: number;
   coverageTotal: number;
   openFlags: number;
   /** ISO date of most recent meeting, or null */
   lastMeeting: string | null;
+  /** ISO date of most recent meeting or email, whichever is later */
+  lastActivity: string | null;
+  /** Distinguishes meeting vs email for the Last activity cell */
+  lastActivityType: "meeting" | "email" | null;
   /** 8 weekly points (relative activity) for the sparkline */
   trend: number[];
   trending: "up" | "down" | "flat";

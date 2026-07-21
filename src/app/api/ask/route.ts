@@ -21,9 +21,11 @@ import {
 } from "~/server/ask/types";
 import {
   NO_EVIDENCE_ANSWER,
+  NO_CORRESPONDENCE_ANSWER,
   BLOCKED_REGULATORY_ANSWER,
 } from "~/server/ask/prompt";
 import { checkRateLimit } from "~/server/ask/rate-limit";
+import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
 
 export const POST = withPerformance(
   "Ask ComplyVault",
@@ -114,7 +116,10 @@ export const POST = withPerformance(
         return NextResponse.json<AskResponse>({
           success: true,
           data: {
-            answer: NO_EVIDENCE_ANSWER,
+            answer:
+              outcome.reason === "no-correspondence" || isEmailIntelligenceEnabled()
+                ? NO_CORRESPONDENCE_ANSWER
+                : NO_EVIDENCE_ANSWER,
             citations: [],
             retrieval: outcome.retrieval,
             model: outcome.model,

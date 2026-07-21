@@ -94,6 +94,8 @@ export async function POST(request: Request) {
         data: missingDisclosureFlags.map((flag) => ({
           workspaceId,
           meetingId: meeting.id,
+          sourceType: "MEETING",
+          sourceId: meeting.id,
           type: flag.type,
           severity: flag.severity,
           status: "OPEN",

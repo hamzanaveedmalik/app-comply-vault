@@ -35,16 +35,16 @@ const zoomIngestSchema = z.object({
 
 export const maxDuration = 120;
 
-async function checkExternalParticipants(
+async function fetchZoomParticipantEmails(
   workspaceId: string,
   meetingId: string,
   hostEmail: string
-): Promise<boolean> {
+): Promise<{ hasExternal: boolean; emails: string[] }> {
   try {
     const credential = await db.integrationCredential.findUnique({
       where: { workspaceId_provider: { workspaceId, provider: "ZOOM" } },
     });
-    if (!credential) return true;
+    if (!credential) return { hasExternal: true, emails: [] };
 
     const { decryptToken } = await import("~/server/integrations/crypto");
     const accessToken = decryptToken(credential.accessTokenEncrypted);
@@ -56,20 +56,21 @@ async function checkExternalParticipants(
     );
 
     if (!res.ok) {
-      if (res.status === 403) return true;
-      return true;
+      return { hasExternal: true, emails: [] };
     }
 
     const data = (await res.json()) as { participants?: Array<{ user_email?: string }> };
     const participants = data.participants ?? [];
-    const hasExternal = participants.some((p) => {
-      const email = p.user_email ?? "";
+    const emails = participants
+      .map((p) => (p.user_email ?? "").trim().toLowerCase())
+      .filter((e) => e.includes("@"));
+    const hasExternal = emails.some((email) => {
       const domain = email.split("@")[1]?.toLowerCase() ?? "";
       return domain && domain !== hostDomain;
     });
-    return hasExternal;
+    return { hasExternal, emails: [...new Set(emails)] };
   } catch {
-    return true;
+    return { hasExternal: true, emails: [] };
   }
 }
 
@@ -116,13 +117,14 @@ async function handler(request: Request) {
 
     const workspaceId = config.workspaceId;
     const recordingScope = (config.config as { recordingScope?: string } | null)?.recordingScope ?? "all";
+    const zoomMeetingKey = payload.zoomMeetingNumericId ?? payload.zoomMeetingId;
+    const { hasExternal, emails: participantEmails } = await fetchZoomParticipantEmails(
+      workspaceId,
+      zoomMeetingKey,
+      payload.hostEmail
+    );
 
     if (recordingScope === "external_only") {
-      const hasExternal = await checkExternalParticipants(
-        workspaceId,
-        payload.zoomMeetingNumericId ?? payload.zoomMeetingId,
-        payload.hostEmail
-      );
       if (!hasExternal) {
         await db.auditEvent.create({
           data: {
@@ -181,8 +183,12 @@ async function handler(request: Request) {
         status: "PROCESSING",
         sourceFileName: `zoom-${payload.zoomMeetingId}.mp4`,
         sourceUploadedAt: new Date(),
+        participantEmails,
       },
     });
+
+    const { attributeMeeting } = await import("~/server/meetings/client-attribution");
+    await attributeMeeting({ meetingId: meeting.id, workspaceId });
 
     await db.auditEvent.create({
       data: {

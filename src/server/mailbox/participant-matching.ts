@@ -182,7 +182,7 @@ async function tryZohoEmailMatch(args: {
   }
 }
 
-async function upsertVerifiedAlias(args: {
+export async function upsertVerifiedAlias(args: {
   workspaceId: string;
   address: string;
   userId: string | null;

@@ -35,6 +35,7 @@ export type CommunicationMessageDto = {
   ccAddresses: string[];
   bodyText: string;
   bodyHtml: string | null;
+  classificationStatus: "PENDING" | "COMPLETE" | "FAILED" | null;
   attachments: Array<{
     id: string;
     filename: string;

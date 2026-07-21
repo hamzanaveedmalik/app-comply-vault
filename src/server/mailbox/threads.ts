@@ -77,7 +77,7 @@ export async function getThreadDetail(args: {
         where: { deletedAt: null },
         orderBy: { sentAt: "asc" },
         include: {
-          evidenceItem: { select: { clientId: true } },
+          evidenceItem: { select: { clientId: true, classificationStatus: true } },
           attachments: { where: { deletedAt: null } },
         },
       },
@@ -121,6 +121,7 @@ export async function getThreadDetail(args: {
       ccAddresses: m.ccAddresses,
       bodyText: m.bodyText,
       bodyHtml: m.bodyHtml,
+      classificationStatus: m.evidenceItem.classificationStatus,
       attachments: m.attachments.map((a) => ({
         id: a.id,
         filename: a.filename,

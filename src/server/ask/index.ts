@@ -15,13 +15,19 @@
 import crypto from "node:crypto";
 
 import type { db as defaultDb } from "~/server/db";
-import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
+import {
+  isAskHybridRetrievalEnabled,
+  isEmailIntelligenceEnabled,
+} from "~/lib/feature-flags";
 import { extractKeywords } from "./keywords";
 import {
+  getActiveRetrievalMode,
   rankAndExcerpt,
-  RETRIEVAL_MODE,
+  rankAndExcerptHybrid,
   RETRIEVAL_LIMITS,
+  RETRIEVAL_MODE,
 } from "./retrieval";
+import { embedTexts, searchSimilarChunks } from "./embeddings";
 import {
   SYSTEM_PROMPT,
   NO_EVIDENCE_ANSWER,
@@ -108,6 +114,7 @@ export type AskDependencies = {
   model?: string;
   now?: () => Date;
   emailIntelligenceEnabled?: boolean;
+  hybridRetrievalEnabled?: boolean;
 };
 
 /**
@@ -163,6 +170,9 @@ export async function askComplyVault(
   const startedAt = Date.now();
   const emailIntel =
     deps.emailIntelligenceEnabled ?? isEmailIntelligenceEnabled();
+  const hybridEnabled =
+    deps.hybridRetrievalEnabled ?? isAskHybridRetrievalEnabled();
+  const retrievalMode = getActiveRetrievalMode(hybridEnabled);
 
   const keywords = extractKeywords(input.question);
 
@@ -211,7 +221,7 @@ export async function askComplyVault(
       candidatesUsed: 0,
       model,
       latencyMs: Date.now() - startedAt,
-      mode: RETRIEVAL_MODE,
+      mode: retrievalMode,
       error: "RETRIEVAL_ERROR",
       ...(input.meetingId ? { scopedToMeetingId: input.meetingId } : {}),
       ...(input.windowDays ? { windowDays: input.windowDays } : {}),
@@ -220,7 +230,7 @@ export async function askComplyVault(
     return {
       kind: "provider-error",
       message: errMessage,
-      retrieval: { candidatesScanned: 0, candidatesUsed: 0, mode: RETRIEVAL_MODE },
+      retrieval: { candidatesScanned: 0, candidatesUsed: 0, mode: retrievalMode },
       model,
       latencyMs: Date.now() - startedAt,
     };
@@ -271,12 +281,96 @@ export async function askComplyVault(
     }
   }
 
+  const cosineByCandidateId = new Map<string, number>();
+  if (hybridEnabled && input.question.trim().length > 0) {
+    try {
+      const [queryEmbedding] = await embedTexts([input.question]);
+      if (queryEmbedding) {
+        const hits = await searchSimilarChunks({
+          workspaceId: input.workspaceId,
+          queryEmbedding,
+          limit: RETRIEVAL_LIMITS.candidateLimit,
+        });
+        for (const hit of hits) {
+          const prev = cosineByCandidateId.get(hit.sourceId) ?? 0;
+          if (hit.cosineSimilarity > prev) {
+            cosineByCandidateId.set(hit.sourceId, hit.cosineSimilarity);
+          }
+        }
+        // Expand candidate set with semantic hits not already present.
+        const have = new Set(candidates.map((c) => c.id));
+        const missingEmailIds = hits
+          .filter((h) => h.sourceType === "EMAIL" && !have.has(h.sourceId))
+          .map((h) => h.sourceId)
+          .slice(0, 8);
+        if (missingEmailIds.length > 0 && prisma.evidenceItem) {
+          const extra = await prisma.evidenceItem.findMany({
+            where: {
+              workspaceId: input.workspaceId,
+              id: { in: missingEmailIds },
+              deletedAt: null,
+            },
+            select: {
+              id: true,
+              title: true,
+              occurredAt: true,
+              contentSha256: true,
+              searchableText: true,
+              client: { select: { name: true } },
+              communication: {
+                select: { id: true, threadId: true, direction: true },
+              },
+            },
+            take: missingEmailIds.length,
+            orderBy: [{ occurredAt: "desc" }],
+          });
+          for (const row of extra) {
+            const c = emailToCandidate(row);
+            if (c) candidates.push(c);
+          }
+        }
+        const missingMeetingIds = hits
+          .filter((h) => h.sourceType === "MEETING" && !have.has(h.sourceId))
+          .map((h) => h.sourceId)
+          .slice(0, 8);
+        if (missingMeetingIds.length > 0) {
+          const extraMeetings = await prisma.meeting.findMany({
+            where: {
+              workspaceId: input.workspaceId,
+              id: { in: missingMeetingIds },
+              status: { in: ["DRAFT_READY", "FINALIZED"] },
+            },
+            select: {
+              id: true,
+              clientName: true,
+              meetingDate: true,
+              meetingType: true,
+              transcript: true,
+              extraction: true,
+              searchableText: true,
+            },
+            take: missingMeetingIds.length,
+            orderBy: [{ meetingDate: "desc" }],
+          });
+          for (const row of extraMeetings) {
+            candidates.push(meetingToCandidate(row));
+          }
+        }
+      }
+    } catch {
+      // Hybrid is best-effort; fall back to keyword-only scoring.
+    }
+  }
+
   const candidatesScanned = candidates.length;
-  const evidence = rankAndExcerpt(candidates, keywords, now);
+  const evidence =
+    retrievalMode === "hybrid"
+      ? rankAndExcerptHybrid(candidates, keywords, cosineByCandidateId, now)
+      : rankAndExcerpt(candidates, keywords, now);
   const retrieval: RetrievalMeta = {
     candidatesScanned,
     candidatesUsed: evidence.length,
-    mode: RETRIEVAL_MODE,
+    mode: retrievalMode,
   };
 
   if (evidence.length === 0) {
@@ -298,7 +392,7 @@ export async function askComplyVault(
       candidatesUsed: 0,
       model,
       latencyMs: Date.now() - startedAt,
-      mode: RETRIEVAL_MODE,
+      mode: retrievalMode,
       outcome: "no_evidence",
       ...(input.meetingId ? { scopedToMeetingId: input.meetingId } : {}),
       ...(input.windowDays ? { windowDays: input.windowDays } : {}),
@@ -336,7 +430,7 @@ export async function askComplyVault(
       candidatesUsed: evidence.length,
       model,
       latencyMs: Date.now() - startedAt,
-      mode: RETRIEVAL_MODE,
+      mode: retrievalMode,
       error: "LLM_PROVIDER_ERROR",
       ...(input.meetingId ? { scopedToMeetingId: input.meetingId } : {}),
       ...(input.windowDays ? { windowDays: input.windowDays } : {}),
@@ -367,7 +461,7 @@ export async function askComplyVault(
       candidatesUsed: evidence.length,
       model,
       latencyMs: Date.now() - startedAt,
-      mode: RETRIEVAL_MODE,
+      mode: retrievalMode,
       outputBlocked: true,
       blockedPattern: scan.matchedPattern,
       ...(input.meetingId ? { scopedToMeetingId: input.meetingId } : {}),
@@ -399,7 +493,7 @@ export async function askComplyVault(
     candidatesUsed: evidence.length,
     model,
     latencyMs: Date.now() - startedAt,
-    mode: RETRIEVAL_MODE,
+    mode: retrievalMode,
     outcome: "answered",
     ...(input.meetingId ? { scopedToMeetingId: input.meetingId } : {}),
     ...(input.windowDays ? { windowDays: input.windowDays } : {}),

@@ -196,27 +196,17 @@ const EXPORTABLE_MEETING_STATUSES = new Set([
       "System";
 
     let emailCorrespondenceCsv: string | null = null;
-    if (isEmailIntelligenceEnabled()) {
-      const matchedClient = await db.client.findFirst({
-        where: {
-          workspaceId,
-          deletedAt: null,
-          name: { equals: meeting.clientName, mode: "insensitive" },
-        },
-        select: { id: true },
+    if (isEmailIntelligenceEnabled() && meeting.clientId) {
+      const rangeTo = meeting.meetingDate;
+      const rangeFrom = new Date(rangeTo.getTime() - 365 * 24 * 60 * 60 * 1000);
+      const section = await buildEmailCorrespondenceSection({
+        workspaceId,
+        clientId: meeting.clientId,
+        from: rangeFrom,
+        to: rangeTo,
       });
-      if (matchedClient) {
-        const rangeTo = meeting.meetingDate;
-        const rangeFrom = new Date(rangeTo.getTime() - 365 * 24 * 60 * 60 * 1000);
-        const section = await buildEmailCorrespondenceSection({
-          workspaceId,
-          clientId: matchedClient.id,
-          from: rangeFrom,
-          to: rangeTo,
-        });
-        if (section && section.rows.length > 0) {
-          emailCorrespondenceCsv = emailCorrespondenceSectionToCsv(section);
-        }
+      if (section && section.rows.length > 0) {
+        emailCorrespondenceCsv = emailCorrespondenceSectionToCsv(section);
       }
     }
 

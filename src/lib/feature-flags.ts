@@ -15,3 +15,8 @@ export function isEmailIntelligenceEnabled(): boolean {
     isTruthyEnv(process.env.NEXT_PUBLIC_EMAIL_INTELLIGENCE)
   );
 }
+
+/** Hybrid Ask retrieval (keyword + pgvector). Off until eval gate passes in deploy. */
+export function isAskHybridRetrievalEnabled(): boolean {
+  return isTruthyEnv(process.env.ASK_HYBRID_RETRIEVAL);
+}

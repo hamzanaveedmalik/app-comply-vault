@@ -71,6 +71,8 @@ export async function POST(request: Request) {
         sourceFileMime: getContentType(validation.fileName),
       },
     });
+    const { attributeMeeting } = await import("~/server/meetings/client-attribution");
+    await attributeMeeting({ meetingId: meeting.id, workspaceId });
 
     // Generate presigned URL for direct S3 upload
     const { key, uploadUrl } = await generatePresignedUploadUrl(

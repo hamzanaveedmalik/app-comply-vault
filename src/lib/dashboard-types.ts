@@ -120,7 +120,7 @@ export type AdvisorRow = {
 
 export type ClientHealthRow = {
   clientName: string;
-  /** Linked Client record when email intelligence matched a CRM/client row. */
+  /** Linked Client.id when Meeting.clientId is set (never matched by name). */
   clientId: string | null;
   health: number;
   coverageDone: number;

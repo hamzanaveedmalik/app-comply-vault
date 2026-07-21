@@ -156,6 +156,9 @@ exports.Prisma.MeetingScalarFieldEnum = {
   id: 'id',
   workspaceId: 'workspaceId',
   clientName: 'clientName',
+  clientId: 'clientId',
+  clientMatchConfidence: 'clientMatchConfidence',
+  participantEmails: 'participantEmails',
   meetingType: 'meetingType',
   meetingDate: 'meetingDate',
   status: 'status',
@@ -528,6 +531,7 @@ exports.Prisma.EvidenceItemScalarFieldEnum = {
   contentSha256: 'contentSha256',
   storageUri: 'storageUri',
   searchableText: 'searchableText',
+  classificationStatus: 'classificationStatus',
   retentionRuleId: 'retentionRuleId',
   destructionEligibleAt: 'destructionEligibleAt',
   createdAt: 'createdAt',
@@ -544,6 +548,20 @@ exports.Prisma.EvidenceTagScalarFieldEnum = {
   removedAt: 'removedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EvidenceEmbeddingScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  sourceType: 'sourceType',
+  sourceId: 'sourceId',
+  chunkKey: 'chunkKey',
+  chunkTextHash: 'chunkTextHash',
+  model: 'model',
+  modelVersion: 'modelVersion',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.CommunicationThreadScalarFieldEnum = {
@@ -700,6 +718,12 @@ exports.WorkspaceRole = exports.$Enums.WorkspaceRole = {
   ADVISOR: 'ADVISOR'
 };
 
+exports.MeetingClientMatchConfidence = exports.$Enums.MeetingClientMatchConfidence = {
+  EMAIL: 'EMAIL',
+  NAME_EXACT: 'NAME_EXACT',
+  MANUAL: 'MANUAL'
+};
+
 exports.MeetingStatus = exports.$Enums.MeetingStatus = {
   UPLOADING: 'UPLOADING',
   PROCESSING: 'PROCESSING',
@@ -831,7 +855,8 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   EVIDENCE_VIEW: 'EVIDENCE_VIEW',
   EVIDENCE_TAG: 'EVIDENCE_TAG',
   EMAIL_TRIAGE_RESOLVED: 'EMAIL_TRIAGE_RESOLVED',
-  THREAD_EXPORT: 'THREAD_EXPORT'
+  THREAD_EXPORT: 'THREAD_EXPORT',
+  MEETING_CLIENT_ATTRIBUTED: 'MEETING_CLIENT_ATTRIBUTED'
 };
 
 exports.IntegrationProvider = exports.$Enums.IntegrationProvider = {
@@ -915,6 +940,12 @@ exports.EvidenceSourceType = exports.$Enums.EvidenceSourceType = {
   ATTESTATION: 'ATTESTATION',
   NOTE: 'NOTE',
   FINDING_RECORD: 'FINDING_RECORD'
+};
+
+exports.EvidenceClassificationStatus = exports.$Enums.EvidenceClassificationStatus = {
+  PENDING: 'PENDING',
+  COMPLETE: 'COMPLETE',
+  FAILED: 'FAILED'
 };
 
 exports.TagCategory = exports.$Enums.TagCategory = {
@@ -1009,6 +1040,7 @@ exports.Prisma.ModelName = {
   EmailAlias: 'EmailAlias',
   EvidenceItem: 'EvidenceItem',
   EvidenceTag: 'EvidenceTag',
+  EvidenceEmbedding: 'EvidenceEmbedding',
   CommunicationThread: 'CommunicationThread',
   Communication: 'Communication',
   Attachment: 'Attachment',

@@ -70,11 +70,28 @@ export async function getClientDetail(args: {
       household: { workspaceId: args.workspaceId, deletedAt: null },
     },
     select: {
+      id: true,
       clientId: true,
       role: true,
       client: { select: { name: true } },
     },
   });
+
+  const aliases = await db.emailAlias.findMany({
+    where: {
+      workspaceId: args.workspaceId,
+      clientId: { in: clientIds },
+      deletedAt: null,
+    },
+    select: { id: true, clientId: true, address: true },
+  });
+  const aliasesByClient = new Map<string, Array<{ id: string; address: string }>>();
+  for (const a of aliases) {
+    if (!a.clientId) continue;
+    const list = aliasesByClient.get(a.clientId) ?? [];
+    list.push({ id: a.id, address: a.address });
+    aliasesByClient.set(a.clientId, list);
+  }
 
   const nameById = new Map<string, string>();
   nameById.set(client.id, client.name);
@@ -92,9 +109,11 @@ export async function getClientDetail(args: {
   const householdMembers = memberships
     .filter((m) => m.clientId !== client.id)
     .map((m) => ({
+      membershipId: m.id,
       clientId: m.clientId,
       name: m.client.name,
       role: m.role,
+      emailAddresses: aliasesByClient.get(m.clientId) ?? [],
     }));
 
   const correspondenceCountPeriod = await countCorrespondenceInPeriod({
@@ -136,38 +155,8 @@ export async function getClientDetail(args: {
     lastContactAt: client.lastContactAt?.toISOString() ?? null,
     correspondenceCountPeriod,
     periodLabel: `Last ${periodDays} days`,
+    emailAddresses: aliasesByClient.get(client.id) ?? [],
     householdMembers,
     correspondence,
   };
-}
-
-/**
- * Latest email activity timestamps keyed by normalized client name (for dashboard merge).
- */
-export async function getEmailLastContactByClientName(
-  workspaceId: string
-): Promise<Map<string, { clientId: string; name: string; lastContactAt: Date }>> {
-  const clients = await db.client.findMany({
-    where: {
-      workspaceId,
-      deletedAt: null,
-      lastContactAt: { not: null },
-    },
-    select: { id: true, name: true, lastContactAt: true },
-  });
-
-  const map = new Map<string, { clientId: string; name: string; lastContactAt: Date }>();
-  for (const c of clients) {
-    if (!c.lastContactAt) continue;
-    const key = c.name.trim().toLowerCase();
-    const existing = map.get(key);
-    if (!existing || c.lastContactAt > existing.lastContactAt) {
-      map.set(key, {
-        clientId: c.id,
-        name: c.name,
-        lastContactAt: c.lastContactAt,
-      });
-    }
-  }
-  return map;
 }

@@ -7,10 +7,12 @@ import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
 import { redactForLlm } from "./redaction-guard";
 import { classifyEmailWithLlm } from "./classify-email";
 import {
+  EMAIL_CLASSIFICATION_PROMPT_VERSION,
   emailFlagDedupeKey,
   heuristicEmailPrefilter,
   type EmailFlagType,
 } from "./email-taxonomy";
+import { markClassificationComplete, markClassificationFailed } from "./status";
 import type { FlagSeverity, FlagType } from "../../../generated/prisma";
 
 export type ClassifyEvidenceResult =
@@ -48,7 +50,8 @@ export async function classifyEmailEvidence(args: {
     toAddresses: comm.toAddresses,
   });
 
-  const existing = await db.evidenceClassification.findFirst({
+  // Idempotency: same evidence + content hash (covers duplicate QStash delivery).
+  const existingByHash = await db.evidenceClassification.findFirst({
     where: {
       workspaceId: args.workspaceId,
       evidenceItemId: item.id,
@@ -56,8 +59,31 @@ export async function classifyEmailEvidence(args: {
       deletedAt: null,
     },
   });
-  if (existing) {
-    return { status: "duplicate", classificationId: existing.id };
+  if (existingByHash) {
+    await markClassificationComplete({
+      workspaceId: args.workspaceId,
+      evidenceItemId: item.id,
+    });
+    return { status: "duplicate", classificationId: existingByHash.id };
+  }
+
+  // Also skip if this prompt version already classified the item (any hash).
+  const existingByPrompt = await db.evidenceClassification.findFirst({
+    where: {
+      workspaceId: args.workspaceId,
+      evidenceItemId: item.id,
+      promptVersion: {
+        in: [EMAIL_CLASSIFICATION_PROMPT_VERSION, "heuristic-skip-v1"],
+      },
+      deletedAt: null,
+    },
+  });
+  if (existingByPrompt) {
+    await markClassificationComplete({
+      workspaceId: args.workspaceId,
+      evidenceItemId: item.id,
+    });
+    return { status: "duplicate", classificationId: existingByPrompt.id };
   }
 
   const prefilter = heuristicEmailPrefilter(redacted.text);
@@ -78,6 +104,10 @@ export async function classifyEmailEvidence(args: {
         signalCount: 0,
         rawResponse: { matchedTypes: [], sampled: false },
       },
+    });
+    await markClassificationComplete({
+      workspaceId: args.workspaceId,
+      evidenceItemId: item.id,
     });
     return { status: "clean", classificationId: row.id };
   }
@@ -148,6 +178,11 @@ export async function classifyEmailEvidence(args: {
       return { row, flagIds };
     });
 
+    await markClassificationComplete({
+      workspaceId: args.workspaceId,
+      evidenceItemId: item.id,
+    });
+
     if (result === "CLEAN") {
       return { status: "clean", classificationId: classification.row.id };
     }
@@ -160,6 +195,16 @@ export async function classifyEmailEvidence(args: {
     const reason = err instanceof Error ? err.message : "classification_failed";
     return { status: "error", reason };
   }
+}
+
+/**
+ * Mark FAILED after QStash has exhausted retries (or local fire-and-forget failure).
+ */
+export async function recordClassificationFailure(args: {
+  workspaceId: string;
+  evidenceItemId: string;
+}): Promise<void> {
+  await markClassificationFailed(args);
 }
 
 /** Test helper — force a signal type through persistence without LLM. */

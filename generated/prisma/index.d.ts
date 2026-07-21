@@ -164,6 +164,11 @@ export type EvidenceItem = $Result.DefaultSelection<Prisma.$EvidenceItemPayload>
  */
 export type EvidenceTag = $Result.DefaultSelection<Prisma.$EvidenceTagPayload>
 /**
+ * Model EvidenceEmbedding
+ * Chunk embeddings for hybrid Ask retrieval (pgvector). Embed redacted text only.
+ */
+export type EvidenceEmbedding = $Result.DefaultSelection<Prisma.$EvidenceEmbeddingPayload>
+/**
  * Model CommunicationThread
  * 
  */
@@ -299,10 +304,20 @@ export const AuditAction: {
   EVIDENCE_VIEW: 'EVIDENCE_VIEW',
   EVIDENCE_TAG: 'EVIDENCE_TAG',
   EMAIL_TRIAGE_RESOLVED: 'EMAIL_TRIAGE_RESOLVED',
-  THREAD_EXPORT: 'THREAD_EXPORT'
+  THREAD_EXPORT: 'THREAD_EXPORT',
+  MEETING_CLIENT_ATTRIBUTED: 'MEETING_CLIENT_ATTRIBUTED'
 };
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction]
+
+
+export const MeetingClientMatchConfidence: {
+  EMAIL: 'EMAIL',
+  NAME_EXACT: 'NAME_EXACT',
+  MANUAL: 'MANUAL'
+};
+
+export type MeetingClientMatchConfidence = (typeof MeetingClientMatchConfidence)[keyof typeof MeetingClientMatchConfidence]
 
 
 export const FlagType: {
@@ -337,6 +352,15 @@ export const EvidenceClassificationResult: {
 };
 
 export type EvidenceClassificationResult = (typeof EvidenceClassificationResult)[keyof typeof EvidenceClassificationResult]
+
+
+export const EvidenceClassificationStatus: {
+  PENDING: 'PENDING',
+  COMPLETE: 'COMPLETE',
+  FAILED: 'FAILED'
+};
+
+export type EvidenceClassificationStatus = (typeof EvidenceClassificationStatus)[keyof typeof EvidenceClassificationStatus]
 
 
 export const FlagSeverity: {
@@ -646,6 +670,10 @@ export type AuditAction = $Enums.AuditAction
 
 export const AuditAction: typeof $Enums.AuditAction
 
+export type MeetingClientMatchConfidence = $Enums.MeetingClientMatchConfidence
+
+export const MeetingClientMatchConfidence: typeof $Enums.MeetingClientMatchConfidence
+
 export type FlagType = $Enums.FlagType
 
 export const FlagType: typeof $Enums.FlagType
@@ -657,6 +685,10 @@ export const FlagSourceType: typeof $Enums.FlagSourceType
 export type EvidenceClassificationResult = $Enums.EvidenceClassificationResult
 
 export const EvidenceClassificationResult: typeof $Enums.EvidenceClassificationResult
+
+export type EvidenceClassificationStatus = $Enums.EvidenceClassificationStatus
+
+export const EvidenceClassificationStatus: typeof $Enums.EvidenceClassificationStatus
 
 export type FlagSeverity = $Enums.FlagSeverity
 
@@ -1183,6 +1215,16 @@ export class PrismaClient<
     * ```
     */
   get evidenceTag(): Prisma.EvidenceTagDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.evidenceEmbedding`: Exposes CRUD operations for the **EvidenceEmbedding** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more EvidenceEmbeddings
+    * const evidenceEmbeddings = await prisma.evidenceEmbedding.findMany()
+    * ```
+    */
+  get evidenceEmbedding(): Prisma.EvidenceEmbeddingDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.communicationThread`: Exposes CRUD operations for the **CommunicationThread** model.
@@ -1724,6 +1766,7 @@ export namespace Prisma {
     EmailAlias: 'EmailAlias',
     EvidenceItem: 'EvidenceItem',
     EvidenceTag: 'EvidenceTag',
+    EvidenceEmbedding: 'EvidenceEmbedding',
     CommunicationThread: 'CommunicationThread',
     Communication: 'Communication',
     Attachment: 'Attachment',
@@ -1749,7 +1792,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "workspace" | "userWorkspace" | "meeting" | "version" | "flag" | "resolutionRecord" | "evidenceClassification" | "actionItem" | "evidenceLink" | "verification" | "auditEvent" | "account" | "session" | "user" | "verificationToken" | "invitation" | "integrationCredential" | "integrationConfig" | "integrationSyncLog" | "firmProfile" | "disclosureCategory" | "suppressionLogEntry" | "firmProfileVersion" | "client" | "clientHousehold" | "clientHouseholdMember" | "clientActivity" | "emailAlias" | "evidenceItem" | "evidenceTag" | "communicationThread" | "communication" | "attachment" | "mailboxConnection" | "ingestJob" | "emailTriageItem" | "lead"
+      modelProps: "workspace" | "userWorkspace" | "meeting" | "version" | "flag" | "resolutionRecord" | "evidenceClassification" | "actionItem" | "evidenceLink" | "verification" | "auditEvent" | "account" | "session" | "user" | "verificationToken" | "invitation" | "integrationCredential" | "integrationConfig" | "integrationSyncLog" | "firmProfile" | "disclosureCategory" | "suppressionLogEntry" | "firmProfileVersion" | "client" | "clientHousehold" | "clientHouseholdMember" | "clientActivity" | "emailAlias" | "evidenceItem" | "evidenceTag" | "evidenceEmbedding" | "communicationThread" | "communication" | "attachment" | "mailboxConnection" | "ingestJob" | "emailTriageItem" | "lead"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3973,6 +4016,64 @@ export namespace Prisma {
           }
         }
       }
+      EvidenceEmbedding: {
+        payload: Prisma.$EvidenceEmbeddingPayload<ExtArgs>
+        fields: Prisma.EvidenceEmbeddingFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EvidenceEmbeddingFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceEmbeddingPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EvidenceEmbeddingFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceEmbeddingPayload>
+          }
+          findFirst: {
+            args: Prisma.EvidenceEmbeddingFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceEmbeddingPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EvidenceEmbeddingFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceEmbeddingPayload>
+          }
+          findMany: {
+            args: Prisma.EvidenceEmbeddingFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceEmbeddingPayload>[]
+          }
+          delete: {
+            args: Prisma.EvidenceEmbeddingDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceEmbeddingPayload>
+          }
+          update: {
+            args: Prisma.EvidenceEmbeddingUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceEmbeddingPayload>
+          }
+          deleteMany: {
+            args: Prisma.EvidenceEmbeddingDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EvidenceEmbeddingUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EvidenceEmbeddingUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EvidenceEmbeddingPayload>[]
+          }
+          aggregate: {
+            args: Prisma.EvidenceEmbeddingAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEvidenceEmbedding>
+          }
+          groupBy: {
+            args: Prisma.EvidenceEmbeddingGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EvidenceEmbeddingGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EvidenceEmbeddingCountArgs<ExtArgs>
+            result: $Utils.Optional<EvidenceEmbeddingCountAggregateOutputType> | number
+          }
+        }
+      }
       CommunicationThread: {
         payload: Prisma.$CommunicationThreadPayload<ExtArgs>
         fields: Prisma.CommunicationThreadFieldRefs
@@ -4617,6 +4718,7 @@ export namespace Prisma {
     emailAlias?: EmailAliasOmit
     evidenceItem?: EvidenceItemOmit
     evidenceTag?: EvidenceTagOmit
+    evidenceEmbedding?: EvidenceEmbeddingOmit
     communicationThread?: CommunicationThreadOmit
     communication?: CommunicationOmit
     attachment?: AttachmentOmit
@@ -4722,6 +4824,7 @@ export namespace Prisma {
     emailTriageItems: number
     ingestJobs: number
     evidenceClassifications: number
+    evidenceEmbeddings: number
   }
 
   export type WorkspaceCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4743,6 +4846,7 @@ export namespace Prisma {
     emailTriageItems?: boolean | WorkspaceCountOutputTypeCountEmailTriageItemsArgs
     ingestJobs?: boolean | WorkspaceCountOutputTypeCountIngestJobsArgs
     evidenceClassifications?: boolean | WorkspaceCountOutputTypeCountEvidenceClassificationsArgs
+    evidenceEmbeddings?: boolean | WorkspaceCountOutputTypeCountEvidenceEmbeddingsArgs
   }
 
   // Custom InputTypes
@@ -4880,6 +4984,13 @@ export namespace Prisma {
    */
   export type WorkspaceCountOutputTypeCountEvidenceClassificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: EvidenceClassificationWhereInput
+  }
+
+  /**
+   * WorkspaceCountOutputType without action
+   */
+  export type WorkspaceCountOutputTypeCountEvidenceEmbeddingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EvidenceEmbeddingWhereInput
   }
 
 
@@ -5231,6 +5342,7 @@ export namespace Prisma {
     evidenceItems: number
     activities: number
     householdMemberships: number
+    meetings: number
   }
 
   export type ClientCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5238,6 +5350,7 @@ export namespace Prisma {
     evidenceItems?: boolean | ClientCountOutputTypeCountEvidenceItemsArgs
     activities?: boolean | ClientCountOutputTypeCountActivitiesArgs
     householdMemberships?: boolean | ClientCountOutputTypeCountHouseholdMembershipsArgs
+    meetings?: boolean | ClientCountOutputTypeCountMeetingsArgs
   }
 
   // Custom InputTypes
@@ -5277,6 +5390,13 @@ export namespace Prisma {
    */
   export type ClientCountOutputTypeCountHouseholdMembershipsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ClientHouseholdMemberWhereInput
+  }
+
+  /**
+   * ClientCountOutputType without action
+   */
+  export type ClientCountOutputTypeCountMeetingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MeetingWhereInput
   }
 
 
@@ -5777,6 +5897,7 @@ export namespace Prisma {
     emailTriageItems?: boolean | Workspace$emailTriageItemsArgs<ExtArgs>
     ingestJobs?: boolean | Workspace$ingestJobsArgs<ExtArgs>
     evidenceClassifications?: boolean | Workspace$evidenceClassificationsArgs<ExtArgs>
+    evidenceEmbeddings?: boolean | Workspace$evidenceEmbeddingsArgs<ExtArgs>
     _count?: boolean | WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["workspace"]>
 
@@ -5867,6 +5988,7 @@ export namespace Prisma {
     emailTriageItems?: boolean | Workspace$emailTriageItemsArgs<ExtArgs>
     ingestJobs?: boolean | Workspace$ingestJobsArgs<ExtArgs>
     evidenceClassifications?: boolean | Workspace$evidenceClassificationsArgs<ExtArgs>
+    evidenceEmbeddings?: boolean | Workspace$evidenceEmbeddingsArgs<ExtArgs>
     _count?: boolean | WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type WorkspaceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -5894,6 +6016,7 @@ export namespace Prisma {
       emailTriageItems: Prisma.$EmailTriageItemPayload<ExtArgs>[]
       ingestJobs: Prisma.$IngestJobPayload<ExtArgs>[]
       evidenceClassifications: Prisma.$EvidenceClassificationPayload<ExtArgs>[]
+      evidenceEmbeddings: Prisma.$EvidenceEmbeddingPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6328,6 +6451,7 @@ export namespace Prisma {
     emailTriageItems<T extends Workspace$emailTriageItemsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$emailTriageItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailTriageItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     ingestJobs<T extends Workspace$ingestJobsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$ingestJobsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IngestJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     evidenceClassifications<T extends Workspace$evidenceClassificationsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$evidenceClassificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceClassificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    evidenceEmbeddings<T extends Workspace$evidenceEmbeddingsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$evidenceEmbeddingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceEmbeddingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7212,6 +7336,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: EvidenceClassificationScalarFieldEnum | EvidenceClassificationScalarFieldEnum[]
+  }
+
+  /**
+   * Workspace.evidenceEmbeddings
+   */
+  export type Workspace$evidenceEmbeddingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceEmbedding
+     */
+    select?: EvidenceEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceEmbedding
+     */
+    omit?: EvidenceEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceEmbeddingInclude<ExtArgs> | null
+    where?: EvidenceEmbeddingWhereInput
+    orderBy?: EvidenceEmbeddingOrderByWithRelationInput | EvidenceEmbeddingOrderByWithRelationInput[]
+    cursor?: EvidenceEmbeddingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EvidenceEmbeddingScalarFieldEnum | EvidenceEmbeddingScalarFieldEnum[]
   }
 
   /**
@@ -8367,6 +8515,8 @@ export namespace Prisma {
     id: string | null
     workspaceId: string | null
     clientName: string | null
+    clientId: string | null
+    clientMatchConfidence: $Enums.MeetingClientMatchConfidence | null
     meetingType: string | null
     meetingDate: Date | null
     status: $Enums.MeetingStatus | null
@@ -8405,6 +8555,8 @@ export namespace Prisma {
     id: string | null
     workspaceId: string | null
     clientName: string | null
+    clientId: string | null
+    clientMatchConfidence: $Enums.MeetingClientMatchConfidence | null
     meetingType: string | null
     meetingDate: Date | null
     status: $Enums.MeetingStatus | null
@@ -8443,6 +8595,9 @@ export namespace Prisma {
     id: number
     workspaceId: number
     clientName: number
+    clientId: number
+    clientMatchConfidence: number
+    participantEmails: number
     meetingType: number
     meetingDate: number
     status: number
@@ -8498,6 +8653,8 @@ export namespace Prisma {
     id?: true
     workspaceId?: true
     clientName?: true
+    clientId?: true
+    clientMatchConfidence?: true
     meetingType?: true
     meetingDate?: true
     status?: true
@@ -8536,6 +8693,8 @@ export namespace Prisma {
     id?: true
     workspaceId?: true
     clientName?: true
+    clientId?: true
+    clientMatchConfidence?: true
     meetingType?: true
     meetingDate?: true
     status?: true
@@ -8574,6 +8733,9 @@ export namespace Prisma {
     id?: true
     workspaceId?: true
     clientName?: true
+    clientId?: true
+    clientMatchConfidence?: true
+    participantEmails?: true
     meetingType?: true
     meetingDate?: true
     status?: true
@@ -8702,6 +8864,9 @@ export namespace Prisma {
     id: string
     workspaceId: string
     clientName: string
+    clientId: string | null
+    clientMatchConfidence: $Enums.MeetingClientMatchConfidence | null
+    participantEmails: string[]
     meetingType: string
     meetingDate: Date
     status: $Enums.MeetingStatus
@@ -8762,6 +8927,9 @@ export namespace Prisma {
     id?: boolean
     workspaceId?: boolean
     clientName?: boolean
+    clientId?: boolean
+    clientMatchConfidence?: boolean
+    participantEmails?: boolean
     meetingType?: boolean
     meetingDate?: boolean
     status?: boolean
@@ -8798,6 +8966,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    client?: boolean | Meeting$clientArgs<ExtArgs>
     versions?: boolean | Meeting$versionsArgs<ExtArgs>
     auditEvents?: boolean | Meeting$auditEventsArgs<ExtArgs>
     flags?: boolean | Meeting$flagsArgs<ExtArgs>
@@ -8813,6 +8982,9 @@ export namespace Prisma {
     id?: boolean
     workspaceId?: boolean
     clientName?: boolean
+    clientId?: boolean
+    clientMatchConfidence?: boolean
+    participantEmails?: boolean
     meetingType?: boolean
     meetingDate?: boolean
     status?: boolean
@@ -8849,6 +9021,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    client?: boolean | Meeting$clientArgs<ExtArgs>
     advisorCertifiedByUser?: boolean | Meeting$advisorCertifiedByUserArgs<ExtArgs>
     cmReviewedByUser?: boolean | Meeting$cmReviewedByUserArgs<ExtArgs>
     ccoSignedOffByUser?: boolean | Meeting$ccoSignedOffByUserArgs<ExtArgs>
@@ -8858,6 +9031,9 @@ export namespace Prisma {
     id?: boolean
     workspaceId?: boolean
     clientName?: boolean
+    clientId?: boolean
+    clientMatchConfidence?: boolean
+    participantEmails?: boolean
     meetingType?: boolean
     meetingDate?: boolean
     status?: boolean
@@ -8894,6 +9070,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    client?: boolean | Meeting$clientArgs<ExtArgs>
     advisorCertifiedByUser?: boolean | Meeting$advisorCertifiedByUserArgs<ExtArgs>
     cmReviewedByUser?: boolean | Meeting$cmReviewedByUserArgs<ExtArgs>
     ccoSignedOffByUser?: boolean | Meeting$ccoSignedOffByUserArgs<ExtArgs>
@@ -8903,6 +9080,9 @@ export namespace Prisma {
     id?: boolean
     workspaceId?: boolean
     clientName?: boolean
+    clientId?: boolean
+    clientMatchConfidence?: boolean
+    participantEmails?: boolean
     meetingType?: boolean
     meetingDate?: boolean
     status?: boolean
@@ -8940,9 +9120,10 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientName" | "meetingType" | "meetingDate" | "status" | "fileUrl" | "sourceFileSha256" | "sourceFileName" | "sourceFileSize" | "sourceFileMime" | "sourceUploadedAt" | "transcript" | "extraction" | "searchableText" | "finalizedBy" | "finalizedAt" | "finalizeReason" | "finalizeNote" | "finalizedPolicyVersion" | "samplingBucket" | "samplingRuleId" | "draftReadyAt" | "timeToFinalize" | "readyForCCO" | "sharepointItemWebUrl" | "sharepointDepositedAt" | "zohoCrmContactId" | "zohoCrmNotePostedAt" | "advisorCertifiedAt" | "advisorCertifiedByUserId" | "cmReviewedAt" | "cmReviewedByUserId" | "ccoSignedOffAt" | "ccoSignedOffByUserId" | "cmReviewSummary" | "createdAt" | "updatedAt", ExtArgs["result"]["meeting"]>
+  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientName" | "clientId" | "clientMatchConfidence" | "participantEmails" | "meetingType" | "meetingDate" | "status" | "fileUrl" | "sourceFileSha256" | "sourceFileName" | "sourceFileSize" | "sourceFileMime" | "sourceUploadedAt" | "transcript" | "extraction" | "searchableText" | "finalizedBy" | "finalizedAt" | "finalizeReason" | "finalizeNote" | "finalizedPolicyVersion" | "samplingBucket" | "samplingRuleId" | "draftReadyAt" | "timeToFinalize" | "readyForCCO" | "sharepointItemWebUrl" | "sharepointDepositedAt" | "zohoCrmContactId" | "zohoCrmNotePostedAt" | "advisorCertifiedAt" | "advisorCertifiedByUserId" | "cmReviewedAt" | "cmReviewedByUserId" | "ccoSignedOffAt" | "ccoSignedOffByUserId" | "cmReviewSummary" | "createdAt" | "updatedAt", ExtArgs["result"]["meeting"]>
   export type MeetingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    client?: boolean | Meeting$clientArgs<ExtArgs>
     versions?: boolean | Meeting$versionsArgs<ExtArgs>
     auditEvents?: boolean | Meeting$auditEventsArgs<ExtArgs>
     flags?: boolean | Meeting$flagsArgs<ExtArgs>
@@ -8955,12 +9136,14 @@ export namespace Prisma {
   }
   export type MeetingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    client?: boolean | Meeting$clientArgs<ExtArgs>
     advisorCertifiedByUser?: boolean | Meeting$advisorCertifiedByUserArgs<ExtArgs>
     cmReviewedByUser?: boolean | Meeting$cmReviewedByUserArgs<ExtArgs>
     ccoSignedOffByUser?: boolean | Meeting$ccoSignedOffByUserArgs<ExtArgs>
   }
   export type MeetingIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    client?: boolean | Meeting$clientArgs<ExtArgs>
     advisorCertifiedByUser?: boolean | Meeting$advisorCertifiedByUserArgs<ExtArgs>
     cmReviewedByUser?: boolean | Meeting$cmReviewedByUserArgs<ExtArgs>
     ccoSignedOffByUser?: boolean | Meeting$ccoSignedOffByUserArgs<ExtArgs>
@@ -8970,6 +9153,7 @@ export namespace Prisma {
     name: "Meeting"
     objects: {
       workspace: Prisma.$WorkspacePayload<ExtArgs>
+      client: Prisma.$ClientPayload<ExtArgs> | null
       versions: Prisma.$VersionPayload<ExtArgs>[]
       auditEvents: Prisma.$AuditEventPayload<ExtArgs>[]
       flags: Prisma.$FlagPayload<ExtArgs>[]
@@ -8983,6 +9167,18 @@ export namespace Prisma {
       id: string
       workspaceId: string
       clientName: string
+      /**
+       * Linked Client row when attributed (email alias, name backfill, or manual).
+       */
+      clientId: string | null
+      /**
+       * EMAIL = authoritative; NAME_EXACT = low-confidence backfill; MANUAL = user resolved.
+       */
+      clientMatchConfidence: $Enums.MeetingClientMatchConfidence | null
+      /**
+       * Participant emails captured at ingest (Zoom/Teams). Used for client attribution.
+       */
+      participantEmails: string[]
       meetingType: string
       meetingDate: Date
       status: $Enums.MeetingStatus
@@ -9422,6 +9618,7 @@ export namespace Prisma {
   export interface Prisma__MeetingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    client<T extends Meeting$clientArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$clientArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     versions<T extends Meeting$versionsArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$versionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VersionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     auditEvents<T extends Meeting$auditEventsArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$auditEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     flags<T extends Meeting$flagsArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$flagsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FlagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -9462,6 +9659,9 @@ export namespace Prisma {
     readonly id: FieldRef<"Meeting", 'String'>
     readonly workspaceId: FieldRef<"Meeting", 'String'>
     readonly clientName: FieldRef<"Meeting", 'String'>
+    readonly clientId: FieldRef<"Meeting", 'String'>
+    readonly clientMatchConfidence: FieldRef<"Meeting", 'MeetingClientMatchConfidence'>
+    readonly participantEmails: FieldRef<"Meeting", 'String[]'>
     readonly meetingType: FieldRef<"Meeting", 'String'>
     readonly meetingDate: FieldRef<"Meeting", 'DateTime'>
     readonly status: FieldRef<"Meeting", 'MeetingStatus'>
@@ -9890,6 +10090,25 @@ export namespace Prisma {
      * Limit how many Meetings to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Meeting.client
+   */
+  export type Meeting$clientArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientInclude<ExtArgs> | null
+    where?: ClientWhereInput
   }
 
   /**
@@ -33668,6 +33887,7 @@ export namespace Prisma {
     evidenceItems?: boolean | Client$evidenceItemsArgs<ExtArgs>
     activities?: boolean | Client$activitiesArgs<ExtArgs>
     householdMemberships?: boolean | Client$householdMembershipsArgs<ExtArgs>
+    meetings?: boolean | Client$meetingsArgs<ExtArgs>
     _count?: boolean | ClientCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["client"]>
 
@@ -33716,6 +33936,7 @@ export namespace Prisma {
     evidenceItems?: boolean | Client$evidenceItemsArgs<ExtArgs>
     activities?: boolean | Client$activitiesArgs<ExtArgs>
     householdMemberships?: boolean | Client$householdMembershipsArgs<ExtArgs>
+    meetings?: boolean | Client$meetingsArgs<ExtArgs>
     _count?: boolean | ClientCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ClientIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -33733,6 +33954,7 @@ export namespace Prisma {
       evidenceItems: Prisma.$EvidenceItemPayload<ExtArgs>[]
       activities: Prisma.$ClientActivityPayload<ExtArgs>[]
       householdMemberships: Prisma.$ClientHouseholdMemberPayload<ExtArgs>[]
+      meetings: Prisma.$MeetingPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -34146,6 +34368,7 @@ export namespace Prisma {
     evidenceItems<T extends Client$evidenceItemsArgs<ExtArgs> = {}>(args?: Subset<T, Client$evidenceItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     activities<T extends Client$activitiesArgs<ExtArgs> = {}>(args?: Subset<T, Client$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClientActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     householdMemberships<T extends Client$householdMembershipsArgs<ExtArgs> = {}>(args?: Subset<T, Client$householdMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClientHouseholdMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    meetings<T extends Client$meetingsArgs<ExtArgs> = {}>(args?: Subset<T, Client$meetingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MeetingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -34673,6 +34896,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ClientHouseholdMemberScalarFieldEnum | ClientHouseholdMemberScalarFieldEnum[]
+  }
+
+  /**
+   * Client.meetings
+   */
+  export type Client$meetingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Meeting
+     */
+    select?: MeetingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Meeting
+     */
+    omit?: MeetingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MeetingInclude<ExtArgs> | null
+    where?: MeetingWhereInput
+    orderBy?: MeetingOrderByWithRelationInput | MeetingOrderByWithRelationInput[]
+    cursor?: MeetingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MeetingScalarFieldEnum | MeetingScalarFieldEnum[]
   }
 
   /**
@@ -39261,6 +39508,7 @@ export namespace Prisma {
     contentSha256: string | null
     storageUri: string | null
     searchableText: string | null
+    classificationStatus: $Enums.EvidenceClassificationStatus | null
     retentionRuleId: string | null
     destructionEligibleAt: Date | null
     createdAt: Date | null
@@ -39280,6 +39528,7 @@ export namespace Prisma {
     contentSha256: string | null
     storageUri: string | null
     searchableText: string | null
+    classificationStatus: $Enums.EvidenceClassificationStatus | null
     retentionRuleId: string | null
     destructionEligibleAt: Date | null
     createdAt: Date | null
@@ -39299,6 +39548,7 @@ export namespace Prisma {
     contentSha256: number
     storageUri: number
     searchableText: number
+    classificationStatus: number
     retentionRuleId: number
     destructionEligibleAt: number
     createdAt: number
@@ -39320,6 +39570,7 @@ export namespace Prisma {
     contentSha256?: true
     storageUri?: true
     searchableText?: true
+    classificationStatus?: true
     retentionRuleId?: true
     destructionEligibleAt?: true
     createdAt?: true
@@ -39339,6 +39590,7 @@ export namespace Prisma {
     contentSha256?: true
     storageUri?: true
     searchableText?: true
+    classificationStatus?: true
     retentionRuleId?: true
     destructionEligibleAt?: true
     createdAt?: true
@@ -39358,6 +39610,7 @@ export namespace Prisma {
     contentSha256?: true
     storageUri?: true
     searchableText?: true
+    classificationStatus?: true
     retentionRuleId?: true
     destructionEligibleAt?: true
     createdAt?: true
@@ -39450,6 +39703,7 @@ export namespace Prisma {
     contentSha256: string
     storageUri: string | null
     searchableText: string | null
+    classificationStatus: $Enums.EvidenceClassificationStatus | null
     retentionRuleId: string | null
     destructionEligibleAt: Date | null
     createdAt: Date
@@ -39486,6 +39740,7 @@ export namespace Prisma {
     contentSha256?: boolean
     storageUri?: boolean
     searchableText?: boolean
+    classificationStatus?: boolean
     retentionRuleId?: boolean
     destructionEligibleAt?: boolean
     createdAt?: boolean
@@ -39510,6 +39765,7 @@ export namespace Prisma {
     contentSha256?: boolean
     storageUri?: boolean
     searchableText?: boolean
+    classificationStatus?: boolean
     retentionRuleId?: boolean
     destructionEligibleAt?: boolean
     createdAt?: boolean
@@ -39531,6 +39787,7 @@ export namespace Prisma {
     contentSha256?: boolean
     storageUri?: boolean
     searchableText?: boolean
+    classificationStatus?: boolean
     retentionRuleId?: boolean
     destructionEligibleAt?: boolean
     createdAt?: boolean
@@ -39552,6 +39809,7 @@ export namespace Prisma {
     contentSha256?: boolean
     storageUri?: boolean
     searchableText?: boolean
+    classificationStatus?: boolean
     retentionRuleId?: boolean
     destructionEligibleAt?: boolean
     createdAt?: boolean
@@ -39559,7 +39817,7 @@ export namespace Prisma {
     deletedAt?: boolean
   }
 
-  export type EvidenceItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientId" | "createdById" | "sourceType" | "title" | "occurredAt" | "ingestedAt" | "contentSha256" | "storageUri" | "searchableText" | "retentionRuleId" | "destructionEligibleAt" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["evidenceItem"]>
+  export type EvidenceItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientId" | "createdById" | "sourceType" | "title" | "occurredAt" | "ingestedAt" | "contentSha256" | "storageUri" | "searchableText" | "classificationStatus" | "retentionRuleId" | "destructionEligibleAt" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["evidenceItem"]>
   export type EvidenceItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     client?: boolean | EvidenceItem$clientArgs<ExtArgs>
@@ -39599,6 +39857,10 @@ export namespace Prisma {
        * Keyword index for Ask / search (redacted for EMAIL). Mirrors Meeting.searchableText.
        */
       searchableText: string | null
+      /**
+       * EMAIL only: PENDING until classify job completes; FAILED after exhausted retries.
+       */
+      classificationStatus: $Enums.EvidenceClassificationStatus | null
       retentionRuleId: string | null
       destructionEligibleAt: Date | null
       createdAt: Date
@@ -40042,6 +40304,7 @@ export namespace Prisma {
     readonly contentSha256: FieldRef<"EvidenceItem", 'String'>
     readonly storageUri: FieldRef<"EvidenceItem", 'String'>
     readonly searchableText: FieldRef<"EvidenceItem", 'String'>
+    readonly classificationStatus: FieldRef<"EvidenceItem", 'EvidenceClassificationStatus'>
     readonly retentionRuleId: FieldRef<"EvidenceItem", 'String'>
     readonly destructionEligibleAt: FieldRef<"EvidenceItem", 'DateTime'>
     readonly createdAt: FieldRef<"EvidenceItem", 'DateTime'>
@@ -41617,6 +41880,974 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: EvidenceTagInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model EvidenceEmbedding
+   */
+
+  export type AggregateEvidenceEmbedding = {
+    _count: EvidenceEmbeddingCountAggregateOutputType | null
+    _min: EvidenceEmbeddingMinAggregateOutputType | null
+    _max: EvidenceEmbeddingMaxAggregateOutputType | null
+  }
+
+  export type EvidenceEmbeddingMinAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    sourceType: $Enums.EvidenceSourceType | null
+    sourceId: string | null
+    chunkKey: string | null
+    chunkTextHash: string | null
+    model: string | null
+    modelVersion: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type EvidenceEmbeddingMaxAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    sourceType: $Enums.EvidenceSourceType | null
+    sourceId: string | null
+    chunkKey: string | null
+    chunkTextHash: string | null
+    model: string | null
+    modelVersion: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type EvidenceEmbeddingCountAggregateOutputType = {
+    id: number
+    workspaceId: number
+    sourceType: number
+    sourceId: number
+    chunkKey: number
+    chunkTextHash: number
+    model: number
+    modelVersion: number
+    createdAt: number
+    updatedAt: number
+    deletedAt: number
+    _all: number
+  }
+
+
+  export type EvidenceEmbeddingMinAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    sourceType?: true
+    sourceId?: true
+    chunkKey?: true
+    chunkTextHash?: true
+    model?: true
+    modelVersion?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type EvidenceEmbeddingMaxAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    sourceType?: true
+    sourceId?: true
+    chunkKey?: true
+    chunkTextHash?: true
+    model?: true
+    modelVersion?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type EvidenceEmbeddingCountAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    sourceType?: true
+    sourceId?: true
+    chunkKey?: true
+    chunkTextHash?: true
+    model?: true
+    modelVersion?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+    _all?: true
+  }
+
+  export type EvidenceEmbeddingAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EvidenceEmbedding to aggregate.
+     */
+    where?: EvidenceEmbeddingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EvidenceEmbeddings to fetch.
+     */
+    orderBy?: EvidenceEmbeddingOrderByWithRelationInput | EvidenceEmbeddingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EvidenceEmbeddingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EvidenceEmbeddings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EvidenceEmbeddings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned EvidenceEmbeddings
+    **/
+    _count?: true | EvidenceEmbeddingCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EvidenceEmbeddingMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EvidenceEmbeddingMaxAggregateInputType
+  }
+
+  export type GetEvidenceEmbeddingAggregateType<T extends EvidenceEmbeddingAggregateArgs> = {
+        [P in keyof T & keyof AggregateEvidenceEmbedding]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEvidenceEmbedding[P]>
+      : GetScalarType<T[P], AggregateEvidenceEmbedding[P]>
+  }
+
+
+
+
+  export type EvidenceEmbeddingGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EvidenceEmbeddingWhereInput
+    orderBy?: EvidenceEmbeddingOrderByWithAggregationInput | EvidenceEmbeddingOrderByWithAggregationInput[]
+    by: EvidenceEmbeddingScalarFieldEnum[] | EvidenceEmbeddingScalarFieldEnum
+    having?: EvidenceEmbeddingScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EvidenceEmbeddingCountAggregateInputType | true
+    _min?: EvidenceEmbeddingMinAggregateInputType
+    _max?: EvidenceEmbeddingMaxAggregateInputType
+  }
+
+  export type EvidenceEmbeddingGroupByOutputType = {
+    id: string
+    workspaceId: string
+    sourceType: $Enums.EvidenceSourceType
+    sourceId: string
+    chunkKey: string
+    chunkTextHash: string
+    model: string
+    modelVersion: string
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date | null
+    _count: EvidenceEmbeddingCountAggregateOutputType | null
+    _min: EvidenceEmbeddingMinAggregateOutputType | null
+    _max: EvidenceEmbeddingMaxAggregateOutputType | null
+  }
+
+  type GetEvidenceEmbeddingGroupByPayload<T extends EvidenceEmbeddingGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EvidenceEmbeddingGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EvidenceEmbeddingGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EvidenceEmbeddingGroupByOutputType[P]>
+            : GetScalarType<T[P], EvidenceEmbeddingGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EvidenceEmbeddingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    sourceType?: boolean
+    sourceId?: boolean
+    chunkKey?: boolean
+    chunkTextHash?: boolean
+    model?: boolean
+    modelVersion?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["evidenceEmbedding"]>
+
+
+  export type EvidenceEmbeddingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    sourceType?: boolean
+    sourceId?: boolean
+    chunkKey?: boolean
+    chunkTextHash?: boolean
+    model?: boolean
+    modelVersion?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["evidenceEmbedding"]>
+
+  export type EvidenceEmbeddingSelectScalar = {
+    id?: boolean
+    workspaceId?: boolean
+    sourceType?: boolean
+    sourceId?: boolean
+    chunkKey?: boolean
+    chunkTextHash?: boolean
+    model?: boolean
+    modelVersion?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }
+
+  export type EvidenceEmbeddingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "sourceType" | "sourceId" | "chunkKey" | "chunkTextHash" | "model" | "modelVersion" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["evidenceEmbedding"]>
+  export type EvidenceEmbeddingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+  export type EvidenceEmbeddingIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+
+  export type $EvidenceEmbeddingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "EvidenceEmbedding"
+    objects: {
+      workspace: Prisma.$WorkspacePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workspaceId: string
+      sourceType: $Enums.EvidenceSourceType
+      /**
+       * EMAIL: EvidenceItem id. MEETING: Meeting id.
+       */
+      sourceId: string
+      /**
+       * EMAIL: evidenceItemId. MEETING: `${meetingId}:${segmentIndex}`
+       */
+      chunkKey: string
+      chunkTextHash: string
+      model: string
+      modelVersion: string
+      createdAt: Date
+      updatedAt: Date
+      deletedAt: Date | null
+    }, ExtArgs["result"]["evidenceEmbedding"]>
+    composites: {}
+  }
+
+  type EvidenceEmbeddingGetPayload<S extends boolean | null | undefined | EvidenceEmbeddingDefaultArgs> = $Result.GetResult<Prisma.$EvidenceEmbeddingPayload, S>
+
+  type EvidenceEmbeddingCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EvidenceEmbeddingFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EvidenceEmbeddingCountAggregateInputType | true
+    }
+
+  export interface EvidenceEmbeddingDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['EvidenceEmbedding'], meta: { name: 'EvidenceEmbedding' } }
+    /**
+     * Find zero or one EvidenceEmbedding that matches the filter.
+     * @param {EvidenceEmbeddingFindUniqueArgs} args - Arguments to find a EvidenceEmbedding
+     * @example
+     * // Get one EvidenceEmbedding
+     * const evidenceEmbedding = await prisma.evidenceEmbedding.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EvidenceEmbeddingFindUniqueArgs>(args: SelectSubset<T, EvidenceEmbeddingFindUniqueArgs<ExtArgs>>): Prisma__EvidenceEmbeddingClient<$Result.GetResult<Prisma.$EvidenceEmbeddingPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one EvidenceEmbedding that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EvidenceEmbeddingFindUniqueOrThrowArgs} args - Arguments to find a EvidenceEmbedding
+     * @example
+     * // Get one EvidenceEmbedding
+     * const evidenceEmbedding = await prisma.evidenceEmbedding.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EvidenceEmbeddingFindUniqueOrThrowArgs>(args: SelectSubset<T, EvidenceEmbeddingFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EvidenceEmbeddingClient<$Result.GetResult<Prisma.$EvidenceEmbeddingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EvidenceEmbedding that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceEmbeddingFindFirstArgs} args - Arguments to find a EvidenceEmbedding
+     * @example
+     * // Get one EvidenceEmbedding
+     * const evidenceEmbedding = await prisma.evidenceEmbedding.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EvidenceEmbeddingFindFirstArgs>(args?: SelectSubset<T, EvidenceEmbeddingFindFirstArgs<ExtArgs>>): Prisma__EvidenceEmbeddingClient<$Result.GetResult<Prisma.$EvidenceEmbeddingPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EvidenceEmbedding that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceEmbeddingFindFirstOrThrowArgs} args - Arguments to find a EvidenceEmbedding
+     * @example
+     * // Get one EvidenceEmbedding
+     * const evidenceEmbedding = await prisma.evidenceEmbedding.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EvidenceEmbeddingFindFirstOrThrowArgs>(args?: SelectSubset<T, EvidenceEmbeddingFindFirstOrThrowArgs<ExtArgs>>): Prisma__EvidenceEmbeddingClient<$Result.GetResult<Prisma.$EvidenceEmbeddingPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more EvidenceEmbeddings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceEmbeddingFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all EvidenceEmbeddings
+     * const evidenceEmbeddings = await prisma.evidenceEmbedding.findMany()
+     * 
+     * // Get first 10 EvidenceEmbeddings
+     * const evidenceEmbeddings = await prisma.evidenceEmbedding.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const evidenceEmbeddingWithIdOnly = await prisma.evidenceEmbedding.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EvidenceEmbeddingFindManyArgs>(args?: SelectSubset<T, EvidenceEmbeddingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceEmbeddingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Delete a EvidenceEmbedding.
+     * @param {EvidenceEmbeddingDeleteArgs} args - Arguments to delete one EvidenceEmbedding.
+     * @example
+     * // Delete one EvidenceEmbedding
+     * const EvidenceEmbedding = await prisma.evidenceEmbedding.delete({
+     *   where: {
+     *     // ... filter to delete one EvidenceEmbedding
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EvidenceEmbeddingDeleteArgs>(args: SelectSubset<T, EvidenceEmbeddingDeleteArgs<ExtArgs>>): Prisma__EvidenceEmbeddingClient<$Result.GetResult<Prisma.$EvidenceEmbeddingPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one EvidenceEmbedding.
+     * @param {EvidenceEmbeddingUpdateArgs} args - Arguments to update one EvidenceEmbedding.
+     * @example
+     * // Update one EvidenceEmbedding
+     * const evidenceEmbedding = await prisma.evidenceEmbedding.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EvidenceEmbeddingUpdateArgs>(args: SelectSubset<T, EvidenceEmbeddingUpdateArgs<ExtArgs>>): Prisma__EvidenceEmbeddingClient<$Result.GetResult<Prisma.$EvidenceEmbeddingPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more EvidenceEmbeddings.
+     * @param {EvidenceEmbeddingDeleteManyArgs} args - Arguments to filter EvidenceEmbeddings to delete.
+     * @example
+     * // Delete a few EvidenceEmbeddings
+     * const { count } = await prisma.evidenceEmbedding.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EvidenceEmbeddingDeleteManyArgs>(args?: SelectSubset<T, EvidenceEmbeddingDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EvidenceEmbeddings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceEmbeddingUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many EvidenceEmbeddings
+     * const evidenceEmbedding = await prisma.evidenceEmbedding.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EvidenceEmbeddingUpdateManyArgs>(args: SelectSubset<T, EvidenceEmbeddingUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EvidenceEmbeddings and returns the data updated in the database.
+     * @param {EvidenceEmbeddingUpdateManyAndReturnArgs} args - Arguments to update many EvidenceEmbeddings.
+     * @example
+     * // Update many EvidenceEmbeddings
+     * const evidenceEmbedding = await prisma.evidenceEmbedding.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more EvidenceEmbeddings and only return the `id`
+     * const evidenceEmbeddingWithIdOnly = await prisma.evidenceEmbedding.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EvidenceEmbeddingUpdateManyAndReturnArgs>(args: SelectSubset<T, EvidenceEmbeddingUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceEmbeddingPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+
+    /**
+     * Count the number of EvidenceEmbeddings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceEmbeddingCountArgs} args - Arguments to filter EvidenceEmbeddings to count.
+     * @example
+     * // Count the number of EvidenceEmbeddings
+     * const count = await prisma.evidenceEmbedding.count({
+     *   where: {
+     *     // ... the filter for the EvidenceEmbeddings we want to count
+     *   }
+     * })
+    **/
+    count<T extends EvidenceEmbeddingCountArgs>(
+      args?: Subset<T, EvidenceEmbeddingCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EvidenceEmbeddingCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a EvidenceEmbedding.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceEmbeddingAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EvidenceEmbeddingAggregateArgs>(args: Subset<T, EvidenceEmbeddingAggregateArgs>): Prisma.PrismaPromise<GetEvidenceEmbeddingAggregateType<T>>
+
+    /**
+     * Group by EvidenceEmbedding.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EvidenceEmbeddingGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EvidenceEmbeddingGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EvidenceEmbeddingGroupByArgs['orderBy'] }
+        : { orderBy?: EvidenceEmbeddingGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EvidenceEmbeddingGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEvidenceEmbeddingGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the EvidenceEmbedding model
+   */
+  readonly fields: EvidenceEmbeddingFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for EvidenceEmbedding.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EvidenceEmbeddingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the EvidenceEmbedding model
+   */
+  interface EvidenceEmbeddingFieldRefs {
+    readonly id: FieldRef<"EvidenceEmbedding", 'String'>
+    readonly workspaceId: FieldRef<"EvidenceEmbedding", 'String'>
+    readonly sourceType: FieldRef<"EvidenceEmbedding", 'EvidenceSourceType'>
+    readonly sourceId: FieldRef<"EvidenceEmbedding", 'String'>
+    readonly chunkKey: FieldRef<"EvidenceEmbedding", 'String'>
+    readonly chunkTextHash: FieldRef<"EvidenceEmbedding", 'String'>
+    readonly model: FieldRef<"EvidenceEmbedding", 'String'>
+    readonly modelVersion: FieldRef<"EvidenceEmbedding", 'String'>
+    readonly createdAt: FieldRef<"EvidenceEmbedding", 'DateTime'>
+    readonly updatedAt: FieldRef<"EvidenceEmbedding", 'DateTime'>
+    readonly deletedAt: FieldRef<"EvidenceEmbedding", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * EvidenceEmbedding findUnique
+   */
+  export type EvidenceEmbeddingFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceEmbedding
+     */
+    select?: EvidenceEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceEmbedding
+     */
+    omit?: EvidenceEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceEmbeddingInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceEmbedding to fetch.
+     */
+    where: EvidenceEmbeddingWhereUniqueInput
+  }
+
+  /**
+   * EvidenceEmbedding findUniqueOrThrow
+   */
+  export type EvidenceEmbeddingFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceEmbedding
+     */
+    select?: EvidenceEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceEmbedding
+     */
+    omit?: EvidenceEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceEmbeddingInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceEmbedding to fetch.
+     */
+    where: EvidenceEmbeddingWhereUniqueInput
+  }
+
+  /**
+   * EvidenceEmbedding findFirst
+   */
+  export type EvidenceEmbeddingFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceEmbedding
+     */
+    select?: EvidenceEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceEmbedding
+     */
+    omit?: EvidenceEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceEmbeddingInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceEmbedding to fetch.
+     */
+    where?: EvidenceEmbeddingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EvidenceEmbeddings to fetch.
+     */
+    orderBy?: EvidenceEmbeddingOrderByWithRelationInput | EvidenceEmbeddingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EvidenceEmbeddings.
+     */
+    cursor?: EvidenceEmbeddingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EvidenceEmbeddings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EvidenceEmbeddings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EvidenceEmbeddings.
+     */
+    distinct?: EvidenceEmbeddingScalarFieldEnum | EvidenceEmbeddingScalarFieldEnum[]
+  }
+
+  /**
+   * EvidenceEmbedding findFirstOrThrow
+   */
+  export type EvidenceEmbeddingFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceEmbedding
+     */
+    select?: EvidenceEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceEmbedding
+     */
+    omit?: EvidenceEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceEmbeddingInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceEmbedding to fetch.
+     */
+    where?: EvidenceEmbeddingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EvidenceEmbeddings to fetch.
+     */
+    orderBy?: EvidenceEmbeddingOrderByWithRelationInput | EvidenceEmbeddingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EvidenceEmbeddings.
+     */
+    cursor?: EvidenceEmbeddingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EvidenceEmbeddings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EvidenceEmbeddings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EvidenceEmbeddings.
+     */
+    distinct?: EvidenceEmbeddingScalarFieldEnum | EvidenceEmbeddingScalarFieldEnum[]
+  }
+
+  /**
+   * EvidenceEmbedding findMany
+   */
+  export type EvidenceEmbeddingFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceEmbedding
+     */
+    select?: EvidenceEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceEmbedding
+     */
+    omit?: EvidenceEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceEmbeddingInclude<ExtArgs> | null
+    /**
+     * Filter, which EvidenceEmbeddings to fetch.
+     */
+    where?: EvidenceEmbeddingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EvidenceEmbeddings to fetch.
+     */
+    orderBy?: EvidenceEmbeddingOrderByWithRelationInput | EvidenceEmbeddingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing EvidenceEmbeddings.
+     */
+    cursor?: EvidenceEmbeddingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EvidenceEmbeddings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EvidenceEmbeddings.
+     */
+    skip?: number
+    distinct?: EvidenceEmbeddingScalarFieldEnum | EvidenceEmbeddingScalarFieldEnum[]
+  }
+
+  /**
+   * EvidenceEmbedding update
+   */
+  export type EvidenceEmbeddingUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceEmbedding
+     */
+    select?: EvidenceEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceEmbedding
+     */
+    omit?: EvidenceEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceEmbeddingInclude<ExtArgs> | null
+    /**
+     * The data needed to update a EvidenceEmbedding.
+     */
+    data: XOR<EvidenceEmbeddingUpdateInput, EvidenceEmbeddingUncheckedUpdateInput>
+    /**
+     * Choose, which EvidenceEmbedding to update.
+     */
+    where: EvidenceEmbeddingWhereUniqueInput
+  }
+
+  /**
+   * EvidenceEmbedding updateMany
+   */
+  export type EvidenceEmbeddingUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update EvidenceEmbeddings.
+     */
+    data: XOR<EvidenceEmbeddingUpdateManyMutationInput, EvidenceEmbeddingUncheckedUpdateManyInput>
+    /**
+     * Filter which EvidenceEmbeddings to update
+     */
+    where?: EvidenceEmbeddingWhereInput
+    /**
+     * Limit how many EvidenceEmbeddings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * EvidenceEmbedding updateManyAndReturn
+   */
+  export type EvidenceEmbeddingUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceEmbedding
+     */
+    select?: EvidenceEmbeddingSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceEmbedding
+     */
+    omit?: EvidenceEmbeddingOmit<ExtArgs> | null
+    /**
+     * The data used to update EvidenceEmbeddings.
+     */
+    data: XOR<EvidenceEmbeddingUpdateManyMutationInput, EvidenceEmbeddingUncheckedUpdateManyInput>
+    /**
+     * Filter which EvidenceEmbeddings to update
+     */
+    where?: EvidenceEmbeddingWhereInput
+    /**
+     * Limit how many EvidenceEmbeddings to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceEmbeddingIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EvidenceEmbedding delete
+   */
+  export type EvidenceEmbeddingDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceEmbedding
+     */
+    select?: EvidenceEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceEmbedding
+     */
+    omit?: EvidenceEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceEmbeddingInclude<ExtArgs> | null
+    /**
+     * Filter which EvidenceEmbedding to delete.
+     */
+    where: EvidenceEmbeddingWhereUniqueInput
+  }
+
+  /**
+   * EvidenceEmbedding deleteMany
+   */
+  export type EvidenceEmbeddingDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EvidenceEmbeddings to delete
+     */
+    where?: EvidenceEmbeddingWhereInput
+    /**
+     * Limit how many EvidenceEmbeddings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * EvidenceEmbedding without action
+   */
+  export type EvidenceEmbeddingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EvidenceEmbedding
+     */
+    select?: EvidenceEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EvidenceEmbedding
+     */
+    omit?: EvidenceEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EvidenceEmbeddingInclude<ExtArgs> | null
   }
 
 
@@ -49757,6 +50988,9 @@ export namespace Prisma {
     id: 'id',
     workspaceId: 'workspaceId',
     clientName: 'clientName',
+    clientId: 'clientId',
+    clientMatchConfidence: 'clientMatchConfidence',
+    participantEmails: 'participantEmails',
     meetingType: 'meetingType',
     meetingDate: 'meetingDate',
     status: 'status',
@@ -50207,6 +51441,7 @@ export namespace Prisma {
     contentSha256: 'contentSha256',
     storageUri: 'storageUri',
     searchableText: 'searchableText',
+    classificationStatus: 'classificationStatus',
     retentionRuleId: 'retentionRuleId',
     destructionEligibleAt: 'destructionEligibleAt',
     createdAt: 'createdAt',
@@ -50229,6 +51464,23 @@ export namespace Prisma {
   };
 
   export type EvidenceTagScalarFieldEnum = (typeof EvidenceTagScalarFieldEnum)[keyof typeof EvidenceTagScalarFieldEnum]
+
+
+  export const EvidenceEmbeddingScalarFieldEnum: {
+    id: 'id',
+    workspaceId: 'workspaceId',
+    sourceType: 'sourceType',
+    sourceId: 'sourceId',
+    chunkKey: 'chunkKey',
+    chunkTextHash: 'chunkTextHash',
+    model: 'model',
+    modelVersion: 'modelVersion',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    deletedAt: 'deletedAt'
+  };
+
+  export type EvidenceEmbeddingScalarFieldEnum = (typeof EvidenceEmbeddingScalarFieldEnum)[keyof typeof EvidenceEmbeddingScalarFieldEnum]
 
 
   export const CommunicationThreadScalarFieldEnum: {
@@ -50507,6 +51759,20 @@ export namespace Prisma {
    * Reference to a field of type 'WorkspaceRole[]'
    */
   export type ListEnumWorkspaceRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WorkspaceRole[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'MeetingClientMatchConfidence'
+   */
+  export type EnumMeetingClientMatchConfidenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MeetingClientMatchConfidence'>
+    
+
+
+  /**
+   * Reference to a field of type 'MeetingClientMatchConfidence[]'
+   */
+  export type ListEnumMeetingClientMatchConfidenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MeetingClientMatchConfidence[]'>
     
 
 
@@ -50889,6 +52155,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'EvidenceClassificationStatus'
+   */
+  export type EnumEvidenceClassificationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EvidenceClassificationStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'EvidenceClassificationStatus[]'
+   */
+  export type ListEnumEvidenceClassificationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EvidenceClassificationStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'TagCategory'
    */
   export type EnumTagCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TagCategory'>
@@ -51059,6 +52339,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemListRelationFilter
     ingestJobs?: IngestJobListRelationFilter
     evidenceClassifications?: EvidenceClassificationListRelationFilter
+    evidenceEmbeddings?: EvidenceEmbeddingListRelationFilter
   }
 
   export type WorkspaceOrderByWithRelationInput = {
@@ -51100,6 +52381,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemOrderByRelationAggregateInput
     ingestJobs?: IngestJobOrderByRelationAggregateInput
     evidenceClassifications?: EvidenceClassificationOrderByRelationAggregateInput
+    evidenceEmbeddings?: EvidenceEmbeddingOrderByRelationAggregateInput
   }
 
   export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
@@ -51144,6 +52426,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemListRelationFilter
     ingestJobs?: IngestJobListRelationFilter
     evidenceClassifications?: EvidenceClassificationListRelationFilter
+    evidenceEmbeddings?: EvidenceEmbeddingListRelationFilter
   }, "id">
 
   export type WorkspaceOrderByWithAggregationInput = {
@@ -51272,6 +52555,9 @@ export namespace Prisma {
     id?: StringFilter<"Meeting"> | string
     workspaceId?: StringFilter<"Meeting"> | string
     clientName?: StringFilter<"Meeting"> | string
+    clientId?: StringNullableFilter<"Meeting"> | string | null
+    clientMatchConfidence?: EnumMeetingClientMatchConfidenceNullableFilter<"Meeting"> | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: StringNullableListFilter<"Meeting">
     meetingType?: StringFilter<"Meeting"> | string
     meetingDate?: DateTimeFilter<"Meeting"> | Date | string
     status?: EnumMeetingStatusFilter<"Meeting"> | $Enums.MeetingStatus
@@ -51308,6 +52594,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    client?: XOR<ClientNullableScalarRelationFilter, ClientWhereInput> | null
     versions?: VersionListRelationFilter
     auditEvents?: AuditEventListRelationFilter
     flags?: FlagListRelationFilter
@@ -51322,6 +52609,9 @@ export namespace Prisma {
     id?: SortOrder
     workspaceId?: SortOrder
     clientName?: SortOrder
+    clientId?: SortOrderInput | SortOrder
+    clientMatchConfidence?: SortOrderInput | SortOrder
+    participantEmails?: SortOrder
     meetingType?: SortOrder
     meetingDate?: SortOrder
     status?: SortOrder
@@ -51358,6 +52648,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     workspace?: WorkspaceOrderByWithRelationInput
+    client?: ClientOrderByWithRelationInput
     versions?: VersionOrderByRelationAggregateInput
     auditEvents?: AuditEventOrderByRelationAggregateInput
     flags?: FlagOrderByRelationAggregateInput
@@ -51375,6 +52666,9 @@ export namespace Prisma {
     NOT?: MeetingWhereInput | MeetingWhereInput[]
     workspaceId?: StringFilter<"Meeting"> | string
     clientName?: StringFilter<"Meeting"> | string
+    clientId?: StringNullableFilter<"Meeting"> | string | null
+    clientMatchConfidence?: EnumMeetingClientMatchConfidenceNullableFilter<"Meeting"> | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: StringNullableListFilter<"Meeting">
     meetingType?: StringFilter<"Meeting"> | string
     meetingDate?: DateTimeFilter<"Meeting"> | Date | string
     status?: EnumMeetingStatusFilter<"Meeting"> | $Enums.MeetingStatus
@@ -51411,6 +52705,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Meeting"> | Date | string
     updatedAt?: DateTimeFilter<"Meeting"> | Date | string
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    client?: XOR<ClientNullableScalarRelationFilter, ClientWhereInput> | null
     versions?: VersionListRelationFilter
     auditEvents?: AuditEventListRelationFilter
     flags?: FlagListRelationFilter
@@ -51425,6 +52720,9 @@ export namespace Prisma {
     id?: SortOrder
     workspaceId?: SortOrder
     clientName?: SortOrder
+    clientId?: SortOrderInput | SortOrder
+    clientMatchConfidence?: SortOrderInput | SortOrder
+    participantEmails?: SortOrder
     meetingType?: SortOrder
     meetingDate?: SortOrder
     status?: SortOrder
@@ -51474,6 +52772,9 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Meeting"> | string
     workspaceId?: StringWithAggregatesFilter<"Meeting"> | string
     clientName?: StringWithAggregatesFilter<"Meeting"> | string
+    clientId?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
+    clientMatchConfidence?: EnumMeetingClientMatchConfidenceNullableWithAggregatesFilter<"Meeting"> | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: StringNullableListFilter<"Meeting">
     meetingType?: StringWithAggregatesFilter<"Meeting"> | string
     meetingDate?: DateTimeWithAggregatesFilter<"Meeting"> | Date | string
     status?: EnumMeetingStatusWithAggregatesFilter<"Meeting"> | $Enums.MeetingStatus
@@ -53237,6 +54538,7 @@ export namespace Prisma {
     evidenceItems?: EvidenceItemListRelationFilter
     activities?: ClientActivityListRelationFilter
     householdMemberships?: ClientHouseholdMemberListRelationFilter
+    meetings?: MeetingListRelationFilter
   }
 
   export type ClientOrderByWithRelationInput = {
@@ -53254,6 +54556,7 @@ export namespace Prisma {
     evidenceItems?: EvidenceItemOrderByRelationAggregateInput
     activities?: ClientActivityOrderByRelationAggregateInput
     householdMemberships?: ClientHouseholdMemberOrderByRelationAggregateInput
+    meetings?: MeetingOrderByRelationAggregateInput
   }
 
   export type ClientWhereUniqueInput = Prisma.AtLeast<{
@@ -53274,6 +54577,7 @@ export namespace Prisma {
     evidenceItems?: EvidenceItemListRelationFilter
     activities?: ClientActivityListRelationFilter
     householdMemberships?: ClientHouseholdMemberListRelationFilter
+    meetings?: MeetingListRelationFilter
   }, "id">
 
   export type ClientOrderByWithAggregationInput = {
@@ -53644,6 +54948,7 @@ export namespace Prisma {
     contentSha256?: StringFilter<"EvidenceItem"> | string
     storageUri?: StringNullableFilter<"EvidenceItem"> | string | null
     searchableText?: StringNullableFilter<"EvidenceItem"> | string | null
+    classificationStatus?: EnumEvidenceClassificationStatusNullableFilter<"EvidenceItem"> | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: StringNullableFilter<"EvidenceItem"> | string | null
     destructionEligibleAt?: DateTimeNullableFilter<"EvidenceItem"> | Date | string | null
     createdAt?: DateTimeFilter<"EvidenceItem"> | Date | string
@@ -53667,6 +54972,7 @@ export namespace Prisma {
     contentSha256?: SortOrder
     storageUri?: SortOrderInput | SortOrder
     searchableText?: SortOrderInput | SortOrder
+    classificationStatus?: SortOrderInput | SortOrder
     retentionRuleId?: SortOrderInput | SortOrder
     destructionEligibleAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -53693,6 +54999,7 @@ export namespace Prisma {
     contentSha256?: StringFilter<"EvidenceItem"> | string
     storageUri?: StringNullableFilter<"EvidenceItem"> | string | null
     searchableText?: StringNullableFilter<"EvidenceItem"> | string | null
+    classificationStatus?: EnumEvidenceClassificationStatusNullableFilter<"EvidenceItem"> | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: StringNullableFilter<"EvidenceItem"> | string | null
     destructionEligibleAt?: DateTimeNullableFilter<"EvidenceItem"> | Date | string | null
     createdAt?: DateTimeFilter<"EvidenceItem"> | Date | string
@@ -53716,6 +55023,7 @@ export namespace Prisma {
     contentSha256?: SortOrder
     storageUri?: SortOrderInput | SortOrder
     searchableText?: SortOrderInput | SortOrder
+    classificationStatus?: SortOrderInput | SortOrder
     retentionRuleId?: SortOrderInput | SortOrder
     destructionEligibleAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -53741,6 +55049,7 @@ export namespace Prisma {
     contentSha256?: StringWithAggregatesFilter<"EvidenceItem"> | string
     storageUri?: StringNullableWithAggregatesFilter<"EvidenceItem"> | string | null
     searchableText?: StringNullableWithAggregatesFilter<"EvidenceItem"> | string | null
+    classificationStatus?: EnumEvidenceClassificationStatusNullableWithAggregatesFilter<"EvidenceItem"> | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: StringNullableWithAggregatesFilter<"EvidenceItem"> | string | null
     destructionEligibleAt?: DateTimeNullableWithAggregatesFilter<"EvidenceItem"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"EvidenceItem"> | Date | string
@@ -53816,6 +55125,92 @@ export namespace Prisma {
     removedAt?: DateTimeNullableWithAggregatesFilter<"EvidenceTag"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"EvidenceTag"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"EvidenceTag"> | Date | string
+  }
+
+  export type EvidenceEmbeddingWhereInput = {
+    AND?: EvidenceEmbeddingWhereInput | EvidenceEmbeddingWhereInput[]
+    OR?: EvidenceEmbeddingWhereInput[]
+    NOT?: EvidenceEmbeddingWhereInput | EvidenceEmbeddingWhereInput[]
+    id?: StringFilter<"EvidenceEmbedding"> | string
+    workspaceId?: StringFilter<"EvidenceEmbedding"> | string
+    sourceType?: EnumEvidenceSourceTypeFilter<"EvidenceEmbedding"> | $Enums.EvidenceSourceType
+    sourceId?: StringFilter<"EvidenceEmbedding"> | string
+    chunkKey?: StringFilter<"EvidenceEmbedding"> | string
+    chunkTextHash?: StringFilter<"EvidenceEmbedding"> | string
+    model?: StringFilter<"EvidenceEmbedding"> | string
+    modelVersion?: StringFilter<"EvidenceEmbedding"> | string
+    createdAt?: DateTimeFilter<"EvidenceEmbedding"> | Date | string
+    updatedAt?: DateTimeFilter<"EvidenceEmbedding"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"EvidenceEmbedding"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+  }
+
+  export type EvidenceEmbeddingOrderByWithRelationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    sourceType?: SortOrder
+    sourceId?: SortOrder
+    chunkKey?: SortOrder
+    chunkTextHash?: SortOrder
+    model?: SortOrder
+    modelVersion?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    workspace?: WorkspaceOrderByWithRelationInput
+  }
+
+  export type EvidenceEmbeddingWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    workspaceId_chunkKey_model?: EvidenceEmbeddingWorkspaceIdChunkKeyModelCompoundUniqueInput
+    AND?: EvidenceEmbeddingWhereInput | EvidenceEmbeddingWhereInput[]
+    OR?: EvidenceEmbeddingWhereInput[]
+    NOT?: EvidenceEmbeddingWhereInput | EvidenceEmbeddingWhereInput[]
+    workspaceId?: StringFilter<"EvidenceEmbedding"> | string
+    sourceType?: EnumEvidenceSourceTypeFilter<"EvidenceEmbedding"> | $Enums.EvidenceSourceType
+    sourceId?: StringFilter<"EvidenceEmbedding"> | string
+    chunkKey?: StringFilter<"EvidenceEmbedding"> | string
+    chunkTextHash?: StringFilter<"EvidenceEmbedding"> | string
+    model?: StringFilter<"EvidenceEmbedding"> | string
+    modelVersion?: StringFilter<"EvidenceEmbedding"> | string
+    createdAt?: DateTimeFilter<"EvidenceEmbedding"> | Date | string
+    updatedAt?: DateTimeFilter<"EvidenceEmbedding"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"EvidenceEmbedding"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+  }, "id" | "workspaceId_chunkKey_model">
+
+  export type EvidenceEmbeddingOrderByWithAggregationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    sourceType?: SortOrder
+    sourceId?: SortOrder
+    chunkKey?: SortOrder
+    chunkTextHash?: SortOrder
+    model?: SortOrder
+    modelVersion?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    _count?: EvidenceEmbeddingCountOrderByAggregateInput
+    _max?: EvidenceEmbeddingMaxOrderByAggregateInput
+    _min?: EvidenceEmbeddingMinOrderByAggregateInput
+  }
+
+  export type EvidenceEmbeddingScalarWhereWithAggregatesInput = {
+    AND?: EvidenceEmbeddingScalarWhereWithAggregatesInput | EvidenceEmbeddingScalarWhereWithAggregatesInput[]
+    OR?: EvidenceEmbeddingScalarWhereWithAggregatesInput[]
+    NOT?: EvidenceEmbeddingScalarWhereWithAggregatesInput | EvidenceEmbeddingScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"EvidenceEmbedding"> | string
+    workspaceId?: StringWithAggregatesFilter<"EvidenceEmbedding"> | string
+    sourceType?: EnumEvidenceSourceTypeWithAggregatesFilter<"EvidenceEmbedding"> | $Enums.EvidenceSourceType
+    sourceId?: StringWithAggregatesFilter<"EvidenceEmbedding"> | string
+    chunkKey?: StringWithAggregatesFilter<"EvidenceEmbedding"> | string
+    chunkTextHash?: StringWithAggregatesFilter<"EvidenceEmbedding"> | string
+    model?: StringWithAggregatesFilter<"EvidenceEmbedding"> | string
+    modelVersion?: StringWithAggregatesFilter<"EvidenceEmbedding"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"EvidenceEmbedding"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"EvidenceEmbedding"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"EvidenceEmbedding"> | Date | string | null
   }
 
   export type CommunicationThreadWhereInput = {
@@ -54481,6 +55876,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateInput = {
@@ -54522,6 +55918,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUpdateInput = {
@@ -54563,6 +55960,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateInput = {
@@ -54604,6 +56002,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateManyInput = {
@@ -54735,6 +56134,8 @@ export namespace Prisma {
   export type MeetingCreateInput = {
     id?: string
     clientName: string
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -54768,6 +56169,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
+    client?: ClientCreateNestedOneWithoutMeetingsInput
     versions?: VersionCreateNestedManyWithoutMeetingInput
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     flags?: FlagCreateNestedManyWithoutMeetingInput
@@ -54782,6 +56184,9 @@ export namespace Prisma {
     id?: string
     workspaceId: string
     clientName: string
+    clientId?: string | null
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -54827,6 +56232,8 @@ export namespace Prisma {
   export type MeetingUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -54860,6 +56267,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
+    client?: ClientUpdateOneWithoutMeetingsNestedInput
     versions?: VersionUpdateManyWithoutMeetingNestedInput
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     flags?: FlagUpdateManyWithoutMeetingNestedInput
@@ -54874,6 +56282,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     workspaceId?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -54920,6 +56331,9 @@ export namespace Prisma {
     id?: string
     workspaceId: string
     clientName: string
+    clientId?: string | null
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -54960,6 +56374,8 @@ export namespace Prisma {
   export type MeetingUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -54998,6 +56414,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     workspaceId?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -56932,6 +58351,7 @@ export namespace Prisma {
     evidenceItems?: EvidenceItemCreateNestedManyWithoutClientInput
     activities?: ClientActivityCreateNestedManyWithoutClientInput
     householdMemberships?: ClientHouseholdMemberCreateNestedManyWithoutClientInput
+    meetings?: MeetingCreateNestedManyWithoutClientInput
   }
 
   export type ClientUncheckedCreateInput = {
@@ -56948,6 +58368,7 @@ export namespace Prisma {
     evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutClientInput
     activities?: ClientActivityUncheckedCreateNestedManyWithoutClientInput
     householdMemberships?: ClientHouseholdMemberUncheckedCreateNestedManyWithoutClientInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutClientInput
   }
 
   export type ClientUpdateInput = {
@@ -56964,6 +58385,7 @@ export namespace Prisma {
     evidenceItems?: EvidenceItemUpdateManyWithoutClientNestedInput
     activities?: ClientActivityUpdateManyWithoutClientNestedInput
     householdMemberships?: ClientHouseholdMemberUpdateManyWithoutClientNestedInput
+    meetings?: MeetingUpdateManyWithoutClientNestedInput
   }
 
   export type ClientUncheckedUpdateInput = {
@@ -56980,6 +58402,7 @@ export namespace Prisma {
     evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutClientNestedInput
     activities?: ClientActivityUncheckedUpdateManyWithoutClientNestedInput
     householdMemberships?: ClientHouseholdMemberUncheckedUpdateManyWithoutClientNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutClientNestedInput
   }
 
   export type ClientCreateManyInput = {
@@ -57366,6 +58789,7 @@ export namespace Prisma {
     contentSha256: string
     storageUri?: string | null
     searchableText?: string | null
+    classificationStatus?: $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: string | null
     destructionEligibleAt?: Date | string | null
     createdAt?: Date | string
@@ -57389,6 +58813,7 @@ export namespace Prisma {
     contentSha256: string
     storageUri?: string | null
     searchableText?: string | null
+    classificationStatus?: $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: string | null
     destructionEligibleAt?: Date | string | null
     createdAt?: Date | string
@@ -57408,6 +58833,7 @@ export namespace Prisma {
     contentSha256?: StringFieldUpdateOperationsInput | string
     storageUri?: NullableStringFieldUpdateOperationsInput | string | null
     searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    classificationStatus?: NullableEnumEvidenceClassificationStatusFieldUpdateOperationsInput | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -57431,6 +58857,7 @@ export namespace Prisma {
     contentSha256?: StringFieldUpdateOperationsInput | string
     storageUri?: NullableStringFieldUpdateOperationsInput | string | null
     searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    classificationStatus?: NullableEnumEvidenceClassificationStatusFieldUpdateOperationsInput | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -57452,6 +58879,7 @@ export namespace Prisma {
     contentSha256: string
     storageUri?: string | null
     searchableText?: string | null
+    classificationStatus?: $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: string | null
     destructionEligibleAt?: Date | string | null
     createdAt?: Date | string
@@ -57469,6 +58897,7 @@ export namespace Prisma {
     contentSha256?: StringFieldUpdateOperationsInput | string
     storageUri?: NullableStringFieldUpdateOperationsInput | string | null
     searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    classificationStatus?: NullableEnumEvidenceClassificationStatusFieldUpdateOperationsInput | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -57488,6 +58917,7 @@ export namespace Prisma {
     contentSha256?: StringFieldUpdateOperationsInput | string
     storageUri?: NullableStringFieldUpdateOperationsInput | string | null
     searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    classificationStatus?: NullableEnumEvidenceClassificationStatusFieldUpdateOperationsInput | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -57569,6 +58999,61 @@ export namespace Prisma {
     removedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EvidenceEmbeddingUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    sourceId?: StringFieldUpdateOperationsInput | string
+    chunkKey?: StringFieldUpdateOperationsInput | string
+    chunkTextHash?: StringFieldUpdateOperationsInput | string
+    model?: StringFieldUpdateOperationsInput | string
+    modelVersion?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutEvidenceEmbeddingsNestedInput
+  }
+
+  export type EvidenceEmbeddingUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    sourceId?: StringFieldUpdateOperationsInput | string
+    chunkKey?: StringFieldUpdateOperationsInput | string
+    chunkTextHash?: StringFieldUpdateOperationsInput | string
+    model?: StringFieldUpdateOperationsInput | string
+    modelVersion?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EvidenceEmbeddingUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    sourceId?: StringFieldUpdateOperationsInput | string
+    chunkKey?: StringFieldUpdateOperationsInput | string
+    chunkTextHash?: StringFieldUpdateOperationsInput | string
+    model?: StringFieldUpdateOperationsInput | string
+    modelVersion?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EvidenceEmbeddingUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    sourceId?: StringFieldUpdateOperationsInput | string
+    chunkKey?: StringFieldUpdateOperationsInput | string
+    chunkTextHash?: StringFieldUpdateOperationsInput | string
+    model?: StringFieldUpdateOperationsInput | string
+    modelVersion?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type CommunicationThreadCreateInput = {
@@ -58481,6 +59966,12 @@ export namespace Prisma {
     none?: EvidenceClassificationWhereInput
   }
 
+  export type EvidenceEmbeddingListRelationFilter = {
+    every?: EvidenceEmbeddingWhereInput
+    some?: EvidenceEmbeddingWhereInput
+    none?: EvidenceEmbeddingWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -58555,6 +60046,10 @@ export namespace Prisma {
   }
 
   export type EvidenceClassificationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type EvidenceEmbeddingOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -58814,6 +60309,21 @@ export namespace Prisma {
     _max?: NestedEnumWorkspaceRoleFilter<$PrismaModel>
   }
 
+  export type EnumMeetingClientMatchConfidenceNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.MeetingClientMatchConfidence | EnumMeetingClientMatchConfidenceFieldRefInput<$PrismaModel> | null
+    in?: $Enums.MeetingClientMatchConfidence[] | ListEnumMeetingClientMatchConfidenceFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.MeetingClientMatchConfidence[] | ListEnumMeetingClientMatchConfidenceFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumMeetingClientMatchConfidenceNullableFilter<$PrismaModel> | $Enums.MeetingClientMatchConfidence | null
+  }
+
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
   export type EnumMeetingStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.MeetingStatus | EnumMeetingStatusFieldRefInput<$PrismaModel>
     in?: $Enums.MeetingStatus[] | ListEnumMeetingStatusFieldRefInput<$PrismaModel>
@@ -58862,6 +60372,11 @@ export namespace Prisma {
     not?: NestedEnumFinalizeReasonNullableFilter<$PrismaModel> | $Enums.FinalizeReason | null
   }
 
+  export type ClientNullableScalarRelationFilter = {
+    is?: ClientWhereInput | null
+    isNot?: ClientWhereInput | null
+  }
+
   export type VersionListRelationFilter = {
     every?: VersionWhereInput
     some?: VersionWhereInput
@@ -58886,6 +60401,9 @@ export namespace Prisma {
     id?: SortOrder
     workspaceId?: SortOrder
     clientName?: SortOrder
+    clientId?: SortOrder
+    clientMatchConfidence?: SortOrder
+    participantEmails?: SortOrder
     meetingType?: SortOrder
     meetingDate?: SortOrder
     status?: SortOrder
@@ -58933,6 +60451,8 @@ export namespace Prisma {
     id?: SortOrder
     workspaceId?: SortOrder
     clientName?: SortOrder
+    clientId?: SortOrder
+    clientMatchConfidence?: SortOrder
     meetingType?: SortOrder
     meetingDate?: SortOrder
     status?: SortOrder
@@ -58971,6 +60491,8 @@ export namespace Prisma {
     id?: SortOrder
     workspaceId?: SortOrder
     clientName?: SortOrder
+    clientId?: SortOrder
+    clientMatchConfidence?: SortOrder
     meetingType?: SortOrder
     meetingDate?: SortOrder
     status?: SortOrder
@@ -59009,6 +60531,16 @@ export namespace Prisma {
     sourceFileSize?: SortOrder
     finalizedPolicyVersion?: SortOrder
     timeToFinalize?: SortOrder
+  }
+
+  export type EnumMeetingClientMatchConfidenceNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MeetingClientMatchConfidence | EnumMeetingClientMatchConfidenceFieldRefInput<$PrismaModel> | null
+    in?: $Enums.MeetingClientMatchConfidence[] | ListEnumMeetingClientMatchConfidenceFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.MeetingClientMatchConfidence[] | ListEnumMeetingClientMatchConfidenceFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumMeetingClientMatchConfidenceNullableWithAggregatesFilter<$PrismaModel> | $Enums.MeetingClientMatchConfidence | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumMeetingClientMatchConfidenceNullableFilter<$PrismaModel>
+    _max?: NestedEnumMeetingClientMatchConfidenceNullableFilter<$PrismaModel>
   }
 
   export type EnumMeetingStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -60161,14 +61693,6 @@ export namespace Prisma {
     not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
   }
 
-  export type StringNullableListFilter<$PrismaModel = never> = {
-    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    has?: string | StringFieldRefInput<$PrismaModel> | null
-    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
-    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
-    isEmpty?: boolean
-  }
-
   export type DisclosureCategoryListRelationFilter = {
     every?: DisclosureCategoryWhereInput
     some?: DisclosureCategoryWhereInput
@@ -60725,11 +62249,6 @@ export namespace Prisma {
     _max?: NestedEnumCommunicationDirectionNullableFilter<$PrismaModel>
   }
 
-  export type ClientNullableScalarRelationFilter = {
-    is?: ClientWhereInput | null
-    isNot?: ClientWhereInput | null
-  }
-
   export type EmailAliasWorkspaceIdAddressUserIdClientIdCompoundUniqueInput = {
     workspaceId: string
     address: string
@@ -60780,6 +62299,13 @@ export namespace Prisma {
     not?: NestedEnumEvidenceSourceTypeFilter<$PrismaModel> | $Enums.EvidenceSourceType
   }
 
+  export type EnumEvidenceClassificationStatusNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.EvidenceClassificationStatus | EnumEvidenceClassificationStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.EvidenceClassificationStatus[] | ListEnumEvidenceClassificationStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.EvidenceClassificationStatus[] | ListEnumEvidenceClassificationStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumEvidenceClassificationStatusNullableFilter<$PrismaModel> | $Enums.EvidenceClassificationStatus | null
+  }
+
   export type EvidenceTagListRelationFilter = {
     every?: EvidenceTagWhereInput
     some?: EvidenceTagWhereInput
@@ -60802,6 +62328,7 @@ export namespace Prisma {
     contentSha256?: SortOrder
     storageUri?: SortOrder
     searchableText?: SortOrder
+    classificationStatus?: SortOrder
     retentionRuleId?: SortOrder
     destructionEligibleAt?: SortOrder
     createdAt?: SortOrder
@@ -60821,6 +62348,7 @@ export namespace Prisma {
     contentSha256?: SortOrder
     storageUri?: SortOrder
     searchableText?: SortOrder
+    classificationStatus?: SortOrder
     retentionRuleId?: SortOrder
     destructionEligibleAt?: SortOrder
     createdAt?: SortOrder
@@ -60840,6 +62368,7 @@ export namespace Prisma {
     contentSha256?: SortOrder
     storageUri?: SortOrder
     searchableText?: SortOrder
+    classificationStatus?: SortOrder
     retentionRuleId?: SortOrder
     destructionEligibleAt?: SortOrder
     createdAt?: SortOrder
@@ -60855,6 +62384,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumEvidenceSourceTypeFilter<$PrismaModel>
     _max?: NestedEnumEvidenceSourceTypeFilter<$PrismaModel>
+  }
+
+  export type EnumEvidenceClassificationStatusNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EvidenceClassificationStatus | EnumEvidenceClassificationStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.EvidenceClassificationStatus[] | ListEnumEvidenceClassificationStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.EvidenceClassificationStatus[] | ListEnumEvidenceClassificationStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumEvidenceClassificationStatusNullableWithAggregatesFilter<$PrismaModel> | $Enums.EvidenceClassificationStatus | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumEvidenceClassificationStatusNullableFilter<$PrismaModel>
+    _max?: NestedEnumEvidenceClassificationStatusNullableFilter<$PrismaModel>
   }
 
   export type EnumTagCategoryFilter<$PrismaModel = never> = {
@@ -60910,6 +62449,54 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTagCategoryFilter<$PrismaModel>
     _max?: NestedEnumTagCategoryFilter<$PrismaModel>
+  }
+
+  export type EvidenceEmbeddingWorkspaceIdChunkKeyModelCompoundUniqueInput = {
+    workspaceId: string
+    chunkKey: string
+    model: string
+  }
+
+  export type EvidenceEmbeddingCountOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    sourceType?: SortOrder
+    sourceId?: SortOrder
+    chunkKey?: SortOrder
+    chunkTextHash?: SortOrder
+    model?: SortOrder
+    modelVersion?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type EvidenceEmbeddingMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    sourceType?: SortOrder
+    sourceId?: SortOrder
+    chunkKey?: SortOrder
+    chunkTextHash?: SortOrder
+    model?: SortOrder
+    modelVersion?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type EvidenceEmbeddingMinOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    sourceType?: SortOrder
+    sourceId?: SortOrder
+    chunkKey?: SortOrder
+    chunkTextHash?: SortOrder
+    model?: SortOrder
+    modelVersion?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
   }
 
   export type EnumCommunicationChannelFilter<$PrismaModel = never> = {
@@ -61523,6 +63110,10 @@ export namespace Prisma {
     connect?: EvidenceClassificationWhereUniqueInput | EvidenceClassificationWhereUniqueInput[]
   }
 
+  export type EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput = {
+    connect?: EvidenceEmbeddingWhereUniqueInput | EvidenceEmbeddingWhereUniqueInput[]
+  }
+
   export type UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput = {
     create?: XOR<UserWorkspaceCreateWithoutWorkspaceInput, UserWorkspaceUncheckedCreateWithoutWorkspaceInput> | UserWorkspaceCreateWithoutWorkspaceInput[] | UserWorkspaceUncheckedCreateWithoutWorkspaceInput[]
     connectOrCreate?: UserWorkspaceCreateOrConnectWithoutWorkspaceInput | UserWorkspaceCreateOrConnectWithoutWorkspaceInput[]
@@ -61653,6 +63244,10 @@ export namespace Prisma {
     connectOrCreate?: EvidenceClassificationCreateOrConnectWithoutWorkspaceInput | EvidenceClassificationCreateOrConnectWithoutWorkspaceInput[]
     createMany?: EvidenceClassificationCreateManyWorkspaceInputEnvelope
     connect?: EvidenceClassificationWhereUniqueInput | EvidenceClassificationWhereUniqueInput[]
+  }
+
+  export type EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput = {
+    connect?: EvidenceEmbeddingWhereUniqueInput | EvidenceEmbeddingWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -61957,6 +63552,16 @@ export namespace Prisma {
     deleteMany?: EvidenceClassificationScalarWhereInput | EvidenceClassificationScalarWhereInput[]
   }
 
+  export type EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput = {
+    set?: EvidenceEmbeddingWhereUniqueInput | EvidenceEmbeddingWhereUniqueInput[]
+    disconnect?: EvidenceEmbeddingWhereUniqueInput | EvidenceEmbeddingWhereUniqueInput[]
+    delete?: EvidenceEmbeddingWhereUniqueInput | EvidenceEmbeddingWhereUniqueInput[]
+    connect?: EvidenceEmbeddingWhereUniqueInput | EvidenceEmbeddingWhereUniqueInput[]
+    update?: EvidenceEmbeddingUpdateWithWhereUniqueWithoutWorkspaceInput | EvidenceEmbeddingUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: EvidenceEmbeddingUpdateManyWithWhereWithoutWorkspaceInput | EvidenceEmbeddingUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: EvidenceEmbeddingScalarWhereInput | EvidenceEmbeddingScalarWhereInput[]
+  }
+
   export type UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput = {
     create?: XOR<UserWorkspaceCreateWithoutWorkspaceInput, UserWorkspaceUncheckedCreateWithoutWorkspaceInput> | UserWorkspaceCreateWithoutWorkspaceInput[] | UserWorkspaceUncheckedCreateWithoutWorkspaceInput[]
     connectOrCreate?: UserWorkspaceCreateOrConnectWithoutWorkspaceInput | UserWorkspaceCreateOrConnectWithoutWorkspaceInput[]
@@ -62219,6 +63824,16 @@ export namespace Prisma {
     deleteMany?: EvidenceClassificationScalarWhereInput | EvidenceClassificationScalarWhereInput[]
   }
 
+  export type EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput = {
+    set?: EvidenceEmbeddingWhereUniqueInput | EvidenceEmbeddingWhereUniqueInput[]
+    disconnect?: EvidenceEmbeddingWhereUniqueInput | EvidenceEmbeddingWhereUniqueInput[]
+    delete?: EvidenceEmbeddingWhereUniqueInput | EvidenceEmbeddingWhereUniqueInput[]
+    connect?: EvidenceEmbeddingWhereUniqueInput | EvidenceEmbeddingWhereUniqueInput[]
+    update?: EvidenceEmbeddingUpdateWithWhereUniqueWithoutWorkspaceInput | EvidenceEmbeddingUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: EvidenceEmbeddingUpdateManyWithWhereWithoutWorkspaceInput | EvidenceEmbeddingUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: EvidenceEmbeddingScalarWhereInput | EvidenceEmbeddingScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutWorkspacesInput = {
     create?: XOR<UserCreateWithoutWorkspacesInput, UserUncheckedCreateWithoutWorkspacesInput>
     connectOrCreate?: UserCreateOrConnectWithoutWorkspacesInput
@@ -62267,10 +63882,20 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutRemovedWorkspaceMembershipsInput, UserUpdateWithoutRemovedWorkspaceMembershipsInput>, UserUncheckedUpdateWithoutRemovedWorkspaceMembershipsInput>
   }
 
+  export type MeetingCreateparticipantEmailsInput = {
+    set: string[]
+  }
+
   export type WorkspaceCreateNestedOneWithoutMeetingsInput = {
     create?: XOR<WorkspaceCreateWithoutMeetingsInput, WorkspaceUncheckedCreateWithoutMeetingsInput>
     connectOrCreate?: WorkspaceCreateOrConnectWithoutMeetingsInput
     connect?: WorkspaceWhereUniqueInput
+  }
+
+  export type ClientCreateNestedOneWithoutMeetingsInput = {
+    create?: XOR<ClientCreateWithoutMeetingsInput, ClientUncheckedCreateWithoutMeetingsInput>
+    connectOrCreate?: ClientCreateOrConnectWithoutMeetingsInput
+    connect?: ClientWhereUniqueInput
   }
 
   export type VersionCreateNestedManyWithoutMeetingInput = {
@@ -62361,6 +63986,15 @@ export namespace Prisma {
     connect?: IntegrationSyncLogWhereUniqueInput | IntegrationSyncLogWhereUniqueInput[]
   }
 
+  export type NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput = {
+    set?: $Enums.MeetingClientMatchConfidence | null
+  }
+
+  export type MeetingUpdateparticipantEmailsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
   export type EnumMeetingStatusFieldUpdateOperationsInput = {
     set?: $Enums.MeetingStatus
   }
@@ -62383,6 +64017,16 @@ export namespace Prisma {
     upsert?: WorkspaceUpsertWithoutMeetingsInput
     connect?: WorkspaceWhereUniqueInput
     update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutMeetingsInput, WorkspaceUpdateWithoutMeetingsInput>, WorkspaceUncheckedUpdateWithoutMeetingsInput>
+  }
+
+  export type ClientUpdateOneWithoutMeetingsNestedInput = {
+    create?: XOR<ClientCreateWithoutMeetingsInput, ClientUncheckedCreateWithoutMeetingsInput>
+    connectOrCreate?: ClientCreateOrConnectWithoutMeetingsInput
+    upsert?: ClientUpsertWithoutMeetingsInput
+    disconnect?: ClientWhereInput | boolean
+    delete?: ClientWhereInput | boolean
+    connect?: ClientWhereUniqueInput
+    update?: XOR<XOR<ClientUpdateToOneWithWhereWithoutMeetingsInput, ClientUpdateWithoutMeetingsInput>, ClientUncheckedUpdateWithoutMeetingsInput>
   }
 
   export type VersionUpdateManyWithoutMeetingNestedInput = {
@@ -63870,6 +65514,13 @@ export namespace Prisma {
     connect?: ClientHouseholdMemberWhereUniqueInput | ClientHouseholdMemberWhereUniqueInput[]
   }
 
+  export type MeetingCreateNestedManyWithoutClientInput = {
+    create?: XOR<MeetingCreateWithoutClientInput, MeetingUncheckedCreateWithoutClientInput> | MeetingCreateWithoutClientInput[] | MeetingUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: MeetingCreateOrConnectWithoutClientInput | MeetingCreateOrConnectWithoutClientInput[]
+    createMany?: MeetingCreateManyClientInputEnvelope
+    connect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+  }
+
   export type EmailAliasUncheckedCreateNestedManyWithoutClientInput = {
     create?: XOR<EmailAliasCreateWithoutClientInput, EmailAliasUncheckedCreateWithoutClientInput> | EmailAliasCreateWithoutClientInput[] | EmailAliasUncheckedCreateWithoutClientInput[]
     connectOrCreate?: EmailAliasCreateOrConnectWithoutClientInput | EmailAliasCreateOrConnectWithoutClientInput[]
@@ -63896,6 +65547,13 @@ export namespace Prisma {
     connectOrCreate?: ClientHouseholdMemberCreateOrConnectWithoutClientInput | ClientHouseholdMemberCreateOrConnectWithoutClientInput[]
     createMany?: ClientHouseholdMemberCreateManyClientInputEnvelope
     connect?: ClientHouseholdMemberWhereUniqueInput | ClientHouseholdMemberWhereUniqueInput[]
+  }
+
+  export type MeetingUncheckedCreateNestedManyWithoutClientInput = {
+    create?: XOR<MeetingCreateWithoutClientInput, MeetingUncheckedCreateWithoutClientInput> | MeetingCreateWithoutClientInput[] | MeetingUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: MeetingCreateOrConnectWithoutClientInput | MeetingCreateOrConnectWithoutClientInput[]
+    createMany?: MeetingCreateManyClientInputEnvelope
+    connect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
   }
 
   export type EnumClientStatusFieldUpdateOperationsInput = {
@@ -63966,6 +65624,20 @@ export namespace Prisma {
     deleteMany?: ClientHouseholdMemberScalarWhereInput | ClientHouseholdMemberScalarWhereInput[]
   }
 
+  export type MeetingUpdateManyWithoutClientNestedInput = {
+    create?: XOR<MeetingCreateWithoutClientInput, MeetingUncheckedCreateWithoutClientInput> | MeetingCreateWithoutClientInput[] | MeetingUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: MeetingCreateOrConnectWithoutClientInput | MeetingCreateOrConnectWithoutClientInput[]
+    upsert?: MeetingUpsertWithWhereUniqueWithoutClientInput | MeetingUpsertWithWhereUniqueWithoutClientInput[]
+    createMany?: MeetingCreateManyClientInputEnvelope
+    set?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    disconnect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    delete?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    connect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    update?: MeetingUpdateWithWhereUniqueWithoutClientInput | MeetingUpdateWithWhereUniqueWithoutClientInput[]
+    updateMany?: MeetingUpdateManyWithWhereWithoutClientInput | MeetingUpdateManyWithWhereWithoutClientInput[]
+    deleteMany?: MeetingScalarWhereInput | MeetingScalarWhereInput[]
+  }
+
   export type EmailAliasUncheckedUpdateManyWithoutClientNestedInput = {
     create?: XOR<EmailAliasCreateWithoutClientInput, EmailAliasUncheckedCreateWithoutClientInput> | EmailAliasCreateWithoutClientInput[] | EmailAliasUncheckedCreateWithoutClientInput[]
     connectOrCreate?: EmailAliasCreateOrConnectWithoutClientInput | EmailAliasCreateOrConnectWithoutClientInput[]
@@ -64020,6 +65692,20 @@ export namespace Prisma {
     update?: ClientHouseholdMemberUpdateWithWhereUniqueWithoutClientInput | ClientHouseholdMemberUpdateWithWhereUniqueWithoutClientInput[]
     updateMany?: ClientHouseholdMemberUpdateManyWithWhereWithoutClientInput | ClientHouseholdMemberUpdateManyWithWhereWithoutClientInput[]
     deleteMany?: ClientHouseholdMemberScalarWhereInput | ClientHouseholdMemberScalarWhereInput[]
+  }
+
+  export type MeetingUncheckedUpdateManyWithoutClientNestedInput = {
+    create?: XOR<MeetingCreateWithoutClientInput, MeetingUncheckedCreateWithoutClientInput> | MeetingCreateWithoutClientInput[] | MeetingUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: MeetingCreateOrConnectWithoutClientInput | MeetingCreateOrConnectWithoutClientInput[]
+    upsert?: MeetingUpsertWithWhereUniqueWithoutClientInput | MeetingUpsertWithWhereUniqueWithoutClientInput[]
+    createMany?: MeetingCreateManyClientInputEnvelope
+    set?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    disconnect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    delete?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    connect?: MeetingWhereUniqueInput | MeetingWhereUniqueInput[]
+    update?: MeetingUpdateWithWhereUniqueWithoutClientInput | MeetingUpdateWithWhereUniqueWithoutClientInput[]
+    updateMany?: MeetingUpdateManyWithWhereWithoutClientInput | MeetingUpdateManyWithWhereWithoutClientInput[]
+    deleteMany?: MeetingScalarWhereInput | MeetingScalarWhereInput[]
   }
 
   export type WorkspaceCreateNestedOneWithoutClientHouseholdsInput = {
@@ -64243,6 +65929,10 @@ export namespace Prisma {
     set?: $Enums.EvidenceSourceType
   }
 
+  export type NullableEnumEvidenceClassificationStatusFieldUpdateOperationsInput = {
+    set?: $Enums.EvidenceClassificationStatus | null
+  }
+
   export type WorkspaceUpdateOneRequiredWithoutEvidenceItemsNestedInput = {
     create?: XOR<WorkspaceCreateWithoutEvidenceItemsInput, WorkspaceUncheckedCreateWithoutEvidenceItemsInput>
     connectOrCreate?: WorkspaceCreateOrConnectWithoutEvidenceItemsInput
@@ -64325,6 +66015,14 @@ export namespace Prisma {
     upsert?: EvidenceItemUpsertWithoutTagsInput
     connect?: EvidenceItemWhereUniqueInput
     update?: XOR<XOR<EvidenceItemUpdateToOneWithWhereWithoutTagsInput, EvidenceItemUpdateWithoutTagsInput>, EvidenceItemUncheckedUpdateWithoutTagsInput>
+  }
+
+  export type WorkspaceUpdateOneRequiredWithoutEvidenceEmbeddingsNestedInput = {
+    create?: XOR<WorkspaceCreateWithoutEvidenceEmbeddingsInput, WorkspaceUncheckedCreateWithoutEvidenceEmbeddingsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutEvidenceEmbeddingsInput
+    upsert?: WorkspaceUpsertWithoutEvidenceEmbeddingsInput
+    connect?: WorkspaceWhereUniqueInput
+    update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutEvidenceEmbeddingsInput, WorkspaceUpdateWithoutEvidenceEmbeddingsInput>, WorkspaceUncheckedUpdateWithoutEvidenceEmbeddingsInput>
   }
 
   export type WorkspaceCreateNestedOneWithoutCommunicationThreadsInput = {
@@ -64910,6 +66608,13 @@ export namespace Prisma {
     _max?: NestedEnumWorkspaceRoleFilter<$PrismaModel>
   }
 
+  export type NestedEnumMeetingClientMatchConfidenceNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.MeetingClientMatchConfidence | EnumMeetingClientMatchConfidenceFieldRefInput<$PrismaModel> | null
+    in?: $Enums.MeetingClientMatchConfidence[] | ListEnumMeetingClientMatchConfidenceFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.MeetingClientMatchConfidence[] | ListEnumMeetingClientMatchConfidenceFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumMeetingClientMatchConfidenceNullableFilter<$PrismaModel> | $Enums.MeetingClientMatchConfidence | null
+  }
+
   export type NestedEnumMeetingStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.MeetingStatus | EnumMeetingStatusFieldRefInput<$PrismaModel>
     in?: $Enums.MeetingStatus[] | ListEnumMeetingStatusFieldRefInput<$PrismaModel>
@@ -64922,6 +66627,16 @@ export namespace Prisma {
     in?: $Enums.FinalizeReason[] | ListEnumFinalizeReasonFieldRefInput<$PrismaModel> | null
     notIn?: $Enums.FinalizeReason[] | ListEnumFinalizeReasonFieldRefInput<$PrismaModel> | null
     not?: NestedEnumFinalizeReasonNullableFilter<$PrismaModel> | $Enums.FinalizeReason | null
+  }
+
+  export type NestedEnumMeetingClientMatchConfidenceNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MeetingClientMatchConfidence | EnumMeetingClientMatchConfidenceFieldRefInput<$PrismaModel> | null
+    in?: $Enums.MeetingClientMatchConfidence[] | ListEnumMeetingClientMatchConfidenceFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.MeetingClientMatchConfidence[] | ListEnumMeetingClientMatchConfidenceFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumMeetingClientMatchConfidenceNullableWithAggregatesFilter<$PrismaModel> | $Enums.MeetingClientMatchConfidence | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumMeetingClientMatchConfidenceNullableFilter<$PrismaModel>
+    _max?: NestedEnumMeetingClientMatchConfidenceNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumMeetingStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -65459,6 +67174,13 @@ export namespace Prisma {
     not?: NestedEnumEvidenceSourceTypeFilter<$PrismaModel> | $Enums.EvidenceSourceType
   }
 
+  export type NestedEnumEvidenceClassificationStatusNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.EvidenceClassificationStatus | EnumEvidenceClassificationStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.EvidenceClassificationStatus[] | ListEnumEvidenceClassificationStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.EvidenceClassificationStatus[] | ListEnumEvidenceClassificationStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumEvidenceClassificationStatusNullableFilter<$PrismaModel> | $Enums.EvidenceClassificationStatus | null
+  }
+
   export type NestedEnumEvidenceSourceTypeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.EvidenceSourceType | EnumEvidenceSourceTypeFieldRefInput<$PrismaModel>
     in?: $Enums.EvidenceSourceType[] | ListEnumEvidenceSourceTypeFieldRefInput<$PrismaModel>
@@ -65467,6 +67189,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumEvidenceSourceTypeFilter<$PrismaModel>
     _max?: NestedEnumEvidenceSourceTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumEvidenceClassificationStatusNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EvidenceClassificationStatus | EnumEvidenceClassificationStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.EvidenceClassificationStatus[] | ListEnumEvidenceClassificationStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.EvidenceClassificationStatus[] | ListEnumEvidenceClassificationStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumEvidenceClassificationStatusNullableWithAggregatesFilter<$PrismaModel> | $Enums.EvidenceClassificationStatus | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumEvidenceClassificationStatusNullableFilter<$PrismaModel>
+    _max?: NestedEnumEvidenceClassificationStatusNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumTagCategoryFilter<$PrismaModel = never> = {
@@ -65651,6 +67383,8 @@ export namespace Prisma {
   export type MeetingCreateWithoutWorkspaceInput = {
     id?: string
     clientName: string
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -65683,6 +67417,7 @@ export namespace Prisma {
     cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    client?: ClientCreateNestedOneWithoutMeetingsInput
     versions?: VersionCreateNestedManyWithoutMeetingInput
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     flags?: FlagCreateNestedManyWithoutMeetingInput
@@ -65696,6 +67431,9 @@ export namespace Prisma {
   export type MeetingUncheckedCreateWithoutWorkspaceInput = {
     id?: string
     clientName: string
+    clientId?: string | null
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -66053,6 +67791,7 @@ export namespace Prisma {
     contentSha256: string
     storageUri?: string | null
     searchableText?: string | null
+    classificationStatus?: $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: string | null
     destructionEligibleAt?: Date | string | null
     createdAt?: Date | string
@@ -66074,6 +67813,7 @@ export namespace Prisma {
     contentSha256: string
     storageUri?: string | null
     searchableText?: string | null
+    classificationStatus?: $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: string | null
     destructionEligibleAt?: Date | string | null
     createdAt?: Date | string
@@ -66106,6 +67846,7 @@ export namespace Prisma {
     evidenceItems?: EvidenceItemCreateNestedManyWithoutClientInput
     activities?: ClientActivityCreateNestedManyWithoutClientInput
     householdMemberships?: ClientHouseholdMemberCreateNestedManyWithoutClientInput
+    meetings?: MeetingCreateNestedManyWithoutClientInput
   }
 
   export type ClientUncheckedCreateWithoutWorkspaceInput = {
@@ -66121,6 +67862,7 @@ export namespace Prisma {
     evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutClientInput
     activities?: ClientActivityUncheckedCreateNestedManyWithoutClientInput
     householdMemberships?: ClientHouseholdMemberUncheckedCreateNestedManyWithoutClientInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutClientInput
   }
 
   export type ClientCreateOrConnectWithoutWorkspaceInput = {
@@ -66480,6 +68222,9 @@ export namespace Prisma {
     id?: StringFilter<"Meeting"> | string
     workspaceId?: StringFilter<"Meeting"> | string
     clientName?: StringFilter<"Meeting"> | string
+    clientId?: StringNullableFilter<"Meeting"> | string | null
+    clientMatchConfidence?: EnumMeetingClientMatchConfidenceNullableFilter<"Meeting"> | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: StringNullableListFilter<"Meeting">
     meetingType?: StringFilter<"Meeting"> | string
     meetingDate?: DateTimeFilter<"Meeting"> | Date | string
     status?: EnumMeetingStatusFilter<"Meeting"> | $Enums.MeetingStatus
@@ -66810,6 +68555,7 @@ export namespace Prisma {
     contentSha256?: StringFilter<"EvidenceItem"> | string
     storageUri?: StringNullableFilter<"EvidenceItem"> | string | null
     searchableText?: StringNullableFilter<"EvidenceItem"> | string | null
+    classificationStatus?: EnumEvidenceClassificationStatusNullableFilter<"EvidenceItem"> | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: StringNullableFilter<"EvidenceItem"> | string | null
     destructionEligibleAt?: DateTimeNullableFilter<"EvidenceItem"> | Date | string | null
     createdAt?: DateTimeFilter<"EvidenceItem"> | Date | string
@@ -67113,6 +68859,33 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"EvidenceClassification"> | Date | string | null
   }
 
+  export type EvidenceEmbeddingUpdateWithWhereUniqueWithoutWorkspaceInput = {
+    where: EvidenceEmbeddingWhereUniqueInput
+    data: XOR<EvidenceEmbeddingUpdateWithoutWorkspaceInput, EvidenceEmbeddingUncheckedUpdateWithoutWorkspaceInput>
+  }
+
+  export type EvidenceEmbeddingUpdateManyWithWhereWithoutWorkspaceInput = {
+    where: EvidenceEmbeddingScalarWhereInput
+    data: XOR<EvidenceEmbeddingUpdateManyMutationInput, EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceInput>
+  }
+
+  export type EvidenceEmbeddingScalarWhereInput = {
+    AND?: EvidenceEmbeddingScalarWhereInput | EvidenceEmbeddingScalarWhereInput[]
+    OR?: EvidenceEmbeddingScalarWhereInput[]
+    NOT?: EvidenceEmbeddingScalarWhereInput | EvidenceEmbeddingScalarWhereInput[]
+    id?: StringFilter<"EvidenceEmbedding"> | string
+    workspaceId?: StringFilter<"EvidenceEmbedding"> | string
+    sourceType?: EnumEvidenceSourceTypeFilter<"EvidenceEmbedding"> | $Enums.EvidenceSourceType
+    sourceId?: StringFilter<"EvidenceEmbedding"> | string
+    chunkKey?: StringFilter<"EvidenceEmbedding"> | string
+    chunkTextHash?: StringFilter<"EvidenceEmbedding"> | string
+    model?: StringFilter<"EvidenceEmbedding"> | string
+    modelVersion?: StringFilter<"EvidenceEmbedding"> | string
+    createdAt?: DateTimeFilter<"EvidenceEmbedding"> | Date | string
+    updatedAt?: DateTimeFilter<"EvidenceEmbedding"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"EvidenceEmbedding"> | Date | string | null
+  }
+
   export type UserCreateWithoutWorkspacesInput = {
     id?: string
     name?: string | null
@@ -67190,6 +68963,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutUsersInput = {
@@ -67230,6 +69004,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutUsersInput = {
@@ -67370,6 +69145,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutUsersInput = {
@@ -67410,6 +69186,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserUpsertWithoutRemovedWorkspaceMembershipsInput = {
@@ -67495,6 +69272,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutMeetingsInput = {
@@ -67535,11 +69313,49 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutMeetingsInput = {
     where: WorkspaceWhereUniqueInput
     create: XOR<WorkspaceCreateWithoutMeetingsInput, WorkspaceUncheckedCreateWithoutMeetingsInput>
+  }
+
+  export type ClientCreateWithoutMeetingsInput = {
+    id?: string
+    name: string
+    zohoId?: string | null
+    status?: $Enums.ClientStatus
+    lastContactAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutClientsInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutClientInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutClientInput
+    activities?: ClientActivityCreateNestedManyWithoutClientInput
+    householdMemberships?: ClientHouseholdMemberCreateNestedManyWithoutClientInput
+  }
+
+  export type ClientUncheckedCreateWithoutMeetingsInput = {
+    id?: string
+    workspaceId: string
+    name: string
+    zohoId?: string | null
+    status?: $Enums.ClientStatus
+    lastContactAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutClientInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutClientInput
+    activities?: ClientActivityUncheckedCreateNestedManyWithoutClientInput
+    householdMemberships?: ClientHouseholdMemberUncheckedCreateNestedManyWithoutClientInput
+  }
+
+  export type ClientCreateOrConnectWithoutMeetingsInput = {
+    where: ClientWhereUniqueInput
+    create: XOR<ClientCreateWithoutMeetingsInput, ClientUncheckedCreateWithoutMeetingsInput>
   }
 
   export type VersionCreateWithoutMeetingInput = {
@@ -67916,6 +69732,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutMeetingsInput = {
@@ -67956,6 +69773,50 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type ClientUpsertWithoutMeetingsInput = {
+    update: XOR<ClientUpdateWithoutMeetingsInput, ClientUncheckedUpdateWithoutMeetingsInput>
+    create: XOR<ClientCreateWithoutMeetingsInput, ClientUncheckedCreateWithoutMeetingsInput>
+    where?: ClientWhereInput
+  }
+
+  export type ClientUpdateToOneWithWhereWithoutMeetingsInput = {
+    where?: ClientWhereInput
+    data: XOR<ClientUpdateWithoutMeetingsInput, ClientUncheckedUpdateWithoutMeetingsInput>
+  }
+
+  export type ClientUpdateWithoutMeetingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    zohoId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumClientStatusFieldUpdateOperationsInput | $Enums.ClientStatus
+    lastContactAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutClientsNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutClientNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutClientNestedInput
+    activities?: ClientActivityUpdateManyWithoutClientNestedInput
+    householdMemberships?: ClientHouseholdMemberUpdateManyWithoutClientNestedInput
+  }
+
+  export type ClientUncheckedUpdateWithoutMeetingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    zohoId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumClientStatusFieldUpdateOperationsInput | $Enums.ClientStatus
+    lastContactAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutClientNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutClientNestedInput
+    activities?: ClientActivityUncheckedUpdateManyWithoutClientNestedInput
+    householdMemberships?: ClientHouseholdMemberUncheckedUpdateManyWithoutClientNestedInput
   }
 
   export type VersionUpsertWithWhereUniqueWithoutMeetingInput = {
@@ -68205,6 +70066,8 @@ export namespace Prisma {
   export type MeetingCreateWithoutVersionsInput = {
     id?: string
     clientName: string
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -68238,6 +70101,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
+    client?: ClientCreateNestedOneWithoutMeetingsInput
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     flags?: FlagCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
@@ -68251,6 +70115,9 @@ export namespace Prisma {
     id?: string
     workspaceId: string
     clientName: string
+    clientId?: string | null
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -68311,6 +70178,8 @@ export namespace Prisma {
   export type MeetingUpdateWithoutVersionsInput = {
     id?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -68344,6 +70213,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
+    client?: ClientUpdateOneWithoutMeetingsNestedInput
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
@@ -68357,6 +70227,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     workspaceId?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -68401,6 +70274,8 @@ export namespace Prisma {
   export type MeetingCreateWithoutFlagsInput = {
     id?: string
     clientName: string
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -68434,6 +70309,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
+    client?: ClientCreateNestedOneWithoutMeetingsInput
     versions?: VersionCreateNestedManyWithoutMeetingInput
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
@@ -68447,6 +70323,9 @@ export namespace Prisma {
     id?: string
     workspaceId: string
     clientName: string
+    clientId?: string | null
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -68576,6 +70455,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutFlagsInput = {
@@ -68616,6 +70496,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutFlagsInput = {
@@ -68721,6 +70602,8 @@ export namespace Prisma {
   export type MeetingUpdateWithoutFlagsInput = {
     id?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -68754,6 +70637,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
+    client?: ClientUpdateOneWithoutMeetingsNestedInput
     versions?: VersionUpdateManyWithoutMeetingNestedInput
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
@@ -68767,6 +70651,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     workspaceId?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -68908,6 +70795,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutFlagsInput = {
@@ -68948,6 +70836,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ResolutionRecordUpsertWithoutFlagInput = {
@@ -69108,6 +70997,8 @@ export namespace Prisma {
   export type MeetingCreateWithoutResolutionRecordsInput = {
     id?: string
     clientName: string
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -69141,6 +71032,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
+    client?: ClientCreateNestedOneWithoutMeetingsInput
     versions?: VersionCreateNestedManyWithoutMeetingInput
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     flags?: FlagCreateNestedManyWithoutMeetingInput
@@ -69154,6 +71046,9 @@ export namespace Prisma {
     id?: string
     workspaceId: string
     clientName: string
+    clientId?: string | null
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -69238,6 +71133,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutResolutionRecordsInput = {
@@ -69278,6 +71174,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutResolutionRecordsInput = {
@@ -69460,6 +71357,8 @@ export namespace Prisma {
   export type MeetingUpdateWithoutResolutionRecordsInput = {
     id?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -69493,6 +71392,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
+    client?: ClientUpdateOneWithoutMeetingsNestedInput
     versions?: VersionUpdateManyWithoutMeetingNestedInput
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     flags?: FlagUpdateManyWithoutMeetingNestedInput
@@ -69506,6 +71406,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     workspaceId?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -69596,6 +71499,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutResolutionRecordsInput = {
@@ -69636,6 +71540,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ActionItemUpsertWithWhereUniqueWithoutResolutionInput = {
@@ -69768,6 +71673,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEvidenceClassificationsInput = {
@@ -69808,6 +71714,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEvidenceClassificationsInput = {
@@ -69864,6 +71771,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEvidenceClassificationsInput = {
@@ -69904,6 +71812,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ResolutionRecordCreateWithoutTasksInput = {
@@ -70352,6 +72261,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutAuditEventsInput = {
@@ -70392,6 +72302,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutAuditEventsInput = {
@@ -70402,6 +72313,8 @@ export namespace Prisma {
   export type MeetingCreateWithoutAuditEventsInput = {
     id?: string
     clientName: string
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -70435,6 +72348,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
+    client?: ClientCreateNestedOneWithoutMeetingsInput
     versions?: VersionCreateNestedManyWithoutMeetingInput
     flags?: FlagCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
@@ -70448,6 +72362,9 @@ export namespace Prisma {
     id?: string
     workspaceId: string
     clientName: string
+    clientId?: string | null
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -70543,6 +72460,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutAuditEventsInput = {
@@ -70583,6 +72501,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type MeetingUpsertWithoutAuditEventsInput = {
@@ -70599,6 +72518,8 @@ export namespace Prisma {
   export type MeetingUpdateWithoutAuditEventsInput = {
     id?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -70632,6 +72553,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
+    client?: ClientUpdateOneWithoutMeetingsNestedInput
     versions?: VersionUpdateManyWithoutMeetingNestedInput
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
@@ -70645,6 +72567,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     workspaceId?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -70971,6 +72896,8 @@ export namespace Prisma {
   export type MeetingCreateWithoutAdvisorCertifiedByUserInput = {
     id?: string
     clientName: string
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -71004,6 +72931,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
+    client?: ClientCreateNestedOneWithoutMeetingsInput
     versions?: VersionCreateNestedManyWithoutMeetingInput
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     flags?: FlagCreateNestedManyWithoutMeetingInput
@@ -71017,6 +72945,9 @@ export namespace Prisma {
     id?: string
     workspaceId: string
     clientName: string
+    clientId?: string | null
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -71071,6 +73002,8 @@ export namespace Prisma {
   export type MeetingCreateWithoutCmReviewedByUserInput = {
     id?: string
     clientName: string
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -71104,6 +73037,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
+    client?: ClientCreateNestedOneWithoutMeetingsInput
     versions?: VersionCreateNestedManyWithoutMeetingInput
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     flags?: FlagCreateNestedManyWithoutMeetingInput
@@ -71117,6 +73051,9 @@ export namespace Prisma {
     id?: string
     workspaceId: string
     clientName: string
+    clientId?: string | null
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -71171,6 +73108,8 @@ export namespace Prisma {
   export type MeetingCreateWithoutCcoSignedOffByUserInput = {
     id?: string
     clientName: string
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -71204,6 +73143,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
+    client?: ClientCreateNestedOneWithoutMeetingsInput
     versions?: VersionCreateNestedManyWithoutMeetingInput
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     flags?: FlagCreateNestedManyWithoutMeetingInput
@@ -71217,6 +73157,9 @@ export namespace Prisma {
     id?: string
     workspaceId: string
     clientName: string
+    clientId?: string | null
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -71625,6 +73568,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutInvitationsInput = {
@@ -71665,6 +73609,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutInvitationsInput = {
@@ -71760,6 +73705,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutInvitationsInput = {
@@ -71800,6 +73746,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserUpsertWithoutInvitationsSentInput = {
@@ -71885,6 +73832,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutIntegrationCredentialsInput = {
@@ -71925,6 +73873,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutIntegrationCredentialsInput = {
@@ -71981,6 +73930,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutIntegrationCredentialsInput = {
@@ -72021,6 +73971,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateWithoutIntegrationConfigsInput = {
@@ -72061,6 +74012,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutIntegrationConfigsInput = {
@@ -72101,6 +74053,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutIntegrationConfigsInput = {
@@ -72191,6 +74144,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutIntegrationConfigsInput = {
@@ -72231,6 +74185,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type IntegrationSyncLogUpsertWithWhereUniqueWithoutIntegrationConfigInput = {
@@ -72281,6 +74236,8 @@ export namespace Prisma {
   export type MeetingCreateWithoutIntegrationSyncLogsInput = {
     id?: string
     clientName: string
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -72314,6 +74271,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
+    client?: ClientCreateNestedOneWithoutMeetingsInput
     versions?: VersionCreateNestedManyWithoutMeetingInput
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     flags?: FlagCreateNestedManyWithoutMeetingInput
@@ -72327,6 +74285,9 @@ export namespace Prisma {
     id?: string
     workspaceId: string
     clientName: string
+    clientId?: string | null
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -72422,6 +74383,8 @@ export namespace Prisma {
   export type MeetingUpdateWithoutIntegrationSyncLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -72455,6 +74418,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
+    client?: ClientUpdateOneWithoutMeetingsNestedInput
     versions?: VersionUpdateManyWithoutMeetingNestedInput
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     flags?: FlagUpdateManyWithoutMeetingNestedInput
@@ -72468,6 +74432,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     workspaceId?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -72547,6 +74514,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutFirmProfileInput = {
@@ -72587,6 +74555,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutFirmProfileInput = {
@@ -72741,6 +74710,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutFirmProfileInput = {
@@ -72781,6 +74751,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type DisclosureCategoryUpsertWithWhereUniqueWithoutFirmProfileInput = {
@@ -73215,6 +75186,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutClientsInput = {
@@ -73255,6 +75227,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutClientsInput = {
@@ -73304,6 +75277,7 @@ export namespace Prisma {
     contentSha256: string
     storageUri?: string | null
     searchableText?: string | null
+    classificationStatus?: $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: string | null
     destructionEligibleAt?: Date | string | null
     createdAt?: Date | string
@@ -73325,6 +75299,7 @@ export namespace Prisma {
     contentSha256: string
     storageUri?: string | null
     searchableText?: string | null
+    classificationStatus?: $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: string | null
     destructionEligibleAt?: Date | string | null
     createdAt?: Date | string
@@ -73416,6 +75391,112 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type MeetingCreateWithoutClientInput = {
+    id?: string
+    clientName: string
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
+    meetingType: string
+    meetingDate: Date | string
+    status?: $Enums.MeetingStatus
+    fileUrl?: string | null
+    sourceFileSha256?: string | null
+    sourceFileName?: string | null
+    sourceFileSize?: number | null
+    sourceFileMime?: string | null
+    sourceUploadedAt?: Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
+    finalizedBy?: string | null
+    finalizedAt?: Date | string | null
+    finalizeReason?: $Enums.FinalizeReason | null
+    finalizeNote?: string | null
+    finalizedPolicyVersion?: number | null
+    samplingBucket?: string | null
+    samplingRuleId?: string | null
+    draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
+    readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    cmReviewedAt?: Date | string | null
+    ccoSignedOffAt?: Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
+    versions?: VersionCreateNestedManyWithoutMeetingInput
+    auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
+    flags?: FlagCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
+    integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
+    cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
+    ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
+  }
+
+  export type MeetingUncheckedCreateWithoutClientInput = {
+    id?: string
+    workspaceId: string
+    clientName: string
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
+    meetingType: string
+    meetingDate: Date | string
+    status?: $Enums.MeetingStatus
+    fileUrl?: string | null
+    sourceFileSha256?: string | null
+    sourceFileName?: string | null
+    sourceFileSize?: number | null
+    sourceFileMime?: string | null
+    sourceUploadedAt?: Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
+    finalizedBy?: string | null
+    finalizedAt?: Date | string | null
+    finalizeReason?: $Enums.FinalizeReason | null
+    finalizeNote?: string | null
+    finalizedPolicyVersion?: number | null
+    samplingBucket?: string | null
+    samplingRuleId?: string | null
+    draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
+    readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    advisorCertifiedByUserId?: string | null
+    cmReviewedAt?: Date | string | null
+    cmReviewedByUserId?: string | null
+    ccoSignedOffAt?: Date | string | null
+    ccoSignedOffByUserId?: string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutMeetingInput
+    flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
+    integrationSyncLogs?: IntegrationSyncLogUncheckedCreateNestedManyWithoutMeetingInput
+  }
+
+  export type MeetingCreateOrConnectWithoutClientInput = {
+    where: MeetingWhereUniqueInput
+    create: XOR<MeetingCreateWithoutClientInput, MeetingUncheckedCreateWithoutClientInput>
+  }
+
+  export type MeetingCreateManyClientInputEnvelope = {
+    data: MeetingCreateManyClientInput | MeetingCreateManyClientInput[]
+    skipDuplicates?: boolean
+  }
+
   export type WorkspaceUpsertWithoutClientsInput = {
     update: XOR<WorkspaceUpdateWithoutClientsInput, WorkspaceUncheckedUpdateWithoutClientsInput>
     create: XOR<WorkspaceCreateWithoutClientsInput, WorkspaceUncheckedCreateWithoutClientsInput>
@@ -73465,6 +75546,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutClientsInput = {
@@ -73505,6 +75587,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type EmailAliasUpsertWithWhereUniqueWithoutClientInput = {
@@ -73584,6 +75667,22 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"ClientHouseholdMember"> | Date | string | null
   }
 
+  export type MeetingUpsertWithWhereUniqueWithoutClientInput = {
+    where: MeetingWhereUniqueInput
+    update: XOR<MeetingUpdateWithoutClientInput, MeetingUncheckedUpdateWithoutClientInput>
+    create: XOR<MeetingCreateWithoutClientInput, MeetingUncheckedCreateWithoutClientInput>
+  }
+
+  export type MeetingUpdateWithWhereUniqueWithoutClientInput = {
+    where: MeetingWhereUniqueInput
+    data: XOR<MeetingUpdateWithoutClientInput, MeetingUncheckedUpdateWithoutClientInput>
+  }
+
+  export type MeetingUpdateManyWithWhereWithoutClientInput = {
+    where: MeetingScalarWhereInput
+    data: XOR<MeetingUpdateManyMutationInput, MeetingUncheckedUpdateManyWithoutClientInput>
+  }
+
   export type WorkspaceCreateWithoutClientHouseholdsInput = {
     id?: string
     name: string
@@ -73622,6 +75721,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutClientHouseholdsInput = {
@@ -73662,6 +75762,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutClientHouseholdsInput = {
@@ -73746,6 +75847,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutClientHouseholdsInput = {
@@ -73786,6 +75888,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ClientHouseholdMemberUpsertWithWhereUniqueWithoutHouseholdInput = {
@@ -73840,6 +75943,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasCreateNestedManyWithoutClientInput
     evidenceItems?: EvidenceItemCreateNestedManyWithoutClientInput
     activities?: ClientActivityCreateNestedManyWithoutClientInput
+    meetings?: MeetingCreateNestedManyWithoutClientInput
   }
 
   export type ClientUncheckedCreateWithoutHouseholdMembershipsInput = {
@@ -73855,6 +75959,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutClientInput
     evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutClientInput
     activities?: ClientActivityUncheckedCreateNestedManyWithoutClientInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutClientInput
   }
 
   export type ClientCreateOrConnectWithoutHouseholdMembershipsInput = {
@@ -73915,6 +76020,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUpdateManyWithoutClientNestedInput
     evidenceItems?: EvidenceItemUpdateManyWithoutClientNestedInput
     activities?: ClientActivityUpdateManyWithoutClientNestedInput
+    meetings?: MeetingUpdateManyWithoutClientNestedInput
   }
 
   export type ClientUncheckedUpdateWithoutHouseholdMembershipsInput = {
@@ -73930,6 +76036,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUncheckedUpdateManyWithoutClientNestedInput
     evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutClientNestedInput
     activities?: ClientActivityUncheckedUpdateManyWithoutClientNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutClientNestedInput
   }
 
   export type WorkspaceCreateWithoutClientActivitiesInput = {
@@ -73970,6 +76077,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutClientActivitiesInput = {
@@ -74010,6 +76118,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutClientActivitiesInput = {
@@ -74030,6 +76139,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasCreateNestedManyWithoutClientInput
     evidenceItems?: EvidenceItemCreateNestedManyWithoutClientInput
     householdMemberships?: ClientHouseholdMemberCreateNestedManyWithoutClientInput
+    meetings?: MeetingCreateNestedManyWithoutClientInput
   }
 
   export type ClientUncheckedCreateWithoutActivitiesInput = {
@@ -74045,6 +76155,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutClientInput
     evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutClientInput
     householdMemberships?: ClientHouseholdMemberUncheckedCreateNestedManyWithoutClientInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutClientInput
   }
 
   export type ClientCreateOrConnectWithoutActivitiesInput = {
@@ -74101,6 +76212,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutClientActivitiesInput = {
@@ -74141,6 +76253,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ClientUpsertWithoutActivitiesInput = {
@@ -74167,6 +76280,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUpdateManyWithoutClientNestedInput
     evidenceItems?: EvidenceItemUpdateManyWithoutClientNestedInput
     householdMemberships?: ClientHouseholdMemberUpdateManyWithoutClientNestedInput
+    meetings?: MeetingUpdateManyWithoutClientNestedInput
   }
 
   export type ClientUncheckedUpdateWithoutActivitiesInput = {
@@ -74182,6 +76296,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUncheckedUpdateManyWithoutClientNestedInput
     evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutClientNestedInput
     householdMemberships?: ClientHouseholdMemberUncheckedUpdateManyWithoutClientNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutClientNestedInput
   }
 
   export type WorkspaceCreateWithoutEmailAliasesInput = {
@@ -74222,6 +76337,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEmailAliasesInput = {
@@ -74262,6 +76378,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEmailAliasesInput = {
@@ -74321,6 +76438,7 @@ export namespace Prisma {
     evidenceItems?: EvidenceItemCreateNestedManyWithoutClientInput
     activities?: ClientActivityCreateNestedManyWithoutClientInput
     householdMemberships?: ClientHouseholdMemberCreateNestedManyWithoutClientInput
+    meetings?: MeetingCreateNestedManyWithoutClientInput
   }
 
   export type ClientUncheckedCreateWithoutEmailAliasesInput = {
@@ -74336,6 +76454,7 @@ export namespace Prisma {
     evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutClientInput
     activities?: ClientActivityUncheckedCreateNestedManyWithoutClientInput
     householdMemberships?: ClientHouseholdMemberUncheckedCreateNestedManyWithoutClientInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutClientInput
   }
 
   export type ClientCreateOrConnectWithoutEmailAliasesInput = {
@@ -74392,6 +76511,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEmailAliasesInput = {
@@ -74432,6 +76552,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserUpsertWithoutEmailAliasesInput = {
@@ -74503,6 +76624,7 @@ export namespace Prisma {
     evidenceItems?: EvidenceItemUpdateManyWithoutClientNestedInput
     activities?: ClientActivityUpdateManyWithoutClientNestedInput
     householdMemberships?: ClientHouseholdMemberUpdateManyWithoutClientNestedInput
+    meetings?: MeetingUpdateManyWithoutClientNestedInput
   }
 
   export type ClientUncheckedUpdateWithoutEmailAliasesInput = {
@@ -74518,6 +76640,7 @@ export namespace Prisma {
     evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutClientNestedInput
     activities?: ClientActivityUncheckedUpdateManyWithoutClientNestedInput
     householdMemberships?: ClientHouseholdMemberUncheckedUpdateManyWithoutClientNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutClientNestedInput
   }
 
   export type WorkspaceCreateWithoutEvidenceItemsInput = {
@@ -74558,6 +76681,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEvidenceItemsInput = {
@@ -74598,6 +76722,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEvidenceItemsInput = {
@@ -74618,6 +76743,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasCreateNestedManyWithoutClientInput
     activities?: ClientActivityCreateNestedManyWithoutClientInput
     householdMemberships?: ClientHouseholdMemberCreateNestedManyWithoutClientInput
+    meetings?: MeetingCreateNestedManyWithoutClientInput
   }
 
   export type ClientUncheckedCreateWithoutEvidenceItemsInput = {
@@ -74633,6 +76759,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutClientInput
     activities?: ClientActivityUncheckedCreateNestedManyWithoutClientInput
     householdMemberships?: ClientHouseholdMemberUncheckedCreateNestedManyWithoutClientInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutClientInput
   }
 
   export type ClientCreateOrConnectWithoutEvidenceItemsInput = {
@@ -74764,6 +76891,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEvidenceItemsInput = {
@@ -74804,6 +76932,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ClientUpsertWithoutEvidenceItemsInput = {
@@ -74830,6 +76959,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUpdateManyWithoutClientNestedInput
     activities?: ClientActivityUpdateManyWithoutClientNestedInput
     householdMemberships?: ClientHouseholdMemberUpdateManyWithoutClientNestedInput
+    meetings?: MeetingUpdateManyWithoutClientNestedInput
   }
 
   export type ClientUncheckedUpdateWithoutEvidenceItemsInput = {
@@ -74845,6 +76975,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUncheckedUpdateManyWithoutClientNestedInput
     activities?: ClientActivityUncheckedUpdateManyWithoutClientNestedInput
     householdMemberships?: ClientHouseholdMemberUncheckedUpdateManyWithoutClientNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutClientNestedInput
   }
 
   export type EvidenceTagUpsertWithWhereUniqueWithoutItemInput = {
@@ -74938,6 +77069,7 @@ export namespace Prisma {
     contentSha256: string
     storageUri?: string | null
     searchableText?: string | null
+    classificationStatus?: $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: string | null
     destructionEligibleAt?: Date | string | null
     createdAt?: Date | string
@@ -74960,6 +77092,7 @@ export namespace Prisma {
     contentSha256: string
     storageUri?: string | null
     searchableText?: string | null
+    classificationStatus?: $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: string | null
     destructionEligibleAt?: Date | string | null
     createdAt?: Date | string
@@ -74994,6 +77127,7 @@ export namespace Prisma {
     contentSha256?: StringFieldUpdateOperationsInput | string
     storageUri?: NullableStringFieldUpdateOperationsInput | string | null
     searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    classificationStatus?: NullableEnumEvidenceClassificationStatusFieldUpdateOperationsInput | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -75016,12 +77150,193 @@ export namespace Prisma {
     contentSha256?: StringFieldUpdateOperationsInput | string
     storageUri?: NullableStringFieldUpdateOperationsInput | string | null
     searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    classificationStatus?: NullableEnumEvidenceClassificationStatusFieldUpdateOperationsInput | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     communication?: CommunicationUncheckedUpdateOneWithoutEvidenceItemNestedInput
+  }
+
+  export type WorkspaceCreateWithoutEvidenceEmbeddingsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    clientHouseholds?: ClientHouseholdCreateNestedManyWithoutWorkspaceInput
+    clientActivities?: ClientActivityCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
+    evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceUncheckedCreateWithoutEvidenceEmbeddingsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    clientHouseholds?: ClientHouseholdUncheckedCreateNestedManyWithoutWorkspaceInput
+    clientActivities?: ClientActivityUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceCreateOrConnectWithoutEvidenceEmbeddingsInput = {
+    where: WorkspaceWhereUniqueInput
+    create: XOR<WorkspaceCreateWithoutEvidenceEmbeddingsInput, WorkspaceUncheckedCreateWithoutEvidenceEmbeddingsInput>
+  }
+
+  export type WorkspaceUpsertWithoutEvidenceEmbeddingsInput = {
+    update: XOR<WorkspaceUpdateWithoutEvidenceEmbeddingsInput, WorkspaceUncheckedUpdateWithoutEvidenceEmbeddingsInput>
+    create: XOR<WorkspaceCreateWithoutEvidenceEmbeddingsInput, WorkspaceUncheckedCreateWithoutEvidenceEmbeddingsInput>
+    where?: WorkspaceWhereInput
+  }
+
+  export type WorkspaceUpdateToOneWithWhereWithoutEvidenceEmbeddingsInput = {
+    where?: WorkspaceWhereInput
+    data: XOR<WorkspaceUpdateWithoutEvidenceEmbeddingsInput, WorkspaceUncheckedUpdateWithoutEvidenceEmbeddingsInput>
+  }
+
+  export type WorkspaceUpdateWithoutEvidenceEmbeddingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    clientHouseholds?: ClientHouseholdUpdateManyWithoutWorkspaceNestedInput
+    clientActivities?: ClientActivityUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
+    evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type WorkspaceUncheckedUpdateWithoutEvidenceEmbeddingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clientHouseholds?: ClientHouseholdUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clientActivities?: ClientActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateWithoutCommunicationThreadsInput = {
@@ -75062,6 +77377,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutCommunicationThreadsInput = {
@@ -75102,6 +77418,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutCommunicationThreadsInput = {
@@ -75208,6 +77525,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutCommunicationThreadsInput = {
@@ -75248,6 +77566,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type CommunicationUpsertWithWhereUniqueWithoutThreadInput = {
@@ -75327,6 +77646,7 @@ export namespace Prisma {
     contentSha256: string
     storageUri?: string | null
     searchableText?: string | null
+    classificationStatus?: $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: string | null
     destructionEligibleAt?: Date | string | null
     createdAt?: Date | string
@@ -75349,6 +77669,7 @@ export namespace Prisma {
     contentSha256: string
     storageUri?: string | null
     searchableText?: string | null
+    classificationStatus?: $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: string | null
     destructionEligibleAt?: Date | string | null
     createdAt?: Date | string
@@ -75516,6 +77837,7 @@ export namespace Prisma {
     contentSha256?: StringFieldUpdateOperationsInput | string
     storageUri?: NullableStringFieldUpdateOperationsInput | string | null
     searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    classificationStatus?: NullableEnumEvidenceClassificationStatusFieldUpdateOperationsInput | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -75538,6 +77860,7 @@ export namespace Prisma {
     contentSha256?: StringFieldUpdateOperationsInput | string
     storageUri?: NullableStringFieldUpdateOperationsInput | string | null
     searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    classificationStatus?: NullableEnumEvidenceClassificationStatusFieldUpdateOperationsInput | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -75728,6 +78051,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutMailboxConnectionsInput = {
@@ -75768,6 +78092,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutMailboxConnectionsInput = {
@@ -75860,6 +78185,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutMailboxConnectionsInput = {
@@ -75900,6 +78226,7 @@ export namespace Prisma {
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type IngestJobUpsertWithWhereUniqueWithoutConnectionInput = {
@@ -75956,6 +78283,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
     emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutIngestJobsInput = {
@@ -75996,6 +78324,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
     emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutIngestJobsInput = {
@@ -76093,6 +78422,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
     emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutIngestJobsInput = {
@@ -76133,6 +78463,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
     emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type MailboxConnectionUpsertWithoutIngestJobsInput = {
@@ -76220,6 +78551,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEmailTriageItemsInput = {
@@ -76260,6 +78592,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEmailTriageItemsInput = {
@@ -76316,6 +78649,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEmailTriageItemsInput = {
@@ -76356,6 +78690,7 @@ export namespace Prisma {
     emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserWorkspaceCreateManyWorkspaceInput = {
@@ -76369,6 +78704,9 @@ export namespace Prisma {
   export type MeetingCreateManyWorkspaceInput = {
     id?: string
     clientName: string
+    clientId?: string | null
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -76506,6 +78844,7 @@ export namespace Prisma {
     contentSha256: string
     storageUri?: string | null
     searchableText?: string | null
+    classificationStatus?: $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: string | null
     destructionEligibleAt?: Date | string | null
     createdAt?: Date | string
@@ -76656,6 +78995,8 @@ export namespace Prisma {
   export type MeetingUpdateWithoutWorkspaceInput = {
     id?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -76688,6 +79029,7 @@ export namespace Prisma {
     cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ClientUpdateOneWithoutMeetingsNestedInput
     versions?: VersionUpdateManyWithoutMeetingNestedInput
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     flags?: FlagUpdateManyWithoutMeetingNestedInput
@@ -76701,6 +79043,9 @@ export namespace Prisma {
   export type MeetingUncheckedUpdateWithoutWorkspaceInput = {
     id?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -76746,6 +79091,9 @@ export namespace Prisma {
   export type MeetingUncheckedUpdateManyWithoutWorkspaceInput = {
     id?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -77070,6 +79418,7 @@ export namespace Prisma {
     contentSha256?: StringFieldUpdateOperationsInput | string
     storageUri?: NullableStringFieldUpdateOperationsInput | string | null
     searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    classificationStatus?: NullableEnumEvidenceClassificationStatusFieldUpdateOperationsInput | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -77091,6 +79440,7 @@ export namespace Prisma {
     contentSha256?: StringFieldUpdateOperationsInput | string
     storageUri?: NullableStringFieldUpdateOperationsInput | string | null
     searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    classificationStatus?: NullableEnumEvidenceClassificationStatusFieldUpdateOperationsInput | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -77111,6 +79461,7 @@ export namespace Prisma {
     contentSha256?: StringFieldUpdateOperationsInput | string
     storageUri?: NullableStringFieldUpdateOperationsInput | string | null
     searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    classificationStatus?: NullableEnumEvidenceClassificationStatusFieldUpdateOperationsInput | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -77131,6 +79482,7 @@ export namespace Prisma {
     evidenceItems?: EvidenceItemUpdateManyWithoutClientNestedInput
     activities?: ClientActivityUpdateManyWithoutClientNestedInput
     householdMemberships?: ClientHouseholdMemberUpdateManyWithoutClientNestedInput
+    meetings?: MeetingUpdateManyWithoutClientNestedInput
   }
 
   export type ClientUncheckedUpdateWithoutWorkspaceInput = {
@@ -77146,6 +79498,7 @@ export namespace Prisma {
     evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutClientNestedInput
     activities?: ClientActivityUncheckedUpdateManyWithoutClientNestedInput
     householdMemberships?: ClientHouseholdMemberUncheckedUpdateManyWithoutClientNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutClientNestedInput
   }
 
   export type ClientUncheckedUpdateManyWithoutWorkspaceInput = {
@@ -77475,6 +79828,45 @@ export namespace Prisma {
     promptVersion?: NullableStringFieldUpdateOperationsInput | string | null
     signalCount?: IntFieldUpdateOperationsInput | number
     rawResponse?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EvidenceEmbeddingUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    sourceId?: StringFieldUpdateOperationsInput | string
+    chunkKey?: StringFieldUpdateOperationsInput | string
+    chunkTextHash?: StringFieldUpdateOperationsInput | string
+    model?: StringFieldUpdateOperationsInput | string
+    modelVersion?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EvidenceEmbeddingUncheckedUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    sourceId?: StringFieldUpdateOperationsInput | string
+    chunkKey?: StringFieldUpdateOperationsInput | string
+    chunkTextHash?: StringFieldUpdateOperationsInput | string
+    model?: StringFieldUpdateOperationsInput | string
+    modelVersion?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceType?: EnumEvidenceSourceTypeFieldUpdateOperationsInput | $Enums.EvidenceSourceType
+    sourceId?: StringFieldUpdateOperationsInput | string
+    chunkKey?: StringFieldUpdateOperationsInput | string
+    chunkTextHash?: StringFieldUpdateOperationsInput | string
+    model?: StringFieldUpdateOperationsInput | string
+    modelVersion?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -78003,6 +80395,9 @@ export namespace Prisma {
     id?: string
     workspaceId: string
     clientName: string
+    clientId?: string | null
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -78043,6 +80438,9 @@ export namespace Prisma {
     id?: string
     workspaceId: string
     clientName: string
+    clientId?: string | null
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -78083,6 +80481,9 @@ export namespace Prisma {
     id?: string
     workspaceId: string
     clientName: string
+    clientId?: string | null
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
     meetingType: string
     meetingDate: Date | string
     status?: $Enums.MeetingStatus
@@ -78282,6 +80683,8 @@ export namespace Prisma {
   export type MeetingUpdateWithoutAdvisorCertifiedByUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -78315,6 +80718,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
+    client?: ClientUpdateOneWithoutMeetingsNestedInput
     versions?: VersionUpdateManyWithoutMeetingNestedInput
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     flags?: FlagUpdateManyWithoutMeetingNestedInput
@@ -78328,6 +80732,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     workspaceId?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -78373,6 +80780,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     workspaceId?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -78412,6 +80822,8 @@ export namespace Prisma {
   export type MeetingUpdateWithoutCmReviewedByUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -78445,6 +80857,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
+    client?: ClientUpdateOneWithoutMeetingsNestedInput
     versions?: VersionUpdateManyWithoutMeetingNestedInput
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     flags?: FlagUpdateManyWithoutMeetingNestedInput
@@ -78458,6 +80871,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     workspaceId?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -78503,6 +80919,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     workspaceId?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -78542,6 +80961,8 @@ export namespace Prisma {
   export type MeetingUpdateWithoutCcoSignedOffByUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -78575,6 +80996,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
+    client?: ClientUpdateOneWithoutMeetingsNestedInput
     versions?: VersionUpdateManyWithoutMeetingNestedInput
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     flags?: FlagUpdateManyWithoutMeetingNestedInput
@@ -78588,6 +81010,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     workspaceId?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -78633,6 +81058,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     workspaceId?: StringFieldUpdateOperationsInput | string
     clientName?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
     meetingType?: StringFieldUpdateOperationsInput | string
     meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
@@ -79024,6 +81452,7 @@ export namespace Prisma {
     contentSha256: string
     storageUri?: string | null
     searchableText?: string | null
+    classificationStatus?: $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: string | null
     destructionEligibleAt?: Date | string | null
     createdAt?: Date | string
@@ -79055,6 +81484,49 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+  }
+
+  export type MeetingCreateManyClientInput = {
+    id?: string
+    workspaceId: string
+    clientName: string
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
+    meetingType: string
+    meetingDate: Date | string
+    status?: $Enums.MeetingStatus
+    fileUrl?: string | null
+    sourceFileSha256?: string | null
+    sourceFileName?: string | null
+    sourceFileSize?: number | null
+    sourceFileMime?: string | null
+    sourceUploadedAt?: Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
+    finalizedBy?: string | null
+    finalizedAt?: Date | string | null
+    finalizeReason?: $Enums.FinalizeReason | null
+    finalizeNote?: string | null
+    finalizedPolicyVersion?: number | null
+    samplingBucket?: string | null
+    samplingRuleId?: string | null
+    draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
+    readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    advisorCertifiedByUserId?: string | null
+    cmReviewedAt?: Date | string | null
+    cmReviewedByUserId?: string | null
+    ccoSignedOffAt?: Date | string | null
+    ccoSignedOffByUserId?: string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type EmailAliasUpdateWithoutClientInput = {
@@ -79100,6 +81572,7 @@ export namespace Prisma {
     contentSha256?: StringFieldUpdateOperationsInput | string
     storageUri?: NullableStringFieldUpdateOperationsInput | string | null
     searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    classificationStatus?: NullableEnumEvidenceClassificationStatusFieldUpdateOperationsInput | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -79121,6 +81594,7 @@ export namespace Prisma {
     contentSha256?: StringFieldUpdateOperationsInput | string
     storageUri?: NullableStringFieldUpdateOperationsInput | string | null
     searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    classificationStatus?: NullableEnumEvidenceClassificationStatusFieldUpdateOperationsInput | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -79141,6 +81615,7 @@ export namespace Prisma {
     contentSha256?: StringFieldUpdateOperationsInput | string
     storageUri?: NullableStringFieldUpdateOperationsInput | string | null
     searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    classificationStatus?: NullableEnumEvidenceClassificationStatusFieldUpdateOperationsInput | $Enums.EvidenceClassificationStatus | null
     retentionRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     destructionEligibleAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -79224,6 +81699,145 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type MeetingUpdateWithoutClientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    clientName?: StringFieldUpdateOperationsInput | string
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
+    meetingType?: StringFieldUpdateOperationsInput | string
+    meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileName?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    sourceFileMime?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUploadedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalizeReason?: NullableEnumFinalizeReasonFieldUpdateOperationsInput | $Enums.FinalizeReason | null
+    finalizeNote?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
+    samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
+    versions?: VersionUpdateManyWithoutMeetingNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
+    flags?: FlagUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
+    integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
+    cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
+    ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
+  }
+
+  export type MeetingUncheckedUpdateWithoutClientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    clientName?: StringFieldUpdateOperationsInput | string
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
+    meetingType?: StringFieldUpdateOperationsInput | string
+    meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileName?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    sourceFileMime?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUploadedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalizeReason?: NullableEnumFinalizeReasonFieldUpdateOperationsInput | $Enums.FinalizeReason | null
+    finalizeNote?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
+    samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
+    integrationSyncLogs?: IntegrationSyncLogUncheckedUpdateManyWithoutMeetingNestedInput
+  }
+
+  export type MeetingUncheckedUpdateManyWithoutClientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    clientName?: StringFieldUpdateOperationsInput | string
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
+    meetingType?: StringFieldUpdateOperationsInput | string
+    meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileName?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    sourceFileMime?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUploadedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalizeReason?: NullableEnumFinalizeReasonFieldUpdateOperationsInput | $Enums.FinalizeReason | null
+    finalizeNote?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
+    samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ClientHouseholdMemberCreateManyHouseholdInput = {

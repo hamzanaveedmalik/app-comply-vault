@@ -151,6 +151,8 @@ async function handler(request: Request) {
         sourceUploadedAt: new Date(),
       },
     });
+    const { attributeMeeting } = await import("~/server/meetings/client-attribution");
+    await attributeMeeting({ meetingId: meeting.id, workspaceId });
 
     await db.auditEvent.create({
       data: {

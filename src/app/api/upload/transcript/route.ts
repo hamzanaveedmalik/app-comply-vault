@@ -52,6 +52,11 @@ export async function POST(request: Request) {
         sourceUploadedAt: new Date(),
       },
     });
+    const { attributeMeeting } = await import("~/server/meetings/client-attribution");
+    await attributeMeeting({
+      meetingId: meeting.id,
+      workspaceId: session.user.workspaceId,
+    });
 
     await db.auditEvent.create({
       data: {

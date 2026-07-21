@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
+import {
+  isAskHybridRetrievalEnabled,
+  isEmailIntelligenceEnabled,
+} from "~/lib/feature-flags";
 
 describe("isEmailIntelligenceEnabled", () => {
   it("is false when unset", () => {
@@ -13,5 +16,18 @@ describe("isEmailIntelligenceEnabled", () => {
     delete process.env.NEXT_PUBLIC_EMAIL_INTELLIGENCE;
     expect(isEmailIntelligenceEnabled()).toBe(true);
     delete process.env.EMAIL_INTELLIGENCE_ENABLED;
+  });
+});
+
+describe("isAskHybridRetrievalEnabled", () => {
+  it("is false when unset", () => {
+    delete process.env.ASK_HYBRID_RETRIEVAL;
+    expect(isAskHybridRetrievalEnabled()).toBe(false);
+  });
+
+  it("is true when ASK_HYBRID_RETRIEVAL=true", () => {
+    process.env.ASK_HYBRID_RETRIEVAL = "true";
+    expect(isAskHybridRetrievalEnabled()).toBe(true);
+    delete process.env.ASK_HYBRID_RETRIEVAL;
   });
 });

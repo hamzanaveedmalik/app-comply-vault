@@ -4,11 +4,13 @@ const findFirstEvidence = vi.fn();
 const findFirstClassification = vi.fn();
 const createClassification = vi.fn();
 const $transaction = vi.fn();
+const updateManyEvidence = vi.fn();
 
 vi.mock("~/server/db", () => ({
   db: {
     evidenceItem: {
       findFirst: (...args: unknown[]) => findFirstEvidence(...args),
+      updateMany: (...args: unknown[]) => updateManyEvidence(...args),
     },
     evidenceClassification: {
       findFirst: (...args: unknown[]) => findFirstClassification(...args),
@@ -35,6 +37,7 @@ beforeEach(() => {
   findFirstClassification.mockReset();
   createClassification.mockReset();
   $transaction.mockReset();
+  updateManyEvidence.mockResolvedValue({ count: 1 });
   vi.mocked(isEmailIntelligenceEnabled).mockReturnValue(true);
   vi.mocked(classifyEmailWithLlm).mockReset();
 });
@@ -49,7 +52,7 @@ describe("classifyEmailEvidence", () => {
     expect(result).toEqual({ status: "skipped", reason: "feature_disabled" });
   });
 
-  it("returns duplicate when contentHash already classified", async () => {
+  it("returns duplicate when contentHash already classified (idempotent redelivery)", async () => {
     findFirstEvidence.mockResolvedValue({
       id: "ev-1",
       contentSha256: "sha",
@@ -61,7 +64,7 @@ describe("classifyEmailEvidence", () => {
         toAddresses: ["b@example.com"],
       },
     });
-    findFirstClassification.mockResolvedValue({ id: "class-1" });
+    findFirstClassification.mockResolvedValueOnce({ id: "class-1" });
 
     const result = await classifyEmailEvidence({
       workspaceId: "ws-1",
@@ -72,10 +75,14 @@ describe("classifyEmailEvidence", () => {
       classificationId: "class-1",
     });
     expect(classifyEmailWithLlm).not.toHaveBeenCalled();
+    expect(updateManyEvidence).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: { classificationStatus: "COMPLETE" },
+      })
+    );
   });
 
   it("records CLEAN without LLM for non-candidate heuristic skips", async () => {
-    // Force random sample off by stubbing Math.random
     const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.99);
     findFirstEvidence.mockResolvedValue({
       id: "ev-1",
@@ -163,5 +170,29 @@ describe("classifyEmailEvidence", () => {
       expect(result.flagIds).toEqual(["flag-1"]);
       expect(result.classificationId).toBe("class-flagged");
     }
+  });
+
+  it("returns error on LLM failure without marking complete (job marks FAILED)", async () => {
+    findFirstEvidence.mockResolvedValue({
+      id: "ev-1",
+      contentSha256: "sha",
+      communication: {
+        id: "comm-1",
+        threadId: "thread-1",
+        bodyText: "We guarantee 12% returns every year.",
+        fromAddress: "advisor@firm.com",
+        toAddresses: ["client@example.com"],
+      },
+    });
+    findFirstClassification.mockResolvedValue(null);
+    vi.mocked(classifyEmailWithLlm).mockRejectedValue(new Error("llm_timeout"));
+
+    const result = await classifyEmailEvidence({
+      workspaceId: "ws-1",
+      evidenceItemId: "ev-1",
+    });
+
+    expect(result).toEqual({ status: "error", reason: "llm_timeout" });
+    expect(createClassification).not.toHaveBeenCalled();
   });
 });

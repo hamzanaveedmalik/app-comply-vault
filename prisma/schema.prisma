@@ -61,6 +61,7 @@ model Workspace {
   emailTriageItems      EmailTriageItem[]
   ingestJobs            IngestJob[]
   evidenceClassifications EvidenceClassification[]
+  evidenceEmbeddings    EvidenceEmbedding[]
 
   @@index([createdAt])
 }
@@ -134,6 +135,12 @@ model Meeting {
   id           String        @id @default(cuid())
   workspaceId  String
   clientName   String
+  /// Linked Client row when attributed (email alias, name backfill, or manual).
+  clientId     String?
+  /// EMAIL = authoritative; NAME_EXACT = low-confidence backfill; MANUAL = user resolved.
+  clientMatchConfidence MeetingClientMatchConfidence?
+  /// Participant emails captured at ingest (Zoom/Teams). Used for client attribution.
+  participantEmails String[] @default([])
   meetingType  String
   meetingDate  DateTime
   status       MeetingStatus @default(UPLOADING)
@@ -175,6 +182,7 @@ model Meeting {
 
   // Relations
   workspace   Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  client      Client?      @relation(fields: [clientId], references: [id], onDelete: SetNull)
   versions    Version[]
   auditEvents AuditEvent[]
   flags       Flag[]
@@ -187,6 +195,8 @@ model Meeting {
   @@index([workspaceId])
   @@index([workspaceId, status])
   @@index([workspaceId, clientName])
+  @@index([workspaceId, clientId])
+  @@index([workspaceId, clientMatchConfidence])
   @@index([workspaceId, meetingDate])
   // Note: searchableText is NOT indexed with btree (too large for index)
   // We use PostgreSQL's native full-text search via to_tsvector() in queries
@@ -249,6 +259,14 @@ enum AuditAction {
   EVIDENCE_TAG
   EMAIL_TRIAGE_RESOLVED
   THREAD_EXPORT
+  MEETING_CLIENT_ATTRIBUTED
+}
+
+/// How Meeting.clientId was resolved. NAME_EXACT is low-confidence (reviewable).
+enum MeetingClientMatchConfidence {
+  EMAIL
+  NAME_EXACT
+  MANUAL
 }
 
 enum FlagType {
@@ -275,6 +293,13 @@ enum FlagSourceType {
 enum EvidenceClassificationResult {
   CLEAN
   FLAGGED
+}
+
+/// Lifecycle of email classification on EvidenceItem (async QStash job).
+enum EvidenceClassificationStatus {
+  PENDING
+  COMPLETE
+  FAILED
 }
 
 enum FlagSeverity {
@@ -883,6 +908,7 @@ model Client {
   evidenceItems EvidenceItem[]
   activities    ClientActivity[]
   householdMemberships ClientHouseholdMember[]
+  meetings      Meeting[]
 
   @@index([workspaceId])
   @@index([workspaceId, name])
@@ -993,6 +1019,8 @@ model EvidenceItem {
   storageUri            String?
   /// Keyword index for Ask / search (redacted for EMAIL). Mirrors Meeting.searchableText.
   searchableText        String?            @db.Text
+  /// EMAIL only: PENDING until classify job completes; FAILED after exhausted retries.
+  classificationStatus  EvidenceClassificationStatus?
   retentionRuleId       String?
   destructionEligibleAt DateTime?
   createdAt             DateTime           @default(now())
@@ -1006,6 +1034,7 @@ model EvidenceItem {
 
   @@index([workspaceId, clientId, occurredAt])
   @@index([workspaceId, sourceType])
+  @@index([workspaceId, classificationStatus])
 }
 
 model EvidenceTag {
@@ -1022,6 +1051,31 @@ model EvidenceTag {
 
   @@index([itemId])
   @@index([itemId, category])
+}
+
+/// Chunk embeddings for hybrid Ask retrieval (pgvector). Embed redacted text only.
+model EvidenceEmbedding {
+  id             String             @id @default(cuid())
+  workspaceId    String
+  sourceType     EvidenceSourceType
+  /// EMAIL: EvidenceItem id. MEETING: Meeting id.
+  sourceId       String
+  /// EMAIL: evidenceItemId. MEETING: `${meetingId}:${segmentIndex}`
+  chunkKey       String
+  chunkTextHash  String
+  /// pgvector column — written/queried via raw SQL only.
+  embedding      Unsupported("vector(1536)")
+  model          String
+  modelVersion   String
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  deletedAt      DateTime?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, chunkKey, model])
+  @@index([workspaceId, sourceType])
+  @@index([workspaceId, sourceId])
 }
 
 model CommunicationThread {

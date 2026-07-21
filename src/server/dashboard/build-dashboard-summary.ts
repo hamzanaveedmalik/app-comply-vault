@@ -13,8 +13,6 @@ import { dashboardColors } from "~/lib/dashboard-colors";
 import type { FlagType, MeetingStatus } from "../../../generated/prisma";
 import type { PrismaClient } from "../../../generated/prisma";
 import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
-import { getEmailLastContactByClientName } from "~/server/clients/queries";
-
 const OPEN_FLAG_STATUSES = ["OPEN", "IN_REMEDIATION", "PENDING_VERIFICATION"] as const;
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
@@ -379,10 +377,14 @@ export async function buildDashboardSummary(
     where: { workspaceId },
     select: {
       clientName: true,
+      clientId: true,
       status: true,
       meetingDate: true,
       createdAt: true,
       finalizedAt: true,
+      client: {
+        select: { id: true, name: true, lastContactAt: true },
+      },
       flags: {
         where: { status: { in: [...OPEN_FLAG_STATUSES] } },
         select: { createdAt: true },
@@ -570,8 +572,11 @@ export async function buildDashboardSummary(
       ? "12-month trend"
       : `${Math.round(rangeCfg.days / 7)}-week trend`;
 
-  // ── Clients table ──
+  // ── Clients table (join on Meeting.clientId — never name-match) ──
   type ClientAccumulator = {
+    clientId: string | null;
+    clientName: string;
+    lastContactAt: Date | null;
     total: number;
     documented: number;
     finalized: number;
@@ -581,10 +586,13 @@ export async function buildDashboardSummary(
   };
   const clientMap = new Map<string, ClientAccumulator>();
   for (const m of clientMeetingRows) {
-    const name = m.clientName.trim() || "Unknown client";
-    let acc = clientMap.get(name);
+    const key = m.clientId ?? `unattributed:${m.clientName.trim() || "Unknown client"}`;
+    let acc = clientMap.get(key);
     if (!acc) {
       acc = {
+        clientId: m.clientId,
+        clientName: m.client?.name?.trim() || m.clientName.trim() || "Unknown client",
+        lastContactAt: m.client?.lastContactAt ?? null,
         total: 0,
         documented: 0,
         finalized: 0,
@@ -592,7 +600,7 @@ export async function buildDashboardSummary(
         lastMeeting: null,
         weekly: Array.from({ length: activityPoints }, () => 0),
       };
-      clientMap.set(name, acc);
+      clientMap.set(key, acc);
     }
     acc.total += 1;
     if (m.status !== "UPLOADING" && m.status !== "PROCESSING") acc.documented += 1;
@@ -606,8 +614,8 @@ export async function buildDashboardSummary(
       }
     }
   }
-  const clients: ClientHealthRow[] = Array.from(clientMap.entries())
-    .map(([clientName, acc]) => {
+  const clients: ClientHealthRow[] = Array.from(clientMap.values())
+    .map((acc) => {
       const coverageRate = acc.total === 0 ? 1 : acc.documented / acc.total;
       const finalizedRate = acc.total === 0 ? 1 : acc.finalized / acc.total;
       // Composite client health indicator derived from real signals (coverage,
@@ -623,16 +631,30 @@ export async function buildDashboardSummary(
       let trending: "up" | "down" | "flat" = "flat";
       if (secondHalf > firstHalf) trending = "up";
       else if (secondHalf < firstHalf) trending = "down";
+
+      let lastActivity = acc.lastMeeting ? acc.lastMeeting.toISOString() : null;
+      let lastActivityType: ClientHealthRow["lastActivityType"] = acc.lastMeeting
+        ? "meeting"
+        : null;
+      if (
+        isEmailIntelligenceEnabled() &&
+        acc.lastContactAt &&
+        (!acc.lastMeeting || acc.lastContactAt > acc.lastMeeting)
+      ) {
+        lastActivity = acc.lastContactAt.toISOString();
+        lastActivityType = "email";
+      }
+
       return {
-        clientName,
-        clientId: null,
+        clientName: acc.clientName,
+        clientId: acc.clientId,
         health,
         coverageDone: acc.documented,
         coverageTotal: acc.total,
         openFlags: acc.openFlags,
         lastMeeting: acc.lastMeeting ? acc.lastMeeting.toISOString() : null,
-        lastActivity: acc.lastMeeting ? acc.lastMeeting.toISOString() : null,
-        lastActivityType: acc.lastMeeting ? ("meeting" as const) : null,
+        lastActivity,
+        lastActivityType,
         trend: acc.weekly,
         trending,
       };
@@ -640,26 +662,23 @@ export async function buildDashboardSummary(
     .sort((a, b) => b.openFlags - a.openFlags || a.health - b.health);
 
   if (isEmailIntelligenceEnabled()) {
-    const emailByName = await getEmailLastContactByClientName(workspaceId);
-    for (const row of clients) {
-      const email = emailByName.get(row.clientName.trim().toLowerCase());
-      if (!email) continue;
-      row.clientId = email.clientId;
-      const meetingAt = row.lastMeeting ? new Date(row.lastMeeting) : null;
-      if (!meetingAt || email.lastContactAt > meetingAt) {
-        row.lastActivity = email.lastContactAt.toISOString();
-        row.lastActivityType = "email";
-      } else {
-        row.lastActivity = row.lastMeeting;
-        row.lastActivityType = "meeting";
-      }
-      emailByName.delete(row.clientName.trim().toLowerCase());
-    }
-    // Email-only clients (no meetings in range) still appear when they have contact.
-    for (const [, email] of emailByName) {
+    const attributedIds = new Set(
+      clients.map((c) => c.clientId).filter((id): id is string => id != null)
+    );
+    const emailOnlyClients = await db.client.findMany({
+      where: {
+        workspaceId,
+        deletedAt: null,
+        lastContactAt: { not: null },
+        ...(attributedIds.size > 0 ? { id: { notIn: [...attributedIds] } } : {}),
+      },
+      select: { id: true, name: true, lastContactAt: true },
+    });
+    for (const email of emailOnlyClients) {
+      if (!email.lastContactAt) continue;
       clients.push({
         clientName: email.name,
-        clientId: email.clientId,
+        clientId: email.id,
         health: 70,
         coverageDone: 0,
         coverageTotal: 0,

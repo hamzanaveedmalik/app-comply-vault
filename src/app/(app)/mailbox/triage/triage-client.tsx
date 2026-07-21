@@ -18,15 +18,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { Badge } from "~/components/ui/badge";
 import { toast } from "sonner";
 import type { EmailTriageItemDto } from "~/lib/types/evidence";
-import type { ClientListItemDto } from "~/lib/types/clients";
+import type { ClientListItemDto, NeedsAttributionMeetingDto } from "~/lib/types/clients";
+
+function reasonLabel(reason: NeedsAttributionMeetingDto["reason"]): string {
+  if (reason === "low_confidence") return "Low confidence name match";
+  if (reason === "ambiguous") return "Ambiguous participants";
+  return "Unmatched";
+}
 
 export function TriageClient() {
   const [items, setItems] = useState<EmailTriageItemDto[]>([]);
+  const [meetings, setMeetings] = useState<NeedsAttributionMeetingDto[]>([]);
   const [clients, setClients] = useState<ClientListItemDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [confirmItem, setConfirmItem] = useState<EmailTriageItemDto | null>(null);
+  const [confirmMeeting, setConfirmMeeting] = useState<NeedsAttributionMeetingDto | null>(
+    null
+  );
   const [selectedClientId, setSelectedClientId] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -36,9 +47,10 @@ export function TriageClient() {
 
   async function load(): Promise<void> {
     setLoading(true);
-    const [triageRes, clientsRes] = await Promise.all([
+    const [triageRes, clientsRes, meetingsRes] = await Promise.all([
       fetch("/api/mailbox/triage"),
       fetch("/api/clients"),
+      fetch("/api/meetings/attribution"),
     ]);
     const json = (await triageRes.json()) as { success: boolean; data?: EmailTriageItemDto[] };
     if (json.success && json.data) setItems(json.data);
@@ -48,6 +60,12 @@ export function TriageClient() {
       data?: ClientListItemDto[];
     };
     if (clientsJson.success && clientsJson.data) setClients(clientsJson.data);
+
+    const meetingsJson = (await meetingsRes.json()) as {
+      success: boolean;
+      data?: NeedsAttributionMeetingDto[];
+    };
+    if (meetingsJson.success && meetingsJson.data) setMeetings(meetingsJson.data);
     setLoading(false);
   }
 
@@ -87,52 +105,130 @@ export function TriageClient() {
     await load();
   }
 
-  return (
-    <div className="mx-auto max-w-3xl space-y-6 p-6">
-      <h1 className="text-2xl font-semibold text-[#0D2818]">Participant triage</h1>
-      <p className="text-sm text-muted-foreground">
-        Unmatched email addresses from ingested threads.
-      </p>
+  async function resolveMeeting(meetingId: string, clientId: string): Promise<void> {
+    setSubmitting(true);
+    const res = await fetch(`/api/meetings/attribution/${meetingId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ clientId }),
+    });
+    const json = (await res.json()) as { success: boolean; error?: string };
+    setSubmitting(false);
+    if (!json.success) {
+      toast.error(json.error ?? "Failed");
+      return;
+    }
+    toast.success("Meeting attributed to client");
+    setConfirmMeeting(null);
+    setSelectedClientId("");
+    await load();
+  }
 
-      {loading ? (
-        <p className="text-sm text-muted-foreground">Loading…</p>
-      ) : items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No pending addresses.</p>
-      ) : (
-        <ul className="divide-y rounded-lg border">
-          {items.map((item) => (
-            <li key={item.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
-              <div className="space-y-0.5">
-                <span className="font-mono text-sm">{item.address}</span>
-                {item.historicalThreadCount > 0 ? (
+  return (
+    <div className="mx-auto max-w-3xl space-y-10 p-6">
+      <section className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold text-[#0D2818]">Participant triage</h1>
+          <p className="text-sm text-muted-foreground">
+            Unmatched email addresses from ingested threads.
+          </p>
+        </div>
+
+        {loading ? (
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        ) : items.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No pending addresses.</p>
+        ) : (
+          <ul className="divide-y rounded-lg border">
+            {items.map((item) => (
+              <li
+                key={item.id}
+                className="flex flex-wrap items-center justify-between gap-2 px-4 py-3"
+              >
+                <div className="space-y-0.5">
+                  <span className="font-mono text-sm">{item.address}</span>
+                  {item.historicalThreadCount > 0 ? (
+                    <p className="text-xs text-muted-foreground">
+                      {item.historicalThreadCount} historical thread
+                      {item.historicalThreadCount === 1 ? "" : "s"} will be attached on confirm
+                    </p>
+                  ) : null}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => void resolve(item.id, "EXTERNAL")}
+                  >
+                    External
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => void resolve(item.id, "IRRELEVANT")}
+                  >
+                    Irrelevant
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="bg-[#2ECC71] text-[#0D2818]"
+                    onClick={() => {
+                      setSelectedClientId("");
+                      setConfirmItem(item);
+                    }}
+                  >
+                    Confirm
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="space-y-6">
+        <div>
+          <h2 className="text-xl font-semibold text-[#0D2818]">Needs attribution</h2>
+          <p className="text-sm text-muted-foreground">
+            Meetings without a confirmed client link, or with a low-confidence name match.
+          </p>
+        </div>
+
+        {loading ? (
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        ) : meetings.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No meetings need attribution.</p>
+        ) : (
+          <ul className="divide-y rounded-lg border">
+            {meetings.map((m) => (
+              <li
+                key={m.id}
+                className="flex flex-wrap items-center justify-between gap-2 px-4 py-3"
+              >
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-medium text-sm">{m.clientName}</span>
+                    <Badge variant="outline">{reasonLabel(m.reason)}</Badge>
+                  </div>
                   <p className="text-xs text-muted-foreground">
-                    {item.historicalThreadCount} historical thread
-                    {item.historicalThreadCount === 1 ? "" : "s"} will be attached on confirm
+                    {m.meetingType} · {new Date(m.meetingDate).toLocaleDateString()}
                   </p>
-                ) : null}
-              </div>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => void resolve(item.id, "EXTERNAL")}>
-                  External
-                </Button>
-                <Button size="sm" variant="secondary" onClick={() => void resolve(item.id, "IRRELEVANT")}>
-                  Irrelevant
-                </Button>
+                </div>
                 <Button
                   size="sm"
                   className="bg-[#2ECC71] text-[#0D2818]"
                   onClick={() => {
-                    setSelectedClientId("");
-                    setConfirmItem(item);
+                    setSelectedClientId(m.clientId ?? "");
+                    setConfirmMeeting(m);
                   }}
                 >
-                  Confirm
+                  Assign client
                 </Button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       <Dialog
         open={confirmItem != null}
@@ -191,6 +287,63 @@ export function TriageClient() {
               }}
             >
               Confirm and attach
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={confirmMeeting != null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setConfirmMeeting(null);
+            setSelectedClientId("");
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Attribute meeting to client</DialogTitle>
+            <DialogDescription>
+              {confirmMeeting
+                ? `Link “${confirmMeeting.clientName}” to a client record. This replaces any low-confidence name match.`
+                : null}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-2">
+            <Label htmlFor="meeting-client">Client</Label>
+            <Select value={selectedClientId} onValueChange={setSelectedClientId}>
+              <SelectTrigger id="meeting-client">
+                <SelectValue placeholder="Select client" />
+              </SelectTrigger>
+              <SelectContent>
+                {clients.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setConfirmMeeting(null);
+                setSelectedClientId("");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="bg-[#2ECC71] text-[#0D2818]"
+              disabled={!selectedClientId || submitting || !confirmMeeting}
+              onClick={() => {
+                if (!confirmMeeting || !selectedClientId) return;
+                void resolveMeeting(confirmMeeting.id, selectedClientId);
+              }}
+            >
+              Confirm attribution
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -2,7 +2,11 @@
  * Client correspondence DTOs — safe for client components.
  */
 
-import type { ClientActivityType, CommunicationDirection } from "../../../generated/prisma";
+import type {
+  ClientActivityType,
+  CommunicationDirection,
+  MeetingClientMatchConfidence,
+} from "../../../generated/prisma";
 
 export type ClientListItemDto = {
   id: string;
@@ -25,6 +29,14 @@ export type ClientCorrespondenceRowDto = {
   memberClientName: string | null;
 };
 
+export type HouseholdMemberDto = {
+  membershipId: string;
+  clientId: string;
+  name: string;
+  role: string;
+  emailAddresses: Array<{ id: string; address: string }>;
+};
+
 export type ClientDetailDto = {
   id: string;
   name: string;
@@ -32,10 +44,19 @@ export type ClientDetailDto = {
   lastContactAt: string | null;
   correspondenceCountPeriod: number;
   periodLabel: string;
-  householdMembers: Array<{
-    clientId: string;
-    name: string;
-    role: string;
-  }>;
+  /** Email aliases on this client record. */
+  emailAddresses: Array<{ id: string; address: string }>;
+  householdMembers: HouseholdMemberDto[];
   correspondence: ClientCorrespondenceRowDto[];
+};
+
+export type NeedsAttributionMeetingDto = {
+  id: string;
+  clientName: string;
+  meetingDate: string;
+  meetingType: string;
+  clientId: string | null;
+  clientMatchConfidence: MeetingClientMatchConfidence | null;
+  participantEmails: string[];
+  reason: "unmatched" | "low_confidence" | "ambiguous";
 };

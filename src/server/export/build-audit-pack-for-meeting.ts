@@ -128,27 +128,17 @@ export async function buildAuditPackZipForMeeting(args: {
   } as Meeting & { finalizedBy?: User | null };
 
   let emailCorrespondenceCsv: string | null = null;
-  if (isEmailIntelligenceEnabled()) {
-    const matchedClient = await db.client.findFirst({
-      where: {
-        workspaceId,
-        deletedAt: null,
-        name: { equals: meeting.clientName, mode: "insensitive" },
-      },
-      select: { id: true },
+  if (isEmailIntelligenceEnabled() && meeting.clientId) {
+    const to = meeting.meetingDate;
+    const from = new Date(to.getTime() - 365 * 24 * 60 * 60 * 1000);
+    const section = await buildEmailCorrespondenceSection({
+      workspaceId,
+      clientId: meeting.clientId,
+      from,
+      to,
     });
-    if (matchedClient) {
-      const to = meeting.meetingDate;
-      const from = new Date(to.getTime() - 365 * 24 * 60 * 60 * 1000);
-      const section = await buildEmailCorrespondenceSection({
-        workspaceId,
-        clientId: matchedClient.id,
-        from,
-        to,
-      });
-      if (section && section.rows.length > 0) {
-        emailCorrespondenceCsv = emailCorrespondenceSectionToCsv(section);
-      }
+    if (section && section.rows.length > 0) {
+      emailCorrespondenceCsv = emailCorrespondenceSectionToCsv(section);
     }
   }
 

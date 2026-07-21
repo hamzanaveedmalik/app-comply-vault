@@ -1,6 +1,8 @@
 import { requireAppAccess } from "~/server/auth/guards";
 import { redirect } from "next/navigation";
 import { listCommunicationThreads } from "~/server/mailbox/threads";
+import { countFailedClassifications } from "~/server/classification/status";
+import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
 import { CommunicationsClient } from "./communications-client";
 
 export default async function CommunicationsPage() {
@@ -11,5 +13,13 @@ export default async function CommunicationsPage() {
   }
 
   const threads = await listCommunicationThreads(access.workspaceId);
-  return <CommunicationsClient threads={threads} />;
+  const failedClassificationCount = isEmailIntelligenceEnabled()
+    ? await countFailedClassifications(access.workspaceId)
+    : 0;
+  return (
+    <CommunicationsClient
+      threads={threads}
+      failedClassificationCount={failedClassificationCount}
+    />
+  );
 }

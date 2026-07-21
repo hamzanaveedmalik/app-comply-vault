@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
+import { Badge } from "~/components/ui/badge";
 import { toast } from "sonner";
 import type {
   CommunicationMessageDto,
@@ -23,6 +26,9 @@ export function ThreadReaderClient({
   thread: CommunicationThreadDto;
   messages: CommunicationMessageDto[];
 }) {
+  const router = useRouter();
+  const [reclassifyingId, setReclassifyingId] = useState<string | null>(null);
+
   async function tagThread(category: (typeof TAGS)[number]): Promise<void> {
     const res = await fetch(`/api/mailbox/threads/${thread.id}`, {
       method: "POST",
@@ -53,6 +59,21 @@ export function ThreadReaderClient({
     a.click();
     URL.revokeObjectURL(url);
     toast.success("Export downloaded");
+  }
+
+  async function reclassify(evidenceItemId: string): Promise<void> {
+    setReclassifyingId(evidenceItemId);
+    const res = await fetch(`/api/evidence/${evidenceItemId}/reclassify`, {
+      method: "POST",
+    });
+    const json = (await res.json()) as { success: boolean; error?: string };
+    setReclassifyingId(null);
+    if (!json.success) {
+      toast.error(json.error ?? "Reclassify failed");
+      return;
+    }
+    toast.success("Reclassification queued");
+    router.refresh();
   }
 
   return (
@@ -89,10 +110,25 @@ export function ThreadReaderClient({
       <div className="space-y-4">
         {messages.map((m) => (
           <article key={m.id} className="rounded-lg border p-4">
-            <header className="mb-2 text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">{m.fromAddress}</span>
-              {" · "}
-              {new Date(m.sentAt).toLocaleString()} · {m.direction}
+            <header className="mb-2 flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
+              <div>
+                <span className="font-medium text-foreground">{m.fromAddress}</span>
+                {" · "}
+                {new Date(m.sentAt).toLocaleString()} · {m.direction}
+              </div>
+              {m.classificationStatus === "FAILED" ? (
+                <div className="flex items-center gap-2">
+                  <Badge variant="destructive">Classification failed</Badge>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={reclassifyingId === m.evidenceItemId}
+                    onClick={() => void reclassify(m.evidenceItemId)}
+                  >
+                    {reclassifyingId === m.evidenceItemId ? "Queuing…" : "Reclassify"}
+                  </Button>
+                </div>
+              ) : null}
             </header>
             {m.bodyHtml ? (
               <div

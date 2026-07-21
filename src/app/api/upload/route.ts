@@ -79,6 +79,11 @@ export async function POST(request: Request) {
         sourceUploadedAt: new Date(),
       },
     });
+    const { attributeMeeting } = await import("~/server/meetings/client-attribution");
+    await attributeMeeting({
+      meetingId: meeting.id,
+      workspaceId: session.user.workspaceId,
+    });
 
     // Upload file to S3/R2
     const { key, url } = await uploadFile(

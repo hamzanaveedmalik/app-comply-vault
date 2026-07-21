@@ -176,6 +176,7 @@ export async function ingestEmailMessage(args: {
           contentSha256,
           storageUri,
           searchableText,
+          classificationStatus: "PENDING",
         },
       });
 

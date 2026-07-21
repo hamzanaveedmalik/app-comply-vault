@@ -17,6 +17,7 @@ import type {
   RetrievalMode,
 } from "./types";
 import { topicToString, type TopicEntry } from "~/lib/topics";
+import { hybridScore, passesHybridThreshold } from "./hybrid";
 
 const MAX_CANDIDATES = 12;
 const MAX_KEEP = 5;
@@ -44,6 +45,20 @@ type TranscriptShape = {
 };
 
 export const RETRIEVAL_MODE: RetrievalMode = "keyword";
+
+export function setRetrievalModeForTests(mode: RetrievalMode): void {
+  // Test hook — production uses feature flag in ask/index.
+  (globalThis as { __askRetrievalMode?: RetrievalMode }).__askRetrievalMode = mode;
+}
+
+export function getActiveRetrievalMode(
+  hybridEnabled: boolean
+): RetrievalMode {
+  const override = (globalThis as { __askRetrievalMode?: RetrievalMode })
+    .__askRetrievalMode;
+  if (override) return override;
+  return hybridEnabled ? "hybrid" : "keyword";
+}
 
 /**
  * Count how many of the keywords appear (case-insensitive) in a haystack.
@@ -78,7 +93,7 @@ function recencyDecay(meetingDate: Date, now: Date): number {
 /**
  * Score a single candidate against the question keywords.
  */
-function scoreCandidate(
+export function scoreCandidateKeyword(
   candidate: RetrievalCandidate,
   keywords: string[],
   now: Date
@@ -87,6 +102,59 @@ function scoreCandidate(
   const matches = keywordMatchCount(haystack, keywords);
   if (matches === 0) return 0;
   return matches * recencyDecay(candidate.meetingDate, now);
+}
+
+/**
+ * Score a single candidate against the question keywords.
+ */
+function scoreCandidate(
+  candidate: RetrievalCandidate,
+  keywords: string[],
+  now: Date
+): number {
+  return scoreCandidateKeyword(candidate, keywords, now);
+}
+
+/**
+ * Rank with optional cosine boosts keyed by candidate id (hybrid mode).
+ */
+export function rankAndExcerptHybrid(
+  candidates: RetrievalCandidate[],
+  keywords: string[],
+  cosineByCandidateId: Map<string, number>,
+  now: Date = new Date()
+): ScoredEvidence[] {
+  const scored: ScoredEvidence[] = [];
+  for (const candidate of candidates) {
+    const keywordScore = scoreCandidateKeyword(candidate, keywords, now);
+    const cosine = cosineByCandidateId.get(candidate.id) ?? null;
+    if (keywordScore <= 0 && cosine == null) continue;
+    const score = hybridScore({ keywordScore, cosineSimilarity: cosine });
+    // Exact keyword matches always keep; semantic-only must pass threshold.
+    if (keywordScore <= 0 && !passesHybridThreshold(score)) continue;
+    const { excerpts, matchedFields } = extractExcerpts(candidate, keywords);
+    const fallbackExcerpts =
+      excerpts.length > 0 ? excerpts : buildFallbackExcerpts(candidate, keywords);
+    scored.push({
+      candidate,
+      score,
+      excerpts: fallbackExcerpts,
+      matchedFields,
+    });
+  }
+
+  scored.sort((a, b) => b.score - a.score);
+  const top = scored.slice(0, MAX_KEEP);
+
+  let totalChars = 0;
+  const kept: ScoredEvidence[] = [];
+  for (const item of top) {
+    const blockSize = estimateEvidenceSize(item);
+    if (kept.length > 0 && totalChars + blockSize > MAX_CONTEXT_CHARS) break;
+    kept.push(item);
+    totalChars += blockSize;
+  }
+  return kept;
 }
 
 /**

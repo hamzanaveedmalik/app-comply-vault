@@ -415,3 +415,125 @@ export async function publishMailboxIngestJob(
     throw error;
   }
 }
+
+export type MeetingClientAttributionPayload = {
+  workspaceId?: string;
+  cursor?: string | null;
+  batchSize?: number;
+};
+
+/**
+ * Publish a resumable Meeting.clientId backfill batch via QStash.
+ */
+export async function publishMeetingClientAttributionJob(
+  payload: MeetingClientAttributionPayload
+): Promise<string | null> {
+  if (!env.QSTASH_TOKEN) {
+    console.warn("QSTASH_TOKEN not configured — meeting attribution job skipped");
+    return null;
+  }
+
+  const baseUrl = env.NEXT_PUBLIC_APP_URL;
+  if (!baseUrl || baseUrl.includes("localhost") || baseUrl.includes("127.0.0.1")) {
+    console.warn(
+      "NEXT_PUBLIC_APP_URL must be a public URL for meeting attribution jobs"
+    );
+    return null;
+  }
+
+  const webhookUrl = `${baseUrl}/api/jobs/meeting-client-attribution`;
+  try {
+    const qstash = getQStashClient();
+    const published = await qstash.publishJSON({
+      url: webhookUrl,
+      body: payload,
+      retries: 3,
+      delay: 5,
+      headers: { "X-QStash-Debug": "true" },
+    });
+    return published.messageId;
+  } catch (error) {
+    console.error("Meeting attribution job publish failed:", error);
+    throw error;
+  }
+}
+
+export type EmailClassificationJobPayload = {
+  workspaceId: string;
+  evidenceItemId: string;
+};
+
+/**
+ * Publish email classification job. Payload is ids only — job re-reads content server-side.
+ */
+export async function publishEmailClassificationJob(
+  payload: EmailClassificationJobPayload
+): Promise<string | null> {
+  if (!env.QSTASH_TOKEN) {
+    console.warn("QSTASH_TOKEN not configured — email classification job skipped");
+    return null;
+  }
+
+  const baseUrl = env.NEXT_PUBLIC_APP_URL;
+  if (!baseUrl || baseUrl.includes("localhost") || baseUrl.includes("127.0.0.1")) {
+    console.warn(
+      "NEXT_PUBLIC_APP_URL must be a public URL for email classification jobs"
+    );
+    return null;
+  }
+
+  const webhookUrl = `${baseUrl}/api/jobs/email-classify`;
+  try {
+    const qstash = getQStashClient();
+    const published = await qstash.publishJSON({
+      url: webhookUrl,
+      body: payload,
+      retries: 3,
+      delay: 5,
+      headers: { "X-QStash-Debug": "true" },
+    });
+    return published.messageId;
+  } catch (error) {
+    console.error("Email classification job publish failed:", error);
+    throw error;
+  }
+}
+
+export type EvidenceEmbedBackfillPayload = {
+  workspaceId?: string;
+  cursor?: string | null;
+  batchSize?: number;
+};
+
+export async function publishEvidenceEmbedBackfillJob(
+  payload: EvidenceEmbedBackfillPayload
+): Promise<string | null> {
+  if (!env.QSTASH_TOKEN) {
+    console.warn("QSTASH_TOKEN not configured — embed backfill skipped");
+    return null;
+  }
+
+  const baseUrl = env.NEXT_PUBLIC_APP_URL;
+  if (!baseUrl || baseUrl.includes("localhost") || baseUrl.includes("127.0.0.1")) {
+    console.warn(
+      "NEXT_PUBLIC_APP_URL must be a public URL for embed backfill jobs"
+    );
+    return null;
+  }
+
+  const webhookUrl = `${baseUrl}/api/jobs/evidence-embed-backfill`;
+  try {
+    const qstash = getQStashClient();
+    const published = await qstash.publishJSON({
+      url: webhookUrl,
+      body: payload,
+      retries: 3,
+      delay: 5,
+      headers: { "X-QStash-Debug": "true" },
+    });
+    return published.messageId;
+  } catch (error) {
+    console.error("Embed backfill job publish failed:", error);
+    throw error;
+  }
+}

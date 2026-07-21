@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { Badge } from "~/components/ui/badge";
 import type { CommunicationThreadDto } from "~/lib/types/evidence";
 
 export function CommunicationsClient({
   threads,
+  failedClassificationCount = 0,
 }: {
   threads: CommunicationThreadDto[];
+  failedClassificationCount?: number;
 }) {
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-6">
@@ -15,7 +18,13 @@ export function CommunicationsClient({
           <h1 className="text-2xl font-semibold text-[#0D2818]">Communications</h1>
           <p className="text-sm text-muted-foreground">Email threads ingested from M365</p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex items-center gap-4">
+          {failedClassificationCount > 0 ? (
+            <Badge variant="destructive">
+              {failedClassificationCount} unclassified
+              {failedClassificationCount === 1 ? " message" : " messages"}
+            </Badge>
+          ) : null}
           <Link
             href="/integrations/m365-mail"
             className="text-sm text-[#2ECC71] hover:underline"

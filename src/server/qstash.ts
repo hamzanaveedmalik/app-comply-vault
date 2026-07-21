@@ -367,3 +367,51 @@ export async function publishZohoCrmNoteJob(
     throw error;
   }
 }
+
+/** Mailbox ingest (backfill / delta) — Epic B + Gmail adapter */
+export type MailboxIngestPayload = {
+  jobId: string;
+};
+
+/**
+ * Publish a mailbox ingest job via QStash.
+ * Prefer this over BullMQ on Vercel (serverless has no persistent worker).
+ * Returns null when QStash is not configured so callers can fall back to
+ * inline processing.
+ */
+export async function publishMailboxIngestJob(
+  payload: MailboxIngestPayload
+): Promise<string | null> {
+  if (!env.QSTASH_TOKEN) {
+    console.warn("QSTASH_TOKEN not configured — mailbox ingest job skipped");
+    return null;
+  }
+
+  const baseUrl = env.NEXT_PUBLIC_APP_URL;
+  if (!baseUrl || baseUrl.includes("localhost") || baseUrl.includes("127.0.0.1")) {
+    console.warn(
+      "NEXT_PUBLIC_APP_URL must be a public URL for mailbox ingest jobs"
+    );
+    return null;
+  }
+
+  const webhookUrl = `${baseUrl}/api/jobs/mailbox-ingest`;
+  try {
+    const qstash = getQStashClient();
+    const published = await qstash.publishJSON({
+      url: webhookUrl,
+      body: payload,
+      retries: 3,
+      delay: 5,
+      headers: { "X-QStash-Debug": "true" },
+    });
+    console.log("✅ Mailbox ingest job published", {
+      messageId: published.messageId,
+      jobId: payload.jobId,
+    });
+    return published.messageId;
+  } catch (error) {
+    console.error("❌ Mailbox ingest job publish failed:", error);
+    throw error;
+  }
+}

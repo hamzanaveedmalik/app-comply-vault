@@ -1,7 +1,6 @@
 import { requireAppAccess } from "~/server/auth/guards";
-import { startMailboxSync } from "~/server/mailbox/ingest";
-import { enqueueMailboxIngest } from "~/server/mailbox/queue";
-import { processIngestJob } from "~/server/mailbox/ingest";
+import { startMailboxSync, processIngestJob } from "~/server/mailbox/ingest";
+import { publishMailboxIngestJob } from "~/server/qstash";
 import { z } from "zod";
 
 const bodySchema = z.object({
@@ -32,7 +31,9 @@ export async function POST(
       userId: access.session.user.id,
     });
 
-    const queued = await enqueueMailboxIngest(jobId);
+    // Prefer QStash (works on Vercel serverless). Fall back to inline
+    // processing when QStash is unavailable (local / misconfigured).
+    const queued = await publishMailboxIngestJob({ jobId });
     if (!queued) {
       await processIngestJob(jobId);
     }

@@ -1,7 +1,6 @@
 import { db } from "~/server/db";
-import { startMailboxSync } from "~/server/mailbox/ingest";
-import { enqueueMailboxIngest } from "~/server/mailbox/queue";
-import { processIngestJob } from "~/server/mailbox/ingest";
+import { startMailboxSync, processIngestJob } from "~/server/mailbox/ingest";
+import { publishMailboxIngestJob } from "~/server/qstash";
 import { WorkspaceRole } from "../../../../../generated/prisma";
 
 export const runtime = "nodejs";
@@ -39,7 +38,8 @@ export async function POST(request: Request): Promise<Response> {
       kind: "DELTA",
       userId: actorUserId,
     });
-    const queued = await enqueueMailboxIngest(jobId);
+
+    const queued = await publishMailboxIngestJob({ jobId });
     if (!queued) {
       void processIngestJob(jobId).catch(() => undefined);
     }

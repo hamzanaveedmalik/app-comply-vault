@@ -24,7 +24,9 @@ import type { EmailTriageItemDto } from "~/lib/types/evidence";
 import type { ClientListItemDto, NeedsAttributionMeetingDto } from "~/lib/types/clients";
 import {
   attributeMeetingToClient,
+  clientSelectOptions,
   fetchWorkspaceClients,
+  normalizeClientName,
 } from "~/lib/triage-attribution-api";
 
 function reasonLabel(reason: NeedsAttributionMeetingDto["reason"]): string {
@@ -90,10 +92,18 @@ export function TriageClient({ workspaceId }: TriageClientProps): React.JSX.Elem
   }, [confirmItem, confirmMeeting, loadClients]);
 
   useEffect(() => {
-    if (!confirmMeeting?.clientId || clients.length === 0) return;
-    const suggested = confirmMeeting.clientId;
-    if (clients.some((c) => c.id === suggested)) {
-      setSelectedClientId(suggested);
+    if (!confirmMeeting || clients.length === 0) return;
+    if (
+      confirmMeeting.clientId &&
+      clients.some((c) => c.id === confirmMeeting.clientId)
+    ) {
+      setSelectedClientId(confirmMeeting.clientId);
+      return;
+    }
+    const key = normalizeClientName(confirmMeeting.clientName);
+    const match = clients.find((c) => normalizeClientName(c.name) === key);
+    if (match) {
+      setSelectedClientId(match.id);
     }
   }, [confirmMeeting, clients]);
 

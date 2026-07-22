@@ -5,6 +5,7 @@
 import { db } from "~/server/db";
 import { getHouseholdClientIds } from "./household";
 import { countCorrespondenceInPeriod } from "./activity";
+import { normalizeClientName } from "~/server/meetings/client-attribution";
 import type {
   ClientCorrespondenceRowDto,
   ClientDetailDto,
@@ -32,6 +33,61 @@ export async function listClientsForWorkspace(
     status: c.status,
     lastContactAt: c.lastContactAt?.toISOString() ?? null,
   }));
+}
+
+/**
+ * Legacy workspaces may have meetings with clientName strings but no Client rows.
+ * Create missing Client records from meetings still needing attribution so the
+ * triage dropdown can link a meeting to a durable client id.
+ */
+export async function ensureClientRecordsForAttribution(
+  workspaceId: string,
+): Promise<void> {
+  const meetings = await db.meeting.findMany({
+    where: {
+      workspaceId,
+      clientName: { not: "" },
+      OR: [{ clientId: null }, { clientMatchConfidence: "NAME_EXACT" }],
+    },
+    select: { clientName: true },
+  });
+
+  if (meetings.length === 0) {
+    return;
+  }
+
+  const existing = await db.client.findMany({
+    where: { workspaceId, deletedAt: null },
+    select: { name: true },
+  });
+  const existingKeys = new Set(existing.map((c) => normalizeClientName(c.name)));
+
+  const namesToCreate: string[] = [];
+  const pendingKeys = new Set<string>();
+  for (const meeting of meetings) {
+    const name = meeting.clientName.trim();
+    if (!name) continue;
+    const key = normalizeClientName(name);
+    if (!key || existingKeys.has(key) || pendingKeys.has(key)) continue;
+    pendingKeys.add(key);
+    namesToCreate.push(name);
+  }
+
+  if (namesToCreate.length === 0) {
+    return;
+  }
+
+  await db.$transaction(
+    namesToCreate.map((name) =>
+      db.client.create({
+        data: {
+          workspaceId,
+          name,
+          status: "CLIENT",
+        },
+      }),
+    ),
+  );
 }
 
 export async function getClientDetail(args: {

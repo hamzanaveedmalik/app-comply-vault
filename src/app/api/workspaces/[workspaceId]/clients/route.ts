@@ -1,7 +1,10 @@
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
-import { listClientsForWorkspace } from "~/server/clients/queries";
+import {
+  ensureClientRecordsForAttribution,
+  listClientsForWorkspace,
+} from "~/server/clients/queries";
 
 export async function GET(
   _request: Request,
@@ -23,6 +26,7 @@ export async function GET(
       return Response.json({ success: false, error: "Forbidden" }, { status: 403 });
     }
 
+    await ensureClientRecordsForAttribution(workspaceId);
     const data = await listClientsForWorkspace(workspaceId);
     return Response.json({ success: true, data });
   } catch (e) {

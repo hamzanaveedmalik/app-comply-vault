@@ -6,6 +6,11 @@ type ClientsResponse =
 
 type AttributionResponse = { success: boolean; error?: string };
 
+/** Normalise client names for matching (mirrors server attribution logic). */
+export function normalizeClientName(name: string): string {
+  return name.trim().toLowerCase().replace(/\s+/g, " ");
+}
+
 export async function fetchWorkspaceClients(
   workspaceId: string,
 ): Promise<ClientsResponse> {

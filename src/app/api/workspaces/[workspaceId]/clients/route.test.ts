@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const authMock = vi.fn();
 const findFirstMembership = vi.fn();
+const ensureClientRecordsForAttribution = vi.fn();
 const listClientsForWorkspace = vi.fn();
 
 vi.mock("~/server/auth", () => ({
@@ -17,6 +18,8 @@ vi.mock("~/server/db", () => ({
 }));
 
 vi.mock("~/server/clients/queries", () => ({
+  ensureClientRecordsForAttribution: (...args: unknown[]) =>
+    ensureClientRecordsForAttribution(...args),
   listClientsForWorkspace: (...args: unknown[]) => listClientsForWorkspace(...args),
 }));
 
@@ -25,6 +28,7 @@ import { GET } from "./route";
 beforeEach(() => {
   authMock.mockReset();
   findFirstMembership.mockReset();
+  ensureClientRecordsForAttribution.mockReset();
   listClientsForWorkspace.mockReset();
 });
 
@@ -32,8 +36,9 @@ describe("GET /api/workspaces/[workspaceId]/clients", () => {
   it("returns clients for an authorized workspace member", async () => {
     authMock.mockResolvedValue({ user: { id: "user-1" } });
     findFirstMembership.mockResolvedValue({ id: "membership-1" });
+    ensureClientRecordsForAttribution.mockResolvedValue(undefined);
     listClientsForWorkspace.mockResolvedValue([
-      { id: "client-a", name: "Robert Calloway", status: "ACTIVE", lastContactAt: null },
+      { id: "client-a", name: "Robert and Susan", status: "CLIENT", lastContactAt: null },
     ]);
 
     const res = await GET(new Request("http://localhost"), {
@@ -44,6 +49,7 @@ describe("GET /api/workspaces/[workspaceId]/clients", () => {
     expect(res.status).toBe(200);
     expect(json.success).toBe(true);
     expect(json.data).toHaveLength(1);
+    expect(ensureClientRecordsForAttribution).toHaveBeenCalledWith("ws-1");
     expect(listClientsForWorkspace).toHaveBeenCalledWith("ws-1");
   });
 

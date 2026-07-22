@@ -236,11 +236,12 @@ export type RiskFlag = {
   explanation: string;
 };
 
+/** Live IAPD firm (not a customer). Used only for the AdvizorStack walkthrough. */
 export const DEMO_FIRM = {
-  name: "Secure Investment Management, LLC",
-  location: "Tucson, AZ",
-  crd: "141195",
-  aum: "$42.9M AUM",
+  name: "A Small Investment, LLC",
+  location: "Humble, TX",
+  crd: "332816",
+  aum: "$8.4M AUM",
 };
 
 /**

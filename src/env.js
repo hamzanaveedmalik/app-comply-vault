@@ -102,6 +102,8 @@ export const env = createEnv({
     NEXT_PUBLIC_APP_URL: z.string().optional(),
     NEXT_PUBLIC_DEMO_MODE: z.string().optional(),
     NEXT_PUBLIC_EMAIL_INTELLIGENCE: z.string().optional(),
+    /** Partner-facing mailbox label; hides test Gmail addresses on the integrations page. */
+    NEXT_PUBLIC_DEMO_MAILBOX_LABEL: z.string().optional(),
   },
 
   /**
@@ -177,6 +179,7 @@ export const env = createEnv({
     EMAIL_INTELLIGENCE_ENABLED: process.env.EMAIL_INTELLIGENCE_ENABLED,
     NEXT_PUBLIC_DEMO_MODE: process.env.NEXT_PUBLIC_DEMO_MODE,
     NEXT_PUBLIC_EMAIL_INTELLIGENCE: process.env.NEXT_PUBLIC_EMAIL_INTELLIGENCE,
+    NEXT_PUBLIC_DEMO_MAILBOX_LABEL: process.env.NEXT_PUBLIC_DEMO_MAILBOX_LABEL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

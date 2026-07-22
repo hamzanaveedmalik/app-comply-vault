@@ -10,6 +10,15 @@ import type { GmailWorkspaceStatus } from "~/lib/types/evidence";
 
 type MailFolder = { id: string; displayName: string };
 
+const TEST_MAILBOX_RE = /complyvaultco@gmail\.com/i;
+
+function displayMailboxAddress(address: string): string {
+  const alias = process.env.NEXT_PUBLIC_DEMO_MAILBOX_LABEL?.trim();
+  if (alias) return alias;
+  if (TEST_MAILBOX_RE.test(address)) return "compliance@demo.complyvault.co";
+  return address;
+}
+
 export function GmailMailClient({
   workspaceStatus,
   connected,
@@ -154,7 +163,9 @@ export function GmailMailClient({
       </div>
 
       {mailbox && (
-        <p className="text-sm text-green-700">Connected mailbox: {decodeURIComponent(mailbox)}</p>
+        <p className="text-sm text-green-700">
+          Connected mailbox: {displayMailboxAddress(decodeURIComponent(mailbox))}
+        </p>
       )}
 
       <section className="space-y-4">
@@ -168,7 +179,7 @@ export function GmailMailClient({
             <div key={c.id} className="rounded-lg border p-4 space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <p className="font-medium">{c.mailboxAddress}</p>
+                  <p className="font-medium">{displayMailboxAddress(c.mailboxAddress)}</p>
                   <p className="text-xs text-muted-foreground">
                     {c.status} · {c.consentMode} · last sync{" "}
                     {c.lastSyncAt ? new Date(c.lastSyncAt).toLocaleString() : "never"}

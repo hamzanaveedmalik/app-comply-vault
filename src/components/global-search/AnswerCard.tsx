@@ -215,8 +215,6 @@ export function AnswerCard({
               </span>
               <span>·</span>
               <span>{formatLatency(state.latencyMs)}</span>
-              <span>·</span>
-              <span>{state.model}</span>
             </Fragment>
           </div>
         </div>

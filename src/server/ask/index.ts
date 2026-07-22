@@ -477,6 +477,7 @@ export async function askComplyVault(
   }
 
   const citations = buildCitations(evidence);
+  const answer = coerceAnswerAgainstEvidence(rawAnswer, evidence);
 
   await safeAudit(prisma, {
     workspaceId: input.workspaceId,
@@ -495,18 +496,58 @@ export async function askComplyVault(
     latencyMs: Date.now() - startedAt,
     mode: retrievalMode,
     outcome: "answered",
+    ...(answer !== rawAnswer ? { answerCoerced: true } : {}),
     ...(input.meetingId ? { scopedToMeetingId: input.meetingId } : {}),
     ...(input.windowDays ? { windowDays: input.windowDays } : {}),
   });
 
   return {
     kind: "answer",
-    answer: rawAnswer,
+    answer,
     citations,
     retrieval,
     model,
     latencyMs: Date.now() - startedAt,
   };
+}
+
+/**
+ * Belt-and-suspenders: the model sometimes emits the empty-retrieval refusal
+ * even when we shipped evidence (keyword/hybrid hits). Citations are always
+ * structural from retrieval, so a refusal here would contradict the UI.
+ */
+export function coerceAnswerAgainstEvidence(
+  rawAnswer: string,
+  evidence: ScoredEvidence[]
+): string {
+  if (evidence.length === 0) return rawAnswer;
+
+  const trimmed = rawAnswer.trim();
+  const isEmptyRefusal =
+    trimmed === NO_EVIDENCE_ANSWER ||
+    trimmed === NO_CORRESPONDENCE_ANSWER ||
+    /no matching correspondence found/i.test(trimmed) ||
+    /i don't have evidence for that/i.test(trimmed);
+
+  if (!isEmptyRefusal) return rawAnswer;
+
+  const top = evidence[0]!;
+  const excerptRaw =
+    top.excerpts[0]?.text?.trim() ||
+    top.candidate.searchableText?.trim() ||
+    "";
+  const excerpt =
+    excerptRaw.length > 160
+      ? excerptRaw.slice(0, 159).trimEnd() + "…"
+      : excerptRaw;
+  const date = top.candidate.meetingDate.toISOString().slice(0, 10);
+  const name = top.candidate.clientName;
+  const quote = excerpt ? ` "${excerpt}"` : "";
+
+  if (top.candidate.sourceType === "EMAIL") {
+    return `Related email correspondence was found. On ${date} with ${name}:${quote} See the cited sources for the full thread.`;
+  }
+  return `Related meeting evidence was found. On ${date} with ${name}:${quote} See the cited sources.`;
 }
 
 /**

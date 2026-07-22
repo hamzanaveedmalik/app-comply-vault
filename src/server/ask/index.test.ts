@@ -204,6 +204,23 @@ describe("askComplyVault — happy path", () => {
     expect(cited).toEqual(["Rob Cabrera"]);
     expect(cited).not.toContain("Sarah Johnson");
   });
+it("coerces LLM empty-refusal when retrieval returned evidence", async () => {
+    const { prisma } = buildStubPrisma([meeting({})]);
+    const completion = vi.fn(
+      async () => "No matching correspondence found in your workspace."
+    );
+
+    const outcome = await askComplyVault(
+      { question: QUESTION_FEE, workspaceId: "wA", userId: "user-1" },
+      { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
+    );
+
+    expect(outcome.kind).toBe("answer");
+    if (outcome.kind !== "answer") throw new Error("unreachable");
+    expect(outcome.answer).not.toMatch(/no matching correspondence/i);
+    expect(outcome.citations).toHaveLength(1);
+    expect(outcome.citations[0]?.meetingId).toBe("m1");
+  });
 });
 
 describe("askComplyVault — no evidence", () => {
@@ -466,6 +483,69 @@ describe("askComplyVault — input scoping", () => {
     expect(outcome.kind).toBe("answer");
     if (outcome.kind !== "answer") throw new Error("unreachable");
     expect(outcome.citations.map((c) => c.meetingId)).toEqual(["m-recent"]);
+  });
+});
+
+describe("coerceAnswerAgainstEvidence", () => {
+  it("overrides empty-retrieval refusal when evidence is present", async () => {
+    const { coerceAnswerAgainstEvidence } = await import("./index");
+    const evidence = [
+      {
+        score: 10,
+        matchedFields: ["searchableText"],
+        excerpts: [
+          {
+            text: "let's move all your pension funds to finance a porsche",
+          },
+        ],
+        candidate: {
+          id: "ev1",
+          sourceType: "EMAIL" as const,
+          clientName: "Margaret Ellison",
+          meetingType: "Email",
+          meetingDate: new Date("2026-07-10T00:00:00Z"),
+          transcript: null,
+          extraction: null,
+          searchableText: "pension porsche",
+          threadId: "t1",
+          messageId: "m1",
+          contentSha256: "abc",
+        },
+      },
+    ];
+
+    const coerced = coerceAnswerAgainstEvidence(
+      "No matching correspondence found in your workspace.",
+      evidence
+    );
+    expect(coerced).not.toMatch(/no matching correspondence/i);
+    expect(coerced).toContain("Margaret Ellison");
+    expect(coerced).toContain("2026-07-10");
+    expect(coerced.toLowerCase()).toContain("porsche");
+  });
+
+  it("leaves a grounded answer unchanged", async () => {
+    const { coerceAnswerAgainstEvidence } = await import("./index");
+    const evidence = [
+      {
+        score: 10,
+        matchedFields: ["searchableText"],
+        excerpts: [{ text: "fee schedule update" }],
+        candidate: {
+          id: "ev1",
+          sourceType: "EMAIL" as const,
+          clientName: "Margaret Ellison",
+          meetingType: "Email",
+          meetingDate: new Date("2026-07-10T00:00:00Z"),
+          transcript: null,
+          extraction: null,
+          searchableText: "fees",
+        },
+      },
+    ];
+    const raw =
+      "On 2026-07-10, Margaret Ellison emailed about the fee schedule update.";
+    expect(coerceAnswerAgainstEvidence(raw, evidence)).toBe(raw);
   });
 });
 

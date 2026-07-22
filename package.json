@@ -16,6 +16,7 @@
     "postinstall": "prisma generate",
     "preview": "prisma migrate deploy && next build && next start",
     "start": "next start",
+    "db:seed-demo": "npx tsx scripts/seed-demo.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "cypress run",

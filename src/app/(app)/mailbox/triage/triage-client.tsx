@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -22,6 +22,10 @@ import { Badge } from "~/components/ui/badge";
 import { toast } from "sonner";
 import type { EmailTriageItemDto } from "~/lib/types/evidence";
 import type { ClientListItemDto, NeedsAttributionMeetingDto } from "~/lib/types/clients";
+import {
+  attributeMeetingToClient,
+  fetchWorkspaceClients,
+} from "~/lib/triage-attribution-api";
 
 function reasonLabel(reason: NeedsAttributionMeetingDto["reason"]): string {
   if (reason === "low_confidence") return "Low confidence name match";
@@ -29,37 +33,44 @@ function reasonLabel(reason: NeedsAttributionMeetingDto["reason"]): string {
   return "Unmatched";
 }
 
-export function TriageClient() {
+type TriageClientProps = {
+  workspaceId: string;
+};
+
+export function TriageClient({ workspaceId }: TriageClientProps): React.JSX.Element {
   const [items, setItems] = useState<EmailTriageItemDto[]>([]);
   const [meetings, setMeetings] = useState<NeedsAttributionMeetingDto[]>([]);
   const [clients, setClients] = useState<ClientListItemDto[]>([]);
   const [loading, setLoading] = useState(true);
+  const [clientsLoading, setClientsLoading] = useState(false);
   const [confirmItem, setConfirmItem] = useState<EmailTriageItemDto | null>(null);
   const [confirmMeeting, setConfirmMeeting] = useState<NeedsAttributionMeetingDto | null>(
-    null
+    null,
   );
   const [selectedClientId, setSelectedClientId] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    void load();
-  }, []);
+  const loadClients = useCallback(async (): Promise<void> => {
+    if (!workspaceId) return;
+    setClientsLoading(true);
+    const result = await fetchWorkspaceClients(workspaceId);
+    setClientsLoading(false);
+    if (!result.success) {
+      toast.error(result.error ?? "Failed to load clients");
+      setClients([]);
+      return;
+    }
+    setClients(result.data);
+  }, [workspaceId]);
 
   async function load(): Promise<void> {
     setLoading(true);
-    const [triageRes, clientsRes, meetingsRes] = await Promise.all([
+    const [triageRes, meetingsRes] = await Promise.all([
       fetch("/api/mailbox/triage"),
-      fetch("/api/clients"),
       fetch("/api/meetings/attribution"),
     ]);
     const json = (await triageRes.json()) as { success: boolean; data?: EmailTriageItemDto[] };
     if (json.success && json.data) setItems(json.data);
-
-    const clientsJson = (await clientsRes.json()) as {
-      success: boolean;
-      data?: ClientListItemDto[];
-    };
-    if (clientsJson.success && clientsJson.data) setClients(clientsJson.data);
 
     const meetingsJson = (await meetingsRes.json()) as {
       success: boolean;
@@ -69,10 +80,27 @@ export function TriageClient() {
     setLoading(false);
   }
 
+  useEffect(() => {
+    void load();
+  }, []);
+
+  useEffect(() => {
+    if (!confirmItem && !confirmMeeting) return;
+    void loadClients();
+  }, [confirmItem, confirmMeeting, loadClients]);
+
+  useEffect(() => {
+    if (!confirmMeeting?.clientId || clients.length === 0) return;
+    const suggested = confirmMeeting.clientId;
+    if (clients.some((c) => c.id === suggested)) {
+      setSelectedClientId(suggested);
+    }
+  }, [confirmMeeting, clients]);
+
   async function resolve(
     id: string,
     status: "CONFIRMED" | "EXTERNAL" | "IRRELEVANT",
-    clientId?: string
+    clientId?: string,
   ): Promise<void> {
     setSubmitting(true);
     const res = await fetch(`/api/mailbox/triage/${id}`, {
@@ -95,7 +123,7 @@ export function TriageClient() {
     }
     if (status === "CONFIRMED" && json.data) {
       toast.success(
-        `Resolved. ${json.data.threadsUpdated} thread${json.data.threadsUpdated === 1 ? "" : "s"} updated; ${json.data.evidenceAttached} message${json.data.evidenceAttached === 1 ? "" : "s"} attached.`
+        `Resolved. ${json.data.threadsUpdated} thread${json.data.threadsUpdated === 1 ? "" : "s"} updated; ${json.data.evidenceAttached} message${json.data.evidenceAttached === 1 ? "" : "s"} attached.`,
       );
     } else {
       toast.success("Resolved");
@@ -107,12 +135,7 @@ export function TriageClient() {
 
   async function resolveMeeting(meetingId: string, clientId: string): Promise<void> {
     setSubmitting(true);
-    const res = await fetch(`/api/meetings/attribution/${meetingId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ clientId }),
-    });
-    const json = (await res.json()) as { success: boolean; error?: string };
+    const json = await attributeMeetingToClient(meetingId, clientId);
     setSubmitting(false);
     if (!json.success) {
       toast.error(json.error ?? "Failed");
@@ -218,7 +241,7 @@ export function TriageClient() {
                   size="sm"
                   className="bg-[#2ECC71] text-[#0D2818]"
                   onClick={() => {
-                    setSelectedClientId(m.clientId ?? "");
+                    setSelectedClientId("");
                     setConfirmMeeting(m);
                   }}
                 >
@@ -250,9 +273,15 @@ export function TriageClient() {
           </DialogHeader>
           <div className="space-y-2 py-2">
             <Label htmlFor="triage-client">Client</Label>
-            <Select value={selectedClientId} onValueChange={setSelectedClientId}>
+            <Select
+              value={selectedClientId}
+              onValueChange={setSelectedClientId}
+              disabled={clientsLoading}
+            >
               <SelectTrigger id="triage-client">
-                <SelectValue placeholder="Select client" />
+                <SelectValue
+                  placeholder={clientsLoading ? "Loading clients…" : "Select client"}
+                />
               </SelectTrigger>
               <SelectContent>
                 {clients.map((c) => (
@@ -262,7 +291,9 @@ export function TriageClient() {
                 ))}
               </SelectContent>
             </Select>
-            {clients.length === 0 ? (
+            {clientsLoading ? (
+              <p className="text-xs text-muted-foreground">Loading clients…</p>
+            ) : clients.length === 0 ? (
               <p className="text-xs text-muted-foreground">
                 No clients in this workspace yet. Create a client record before confirming.
               </p>
@@ -280,7 +311,7 @@ export function TriageClient() {
             </Button>
             <Button
               className="bg-[#2ECC71] text-[#0D2818]"
-              disabled={!selectedClientId || submitting || !confirmItem}
+              disabled={!selectedClientId || submitting || !confirmItem || clientsLoading}
               onClick={() => {
                 if (!confirmItem || !selectedClientId) return;
                 void resolve(confirmItem.id, "CONFIRMED", selectedClientId);
@@ -312,9 +343,15 @@ export function TriageClient() {
           </DialogHeader>
           <div className="space-y-2 py-2">
             <Label htmlFor="meeting-client">Client</Label>
-            <Select value={selectedClientId} onValueChange={setSelectedClientId}>
+            <Select
+              value={selectedClientId}
+              onValueChange={setSelectedClientId}
+              disabled={clientsLoading}
+            >
               <SelectTrigger id="meeting-client">
-                <SelectValue placeholder="Select client" />
+                <SelectValue
+                  placeholder={clientsLoading ? "Loading clients…" : "Select client"}
+                />
               </SelectTrigger>
               <SelectContent>
                 {clients.map((c) => (
@@ -324,6 +361,13 @@ export function TriageClient() {
                 ))}
               </SelectContent>
             </Select>
+            {clientsLoading ? (
+              <p className="text-xs text-muted-foreground">Loading clients…</p>
+            ) : clients.length === 0 ? (
+              <p className="text-xs text-muted-foreground">
+                No clients in this workspace yet. Create a client record before attributing.
+              </p>
+            ) : null}
           </div>
           <DialogFooter>
             <Button
@@ -337,7 +381,7 @@ export function TriageClient() {
             </Button>
             <Button
               className="bg-[#2ECC71] text-[#0D2818]"
-              disabled={!selectedClientId || submitting || !confirmMeeting}
+              disabled={!selectedClientId || submitting || !confirmMeeting || clientsLoading}
               onClick={() => {
                 if (!confirmMeeting || !selectedClientId) return;
                 void resolveMeeting(confirmMeeting.id, selectedClientId);

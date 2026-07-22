@@ -8,5 +8,5 @@ export default async function TriagePage() {
     if (access.status === 401) redirect("/auth/signin");
     return <div className="p-6 text-destructive">{access.error}</div>;
   }
-  return <TriageClient />;
+  return <TriageClient workspaceId={access.workspaceId} />;
 }

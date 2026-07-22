@@ -18,9 +18,16 @@
 
 import crypto from "node:crypto";
 import { config } from "dotenv";
+import ws from "ws";
+import { neonConfig, Pool } from "@neondatabase/serverless";
+import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaClient } from "../generated/prisma/index.js";
 
 config();
+
+// Local/corporate TLS MitM breaks Prisma's built-in engine; Neon WS adapter works.
+neonConfig.webSocketConstructor = ws;
+neonConfig.pipelineConnect = false;
 
 const DEMO_FIRM = {
   workspaceName: "A Small Investment, LLC",
@@ -125,7 +132,9 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const prisma = new PrismaClient();
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const adapter = new PrismaNeon(pool);
+  const prisma = new PrismaClient({ adapter });
   const now = new Date();
 
   try {
@@ -569,6 +578,7 @@ async function main(): Promise<void> {
     );
   } finally {
     await prisma.$disconnect();
+    await pool.end();
   }
 }
 

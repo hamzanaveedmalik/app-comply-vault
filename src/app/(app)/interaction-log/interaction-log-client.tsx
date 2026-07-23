@@ -109,9 +109,9 @@ export default function InteractionLogClient({
         <CardHeader>
           <CardTitle>Filters</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div>
+            <div className="flex min-w-0 flex-col gap-2">
               <Label htmlFor="clientName">Client Name</Label>
               <Input
                 id="clientName"
@@ -120,7 +120,7 @@ export default function InteractionLogClient({
                 placeholder="Search by client..."
               />
             </div>
-            <div>
+            <div className="flex min-w-0 flex-col gap-2">
               <Label htmlFor="dateFrom">Date From</Label>
               <Input
                 id="dateFrom"
@@ -129,7 +129,7 @@ export default function InteractionLogClient({
                 onChange={(e) => handleFilterChange("dateFrom", e.target.value)}
               />
             </div>
-            <div>
+            <div className="flex min-w-0 flex-col gap-2">
               <Label htmlFor="dateTo">Date To</Label>
               <Input
                 id="dateTo"
@@ -138,7 +138,7 @@ export default function InteractionLogClient({
                 onChange={(e) => handleFilterChange("dateTo", e.target.value)}
               />
             </div>
-            <div>
+            <div className="flex min-w-0 flex-col gap-2">
               <Label htmlFor="type">Meeting Type</Label>
               <Input
                 id="type"
@@ -147,7 +147,7 @@ export default function InteractionLogClient({
                 placeholder="e.g., Annual Review"
               />
             </div>
-            <div>
+            <div className="flex min-w-0 flex-col gap-2">
               <Label htmlFor="keywords">Keywords</Label>
               <Input
                 id="keywords"
@@ -156,7 +156,7 @@ export default function InteractionLogClient({
                 placeholder="Search keywords..."
               />
             </div>
-            <div>
+            <div className="flex min-w-0 flex-col gap-2">
               <Label htmlFor="recommendations">Recommendations</Label>
               <Select
                 value={filters.recommendations || "all"}
@@ -164,7 +164,7 @@ export default function InteractionLogClient({
                   handleFilterChange("recommendations", value === "all" ? "" : value)
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger id="recommendations" className="w-full">
                   <SelectValue placeholder="All" />
                 </SelectTrigger>
                 <SelectContent>
@@ -174,7 +174,7 @@ export default function InteractionLogClient({
                 </SelectContent>
               </Select>
             </div>
-            <div>
+            <div className="flex min-w-0 flex-col gap-2">
               <Label htmlFor="finalized">Finalized</Label>
               <Select
                 value={filters.finalized || "all"}
@@ -182,7 +182,7 @@ export default function InteractionLogClient({
                   handleFilterChange("finalized", value === "all" ? "" : value)
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger id="finalized" className="w-full">
                   <SelectValue placeholder="All" />
                 </SelectTrigger>
                 <SelectContent>
@@ -192,11 +192,11 @@ export default function InteractionLogClient({
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-end">
-              <Button variant="outline" onClick={clearFilters} className="w-full">
-                Clear Filters
-              </Button>
-            </div>
+          </div>
+          <div>
+            <Button variant="outline" onClick={clearFilters}>
+              Clear Filters
+            </Button>
           </div>
         </CardContent>
       </Card>

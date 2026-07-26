@@ -10,7 +10,7 @@ const requestTrialSchema = z.object({
   email: z.string().email("Invalid email address"),
   name: z.string().min(1, "Name is required").max(200).optional(),
   company: z.string().max(200).optional(),
-  source: z.enum(["complyvault.co", "complyvault.co/uk"]).optional(),
+  source: z.enum(["complyvault.co"]).optional(),
 });
 
 /**

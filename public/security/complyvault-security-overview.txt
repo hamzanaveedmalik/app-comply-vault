@@ -1,0 +1,48 @@
+ComplyVault — Security Overview
+Version: 2026-07-26
+================================================
+
+This document describes security and compliance-relevant controls that are
+implemented in the ComplyVault product today. It is provided for download
+without an email gate (CV-WEB-01).
+
+Certification
+-------------
+SOC 2 Type II: Not started.
+No observation window has been opened and no SOC 2 report has been issued.
+
+Implemented controls (summary)
+------------------------------
+- Sealed audit packs written to Object Lock storage, keyed by SHA-256, with
+  fiscal-year retention expiry.
+- Append-oriented seal ledger (RecordSeal) with SELECT/INSERT-oriented app
+  privileges by design.
+- Fiscal-year retention policy on the workspace (years + fiscal year end).
+- Documented source-media posture (RETAIN vs DISCARD) required before ingest.
+- Supersession of sealed records without deleting the original seal.
+- External deposits labeled as convenience copies; sealed object is system
+  of record.
+- Encrypted integration secrets at rest; workspace RBAC; audit events on
+  compliance mutations.
+
+Not claimed here
+----------------
+- Legal hold as a completed marketed control (pending CV-TR-05).
+- SOC 2 "in progress" without a published observation-window start date.
+- FCA / UK supervision product track (removed per CV-WEB-04).
+
+Subprocessors
+-------------
+See https://complyvault.co/trust for the versioned subprocessor list
+(version and effective date are published on that page).
+
+Capture honesty
+---------------
+Live wired capture in the IntegrationHub registry: Zoom auto-ingest.
+Manual upload is supported for meetings from other platforms.
+Roadmap connectors are listed separately on the Trust page without ship dates.
+
+Contact
+-------
+Workspace administrators: configure retention and media posture in Settings.
+Security questions about your tenant: contact your ComplyVault account owner.

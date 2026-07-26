@@ -47,8 +47,12 @@ export async function middleware(request: NextRequest) {
     const marketingPublicRoutes = [
       "/",
       "/uk",
+      "/trust",
+      "/privacy",
+      "/terms",
+      "/security",
       "/api/trial",
-      "/api/auth", // Auth endpoints for marketing site
+      "/api/auth",
     ];
 
     const isMarketingPublicRoute = marketingPublicRoutes.some((route) =>

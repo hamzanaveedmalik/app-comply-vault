@@ -5,8 +5,9 @@ import { DM_Sans } from "next/font/google";
 import { Toaster } from "~/components/ui/sonner";
 
 export const metadata: Metadata = {
-  title: "Comply Vault",
-  description: "Exam-ready client interaction records in <10 minutes",
+  title: "ComplyVault",
+  description:
+    "Meeting records your CCO can seal for exam documentation — with human review before anything is final.",
   icons: [{ rel: "icon", url: "/favicon.svg", type: "image/svg+xml" }],
 };
 

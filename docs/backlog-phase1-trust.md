@@ -4,7 +4,7 @@
 **Epic:** EPIC-TR (Trust Layer)  
 **Supersedes:** `backlog-phase1-trust.md` v1.0  
 **Window:** Weeks 1 to 7  
-**Status:** 🔨 in progress — CV-TR-02a ✅; CV-TR-04 / 04a ✅; CV-TR-06 / 06a ✅; CV-TR-07 ✅; CV-TR-19 ✅; CV-TR-01 / 02 / 18 ✅; CV-TR-16 / 17 ✅ code (2026-07-26)
+**Status:** ✅ Phase 1 product/code complete (2026-07-26) — remaining: CV-TR-01a deploy validation, sealed-bucket ops; CV-TR-11 optional/deferred
 
 **Patch summary.** Added CV-TR-02a (deterministic bytes, fail-closed gate), CV-TR-04a and CV-TR-06a (existing-tenant migrations), CV-TR-18 (external deposit custody), CV-TR-19 (watermark exclusion). Rewrote CV-TR-01 dual-write as a content-addressed idempotent protocol. Removed coverage AC from CV-TR-17. Corrected cover-page copy, retention default conflict, timezone arithmetic, role names, discard scope, and the CV-WEB-02 integration inventory. Fixed `postureSetById` / `postureSetAt`.
 
@@ -156,21 +156,43 @@ narratives between them; presented as one logical record.
 ## Remaining Phase 1 stories
 
 CV-TR-01a (deployment verification), ops for sealed bucket / COMPLIANCE mode,
-CV-TR-11 (SOC 2, non-engineering), CV-WEB-01..04.
+CV-TR-11 (SOC 2 — deferred; no certification spend required to close Phase 1 product work).
+
+### CV-WEB-01 — Trust page ✅ code (2026-07-26)
+
+Public `/trust` with implemented controls, SOC 2 status **Not started**, versioned
+subprocessors, and direct download of `public/security/complyvault-security-overview.txt`
+(no form gate). Legal hold omitted until CV-TR-05. `/privacy` and `/terms` stubs
+added for Teams manifest URLs.
+
+### CV-WEB-02 — Integrations narrative ✅ code (2026-07-26)
+
+Homepage + trust page: Zoom auto-ingest live; manual upload for other platforms;
+roadmap list separated with no dates. Vitest diffs
+`MARKETING_LIVE_REGISTRY_KEYS` against `adapters` registry.
+
+### CV-WEB-03 — ROI claims ✅ code (2026-07-26)
+
+Removed unsupported “&lt;10 minutes” claim. Empty quantified-claims registry;
+marketing-page grep fails CI on unsupported ROI / time-saved patterns.
+
+### CV-WEB-04 — FCA claim ✅ code (2026-07-26)
+
+`/uk` retired page states no FCA track; trial `source` no longer accepts
+`complyvault.co/uk`.
 
 ### Sequencing (revised)
 
 ```
-week 1 ── CV-TR-11 (external, runs throughout)
+week 1 ── CV-TR-11 (optional / deferred — no spend required for Phase 1 close)
        ── CV-TR-01a (code done; deploy validation pending)
        ── CV-TR-02a ✅
        ── CV-TR-04 ✅ ─┬─ CV-TR-04a ✅
                       └─ CV-TR-06 ✅ ─── CV-TR-06a ✅ ─── CV-TR-07 ✅
 
 CV-TR-02a ✅ + CV-TR-01a + CV-TR-19 ✅ ── CV-TR-01 ✅ ── CV-TR-02 ✅
-                                      └── CV-TR-18 ✅ (same release as TR-01)
+                                      └── CV-TR-18 ✅
                                           └── CV-TR-16 ✅ ── CV-TR-17 ✅
 
-CV-WEB-02, 03, 04 independent
-CV-WEB-01 gated on CV-TR-11 start date
+CV-WEB-01 ✅ · CV-WEB-02 ✅ · CV-WEB-03 ✅ · CV-WEB-04 ✅
 ```

@@ -4,7 +4,7 @@ import { generateAuditPack, generateExportFilename } from "~/server/export";
 import type { ExtractionData } from "~/server/extraction/types";
 import type { TranscriptSegment } from "~/server/transcription/types";
 import type { Meeting, User } from "~/server/export/types";
-import { getEntitlements, isTrialExpired } from "~/server/billing/entitlements";
+import { resolveExportWatermark } from "~/server/export/watermark";
 import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
 import {
   buildEmailCorrespondenceSection,
@@ -133,17 +133,16 @@ const EXPORTABLE_MEETING_STATUSES = new Set([
       return Response.json({ error: "Workspace not found" }, { status: 404 });
     }
 
-    // Determine if export should be watermarked
-    // requireAppAccess already ensures workspace is active/trialing, so we only need to check for watermarking
-    const trialExpired =
-      workspace.billingStatus === "TRIALING" && isTrialExpired(workspace.trialEndsAt);
-    const entitlements = getEntitlements({
-      billingStatus: workspace.billingStatus,
-      planTier: workspace.planTier,
-      trialEndsAt: workspace.trialEndsAt,
+    // Manual export is a draft/convenience download — watermark per entitlement (CV-TR-19).
+    // Sealed packs use purpose "seal" and are never watermarked.
+    const watermarked = resolveExportWatermark({
+      purpose: "draft",
+      workspace: {
+        billingStatus: workspace.billingStatus,
+        planTier: workspace.planTier,
+        trialEndsAt: workspace.trialEndsAt,
+      },
     });
-    // getEntitlements always returns a value (fallback to ENTITLEMENTS.FREE)
-    const watermarked = (entitlements?.exportsWatermarked ?? false) || trialExpired;
 
     // Get flags for this meeting
     const flagsRaw = await db.flag.findMany({

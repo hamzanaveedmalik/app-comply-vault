@@ -4,7 +4,7 @@
 **Epic:** EPIC-TR (Trust Layer)  
 **Supersedes:** `backlog-phase1-trust.md` v1.0  
 **Window:** Weeks 1 to 7  
-**Status:** 🔨 in progress — CV-TR-02a ✅; CV-TR-04 / 04a schema+API ✅; CV-TR-06 / 06a ✅; CV-TR-07 ✅ (2026-07-26)
+**Status:** 🔨 in progress — CV-TR-02a ✅; CV-TR-04 / 04a ✅; CV-TR-06 / 06a ✅; CV-TR-07 ✅; CV-TR-19 ✅ (2026-07-26)
 
 **Patch summary.** Added CV-TR-02a (deterministic bytes, fail-closed gate), CV-TR-04a and CV-TR-06a (existing-tenant migrations), CV-TR-18 (external deposit custody), CV-TR-19 (watermark exclusion). Rewrote CV-TR-01 dual-write as a content-addressed idempotent protocol. Removed coverage AC from CV-TR-17. Corrected cover-page copy, retention default conflict, timezone arithmetic, role names, discard scope, and the CV-WEB-02 integration inventory. Fixed `postureSetById` / `postureSetAt`.
 
@@ -24,9 +24,12 @@
 
 ---
 
-## CV-TR-04 / CV-TR-04a — Fiscal-year retention ✅ schema+API (2026-07-26)
+## CV-TR-04 / CV-TR-04a — Fiscal-year retention ✅ done (2026-07-26)
 
-**Remaining for full AC:** one-time post-migration notice banner for existing OWNER_CCOs (CV-TR-04a notice).
+Schema + API + no-shortening rule. Migration sets existing workspaces to
+`max(current, 6)` with December FYE. One-time OWNER_CCO notice
+(`retentionAnchoringNoticePending`) surfaces in the app shell until dismissed;
+dismissal is audited.
 
 ---
 
@@ -69,20 +72,48 @@ leave media in place and audit `media_discard_failed`. Meeting page shows
 
 ---
 
+## CV-TR-19 — Sealed exports are never watermarked ✅ done (2026-07-26)
+
+`resolveExportWatermark({ purpose })` in `src/server/export/watermark.ts`.
+Purpose `"seal"` always returns false; `"draft"` honours entitlement watermarking.
+Manual export and `buildAuditPackZipForMeeting` (default draft) use the helper.
+Seal callers pass `purpose: "seal"`. Determinism suite proves sealed hashes match
+across trial and paid entitlements, and that a draft watermark changes the hash.
+
+---
+
+## CV-TR-01a — Sealed table privilege separation 🔨 deploy validation pending (2026-07-26)
+
+`RecordSeal` schema and migration are implemented. The migration creates a
+SQL-only `complyvault_app` role without `neon_superuser`, transfers table
+ownership to a non-login owner group, grants the app role `SELECT/INSERT`, and
+revokes `UPDATE/DELETE/TRUNCATE`. An append-only trigger raises SQLSTATE `42501`
+as defense in depth. `scripts/provision-neon-app-role.sql` prompts for the
+runtime password without storing it. The provisioned-DB integration test asserts
+the app role is not the owner and that Postgres rejects UPDATE and DELETE.
+
+**Remaining for full AC:** rotate the exposed Neon owner credential, deploy the
+migration with the owner/direct URL, provision `complyvault_app`, switch runtime
+`DATABASE_URL` to its pooled URL, and run CI with
+`RECORD_SEAL_PRIVILEGE_TEST_DATABASE_URL` on a disposable Neon branch.
+
+---
+
 ## Remaining Phase 1 stories
 
-CV-TR-04, CV-TR-04a, CV-TR-06, CV-TR-06a, CV-TR-07, CV-TR-01a, CV-TR-01, CV-TR-02, CV-TR-19, CV-TR-16, CV-TR-17, CV-TR-18, CV-TR-11, CV-WEB-01..04.
+CV-TR-01a (deployment verification), CV-TR-01, CV-TR-02,
+CV-TR-18, CV-TR-16, CV-TR-17, CV-TR-11, CV-WEB-01..04.
 
 ### Sequencing (revised)
 
 ```
 week 1 ── CV-TR-11 (external, runs throughout)
-       ── CV-TR-01a (infra: sealed bucket + DB role split)
-       ── CV-TR-02a (deterministic bytes)  ← current
-       ── CV-TR-04 ─┬─ CV-TR-04a
-                    └─ CV-TR-06 ─── CV-TR-06a ─── CV-TR-07
+       ── CV-TR-01a (code done; deploy validation pending)
+       ── CV-TR-02a ✅
+       ── CV-TR-04 ✅ ─┬─ CV-TR-04a ✅
+                      └─ CV-TR-06 ✅ ─── CV-TR-06a ✅ ─── CV-TR-07 ✅
 
-CV-TR-02a + CV-TR-01a + CV-TR-19 ── CV-TR-01 ── CV-TR-02
+CV-TR-02a ✅ + CV-TR-01a + CV-TR-19 ✅ ── CV-TR-01 ── CV-TR-02
                                       └── CV-TR-18 (same release as TR-01)
                                           └── CV-TR-16 ── CV-TR-17
 

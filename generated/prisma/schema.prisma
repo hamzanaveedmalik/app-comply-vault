@@ -19,21 +19,23 @@ datasource db {
 // ============================================
 
 model Workspace {
-  id                 String        @id @default(cuid())
-  name               String
+  id                              String        @id @default(cuid())
+  name                            String
   /// Years of retention measured from fiscal year end (Rule 204-2). Floor is 5; never shorten.
-  retentionYears     Int           @default(5)
+  retentionYears                  Int           @default(5)
   /// Month (1-12) on which the firm's fiscal year ends. Default December.
-  fiscalYearEndMonth Int           @default(12)
+  fiscalYearEndMonth              Int           @default(12)
   /// IANA timezone for fiscal date-only arithmetic (e.g. America/Phoenix).
-  fiscalTimezone     String        @default("America/New_York")
+  fiscalTimezone                  String        @default("America/New_York")
   /// Meeting source-media policy. Null until OWNER_CCO decides (CV-TR-06).
-  mediaPosture       MediaPosture?
-  postureSetById     String?
-  postureSetAt       DateTime?
-  legalHold          Boolean       @default(false)
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
+  mediaPosture                    MediaPosture?
+  postureSetById                  String?
+  postureSetAt                    DateTime?
+  /// CV-TR-04a: true for workspaces migrated onto fiscal-year anchoring until OWNER_CCO dismisses the notice.
+  retentionAnchoringNoticePending Boolean       @default(false)
+  legalHold                       Boolean       @default(false)
+  createdAt                       DateTime      @default(now())
+  updatedAt                       DateTime      @updatedAt
 
   // Billing fields
   billingStatus         BillingStatus   @default(PILOT)
@@ -72,6 +74,7 @@ model Workspace {
   evidenceClassifications EvidenceClassification[]
   evidenceEmbeddings      EvidenceEmbedding[]
   parkedIngests           ParkedIngest[]
+  recordSeals             RecordSeal[]
 
   @@index([createdAt])
 }
@@ -245,6 +248,7 @@ model Meeting {
   flags                  Flag[]
   resolutionRecords      ResolutionRecord[]
   integrationSyncLogs    IntegrationSyncLog[]
+  recordSeals            RecordSeal[]
   advisorCertifiedByUser User?                @relation("MeetingAdvisorCertifiedBy", fields: [advisorCertifiedByUserId], references: [id], onDelete: SetNull)
   cmReviewedByUser       User?                @relation("MeetingCmReviewedBy", fields: [cmReviewedByUserId], references: [id], onDelete: SetNull)
   ccoSignedOffByUser     User?                @relation("MeetingCcoSignedOffBy", fields: [ccoSignedOffByUserId], references: [id], onDelete: SetNull)
@@ -322,6 +326,33 @@ enum AuditAction {
   INGEST_PARKED
   INGEST_REPLAYED
   MEDIA_DISCARDED
+  RECORD_SEALED
+}
+
+/// CV-TR-01/02 — append-only ledger entry for immutable audit-pack bytes.
+/// The application role receives SELECT/INSERT only at the PostgreSQL layer.
+/// `updatedAt` and `deletedAt` exist for schema consistency but application
+/// code and the restricted DB role must never mutate them after INSERT.
+model RecordSeal {
+  id             String    @id @default(cuid())
+  workspaceId    String
+  meetingId      String
+  packHash       String    @unique
+  sealedAt       DateTime
+  sealedByUserId String
+  storageUri     String    @db.Text
+  expiresAt      DateTime
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now())
+  deletedAt      DateTime?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Restrict)
+  meeting   Meeting   @relation(fields: [meetingId], references: [id], onDelete: Restrict)
+
+  @@unique([workspaceId, meetingId])
+  @@index([workspaceId, sealedAt])
+  @@index([meetingId])
+  @@index([expiresAt])
 }
 
 /// How Meeting.clientId was resolved. NAME_EXACT is low-confidence (reviewable).

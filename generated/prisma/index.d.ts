@@ -40,6 +40,14 @@ export type Meeting = $Result.DefaultSelection<Prisma.$MeetingPayload>
  */
 export type Version = $Result.DefaultSelection<Prisma.$VersionPayload>
 /**
+ * Model RecordSeal
+ * CV-TR-01/02 — append-only ledger entry for immutable audit-pack bytes.
+ * The application role receives SELECT/INSERT only at the PostgreSQL layer.
+ * `updatedAt` and `deletedAt` exist for schema consistency but application
+ * code and the restricted DB role must never mutate them after INSERT.
+ */
+export type RecordSeal = $Result.DefaultSelection<Prisma.$RecordSealPayload>
+/**
  * Model Flag
  * 
  */
@@ -333,7 +341,8 @@ export const AuditAction: {
   MEDIA_POSTURE_SET: 'MEDIA_POSTURE_SET',
   INGEST_PARKED: 'INGEST_PARKED',
   INGEST_REPLAYED: 'INGEST_REPLAYED',
-  MEDIA_DISCARDED: 'MEDIA_DISCARDED'
+  MEDIA_DISCARDED: 'MEDIA_DISCARDED',
+  RECORD_SEALED: 'RECORD_SEALED'
 };
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction]
@@ -1001,6 +1010,16 @@ export class PrismaClient<
     * ```
     */
   get version(): Prisma.VersionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.recordSeal`: Exposes CRUD operations for the **RecordSeal** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more RecordSeals
+    * const recordSeals = await prisma.recordSeal.findMany()
+    * ```
+    */
+  get recordSeal(): Prisma.RecordSealDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.flag`: Exposes CRUD operations for the **Flag** model.
@@ -1787,6 +1806,7 @@ export namespace Prisma {
     UserWorkspace: 'UserWorkspace',
     Meeting: 'Meeting',
     Version: 'Version',
+    RecordSeal: 'RecordSeal',
     Flag: 'Flag',
     ResolutionRecord: 'ResolutionRecord',
     EvidenceClassification: 'EvidenceClassification',
@@ -1839,7 +1859,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "workspace" | "parkedIngest" | "userWorkspace" | "meeting" | "version" | "flag" | "resolutionRecord" | "evidenceClassification" | "actionItem" | "evidenceLink" | "verification" | "auditEvent" | "account" | "session" | "user" | "verificationToken" | "invitation" | "integrationCredential" | "integrationConfig" | "integrationSyncLog" | "firmProfile" | "disclosureCategory" | "suppressionLogEntry" | "firmProfileVersion" | "client" | "clientHousehold" | "clientHouseholdMember" | "clientActivity" | "emailAlias" | "evidenceItem" | "evidenceTag" | "evidenceEmbedding" | "communicationThread" | "communication" | "attachment" | "mailboxConnection" | "ingestJob" | "emailTriageItem" | "lead"
+      modelProps: "workspace" | "parkedIngest" | "userWorkspace" | "meeting" | "version" | "recordSeal" | "flag" | "resolutionRecord" | "evidenceClassification" | "actionItem" | "evidenceLink" | "verification" | "auditEvent" | "account" | "session" | "user" | "verificationToken" | "invitation" | "integrationCredential" | "integrationConfig" | "integrationSyncLog" | "firmProfile" | "disclosureCategory" | "suppressionLogEntry" | "firmProfileVersion" | "client" | "clientHousehold" | "clientHouseholdMember" | "clientActivity" | "emailAlias" | "evidenceItem" | "evidenceTag" | "evidenceEmbedding" | "communicationThread" | "communication" | "attachment" | "mailboxConnection" | "ingestJob" | "emailTriageItem" | "lead"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2210,6 +2230,80 @@ export namespace Prisma {
           count: {
             args: Prisma.VersionCountArgs<ExtArgs>
             result: $Utils.Optional<VersionCountAggregateOutputType> | number
+          }
+        }
+      }
+      RecordSeal: {
+        payload: Prisma.$RecordSealPayload<ExtArgs>
+        fields: Prisma.RecordSealFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RecordSealFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordSealPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RecordSealFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordSealPayload>
+          }
+          findFirst: {
+            args: Prisma.RecordSealFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordSealPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RecordSealFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordSealPayload>
+          }
+          findMany: {
+            args: Prisma.RecordSealFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordSealPayload>[]
+          }
+          create: {
+            args: Prisma.RecordSealCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordSealPayload>
+          }
+          createMany: {
+            args: Prisma.RecordSealCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RecordSealCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordSealPayload>[]
+          }
+          delete: {
+            args: Prisma.RecordSealDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordSealPayload>
+          }
+          update: {
+            args: Prisma.RecordSealUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordSealPayload>
+          }
+          deleteMany: {
+            args: Prisma.RecordSealDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RecordSealUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RecordSealUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordSealPayload>[]
+          }
+          upsert: {
+            args: Prisma.RecordSealUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordSealPayload>
+          }
+          aggregate: {
+            args: Prisma.RecordSealAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRecordSeal>
+          }
+          groupBy: {
+            args: Prisma.RecordSealGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RecordSealGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RecordSealCountArgs<ExtArgs>
+            result: $Utils.Optional<RecordSealCountAggregateOutputType> | number
           }
         }
       }
@@ -4814,6 +4908,7 @@ export namespace Prisma {
     userWorkspace?: UserWorkspaceOmit
     meeting?: MeetingOmit
     version?: VersionOmit
+    recordSeal?: RecordSealOmit
     flag?: FlagOmit
     resolutionRecord?: ResolutionRecordOmit
     evidenceClassification?: EvidenceClassificationOmit
@@ -4948,6 +5043,7 @@ export namespace Prisma {
     evidenceClassifications: number
     evidenceEmbeddings: number
     parkedIngests: number
+    recordSeals: number
   }
 
   export type WorkspaceCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4971,6 +5067,7 @@ export namespace Prisma {
     evidenceClassifications?: boolean | WorkspaceCountOutputTypeCountEvidenceClassificationsArgs
     evidenceEmbeddings?: boolean | WorkspaceCountOutputTypeCountEvidenceEmbeddingsArgs
     parkedIngests?: boolean | WorkspaceCountOutputTypeCountParkedIngestsArgs
+    recordSeals?: boolean | WorkspaceCountOutputTypeCountRecordSealsArgs
   }
 
   // Custom InputTypes
@@ -5124,6 +5221,13 @@ export namespace Prisma {
     where?: ParkedIngestWhereInput
   }
 
+  /**
+   * WorkspaceCountOutputType without action
+   */
+  export type WorkspaceCountOutputTypeCountRecordSealsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RecordSealWhereInput
+  }
+
 
   /**
    * Count Type MeetingCountOutputType
@@ -5135,6 +5239,7 @@ export namespace Prisma {
     flags: number
     resolutionRecords: number
     integrationSyncLogs: number
+    recordSeals: number
   }
 
   export type MeetingCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5143,6 +5248,7 @@ export namespace Prisma {
     flags?: boolean | MeetingCountOutputTypeCountFlagsArgs
     resolutionRecords?: boolean | MeetingCountOutputTypeCountResolutionRecordsArgs
     integrationSyncLogs?: boolean | MeetingCountOutputTypeCountIntegrationSyncLogsArgs
+    recordSeals?: boolean | MeetingCountOutputTypeCountRecordSealsArgs
   }
 
   // Custom InputTypes
@@ -5189,6 +5295,13 @@ export namespace Prisma {
    */
   export type MeetingCountOutputTypeCountIntegrationSyncLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: IntegrationSyncLogWhereInput
+  }
+
+  /**
+   * MeetingCountOutputType without action
+   */
+  export type MeetingCountOutputTypeCountRecordSealsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RecordSealWhereInput
   }
 
 
@@ -5730,6 +5843,7 @@ export namespace Prisma {
     mediaPosture: $Enums.MediaPosture | null
     postureSetById: string | null
     postureSetAt: Date | null
+    retentionAnchoringNoticePending: boolean | null
     legalHold: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -5757,6 +5871,7 @@ export namespace Prisma {
     mediaPosture: $Enums.MediaPosture | null
     postureSetById: string | null
     postureSetAt: Date | null
+    retentionAnchoringNoticePending: boolean | null
     legalHold: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -5784,6 +5899,7 @@ export namespace Prisma {
     mediaPosture: number
     postureSetById: number
     postureSetAt: number
+    retentionAnchoringNoticePending: number
     legalHold: number
     createdAt: number
     updatedAt: number
@@ -5823,6 +5939,7 @@ export namespace Prisma {
     mediaPosture?: true
     postureSetById?: true
     postureSetAt?: true
+    retentionAnchoringNoticePending?: true
     legalHold?: true
     createdAt?: true
     updatedAt?: true
@@ -5850,6 +5967,7 @@ export namespace Prisma {
     mediaPosture?: true
     postureSetById?: true
     postureSetAt?: true
+    retentionAnchoringNoticePending?: true
     legalHold?: true
     createdAt?: true
     updatedAt?: true
@@ -5877,6 +5995,7 @@ export namespace Prisma {
     mediaPosture?: true
     postureSetById?: true
     postureSetAt?: true
+    retentionAnchoringNoticePending?: true
     legalHold?: true
     createdAt?: true
     updatedAt?: true
@@ -5991,6 +6110,7 @@ export namespace Prisma {
     mediaPosture: $Enums.MediaPosture | null
     postureSetById: string | null
     postureSetAt: Date | null
+    retentionAnchoringNoticePending: boolean
     legalHold: boolean
     createdAt: Date
     updatedAt: Date
@@ -6037,6 +6157,7 @@ export namespace Prisma {
     mediaPosture?: boolean
     postureSetById?: boolean
     postureSetAt?: boolean
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -6074,6 +6195,7 @@ export namespace Prisma {
     evidenceClassifications?: boolean | Workspace$evidenceClassificationsArgs<ExtArgs>
     evidenceEmbeddings?: boolean | Workspace$evidenceEmbeddingsArgs<ExtArgs>
     parkedIngests?: boolean | Workspace$parkedIngestsArgs<ExtArgs>
+    recordSeals?: boolean | Workspace$recordSealsArgs<ExtArgs>
     _count?: boolean | WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["workspace"]>
 
@@ -6086,6 +6208,7 @@ export namespace Prisma {
     mediaPosture?: boolean
     postureSetById?: boolean
     postureSetAt?: boolean
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -6113,6 +6236,7 @@ export namespace Prisma {
     mediaPosture?: boolean
     postureSetById?: boolean
     postureSetAt?: boolean
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -6140,6 +6264,7 @@ export namespace Prisma {
     mediaPosture?: boolean
     postureSetById?: boolean
     postureSetAt?: boolean
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -6158,7 +6283,7 @@ export namespace Prisma {
     onboardingPaidAt?: boolean
   }
 
-  export type WorkspaceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "retentionYears" | "fiscalYearEndMonth" | "fiscalTimezone" | "mediaPosture" | "postureSetById" | "postureSetAt" | "legalHold" | "createdAt" | "updatedAt" | "billingStatus" | "planTier" | "billingCurrency" | "pilotStartDate" | "trialStartedAt" | "trialEndsAt" | "subscriptionStartDate" | "stripeCustomerId" | "stripeSubscriptionId" | "currentPeriodStart" | "currentPeriodEnd" | "onboardingType" | "onboardingPaidAt", ExtArgs["result"]["workspace"]>
+  export type WorkspaceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "retentionYears" | "fiscalYearEndMonth" | "fiscalTimezone" | "mediaPosture" | "postureSetById" | "postureSetAt" | "retentionAnchoringNoticePending" | "legalHold" | "createdAt" | "updatedAt" | "billingStatus" | "planTier" | "billingCurrency" | "pilotStartDate" | "trialStartedAt" | "trialEndsAt" | "subscriptionStartDate" | "stripeCustomerId" | "stripeSubscriptionId" | "currentPeriodStart" | "currentPeriodEnd" | "onboardingType" | "onboardingPaidAt", ExtArgs["result"]["workspace"]>
   export type WorkspaceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     users?: boolean | Workspace$usersArgs<ExtArgs>
     meetings?: boolean | Workspace$meetingsArgs<ExtArgs>
@@ -6181,6 +6306,7 @@ export namespace Prisma {
     evidenceClassifications?: boolean | Workspace$evidenceClassificationsArgs<ExtArgs>
     evidenceEmbeddings?: boolean | Workspace$evidenceEmbeddingsArgs<ExtArgs>
     parkedIngests?: boolean | Workspace$parkedIngestsArgs<ExtArgs>
+    recordSeals?: boolean | Workspace$recordSealsArgs<ExtArgs>
     _count?: boolean | WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type WorkspaceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -6210,6 +6336,7 @@ export namespace Prisma {
       evidenceClassifications: Prisma.$EvidenceClassificationPayload<ExtArgs>[]
       evidenceEmbeddings: Prisma.$EvidenceEmbeddingPayload<ExtArgs>[]
       parkedIngests: Prisma.$ParkedIngestPayload<ExtArgs>[]
+      recordSeals: Prisma.$RecordSealPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6232,6 +6359,10 @@ export namespace Prisma {
       mediaPosture: $Enums.MediaPosture | null
       postureSetById: string | null
       postureSetAt: Date | null
+      /**
+       * CV-TR-04a: true for workspaces migrated onto fiscal-year anchoring until OWNER_CCO dismisses the notice.
+       */
+      retentionAnchoringNoticePending: boolean
       legalHold: boolean
       createdAt: Date
       updatedAt: Date
@@ -6663,6 +6794,7 @@ export namespace Prisma {
     evidenceClassifications<T extends Workspace$evidenceClassificationsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$evidenceClassificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceClassificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     evidenceEmbeddings<T extends Workspace$evidenceEmbeddingsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$evidenceEmbeddingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceEmbeddingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parkedIngests<T extends Workspace$parkedIngestsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$parkedIngestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParkedIngestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    recordSeals<T extends Workspace$recordSealsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$recordSealsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecordSealPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6700,6 +6832,7 @@ export namespace Prisma {
     readonly mediaPosture: FieldRef<"Workspace", 'MediaPosture'>
     readonly postureSetById: FieldRef<"Workspace", 'String'>
     readonly postureSetAt: FieldRef<"Workspace", 'DateTime'>
+    readonly retentionAnchoringNoticePending: FieldRef<"Workspace", 'Boolean'>
     readonly legalHold: FieldRef<"Workspace", 'Boolean'>
     readonly createdAt: FieldRef<"Workspace", 'DateTime'>
     readonly updatedAt: FieldRef<"Workspace", 'DateTime'>
@@ -7600,6 +7733,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ParkedIngestScalarFieldEnum | ParkedIngestScalarFieldEnum[]
+  }
+
+  /**
+   * Workspace.recordSeals
+   */
+  export type Workspace$recordSealsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecordSeal
+     */
+    select?: RecordSealSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecordSeal
+     */
+    omit?: RecordSealOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordSealInclude<ExtArgs> | null
+    where?: RecordSealWhereInput
+    orderBy?: RecordSealOrderByWithRelationInput | RecordSealOrderByWithRelationInput[]
+    cursor?: RecordSealWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RecordSealScalarFieldEnum | RecordSealScalarFieldEnum[]
   }
 
   /**
@@ -10414,6 +10571,7 @@ export namespace Prisma {
     flags?: boolean | Meeting$flagsArgs<ExtArgs>
     resolutionRecords?: boolean | Meeting$resolutionRecordsArgs<ExtArgs>
     integrationSyncLogs?: boolean | Meeting$integrationSyncLogsArgs<ExtArgs>
+    recordSeals?: boolean | Meeting$recordSealsArgs<ExtArgs>
     advisorCertifiedByUser?: boolean | Meeting$advisorCertifiedByUserArgs<ExtArgs>
     cmReviewedByUser?: boolean | Meeting$cmReviewedByUserArgs<ExtArgs>
     ccoSignedOffByUser?: boolean | Meeting$ccoSignedOffByUserArgs<ExtArgs>
@@ -10577,6 +10735,7 @@ export namespace Prisma {
     flags?: boolean | Meeting$flagsArgs<ExtArgs>
     resolutionRecords?: boolean | Meeting$resolutionRecordsArgs<ExtArgs>
     integrationSyncLogs?: boolean | Meeting$integrationSyncLogsArgs<ExtArgs>
+    recordSeals?: boolean | Meeting$recordSealsArgs<ExtArgs>
     advisorCertifiedByUser?: boolean | Meeting$advisorCertifiedByUserArgs<ExtArgs>
     cmReviewedByUser?: boolean | Meeting$cmReviewedByUserArgs<ExtArgs>
     ccoSignedOffByUser?: boolean | Meeting$ccoSignedOffByUserArgs<ExtArgs>
@@ -10607,6 +10766,7 @@ export namespace Prisma {
       flags: Prisma.$FlagPayload<ExtArgs>[]
       resolutionRecords: Prisma.$ResolutionRecordPayload<ExtArgs>[]
       integrationSyncLogs: Prisma.$IntegrationSyncLogPayload<ExtArgs>[]
+      recordSeals: Prisma.$RecordSealPayload<ExtArgs>[]
       advisorCertifiedByUser: Prisma.$UserPayload<ExtArgs> | null
       cmReviewedByUser: Prisma.$UserPayload<ExtArgs> | null
       ccoSignedOffByUser: Prisma.$UserPayload<ExtArgs> | null
@@ -11080,6 +11240,7 @@ export namespace Prisma {
     flags<T extends Meeting$flagsArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$flagsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FlagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     resolutionRecords<T extends Meeting$resolutionRecordsArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$resolutionRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     integrationSyncLogs<T extends Meeting$integrationSyncLogsArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$integrationSyncLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IntegrationSyncLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    recordSeals<T extends Meeting$recordSealsArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$recordSealsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecordSealPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     advisorCertifiedByUser<T extends Meeting$advisorCertifiedByUserArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$advisorCertifiedByUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     cmReviewedByUser<T extends Meeting$cmReviewedByUserArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$cmReviewedByUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     ccoSignedOffByUser<T extends Meeting$ccoSignedOffByUserArgs<ExtArgs> = {}>(args?: Subset<T, Meeting$ccoSignedOffByUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -11687,6 +11848,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: IntegrationSyncLogScalarFieldEnum | IntegrationSyncLogScalarFieldEnum[]
+  }
+
+  /**
+   * Meeting.recordSeals
+   */
+  export type Meeting$recordSealsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecordSeal
+     */
+    select?: RecordSealSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecordSeal
+     */
+    omit?: RecordSealOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordSealInclude<ExtArgs> | null
+    where?: RecordSealWhereInput
+    orderBy?: RecordSealOrderByWithRelationInput | RecordSealOrderByWithRelationInput[]
+    cursor?: RecordSealWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RecordSealScalarFieldEnum | RecordSealScalarFieldEnum[]
   }
 
   /**
@@ -12880,6 +13065,1150 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: VersionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model RecordSeal
+   */
+
+  export type AggregateRecordSeal = {
+    _count: RecordSealCountAggregateOutputType | null
+    _min: RecordSealMinAggregateOutputType | null
+    _max: RecordSealMaxAggregateOutputType | null
+  }
+
+  export type RecordSealMinAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    meetingId: string | null
+    packHash: string | null
+    sealedAt: Date | null
+    sealedByUserId: string | null
+    storageUri: string | null
+    expiresAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type RecordSealMaxAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    meetingId: string | null
+    packHash: string | null
+    sealedAt: Date | null
+    sealedByUserId: string | null
+    storageUri: string | null
+    expiresAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type RecordSealCountAggregateOutputType = {
+    id: number
+    workspaceId: number
+    meetingId: number
+    packHash: number
+    sealedAt: number
+    sealedByUserId: number
+    storageUri: number
+    expiresAt: number
+    createdAt: number
+    updatedAt: number
+    deletedAt: number
+    _all: number
+  }
+
+
+  export type RecordSealMinAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    meetingId?: true
+    packHash?: true
+    sealedAt?: true
+    sealedByUserId?: true
+    storageUri?: true
+    expiresAt?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type RecordSealMaxAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    meetingId?: true
+    packHash?: true
+    sealedAt?: true
+    sealedByUserId?: true
+    storageUri?: true
+    expiresAt?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type RecordSealCountAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    meetingId?: true
+    packHash?: true
+    sealedAt?: true
+    sealedByUserId?: true
+    storageUri?: true
+    expiresAt?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+    _all?: true
+  }
+
+  export type RecordSealAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RecordSeal to aggregate.
+     */
+    where?: RecordSealWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RecordSeals to fetch.
+     */
+    orderBy?: RecordSealOrderByWithRelationInput | RecordSealOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RecordSealWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RecordSeals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RecordSeals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned RecordSeals
+    **/
+    _count?: true | RecordSealCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RecordSealMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RecordSealMaxAggregateInputType
+  }
+
+  export type GetRecordSealAggregateType<T extends RecordSealAggregateArgs> = {
+        [P in keyof T & keyof AggregateRecordSeal]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRecordSeal[P]>
+      : GetScalarType<T[P], AggregateRecordSeal[P]>
+  }
+
+
+
+
+  export type RecordSealGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RecordSealWhereInput
+    orderBy?: RecordSealOrderByWithAggregationInput | RecordSealOrderByWithAggregationInput[]
+    by: RecordSealScalarFieldEnum[] | RecordSealScalarFieldEnum
+    having?: RecordSealScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RecordSealCountAggregateInputType | true
+    _min?: RecordSealMinAggregateInputType
+    _max?: RecordSealMaxAggregateInputType
+  }
+
+  export type RecordSealGroupByOutputType = {
+    id: string
+    workspaceId: string
+    meetingId: string
+    packHash: string
+    sealedAt: Date
+    sealedByUserId: string
+    storageUri: string
+    expiresAt: Date
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date | null
+    _count: RecordSealCountAggregateOutputType | null
+    _min: RecordSealMinAggregateOutputType | null
+    _max: RecordSealMaxAggregateOutputType | null
+  }
+
+  type GetRecordSealGroupByPayload<T extends RecordSealGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RecordSealGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RecordSealGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RecordSealGroupByOutputType[P]>
+            : GetScalarType<T[P], RecordSealGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RecordSealSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    meetingId?: boolean
+    packHash?: boolean
+    sealedAt?: boolean
+    sealedByUserId?: boolean
+    storageUri?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    meeting?: boolean | MeetingDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["recordSeal"]>
+
+  export type RecordSealSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    meetingId?: boolean
+    packHash?: boolean
+    sealedAt?: boolean
+    sealedByUserId?: boolean
+    storageUri?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    meeting?: boolean | MeetingDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["recordSeal"]>
+
+  export type RecordSealSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    meetingId?: boolean
+    packHash?: boolean
+    sealedAt?: boolean
+    sealedByUserId?: boolean
+    storageUri?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    meeting?: boolean | MeetingDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["recordSeal"]>
+
+  export type RecordSealSelectScalar = {
+    id?: boolean
+    workspaceId?: boolean
+    meetingId?: boolean
+    packHash?: boolean
+    sealedAt?: boolean
+    sealedByUserId?: boolean
+    storageUri?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }
+
+  export type RecordSealOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "meetingId" | "packHash" | "sealedAt" | "sealedByUserId" | "storageUri" | "expiresAt" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["recordSeal"]>
+  export type RecordSealInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    meeting?: boolean | MeetingDefaultArgs<ExtArgs>
+  }
+  export type RecordSealIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    meeting?: boolean | MeetingDefaultArgs<ExtArgs>
+  }
+  export type RecordSealIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+    meeting?: boolean | MeetingDefaultArgs<ExtArgs>
+  }
+
+  export type $RecordSealPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "RecordSeal"
+    objects: {
+      workspace: Prisma.$WorkspacePayload<ExtArgs>
+      meeting: Prisma.$MeetingPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workspaceId: string
+      meetingId: string
+      packHash: string
+      sealedAt: Date
+      sealedByUserId: string
+      storageUri: string
+      expiresAt: Date
+      createdAt: Date
+      updatedAt: Date
+      deletedAt: Date | null
+    }, ExtArgs["result"]["recordSeal"]>
+    composites: {}
+  }
+
+  type RecordSealGetPayload<S extends boolean | null | undefined | RecordSealDefaultArgs> = $Result.GetResult<Prisma.$RecordSealPayload, S>
+
+  type RecordSealCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RecordSealFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RecordSealCountAggregateInputType | true
+    }
+
+  export interface RecordSealDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['RecordSeal'], meta: { name: 'RecordSeal' } }
+    /**
+     * Find zero or one RecordSeal that matches the filter.
+     * @param {RecordSealFindUniqueArgs} args - Arguments to find a RecordSeal
+     * @example
+     * // Get one RecordSeal
+     * const recordSeal = await prisma.recordSeal.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RecordSealFindUniqueArgs>(args: SelectSubset<T, RecordSealFindUniqueArgs<ExtArgs>>): Prisma__RecordSealClient<$Result.GetResult<Prisma.$RecordSealPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one RecordSeal that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RecordSealFindUniqueOrThrowArgs} args - Arguments to find a RecordSeal
+     * @example
+     * // Get one RecordSeal
+     * const recordSeal = await prisma.recordSeal.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RecordSealFindUniqueOrThrowArgs>(args: SelectSubset<T, RecordSealFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RecordSealClient<$Result.GetResult<Prisma.$RecordSealPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RecordSeal that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordSealFindFirstArgs} args - Arguments to find a RecordSeal
+     * @example
+     * // Get one RecordSeal
+     * const recordSeal = await prisma.recordSeal.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RecordSealFindFirstArgs>(args?: SelectSubset<T, RecordSealFindFirstArgs<ExtArgs>>): Prisma__RecordSealClient<$Result.GetResult<Prisma.$RecordSealPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RecordSeal that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordSealFindFirstOrThrowArgs} args - Arguments to find a RecordSeal
+     * @example
+     * // Get one RecordSeal
+     * const recordSeal = await prisma.recordSeal.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RecordSealFindFirstOrThrowArgs>(args?: SelectSubset<T, RecordSealFindFirstOrThrowArgs<ExtArgs>>): Prisma__RecordSealClient<$Result.GetResult<Prisma.$RecordSealPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more RecordSeals that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordSealFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all RecordSeals
+     * const recordSeals = await prisma.recordSeal.findMany()
+     * 
+     * // Get first 10 RecordSeals
+     * const recordSeals = await prisma.recordSeal.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const recordSealWithIdOnly = await prisma.recordSeal.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RecordSealFindManyArgs>(args?: SelectSubset<T, RecordSealFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecordSealPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a RecordSeal.
+     * @param {RecordSealCreateArgs} args - Arguments to create a RecordSeal.
+     * @example
+     * // Create one RecordSeal
+     * const RecordSeal = await prisma.recordSeal.create({
+     *   data: {
+     *     // ... data to create a RecordSeal
+     *   }
+     * })
+     * 
+     */
+    create<T extends RecordSealCreateArgs>(args: SelectSubset<T, RecordSealCreateArgs<ExtArgs>>): Prisma__RecordSealClient<$Result.GetResult<Prisma.$RecordSealPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many RecordSeals.
+     * @param {RecordSealCreateManyArgs} args - Arguments to create many RecordSeals.
+     * @example
+     * // Create many RecordSeals
+     * const recordSeal = await prisma.recordSeal.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RecordSealCreateManyArgs>(args?: SelectSubset<T, RecordSealCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many RecordSeals and returns the data saved in the database.
+     * @param {RecordSealCreateManyAndReturnArgs} args - Arguments to create many RecordSeals.
+     * @example
+     * // Create many RecordSeals
+     * const recordSeal = await prisma.recordSeal.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many RecordSeals and only return the `id`
+     * const recordSealWithIdOnly = await prisma.recordSeal.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RecordSealCreateManyAndReturnArgs>(args?: SelectSubset<T, RecordSealCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecordSealPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a RecordSeal.
+     * @param {RecordSealDeleteArgs} args - Arguments to delete one RecordSeal.
+     * @example
+     * // Delete one RecordSeal
+     * const RecordSeal = await prisma.recordSeal.delete({
+     *   where: {
+     *     // ... filter to delete one RecordSeal
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RecordSealDeleteArgs>(args: SelectSubset<T, RecordSealDeleteArgs<ExtArgs>>): Prisma__RecordSealClient<$Result.GetResult<Prisma.$RecordSealPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one RecordSeal.
+     * @param {RecordSealUpdateArgs} args - Arguments to update one RecordSeal.
+     * @example
+     * // Update one RecordSeal
+     * const recordSeal = await prisma.recordSeal.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RecordSealUpdateArgs>(args: SelectSubset<T, RecordSealUpdateArgs<ExtArgs>>): Prisma__RecordSealClient<$Result.GetResult<Prisma.$RecordSealPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more RecordSeals.
+     * @param {RecordSealDeleteManyArgs} args - Arguments to filter RecordSeals to delete.
+     * @example
+     * // Delete a few RecordSeals
+     * const { count } = await prisma.recordSeal.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RecordSealDeleteManyArgs>(args?: SelectSubset<T, RecordSealDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RecordSeals.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordSealUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many RecordSeals
+     * const recordSeal = await prisma.recordSeal.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RecordSealUpdateManyArgs>(args: SelectSubset<T, RecordSealUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RecordSeals and returns the data updated in the database.
+     * @param {RecordSealUpdateManyAndReturnArgs} args - Arguments to update many RecordSeals.
+     * @example
+     * // Update many RecordSeals
+     * const recordSeal = await prisma.recordSeal.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more RecordSeals and only return the `id`
+     * const recordSealWithIdOnly = await prisma.recordSeal.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RecordSealUpdateManyAndReturnArgs>(args: SelectSubset<T, RecordSealUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecordSealPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one RecordSeal.
+     * @param {RecordSealUpsertArgs} args - Arguments to update or create a RecordSeal.
+     * @example
+     * // Update or create a RecordSeal
+     * const recordSeal = await prisma.recordSeal.upsert({
+     *   create: {
+     *     // ... data to create a RecordSeal
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the RecordSeal we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RecordSealUpsertArgs>(args: SelectSubset<T, RecordSealUpsertArgs<ExtArgs>>): Prisma__RecordSealClient<$Result.GetResult<Prisma.$RecordSealPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of RecordSeals.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordSealCountArgs} args - Arguments to filter RecordSeals to count.
+     * @example
+     * // Count the number of RecordSeals
+     * const count = await prisma.recordSeal.count({
+     *   where: {
+     *     // ... the filter for the RecordSeals we want to count
+     *   }
+     * })
+    **/
+    count<T extends RecordSealCountArgs>(
+      args?: Subset<T, RecordSealCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RecordSealCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a RecordSeal.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordSealAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RecordSealAggregateArgs>(args: Subset<T, RecordSealAggregateArgs>): Prisma.PrismaPromise<GetRecordSealAggregateType<T>>
+
+    /**
+     * Group by RecordSeal.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordSealGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RecordSealGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RecordSealGroupByArgs['orderBy'] }
+        : { orderBy?: RecordSealGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RecordSealGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRecordSealGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the RecordSeal model
+   */
+  readonly fields: RecordSealFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for RecordSeal.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RecordSealClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    meeting<T extends MeetingDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MeetingDefaultArgs<ExtArgs>>): Prisma__MeetingClient<$Result.GetResult<Prisma.$MeetingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the RecordSeal model
+   */
+  interface RecordSealFieldRefs {
+    readonly id: FieldRef<"RecordSeal", 'String'>
+    readonly workspaceId: FieldRef<"RecordSeal", 'String'>
+    readonly meetingId: FieldRef<"RecordSeal", 'String'>
+    readonly packHash: FieldRef<"RecordSeal", 'String'>
+    readonly sealedAt: FieldRef<"RecordSeal", 'DateTime'>
+    readonly sealedByUserId: FieldRef<"RecordSeal", 'String'>
+    readonly storageUri: FieldRef<"RecordSeal", 'String'>
+    readonly expiresAt: FieldRef<"RecordSeal", 'DateTime'>
+    readonly createdAt: FieldRef<"RecordSeal", 'DateTime'>
+    readonly updatedAt: FieldRef<"RecordSeal", 'DateTime'>
+    readonly deletedAt: FieldRef<"RecordSeal", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * RecordSeal findUnique
+   */
+  export type RecordSealFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecordSeal
+     */
+    select?: RecordSealSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecordSeal
+     */
+    omit?: RecordSealOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordSealInclude<ExtArgs> | null
+    /**
+     * Filter, which RecordSeal to fetch.
+     */
+    where: RecordSealWhereUniqueInput
+  }
+
+  /**
+   * RecordSeal findUniqueOrThrow
+   */
+  export type RecordSealFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecordSeal
+     */
+    select?: RecordSealSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecordSeal
+     */
+    omit?: RecordSealOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordSealInclude<ExtArgs> | null
+    /**
+     * Filter, which RecordSeal to fetch.
+     */
+    where: RecordSealWhereUniqueInput
+  }
+
+  /**
+   * RecordSeal findFirst
+   */
+  export type RecordSealFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecordSeal
+     */
+    select?: RecordSealSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecordSeal
+     */
+    omit?: RecordSealOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordSealInclude<ExtArgs> | null
+    /**
+     * Filter, which RecordSeal to fetch.
+     */
+    where?: RecordSealWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RecordSeals to fetch.
+     */
+    orderBy?: RecordSealOrderByWithRelationInput | RecordSealOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RecordSeals.
+     */
+    cursor?: RecordSealWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RecordSeals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RecordSeals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RecordSeals.
+     */
+    distinct?: RecordSealScalarFieldEnum | RecordSealScalarFieldEnum[]
+  }
+
+  /**
+   * RecordSeal findFirstOrThrow
+   */
+  export type RecordSealFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecordSeal
+     */
+    select?: RecordSealSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecordSeal
+     */
+    omit?: RecordSealOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordSealInclude<ExtArgs> | null
+    /**
+     * Filter, which RecordSeal to fetch.
+     */
+    where?: RecordSealWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RecordSeals to fetch.
+     */
+    orderBy?: RecordSealOrderByWithRelationInput | RecordSealOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RecordSeals.
+     */
+    cursor?: RecordSealWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RecordSeals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RecordSeals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RecordSeals.
+     */
+    distinct?: RecordSealScalarFieldEnum | RecordSealScalarFieldEnum[]
+  }
+
+  /**
+   * RecordSeal findMany
+   */
+  export type RecordSealFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecordSeal
+     */
+    select?: RecordSealSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecordSeal
+     */
+    omit?: RecordSealOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordSealInclude<ExtArgs> | null
+    /**
+     * Filter, which RecordSeals to fetch.
+     */
+    where?: RecordSealWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RecordSeals to fetch.
+     */
+    orderBy?: RecordSealOrderByWithRelationInput | RecordSealOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing RecordSeals.
+     */
+    cursor?: RecordSealWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RecordSeals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RecordSeals.
+     */
+    skip?: number
+    distinct?: RecordSealScalarFieldEnum | RecordSealScalarFieldEnum[]
+  }
+
+  /**
+   * RecordSeal create
+   */
+  export type RecordSealCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecordSeal
+     */
+    select?: RecordSealSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecordSeal
+     */
+    omit?: RecordSealOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordSealInclude<ExtArgs> | null
+    /**
+     * The data needed to create a RecordSeal.
+     */
+    data: XOR<RecordSealCreateInput, RecordSealUncheckedCreateInput>
+  }
+
+  /**
+   * RecordSeal createMany
+   */
+  export type RecordSealCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many RecordSeals.
+     */
+    data: RecordSealCreateManyInput | RecordSealCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * RecordSeal createManyAndReturn
+   */
+  export type RecordSealCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecordSeal
+     */
+    select?: RecordSealSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecordSeal
+     */
+    omit?: RecordSealOmit<ExtArgs> | null
+    /**
+     * The data used to create many RecordSeals.
+     */
+    data: RecordSealCreateManyInput | RecordSealCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordSealIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RecordSeal update
+   */
+  export type RecordSealUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecordSeal
+     */
+    select?: RecordSealSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecordSeal
+     */
+    omit?: RecordSealOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordSealInclude<ExtArgs> | null
+    /**
+     * The data needed to update a RecordSeal.
+     */
+    data: XOR<RecordSealUpdateInput, RecordSealUncheckedUpdateInput>
+    /**
+     * Choose, which RecordSeal to update.
+     */
+    where: RecordSealWhereUniqueInput
+  }
+
+  /**
+   * RecordSeal updateMany
+   */
+  export type RecordSealUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update RecordSeals.
+     */
+    data: XOR<RecordSealUpdateManyMutationInput, RecordSealUncheckedUpdateManyInput>
+    /**
+     * Filter which RecordSeals to update
+     */
+    where?: RecordSealWhereInput
+    /**
+     * Limit how many RecordSeals to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * RecordSeal updateManyAndReturn
+   */
+  export type RecordSealUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecordSeal
+     */
+    select?: RecordSealSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecordSeal
+     */
+    omit?: RecordSealOmit<ExtArgs> | null
+    /**
+     * The data used to update RecordSeals.
+     */
+    data: XOR<RecordSealUpdateManyMutationInput, RecordSealUncheckedUpdateManyInput>
+    /**
+     * Filter which RecordSeals to update
+     */
+    where?: RecordSealWhereInput
+    /**
+     * Limit how many RecordSeals to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordSealIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RecordSeal upsert
+   */
+  export type RecordSealUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecordSeal
+     */
+    select?: RecordSealSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecordSeal
+     */
+    omit?: RecordSealOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordSealInclude<ExtArgs> | null
+    /**
+     * The filter to search for the RecordSeal to update in case it exists.
+     */
+    where: RecordSealWhereUniqueInput
+    /**
+     * In case the RecordSeal found by the `where` argument doesn't exist, create a new RecordSeal with this data.
+     */
+    create: XOR<RecordSealCreateInput, RecordSealUncheckedCreateInput>
+    /**
+     * In case the RecordSeal was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RecordSealUpdateInput, RecordSealUncheckedUpdateInput>
+  }
+
+  /**
+   * RecordSeal delete
+   */
+  export type RecordSealDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecordSeal
+     */
+    select?: RecordSealSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecordSeal
+     */
+    omit?: RecordSealOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordSealInclude<ExtArgs> | null
+    /**
+     * Filter which RecordSeal to delete.
+     */
+    where: RecordSealWhereUniqueInput
+  }
+
+  /**
+   * RecordSeal deleteMany
+   */
+  export type RecordSealDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RecordSeals to delete
+     */
+    where?: RecordSealWhereInput
+    /**
+     * Limit how many RecordSeals to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * RecordSeal without action
+   */
+  export type RecordSealDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecordSeal
+     */
+    select?: RecordSealSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecordSeal
+     */
+    omit?: RecordSealOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordSealInclude<ExtArgs> | null
   }
 
 
@@ -52414,6 +53743,7 @@ export namespace Prisma {
     mediaPosture: 'mediaPosture',
     postureSetById: 'postureSetById',
     postureSetAt: 'postureSetAt',
+    retentionAnchoringNoticePending: 'retentionAnchoringNoticePending',
     legalHold: 'legalHold',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
@@ -52527,6 +53857,23 @@ export namespace Prisma {
   };
 
   export type VersionScalarFieldEnum = (typeof VersionScalarFieldEnum)[keyof typeof VersionScalarFieldEnum]
+
+
+  export const RecordSealScalarFieldEnum: {
+    id: 'id',
+    workspaceId: 'workspaceId',
+    meetingId: 'meetingId',
+    packHash: 'packHash',
+    sealedAt: 'sealedAt',
+    sealedByUserId: 'sealedByUserId',
+    storageUri: 'storageUri',
+    expiresAt: 'expiresAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    deletedAt: 'deletedAt'
+  };
+
+  export type RecordSealScalarFieldEnum = (typeof RecordSealScalarFieldEnum)[keyof typeof RecordSealScalarFieldEnum]
 
 
   export const FlagScalarFieldEnum: {
@@ -53822,6 +55169,7 @@ export namespace Prisma {
     mediaPosture?: EnumMediaPostureNullableFilter<"Workspace"> | $Enums.MediaPosture | null
     postureSetById?: StringNullableFilter<"Workspace"> | string | null
     postureSetAt?: DateTimeNullableFilter<"Workspace"> | Date | string | null
+    retentionAnchoringNoticePending?: BoolFilter<"Workspace"> | boolean
     legalHold?: BoolFilter<"Workspace"> | boolean
     createdAt?: DateTimeFilter<"Workspace"> | Date | string
     updatedAt?: DateTimeFilter<"Workspace"> | Date | string
@@ -53859,6 +55207,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationListRelationFilter
     evidenceEmbeddings?: EvidenceEmbeddingListRelationFilter
     parkedIngests?: ParkedIngestListRelationFilter
+    recordSeals?: RecordSealListRelationFilter
   }
 
   export type WorkspaceOrderByWithRelationInput = {
@@ -53870,6 +55219,7 @@ export namespace Prisma {
     mediaPosture?: SortOrderInput | SortOrder
     postureSetById?: SortOrderInput | SortOrder
     postureSetAt?: SortOrderInput | SortOrder
+    retentionAnchoringNoticePending?: SortOrder
     legalHold?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -53907,6 +55257,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationOrderByRelationAggregateInput
     evidenceEmbeddings?: EvidenceEmbeddingOrderByRelationAggregateInput
     parkedIngests?: ParkedIngestOrderByRelationAggregateInput
+    recordSeals?: RecordSealOrderByRelationAggregateInput
   }
 
   export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
@@ -53921,6 +55272,7 @@ export namespace Prisma {
     mediaPosture?: EnumMediaPostureNullableFilter<"Workspace"> | $Enums.MediaPosture | null
     postureSetById?: StringNullableFilter<"Workspace"> | string | null
     postureSetAt?: DateTimeNullableFilter<"Workspace"> | Date | string | null
+    retentionAnchoringNoticePending?: BoolFilter<"Workspace"> | boolean
     legalHold?: BoolFilter<"Workspace"> | boolean
     createdAt?: DateTimeFilter<"Workspace"> | Date | string
     updatedAt?: DateTimeFilter<"Workspace"> | Date | string
@@ -53958,6 +55310,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationListRelationFilter
     evidenceEmbeddings?: EvidenceEmbeddingListRelationFilter
     parkedIngests?: ParkedIngestListRelationFilter
+    recordSeals?: RecordSealListRelationFilter
   }, "id">
 
   export type WorkspaceOrderByWithAggregationInput = {
@@ -53969,6 +55322,7 @@ export namespace Prisma {
     mediaPosture?: SortOrderInput | SortOrder
     postureSetById?: SortOrderInput | SortOrder
     postureSetAt?: SortOrderInput | SortOrder
+    retentionAnchoringNoticePending?: SortOrder
     legalHold?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -54004,6 +55358,7 @@ export namespace Prisma {
     mediaPosture?: EnumMediaPostureNullableWithAggregatesFilter<"Workspace"> | $Enums.MediaPosture | null
     postureSetById?: StringNullableWithAggregatesFilter<"Workspace"> | string | null
     postureSetAt?: DateTimeNullableWithAggregatesFilter<"Workspace"> | Date | string | null
+    retentionAnchoringNoticePending?: BoolWithAggregatesFilter<"Workspace"> | boolean
     legalHold?: BoolWithAggregatesFilter<"Workspace"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Workspace"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Workspace"> | Date | string
@@ -54244,6 +55599,7 @@ export namespace Prisma {
     flags?: FlagListRelationFilter
     resolutionRecords?: ResolutionRecordListRelationFilter
     integrationSyncLogs?: IntegrationSyncLogListRelationFilter
+    recordSeals?: RecordSealListRelationFilter
     advisorCertifiedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     cmReviewedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     ccoSignedOffByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
@@ -54300,6 +55656,7 @@ export namespace Prisma {
     flags?: FlagOrderByRelationAggregateInput
     resolutionRecords?: ResolutionRecordOrderByRelationAggregateInput
     integrationSyncLogs?: IntegrationSyncLogOrderByRelationAggregateInput
+    recordSeals?: RecordSealOrderByRelationAggregateInput
     advisorCertifiedByUser?: UserOrderByWithRelationInput
     cmReviewedByUser?: UserOrderByWithRelationInput
     ccoSignedOffByUser?: UserOrderByWithRelationInput
@@ -54359,6 +55716,7 @@ export namespace Prisma {
     flags?: FlagListRelationFilter
     resolutionRecords?: ResolutionRecordListRelationFilter
     integrationSyncLogs?: IntegrationSyncLogListRelationFilter
+    recordSeals?: RecordSealListRelationFilter
     advisorCertifiedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     cmReviewedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     ccoSignedOffByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
@@ -54529,6 +55887,95 @@ export namespace Prisma {
     whatChanged?: StringWithAggregatesFilter<"Version"> | string
     reason?: StringNullableWithAggregatesFilter<"Version"> | string | null
     timestamp?: DateTimeWithAggregatesFilter<"Version"> | Date | string
+  }
+
+  export type RecordSealWhereInput = {
+    AND?: RecordSealWhereInput | RecordSealWhereInput[]
+    OR?: RecordSealWhereInput[]
+    NOT?: RecordSealWhereInput | RecordSealWhereInput[]
+    id?: StringFilter<"RecordSeal"> | string
+    workspaceId?: StringFilter<"RecordSeal"> | string
+    meetingId?: StringFilter<"RecordSeal"> | string
+    packHash?: StringFilter<"RecordSeal"> | string
+    sealedAt?: DateTimeFilter<"RecordSeal"> | Date | string
+    sealedByUserId?: StringFilter<"RecordSeal"> | string
+    storageUri?: StringFilter<"RecordSeal"> | string
+    expiresAt?: DateTimeFilter<"RecordSeal"> | Date | string
+    createdAt?: DateTimeFilter<"RecordSeal"> | Date | string
+    updatedAt?: DateTimeFilter<"RecordSeal"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"RecordSeal"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    meeting?: XOR<MeetingScalarRelationFilter, MeetingWhereInput>
+  }
+
+  export type RecordSealOrderByWithRelationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    meetingId?: SortOrder
+    packHash?: SortOrder
+    sealedAt?: SortOrder
+    sealedByUserId?: SortOrder
+    storageUri?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    workspace?: WorkspaceOrderByWithRelationInput
+    meeting?: MeetingOrderByWithRelationInput
+  }
+
+  export type RecordSealWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    packHash?: string
+    workspaceId_meetingId?: RecordSealWorkspaceIdMeetingIdCompoundUniqueInput
+    AND?: RecordSealWhereInput | RecordSealWhereInput[]
+    OR?: RecordSealWhereInput[]
+    NOT?: RecordSealWhereInput | RecordSealWhereInput[]
+    workspaceId?: StringFilter<"RecordSeal"> | string
+    meetingId?: StringFilter<"RecordSeal"> | string
+    sealedAt?: DateTimeFilter<"RecordSeal"> | Date | string
+    sealedByUserId?: StringFilter<"RecordSeal"> | string
+    storageUri?: StringFilter<"RecordSeal"> | string
+    expiresAt?: DateTimeFilter<"RecordSeal"> | Date | string
+    createdAt?: DateTimeFilter<"RecordSeal"> | Date | string
+    updatedAt?: DateTimeFilter<"RecordSeal"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"RecordSeal"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+    meeting?: XOR<MeetingScalarRelationFilter, MeetingWhereInput>
+  }, "id" | "packHash" | "workspaceId_meetingId">
+
+  export type RecordSealOrderByWithAggregationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    meetingId?: SortOrder
+    packHash?: SortOrder
+    sealedAt?: SortOrder
+    sealedByUserId?: SortOrder
+    storageUri?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    _count?: RecordSealCountOrderByAggregateInput
+    _max?: RecordSealMaxOrderByAggregateInput
+    _min?: RecordSealMinOrderByAggregateInput
+  }
+
+  export type RecordSealScalarWhereWithAggregatesInput = {
+    AND?: RecordSealScalarWhereWithAggregatesInput | RecordSealScalarWhereWithAggregatesInput[]
+    OR?: RecordSealScalarWhereWithAggregatesInput[]
+    NOT?: RecordSealScalarWhereWithAggregatesInput | RecordSealScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"RecordSeal"> | string
+    workspaceId?: StringWithAggregatesFilter<"RecordSeal"> | string
+    meetingId?: StringWithAggregatesFilter<"RecordSeal"> | string
+    packHash?: StringWithAggregatesFilter<"RecordSeal"> | string
+    sealedAt?: DateTimeWithAggregatesFilter<"RecordSeal"> | Date | string
+    sealedByUserId?: StringWithAggregatesFilter<"RecordSeal"> | string
+    storageUri?: StringWithAggregatesFilter<"RecordSeal"> | string
+    expiresAt?: DateTimeWithAggregatesFilter<"RecordSeal"> | Date | string
+    createdAt?: DateTimeWithAggregatesFilter<"RecordSeal"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"RecordSeal"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"RecordSeal"> | Date | string | null
   }
 
   export type FlagWhereInput = {
@@ -57498,6 +58945,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -57535,6 +58983,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateInput = {
@@ -57546,6 +58995,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -57583,6 +59033,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUpdateInput = {
@@ -57594,6 +59045,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -57631,6 +59083,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateInput = {
@@ -57642,6 +59095,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -57679,6 +59133,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateManyInput = {
@@ -57690,6 +59145,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -57717,6 +59173,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -57744,6 +59201,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -57986,6 +59444,7 @@ export namespace Prisma {
     flags?: FlagCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealCreateNestedManyWithoutMeetingInput
     advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
     cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
     ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
@@ -58040,6 +59499,7 @@ export namespace Prisma {
     flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingUpdateInput = {
@@ -58088,6 +59548,7 @@ export namespace Prisma {
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutMeetingNestedInput
     advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
     cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
     ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
@@ -58142,6 +59603,7 @@ export namespace Prisma {
     flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
   export type MeetingCreateManyInput = {
@@ -58344,6 +59806,102 @@ export namespace Prisma {
     whatChanged?: StringFieldUpdateOperationsInput | string
     reason?: NullableStringFieldUpdateOperationsInput | string | null
     timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RecordSealCreateInput = {
+    id?: string
+    packHash: string
+    sealedAt: Date | string
+    sealedByUserId: string
+    storageUri: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutRecordSealsInput
+    meeting: MeetingCreateNestedOneWithoutRecordSealsInput
+  }
+
+  export type RecordSealUncheckedCreateInput = {
+    id?: string
+    workspaceId: string
+    meetingId: string
+    packHash: string
+    sealedAt: Date | string
+    sealedByUserId: string
+    storageUri: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type RecordSealUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    packHash?: StringFieldUpdateOperationsInput | string
+    sealedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sealedByUserId?: StringFieldUpdateOperationsInput | string
+    storageUri?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutRecordSealsNestedInput
+    meeting?: MeetingUpdateOneRequiredWithoutRecordSealsNestedInput
+  }
+
+  export type RecordSealUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    meetingId?: StringFieldUpdateOperationsInput | string
+    packHash?: StringFieldUpdateOperationsInput | string
+    sealedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sealedByUserId?: StringFieldUpdateOperationsInput | string
+    storageUri?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type RecordSealCreateManyInput = {
+    id?: string
+    workspaceId: string
+    meetingId: string
+    packHash: string
+    sealedAt: Date | string
+    sealedByUserId: string
+    storageUri: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type RecordSealUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    packHash?: StringFieldUpdateOperationsInput | string
+    sealedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sealedByUserId?: StringFieldUpdateOperationsInput | string
+    storageUri?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type RecordSealUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    meetingId?: StringFieldUpdateOperationsInput | string
+    packHash?: StringFieldUpdateOperationsInput | string
+    sealedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sealedByUserId?: StringFieldUpdateOperationsInput | string
+    storageUri?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type FlagCreateInput = {
@@ -61808,6 +63366,12 @@ export namespace Prisma {
     none?: ParkedIngestWhereInput
   }
 
+  export type RecordSealListRelationFilter = {
+    every?: RecordSealWhereInput
+    some?: RecordSealWhereInput
+    none?: RecordSealWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -61893,6 +63457,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type RecordSealOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type WorkspaceCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -61902,6 +63470,7 @@ export namespace Prisma {
     mediaPosture?: SortOrder
     postureSetById?: SortOrder
     postureSetAt?: SortOrder
+    retentionAnchoringNoticePending?: SortOrder
     legalHold?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -61934,6 +63503,7 @@ export namespace Prisma {
     mediaPosture?: SortOrder
     postureSetById?: SortOrder
     postureSetAt?: SortOrder
+    retentionAnchoringNoticePending?: SortOrder
     legalHold?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -61961,6 +63531,7 @@ export namespace Prisma {
     mediaPosture?: SortOrder
     postureSetById?: SortOrder
     postureSetAt?: SortOrder
+    retentionAnchoringNoticePending?: SortOrder
     legalHold?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -62640,6 +64211,53 @@ export namespace Prisma {
 
   export type VersionSumOrderByAggregateInput = {
     version?: SortOrder
+  }
+
+  export type RecordSealWorkspaceIdMeetingIdCompoundUniqueInput = {
+    workspaceId: string
+    meetingId: string
+  }
+
+  export type RecordSealCountOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    meetingId?: SortOrder
+    packHash?: SortOrder
+    sealedAt?: SortOrder
+    sealedByUserId?: SortOrder
+    storageUri?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type RecordSealMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    meetingId?: SortOrder
+    packHash?: SortOrder
+    sealedAt?: SortOrder
+    sealedByUserId?: SortOrder
+    storageUri?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type RecordSealMinOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    meetingId?: SortOrder
+    packHash?: SortOrder
+    sealedAt?: SortOrder
+    sealedByUserId?: SortOrder
+    storageUri?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
   }
 
   export type EnumFlagSourceTypeFilter<$PrismaModel = never> = {
@@ -65066,6 +66684,13 @@ export namespace Prisma {
     connect?: ParkedIngestWhereUniqueInput | ParkedIngestWhereUniqueInput[]
   }
 
+  export type RecordSealCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<RecordSealCreateWithoutWorkspaceInput, RecordSealUncheckedCreateWithoutWorkspaceInput> | RecordSealCreateWithoutWorkspaceInput[] | RecordSealUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: RecordSealCreateOrConnectWithoutWorkspaceInput | RecordSealCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: RecordSealCreateManyWorkspaceInputEnvelope
+    connect?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+  }
+
   export type UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput = {
     create?: XOR<UserWorkspaceCreateWithoutWorkspaceInput, UserWorkspaceUncheckedCreateWithoutWorkspaceInput> | UserWorkspaceCreateWithoutWorkspaceInput[] | UserWorkspaceUncheckedCreateWithoutWorkspaceInput[]
     connectOrCreate?: UserWorkspaceCreateOrConnectWithoutWorkspaceInput | UserWorkspaceCreateOrConnectWithoutWorkspaceInput[]
@@ -65207,6 +66832,13 @@ export namespace Prisma {
     connectOrCreate?: ParkedIngestCreateOrConnectWithoutWorkspaceInput | ParkedIngestCreateOrConnectWithoutWorkspaceInput[]
     createMany?: ParkedIngestCreateManyWorkspaceInputEnvelope
     connect?: ParkedIngestWhereUniqueInput | ParkedIngestWhereUniqueInput[]
+  }
+
+  export type RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<RecordSealCreateWithoutWorkspaceInput, RecordSealUncheckedCreateWithoutWorkspaceInput> | RecordSealCreateWithoutWorkspaceInput[] | RecordSealUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: RecordSealCreateOrConnectWithoutWorkspaceInput | RecordSealCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: RecordSealCreateManyWorkspaceInputEnvelope
+    connect?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -65539,6 +67171,20 @@ export namespace Prisma {
     deleteMany?: ParkedIngestScalarWhereInput | ParkedIngestScalarWhereInput[]
   }
 
+  export type RecordSealUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<RecordSealCreateWithoutWorkspaceInput, RecordSealUncheckedCreateWithoutWorkspaceInput> | RecordSealCreateWithoutWorkspaceInput[] | RecordSealUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: RecordSealCreateOrConnectWithoutWorkspaceInput | RecordSealCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: RecordSealUpsertWithWhereUniqueWithoutWorkspaceInput | RecordSealUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: RecordSealCreateManyWorkspaceInputEnvelope
+    set?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+    disconnect?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+    delete?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+    connect?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+    update?: RecordSealUpdateWithWhereUniqueWithoutWorkspaceInput | RecordSealUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: RecordSealUpdateManyWithWhereWithoutWorkspaceInput | RecordSealUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: RecordSealScalarWhereInput | RecordSealScalarWhereInput[]
+  }
+
   export type UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput = {
     create?: XOR<UserWorkspaceCreateWithoutWorkspaceInput, UserWorkspaceUncheckedCreateWithoutWorkspaceInput> | UserWorkspaceCreateWithoutWorkspaceInput[] | UserWorkspaceUncheckedCreateWithoutWorkspaceInput[]
     connectOrCreate?: UserWorkspaceCreateOrConnectWithoutWorkspaceInput | UserWorkspaceCreateOrConnectWithoutWorkspaceInput[]
@@ -65825,6 +67471,20 @@ export namespace Prisma {
     deleteMany?: ParkedIngestScalarWhereInput | ParkedIngestScalarWhereInput[]
   }
 
+  export type RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<RecordSealCreateWithoutWorkspaceInput, RecordSealUncheckedCreateWithoutWorkspaceInput> | RecordSealCreateWithoutWorkspaceInput[] | RecordSealUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: RecordSealCreateOrConnectWithoutWorkspaceInput | RecordSealCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: RecordSealUpsertWithWhereUniqueWithoutWorkspaceInput | RecordSealUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: RecordSealCreateManyWorkspaceInputEnvelope
+    set?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+    disconnect?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+    delete?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+    connect?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+    update?: RecordSealUpdateWithWhereUniqueWithoutWorkspaceInput | RecordSealUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: RecordSealUpdateManyWithWhereWithoutWorkspaceInput | RecordSealUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: RecordSealScalarWhereInput | RecordSealScalarWhereInput[]
+  }
+
   export type WorkspaceCreateNestedOneWithoutParkedIngestsInput = {
     create?: XOR<WorkspaceCreateWithoutParkedIngestsInput, WorkspaceUncheckedCreateWithoutParkedIngestsInput>
     connectOrCreate?: WorkspaceCreateOrConnectWithoutParkedIngestsInput
@@ -65942,6 +67602,13 @@ export namespace Prisma {
     connect?: IntegrationSyncLogWhereUniqueInput | IntegrationSyncLogWhereUniqueInput[]
   }
 
+  export type RecordSealCreateNestedManyWithoutMeetingInput = {
+    create?: XOR<RecordSealCreateWithoutMeetingInput, RecordSealUncheckedCreateWithoutMeetingInput> | RecordSealCreateWithoutMeetingInput[] | RecordSealUncheckedCreateWithoutMeetingInput[]
+    connectOrCreate?: RecordSealCreateOrConnectWithoutMeetingInput | RecordSealCreateOrConnectWithoutMeetingInput[]
+    createMany?: RecordSealCreateManyMeetingInputEnvelope
+    connect?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+  }
+
   export type UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput = {
     create?: XOR<UserCreateWithoutMeetingsAdvisorCertifiedInput, UserUncheckedCreateWithoutMeetingsAdvisorCertifiedInput>
     connectOrCreate?: UserCreateOrConnectWithoutMeetingsAdvisorCertifiedInput
@@ -65993,6 +67660,13 @@ export namespace Prisma {
     connectOrCreate?: IntegrationSyncLogCreateOrConnectWithoutMeetingInput | IntegrationSyncLogCreateOrConnectWithoutMeetingInput[]
     createMany?: IntegrationSyncLogCreateManyMeetingInputEnvelope
     connect?: IntegrationSyncLogWhereUniqueInput | IntegrationSyncLogWhereUniqueInput[]
+  }
+
+  export type RecordSealUncheckedCreateNestedManyWithoutMeetingInput = {
+    create?: XOR<RecordSealCreateWithoutMeetingInput, RecordSealUncheckedCreateWithoutMeetingInput> | RecordSealCreateWithoutMeetingInput[] | RecordSealUncheckedCreateWithoutMeetingInput[]
+    connectOrCreate?: RecordSealCreateOrConnectWithoutMeetingInput | RecordSealCreateOrConnectWithoutMeetingInput[]
+    createMany?: RecordSealCreateManyMeetingInputEnvelope
+    connect?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
   }
 
   export type NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput = {
@@ -66108,6 +67782,20 @@ export namespace Prisma {
     deleteMany?: IntegrationSyncLogScalarWhereInput | IntegrationSyncLogScalarWhereInput[]
   }
 
+  export type RecordSealUpdateManyWithoutMeetingNestedInput = {
+    create?: XOR<RecordSealCreateWithoutMeetingInput, RecordSealUncheckedCreateWithoutMeetingInput> | RecordSealCreateWithoutMeetingInput[] | RecordSealUncheckedCreateWithoutMeetingInput[]
+    connectOrCreate?: RecordSealCreateOrConnectWithoutMeetingInput | RecordSealCreateOrConnectWithoutMeetingInput[]
+    upsert?: RecordSealUpsertWithWhereUniqueWithoutMeetingInput | RecordSealUpsertWithWhereUniqueWithoutMeetingInput[]
+    createMany?: RecordSealCreateManyMeetingInputEnvelope
+    set?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+    disconnect?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+    delete?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+    connect?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+    update?: RecordSealUpdateWithWhereUniqueWithoutMeetingInput | RecordSealUpdateWithWhereUniqueWithoutMeetingInput[]
+    updateMany?: RecordSealUpdateManyWithWhereWithoutMeetingInput | RecordSealUpdateManyWithWhereWithoutMeetingInput[]
+    deleteMany?: RecordSealScalarWhereInput | RecordSealScalarWhereInput[]
+  }
+
   export type UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput = {
     create?: XOR<UserCreateWithoutMeetingsAdvisorCertifiedInput, UserUncheckedCreateWithoutMeetingsAdvisorCertifiedInput>
     connectOrCreate?: UserCreateOrConnectWithoutMeetingsAdvisorCertifiedInput
@@ -66208,6 +67896,20 @@ export namespace Prisma {
     deleteMany?: IntegrationSyncLogScalarWhereInput | IntegrationSyncLogScalarWhereInput[]
   }
 
+  export type RecordSealUncheckedUpdateManyWithoutMeetingNestedInput = {
+    create?: XOR<RecordSealCreateWithoutMeetingInput, RecordSealUncheckedCreateWithoutMeetingInput> | RecordSealCreateWithoutMeetingInput[] | RecordSealUncheckedCreateWithoutMeetingInput[]
+    connectOrCreate?: RecordSealCreateOrConnectWithoutMeetingInput | RecordSealCreateOrConnectWithoutMeetingInput[]
+    upsert?: RecordSealUpsertWithWhereUniqueWithoutMeetingInput | RecordSealUpsertWithWhereUniqueWithoutMeetingInput[]
+    createMany?: RecordSealCreateManyMeetingInputEnvelope
+    set?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+    disconnect?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+    delete?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+    connect?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+    update?: RecordSealUpdateWithWhereUniqueWithoutMeetingInput | RecordSealUpdateWithWhereUniqueWithoutMeetingInput[]
+    updateMany?: RecordSealUpdateManyWithWhereWithoutMeetingInput | RecordSealUpdateManyWithWhereWithoutMeetingInput[]
+    deleteMany?: RecordSealScalarWhereInput | RecordSealScalarWhereInput[]
+  }
+
   export type MeetingCreateNestedOneWithoutVersionsInput = {
     create?: XOR<MeetingCreateWithoutVersionsInput, MeetingUncheckedCreateWithoutVersionsInput>
     connectOrCreate?: MeetingCreateOrConnectWithoutVersionsInput
@@ -66220,6 +67922,34 @@ export namespace Prisma {
     upsert?: MeetingUpsertWithoutVersionsInput
     connect?: MeetingWhereUniqueInput
     update?: XOR<XOR<MeetingUpdateToOneWithWhereWithoutVersionsInput, MeetingUpdateWithoutVersionsInput>, MeetingUncheckedUpdateWithoutVersionsInput>
+  }
+
+  export type WorkspaceCreateNestedOneWithoutRecordSealsInput = {
+    create?: XOR<WorkspaceCreateWithoutRecordSealsInput, WorkspaceUncheckedCreateWithoutRecordSealsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutRecordSealsInput
+    connect?: WorkspaceWhereUniqueInput
+  }
+
+  export type MeetingCreateNestedOneWithoutRecordSealsInput = {
+    create?: XOR<MeetingCreateWithoutRecordSealsInput, MeetingUncheckedCreateWithoutRecordSealsInput>
+    connectOrCreate?: MeetingCreateOrConnectWithoutRecordSealsInput
+    connect?: MeetingWhereUniqueInput
+  }
+
+  export type WorkspaceUpdateOneRequiredWithoutRecordSealsNestedInput = {
+    create?: XOR<WorkspaceCreateWithoutRecordSealsInput, WorkspaceUncheckedCreateWithoutRecordSealsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutRecordSealsInput
+    upsert?: WorkspaceUpsertWithoutRecordSealsInput
+    connect?: WorkspaceWhereUniqueInput
+    update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutRecordSealsInput, WorkspaceUpdateWithoutRecordSealsInput>, WorkspaceUncheckedUpdateWithoutRecordSealsInput>
+  }
+
+  export type MeetingUpdateOneRequiredWithoutRecordSealsNestedInput = {
+    create?: XOR<MeetingCreateWithoutRecordSealsInput, MeetingUncheckedCreateWithoutRecordSealsInput>
+    connectOrCreate?: MeetingCreateOrConnectWithoutRecordSealsInput
+    upsert?: MeetingUpsertWithoutRecordSealsInput
+    connect?: MeetingWhereUniqueInput
+    update?: XOR<XOR<MeetingUpdateToOneWithWhereWithoutRecordSealsInput, MeetingUpdateWithoutRecordSealsInput>, MeetingUncheckedUpdateWithoutRecordSealsInput>
   }
 
   export type MeetingCreateNestedOneWithoutFlagsInput = {
@@ -69468,6 +71198,7 @@ export namespace Prisma {
     flags?: FlagCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealCreateNestedManyWithoutMeetingInput
     advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
     cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
     ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
@@ -69521,6 +71252,7 @@ export namespace Prisma {
     flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingCreateOrConnectWithoutWorkspaceInput = {
@@ -70257,6 +71989,42 @@ export namespace Prisma {
 
   export type ParkedIngestCreateManyWorkspaceInputEnvelope = {
     data: ParkedIngestCreateManyWorkspaceInput | ParkedIngestCreateManyWorkspaceInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type RecordSealCreateWithoutWorkspaceInput = {
+    id?: string
+    packHash: string
+    sealedAt: Date | string
+    sealedByUserId: string
+    storageUri: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    meeting: MeetingCreateNestedOneWithoutRecordSealsInput
+  }
+
+  export type RecordSealUncheckedCreateWithoutWorkspaceInput = {
+    id?: string
+    meetingId: string
+    packHash: string
+    sealedAt: Date | string
+    sealedByUserId: string
+    storageUri: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type RecordSealCreateOrConnectWithoutWorkspaceInput = {
+    where: RecordSealWhereUniqueInput
+    create: XOR<RecordSealCreateWithoutWorkspaceInput, RecordSealUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type RecordSealCreateManyWorkspaceInputEnvelope = {
+    data: RecordSealCreateManyWorkspaceInput | RecordSealCreateManyWorkspaceInput[]
     skipDuplicates?: boolean
   }
 
@@ -71013,6 +72781,39 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"ParkedIngest"> | Date | string | null
   }
 
+  export type RecordSealUpsertWithWhereUniqueWithoutWorkspaceInput = {
+    where: RecordSealWhereUniqueInput
+    update: XOR<RecordSealUpdateWithoutWorkspaceInput, RecordSealUncheckedUpdateWithoutWorkspaceInput>
+    create: XOR<RecordSealCreateWithoutWorkspaceInput, RecordSealUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type RecordSealUpdateWithWhereUniqueWithoutWorkspaceInput = {
+    where: RecordSealWhereUniqueInput
+    data: XOR<RecordSealUpdateWithoutWorkspaceInput, RecordSealUncheckedUpdateWithoutWorkspaceInput>
+  }
+
+  export type RecordSealUpdateManyWithWhereWithoutWorkspaceInput = {
+    where: RecordSealScalarWhereInput
+    data: XOR<RecordSealUpdateManyMutationInput, RecordSealUncheckedUpdateManyWithoutWorkspaceInput>
+  }
+
+  export type RecordSealScalarWhereInput = {
+    AND?: RecordSealScalarWhereInput | RecordSealScalarWhereInput[]
+    OR?: RecordSealScalarWhereInput[]
+    NOT?: RecordSealScalarWhereInput | RecordSealScalarWhereInput[]
+    id?: StringFilter<"RecordSeal"> | string
+    workspaceId?: StringFilter<"RecordSeal"> | string
+    meetingId?: StringFilter<"RecordSeal"> | string
+    packHash?: StringFilter<"RecordSeal"> | string
+    sealedAt?: DateTimeFilter<"RecordSeal"> | Date | string
+    sealedByUserId?: StringFilter<"RecordSeal"> | string
+    storageUri?: StringFilter<"RecordSeal"> | string
+    expiresAt?: DateTimeFilter<"RecordSeal"> | Date | string
+    createdAt?: DateTimeFilter<"RecordSeal"> | Date | string
+    updatedAt?: DateTimeFilter<"RecordSeal"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"RecordSeal"> | Date | string | null
+  }
+
   export type WorkspaceCreateWithoutParkedIngestsInput = {
     id?: string
     name: string
@@ -71022,6 +72823,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -71058,6 +72860,7 @@ export namespace Prisma {
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutParkedIngestsInput = {
@@ -71069,6 +72872,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -71105,6 +72909,7 @@ export namespace Prisma {
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutParkedIngestsInput = {
@@ -71132,6 +72937,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -71168,6 +72974,7 @@ export namespace Prisma {
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutParkedIngestsInput = {
@@ -71179,6 +72986,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -71215,6 +73023,7 @@ export namespace Prisma {
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserCreateWithoutWorkspacesInput = {
@@ -71265,6 +73074,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -71301,6 +73111,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutUsersInput = {
@@ -71312,6 +73123,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -71348,6 +73160,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutUsersInput = {
@@ -71459,6 +73272,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -71495,6 +73309,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutUsersInput = {
@@ -71506,6 +73321,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -71542,6 +73358,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserUpsertWithoutRemovedWorkspaceMembershipsInput = {
@@ -71598,6 +73415,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -71634,6 +73452,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutMeetingsInput = {
@@ -71645,6 +73464,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -71681,6 +73501,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutMeetingsInput = {
@@ -71933,6 +73754,42 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type RecordSealCreateWithoutMeetingInput = {
+    id?: string
+    packHash: string
+    sealedAt: Date | string
+    sealedByUserId: string
+    storageUri: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutRecordSealsInput
+  }
+
+  export type RecordSealUncheckedCreateWithoutMeetingInput = {
+    id?: string
+    workspaceId: string
+    packHash: string
+    sealedAt: Date | string
+    sealedByUserId: string
+    storageUri: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type RecordSealCreateOrConnectWithoutMeetingInput = {
+    where: RecordSealWhereUniqueInput
+    create: XOR<RecordSealCreateWithoutMeetingInput, RecordSealUncheckedCreateWithoutMeetingInput>
+  }
+
+  export type RecordSealCreateManyMeetingInputEnvelope = {
+    data: RecordSealCreateManyMeetingInput | RecordSealCreateManyMeetingInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserCreateWithoutMeetingsAdvisorCertifiedInput = {
     id?: string
     name?: string | null
@@ -72070,6 +73927,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -72106,6 +73964,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutMeetingsInput = {
@@ -72117,6 +73976,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -72153,6 +74013,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ClientUpsertWithoutMeetingsInput = {
@@ -72305,6 +74166,22 @@ export namespace Prisma {
     errorMessage?: StringNullableFilter<"IntegrationSyncLog"> | string | null
     createdAt?: DateTimeFilter<"IntegrationSyncLog"> | Date | string
     completedAt?: DateTimeNullableFilter<"IntegrationSyncLog"> | Date | string | null
+  }
+
+  export type RecordSealUpsertWithWhereUniqueWithoutMeetingInput = {
+    where: RecordSealWhereUniqueInput
+    update: XOR<RecordSealUpdateWithoutMeetingInput, RecordSealUncheckedUpdateWithoutMeetingInput>
+    create: XOR<RecordSealCreateWithoutMeetingInput, RecordSealUncheckedCreateWithoutMeetingInput>
+  }
+
+  export type RecordSealUpdateWithWhereUniqueWithoutMeetingInput = {
+    where: RecordSealWhereUniqueInput
+    data: XOR<RecordSealUpdateWithoutMeetingInput, RecordSealUncheckedUpdateWithoutMeetingInput>
+  }
+
+  export type RecordSealUpdateManyWithWhereWithoutMeetingInput = {
+    where: RecordSealScalarWhereInput
+    data: XOR<RecordSealUpdateManyMutationInput, RecordSealUncheckedUpdateManyWithoutMeetingInput>
   }
 
   export type UserUpsertWithoutMeetingsAdvisorCertifiedInput = {
@@ -72487,6 +74364,7 @@ export namespace Prisma {
     flags?: FlagCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealCreateNestedManyWithoutMeetingInput
     advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
     cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
     ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
@@ -72540,6 +74418,7 @@ export namespace Prisma {
     flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingCreateOrConnectWithoutVersionsInput = {
@@ -72603,6 +74482,7 @@ export namespace Prisma {
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutMeetingNestedInput
     advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
     cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
     ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
@@ -72656,6 +74536,439 @@ export namespace Prisma {
     flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutMeetingNestedInput
+  }
+
+  export type WorkspaceCreateWithoutRecordSealsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    fiscalYearEndMonth?: number
+    fiscalTimezone?: string
+    mediaPosture?: $Enums.MediaPosture | null
+    postureSetById?: string | null
+    postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    clientHouseholds?: ClientHouseholdCreateNestedManyWithoutWorkspaceInput
+    clientActivities?: ClientActivityCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
+    evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
+    parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceUncheckedCreateWithoutRecordSealsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    fiscalYearEndMonth?: number
+    fiscalTimezone?: string
+    mediaPosture?: $Enums.MediaPosture | null
+    postureSetById?: string | null
+    postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    clientHouseholds?: ClientHouseholdUncheckedCreateNestedManyWithoutWorkspaceInput
+    clientActivities?: ClientActivityUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
+    parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceCreateOrConnectWithoutRecordSealsInput = {
+    where: WorkspaceWhereUniqueInput
+    create: XOR<WorkspaceCreateWithoutRecordSealsInput, WorkspaceUncheckedCreateWithoutRecordSealsInput>
+  }
+
+  export type MeetingCreateWithoutRecordSealsInput = {
+    id?: string
+    clientName: string
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
+    meetingType: string
+    meetingDate: Date | string
+    status?: $Enums.MeetingStatus
+    fileUrl?: string | null
+    transcriptSha256?: string | null
+    mediaDiscardedAt?: Date | string | null
+    sourceFileSha256?: string | null
+    sourceFileName?: string | null
+    sourceFileSize?: number | null
+    sourceFileMime?: string | null
+    sourceUploadedAt?: Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
+    finalizedBy?: string | null
+    finalizedAt?: Date | string | null
+    finalizeReason?: $Enums.FinalizeReason | null
+    finalizeNote?: string | null
+    finalizedPolicyVersion?: number | null
+    samplingBucket?: string | null
+    samplingRuleId?: string | null
+    draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
+    readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    cmReviewedAt?: Date | string | null
+    ccoSignedOffAt?: Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspace: WorkspaceCreateNestedOneWithoutMeetingsInput
+    client?: ClientCreateNestedOneWithoutMeetingsInput
+    versions?: VersionCreateNestedManyWithoutMeetingInput
+    auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
+    flags?: FlagCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
+    integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
+    cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
+    ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
+  }
+
+  export type MeetingUncheckedCreateWithoutRecordSealsInput = {
+    id?: string
+    workspaceId: string
+    clientName: string
+    clientId?: string | null
+    clientMatchConfidence?: $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingCreateparticipantEmailsInput | string[]
+    meetingType: string
+    meetingDate: Date | string
+    status?: $Enums.MeetingStatus
+    fileUrl?: string | null
+    transcriptSha256?: string | null
+    mediaDiscardedAt?: Date | string | null
+    sourceFileSha256?: string | null
+    sourceFileName?: string | null
+    sourceFileSize?: number | null
+    sourceFileMime?: string | null
+    sourceUploadedAt?: Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: string | null
+    finalizedBy?: string | null
+    finalizedAt?: Date | string | null
+    finalizeReason?: $Enums.FinalizeReason | null
+    finalizeNote?: string | null
+    finalizedPolicyVersion?: number | null
+    samplingBucket?: string | null
+    samplingRuleId?: string | null
+    draftReadyAt?: Date | string | null
+    timeToFinalize?: number | null
+    readyForCCO?: boolean
+    sharepointItemWebUrl?: string | null
+    sharepointDepositedAt?: Date | string | null
+    zohoCrmContactId?: string | null
+    zohoCrmNotePostedAt?: Date | string | null
+    advisorCertifiedAt?: Date | string | null
+    advisorCertifiedByUserId?: string | null
+    cmReviewedAt?: Date | string | null
+    cmReviewedByUserId?: string | null
+    ccoSignedOffAt?: Date | string | null
+    ccoSignedOffByUserId?: string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    versions?: VersionUncheckedCreateNestedManyWithoutMeetingInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutMeetingInput
+    flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
+    integrationSyncLogs?: IntegrationSyncLogUncheckedCreateNestedManyWithoutMeetingInput
+  }
+
+  export type MeetingCreateOrConnectWithoutRecordSealsInput = {
+    where: MeetingWhereUniqueInput
+    create: XOR<MeetingCreateWithoutRecordSealsInput, MeetingUncheckedCreateWithoutRecordSealsInput>
+  }
+
+  export type WorkspaceUpsertWithoutRecordSealsInput = {
+    update: XOR<WorkspaceUpdateWithoutRecordSealsInput, WorkspaceUncheckedUpdateWithoutRecordSealsInput>
+    create: XOR<WorkspaceCreateWithoutRecordSealsInput, WorkspaceUncheckedCreateWithoutRecordSealsInput>
+    where?: WorkspaceWhereInput
+  }
+
+  export type WorkspaceUpdateToOneWithWhereWithoutRecordSealsInput = {
+    where?: WorkspaceWhereInput
+    data: XOR<WorkspaceUpdateWithoutRecordSealsInput, WorkspaceUncheckedUpdateWithoutRecordSealsInput>
+  }
+
+  export type WorkspaceUpdateWithoutRecordSealsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    fiscalYearEndMonth?: IntFieldUpdateOperationsInput | number
+    fiscalTimezone?: StringFieldUpdateOperationsInput | string
+    mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
+    postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
+    postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    clientHouseholds?: ClientHouseholdUpdateManyWithoutWorkspaceNestedInput
+    clientActivities?: ClientActivityUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
+    evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
+    parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type WorkspaceUncheckedUpdateWithoutRecordSealsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    fiscalYearEndMonth?: IntFieldUpdateOperationsInput | number
+    fiscalTimezone?: StringFieldUpdateOperationsInput | string
+    mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
+    postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
+    postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clientHouseholds?: ClientHouseholdUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clientActivities?: ClientActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type MeetingUpsertWithoutRecordSealsInput = {
+    update: XOR<MeetingUpdateWithoutRecordSealsInput, MeetingUncheckedUpdateWithoutRecordSealsInput>
+    create: XOR<MeetingCreateWithoutRecordSealsInput, MeetingUncheckedCreateWithoutRecordSealsInput>
+    where?: MeetingWhereInput
+  }
+
+  export type MeetingUpdateToOneWithWhereWithoutRecordSealsInput = {
+    where?: MeetingWhereInput
+    data: XOR<MeetingUpdateWithoutRecordSealsInput, MeetingUncheckedUpdateWithoutRecordSealsInput>
+  }
+
+  export type MeetingUpdateWithoutRecordSealsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    clientName?: StringFieldUpdateOperationsInput | string
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
+    meetingType?: StringFieldUpdateOperationsInput | string
+    meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    transcriptSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    mediaDiscardedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sourceFileSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileName?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    sourceFileMime?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUploadedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalizeReason?: NullableEnumFinalizeReasonFieldUpdateOperationsInput | $Enums.FinalizeReason | null
+    finalizeNote?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
+    samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspace?: WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput
+    client?: ClientUpdateOneWithoutMeetingsNestedInput
+    versions?: VersionUpdateManyWithoutMeetingNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
+    flags?: FlagUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
+    integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
+    cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
+    ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
+  }
+
+  export type MeetingUncheckedUpdateWithoutRecordSealsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    clientName?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientMatchConfidence?: NullableEnumMeetingClientMatchConfidenceFieldUpdateOperationsInput | $Enums.MeetingClientMatchConfidence | null
+    participantEmails?: MeetingUpdateparticipantEmailsInput | string[]
+    meetingType?: StringFieldUpdateOperationsInput | string
+    meetingDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMeetingStatusFieldUpdateOperationsInput | $Enums.MeetingStatus
+    fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    transcriptSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    mediaDiscardedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sourceFileSha256?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileName?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceFileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    sourceFileMime?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUploadedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transcript?: NullableJsonNullValueInput | InputJsonValue
+    extraction?: NullableJsonNullValueInput | InputJsonValue
+    searchableText?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalizeReason?: NullableEnumFinalizeReasonFieldUpdateOperationsInput | $Enums.FinalizeReason | null
+    finalizeNote?: NullableStringFieldUpdateOperationsInput | string | null
+    finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
+    samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
+    samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
+    readyForCCO?: BoolFieldUpdateOperationsInput | boolean
+    sharepointItemWebUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sharepointDepositedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    zohoCrmContactId?: NullableStringFieldUpdateOperationsInput | string | null
+    zohoCrmNotePostedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    advisorCertifiedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmReviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    ccoSignedOffAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ccoSignedOffByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    cmReviewSummary?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    versions?: VersionUncheckedUpdateManyWithoutMeetingNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
+    integrationSyncLogs?: IntegrationSyncLogUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
   export type MeetingCreateWithoutFlagsInput = {
@@ -72703,6 +75016,7 @@ export namespace Prisma {
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealCreateNestedManyWithoutMeetingInput
     advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
     cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
     ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
@@ -72756,6 +75070,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingCreateOrConnectWithoutFlagsInput = {
@@ -72817,6 +75132,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -72853,6 +75169,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutFlagsInput = {
@@ -72864,6 +75181,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -72900,6 +75218,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutFlagsInput = {
@@ -73047,6 +75366,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutMeetingNestedInput
     advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
     cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
     ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
@@ -73100,6 +75420,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
   export type CommunicationUpsertWithoutFlagsInput = {
@@ -73173,6 +75494,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -73209,6 +75531,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutFlagsInput = {
@@ -73220,6 +75543,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -73256,6 +75580,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ResolutionRecordUpsertWithoutFlagInput = {
@@ -73458,6 +75783,7 @@ export namespace Prisma {
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     flags?: FlagCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealCreateNestedManyWithoutMeetingInput
     advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
     cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
     ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
@@ -73511,6 +75837,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutMeetingInput
     flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingCreateOrConnectWithoutResolutionRecordsInput = {
@@ -73527,6 +75854,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -73563,6 +75891,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutResolutionRecordsInput = {
@@ -73574,6 +75903,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -73610,6 +75940,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutResolutionRecordsInput = {
@@ -73834,6 +76165,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutMeetingNestedInput
     advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
     cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
     ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
@@ -73887,6 +76219,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
     flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
   export type WorkspaceUpsertWithoutResolutionRecordsInput = {
@@ -73909,6 +76242,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -73945,6 +76279,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutResolutionRecordsInput = {
@@ -73956,6 +76291,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -73992,6 +76328,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ActionItemUpsertWithWhereUniqueWithoutResolutionInput = {
@@ -74095,6 +76432,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -74131,6 +76469,7 @@ export namespace Prisma {
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEvidenceClassificationsInput = {
@@ -74142,6 +76481,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -74178,6 +76518,7 @@ export namespace Prisma {
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEvidenceClassificationsInput = {
@@ -74205,6 +76546,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -74241,6 +76583,7 @@ export namespace Prisma {
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEvidenceClassificationsInput = {
@@ -74252,6 +76595,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -74288,6 +76632,7 @@ export namespace Prisma {
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ResolutionRecordCreateWithoutTasksInput = {
@@ -74707,6 +77052,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -74743,6 +77089,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutAuditEventsInput = {
@@ -74754,6 +77101,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -74790,6 +77138,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutAuditEventsInput = {
@@ -74842,6 +77191,7 @@ export namespace Prisma {
     flags?: FlagCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealCreateNestedManyWithoutMeetingInput
     advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
     cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
     ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
@@ -74895,6 +77245,7 @@ export namespace Prisma {
     flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingCreateOrConnectWithoutAuditEventsInput = {
@@ -74922,6 +77273,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -74958,6 +77310,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutAuditEventsInput = {
@@ -74969,6 +77322,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -75005,6 +77359,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type MeetingUpsertWithoutAuditEventsInput = {
@@ -75063,6 +77418,7 @@ export namespace Prisma {
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutMeetingNestedInput
     advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
     cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
     ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
@@ -75116,6 +77472,7 @@ export namespace Prisma {
     flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -75446,6 +77803,7 @@ export namespace Prisma {
     flags?: FlagCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealCreateNestedManyWithoutMeetingInput
     cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
     ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
   }
@@ -75498,6 +77856,7 @@ export namespace Prisma {
     flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingCreateOrConnectWithoutAdvisorCertifiedByUserInput = {
@@ -75556,6 +77915,7 @@ export namespace Prisma {
     flags?: FlagCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealCreateNestedManyWithoutMeetingInput
     advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
     ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
   }
@@ -75608,6 +77968,7 @@ export namespace Prisma {
     flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingCreateOrConnectWithoutCmReviewedByUserInput = {
@@ -75666,6 +78027,7 @@ export namespace Prisma {
     flags?: FlagCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealCreateNestedManyWithoutMeetingInput
     advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
     cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
   }
@@ -75718,6 +78080,7 @@ export namespace Prisma {
     flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingCreateOrConnectWithoutCcoSignedOffByUserInput = {
@@ -76058,6 +78421,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -76094,6 +78458,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutInvitationsInput = {
@@ -76105,6 +78470,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -76141,6 +78507,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutInvitationsInput = {
@@ -76207,6 +78574,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -76243,6 +78611,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutInvitationsInput = {
@@ -76254,6 +78623,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -76290,6 +78660,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserUpsertWithoutInvitationsSentInput = {
@@ -76346,6 +78717,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -76382,6 +78754,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutIntegrationCredentialsInput = {
@@ -76393,6 +78766,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -76429,6 +78803,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutIntegrationCredentialsInput = {
@@ -76456,6 +78831,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -76492,6 +78868,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutIntegrationCredentialsInput = {
@@ -76503,6 +78880,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -76539,6 +78917,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateWithoutIntegrationConfigsInput = {
@@ -76550,6 +78929,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -76586,6 +78966,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutIntegrationConfigsInput = {
@@ -76597,6 +78978,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -76633,6 +79015,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutIntegrationConfigsInput = {
@@ -76694,6 +79077,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -76730,6 +79114,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutIntegrationConfigsInput = {
@@ -76741,6 +79126,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -76777,6 +79163,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type IntegrationSyncLogUpsertWithWhereUniqueWithoutIntegrationConfigInput = {
@@ -76869,6 +79256,7 @@ export namespace Prisma {
     auditEvents?: AuditEventCreateNestedManyWithoutMeetingInput
     flags?: FlagCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealCreateNestedManyWithoutMeetingInput
     advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
     cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
     ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
@@ -76922,6 +79310,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUncheckedCreateNestedManyWithoutMeetingInput
     flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingCreateOrConnectWithoutIntegrationSyncLogsInput = {
@@ -77020,6 +79409,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUpdateManyWithoutMeetingNestedInput
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutMeetingNestedInput
     advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
     cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
     ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
@@ -77073,6 +79463,7 @@ export namespace Prisma {
     auditEvents?: AuditEventUncheckedUpdateManyWithoutMeetingNestedInput
     flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
   export type WorkspaceCreateWithoutFirmProfileInput = {
@@ -77084,6 +79475,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -77120,6 +79512,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutFirmProfileInput = {
@@ -77131,6 +79524,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -77167,6 +79561,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutFirmProfileInput = {
@@ -77292,6 +79687,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -77328,6 +79724,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutFirmProfileInput = {
@@ -77339,6 +79736,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -77375,6 +79773,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type DisclosureCategoryUpsertWithWhereUniqueWithoutFirmProfileInput = {
@@ -77780,6 +80179,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -77816,6 +80216,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutClientsInput = {
@@ -77827,6 +80228,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -77863,6 +80265,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutClientsInput = {
@@ -78071,6 +80474,7 @@ export namespace Prisma {
     flags?: FlagCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealCreateNestedManyWithoutMeetingInput
     advisorCertifiedByUser?: UserCreateNestedOneWithoutMeetingsAdvisorCertifiedInput
     cmReviewedByUser?: UserCreateNestedOneWithoutMeetingsCmReviewedInput
     ccoSignedOffByUser?: UserCreateNestedOneWithoutMeetingsCcoSignedOffInput
@@ -78124,6 +80528,7 @@ export namespace Prisma {
     flags?: FlagUncheckedCreateNestedManyWithoutMeetingInput
     resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutMeetingInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedCreateNestedManyWithoutMeetingInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutMeetingInput
   }
 
   export type MeetingCreateOrConnectWithoutClientInput = {
@@ -78156,6 +80561,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -78192,6 +80598,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutClientsInput = {
@@ -78203,6 +80610,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -78239,6 +80647,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type EmailAliasUpsertWithWhereUniqueWithoutClientInput = {
@@ -78343,6 +80752,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -78379,6 +80789,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutClientHouseholdsInput = {
@@ -78390,6 +80801,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -78426,6 +80838,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutClientHouseholdsInput = {
@@ -78481,6 +80894,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -78517,6 +80931,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutClientHouseholdsInput = {
@@ -78528,6 +80943,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -78564,6 +80980,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ClientHouseholdMemberUpsertWithWhereUniqueWithoutHouseholdInput = {
@@ -78723,6 +81140,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -78759,6 +81177,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutClientActivitiesInput = {
@@ -78770,6 +81189,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -78806,6 +81226,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutClientActivitiesInput = {
@@ -78870,6 +81291,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -78906,6 +81328,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutClientActivitiesInput = {
@@ -78917,6 +81340,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -78953,6 +81377,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ClientUpsertWithoutActivitiesInput = {
@@ -79007,6 +81432,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -79043,6 +81469,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEmailAliasesInput = {
@@ -79054,6 +81481,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -79090,6 +81518,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEmailAliasesInput = {
@@ -79193,6 +81622,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -79229,6 +81659,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEmailAliasesInput = {
@@ -79240,6 +81671,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -79276,6 +81708,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserUpsertWithoutEmailAliasesInput = {
@@ -79375,6 +81808,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -79411,6 +81845,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEvidenceItemsInput = {
@@ -79422,6 +81857,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -79458,6 +81894,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEvidenceItemsInput = {
@@ -79597,6 +82034,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -79633,6 +82071,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEvidenceItemsInput = {
@@ -79644,6 +82083,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -79680,6 +82120,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ClientUpsertWithoutEvidenceItemsInput = {
@@ -79915,6 +82356,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -79951,6 +82393,7 @@ export namespace Prisma {
     ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEvidenceEmbeddingsInput = {
@@ -79962,6 +82405,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -79998,6 +82442,7 @@ export namespace Prisma {
     ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEvidenceEmbeddingsInput = {
@@ -80025,6 +82470,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -80061,6 +82507,7 @@ export namespace Prisma {
     ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEvidenceEmbeddingsInput = {
@@ -80072,6 +82519,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -80108,6 +82556,7 @@ export namespace Prisma {
     ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateWithoutCommunicationThreadsInput = {
@@ -80119,6 +82568,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -80155,6 +82605,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutCommunicationThreadsInput = {
@@ -80166,6 +82617,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -80202,6 +82654,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutCommunicationThreadsInput = {
@@ -80279,6 +82732,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -80315,6 +82769,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutCommunicationThreadsInput = {
@@ -80326,6 +82781,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -80362,6 +82818,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type CommunicationUpsertWithWhereUniqueWithoutThreadInput = {
@@ -80817,6 +83274,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -80853,6 +83311,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutMailboxConnectionsInput = {
@@ -80864,6 +83323,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -80900,6 +83360,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutMailboxConnectionsInput = {
@@ -80963,6 +83424,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -80999,6 +83461,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutMailboxConnectionsInput = {
@@ -81010,6 +83473,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -81046,6 +83510,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type IngestJobUpsertWithWhereUniqueWithoutConnectionInput = {
@@ -81073,6 +83538,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -81109,6 +83575,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutIngestJobsInput = {
@@ -81120,6 +83587,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -81156,6 +83624,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutIngestJobsInput = {
@@ -81224,6 +83693,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -81260,6 +83730,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutIngestJobsInput = {
@@ -81271,6 +83742,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -81307,6 +83779,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type MailboxConnectionUpsertWithoutIngestJobsInput = {
@@ -81365,6 +83838,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -81401,6 +83875,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEmailTriageItemsInput = {
@@ -81412,6 +83887,7 @@ export namespace Prisma {
     mediaPosture?: $Enums.MediaPosture | null
     postureSetById?: string | null
     postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
     legalHold?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -81448,6 +83924,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEmailTriageItemsInput = {
@@ -81475,6 +83952,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -81511,6 +83989,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEmailTriageItemsInput = {
@@ -81522,6 +84001,7 @@ export namespace Prisma {
     mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
     postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
     postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
     legalHold?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -81558,6 +84038,7 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserWorkspaceCreateManyWorkspaceInput = {
@@ -81853,6 +84334,19 @@ export namespace Prisma {
     deletedAt?: Date | string | null
   }
 
+  export type RecordSealCreateManyWorkspaceInput = {
+    id?: string
+    meetingId: string
+    packHash: string
+    sealedAt: Date | string
+    sealedByUserId: string
+    storageUri: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
   export type UserWorkspaceUpdateWithoutWorkspaceInput = {
     role?: EnumWorkspaceRoleFieldUpdateOperationsInput | $Enums.WorkspaceRole
     onboardingDismissedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -81922,6 +84416,7 @@ export namespace Prisma {
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutMeetingNestedInput
     advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
     cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
     ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
@@ -81975,6 +84470,7 @@ export namespace Prisma {
     flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
   export type MeetingUncheckedUpdateManyWithoutWorkspaceInput = {
@@ -82811,6 +85307,45 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type RecordSealUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    packHash?: StringFieldUpdateOperationsInput | string
+    sealedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sealedByUserId?: StringFieldUpdateOperationsInput | string
+    storageUri?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    meeting?: MeetingUpdateOneRequiredWithoutRecordSealsNestedInput
+  }
+
+  export type RecordSealUncheckedUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    meetingId?: StringFieldUpdateOperationsInput | string
+    packHash?: StringFieldUpdateOperationsInput | string
+    sealedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sealedByUserId?: StringFieldUpdateOperationsInput | string
+    storageUri?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type RecordSealUncheckedUpdateManyWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    meetingId?: StringFieldUpdateOperationsInput | string
+    packHash?: StringFieldUpdateOperationsInput | string
+    sealedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sealedByUserId?: StringFieldUpdateOperationsInput | string
+    storageUri?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type VersionCreateManyMeetingInput = {
     id?: string
     version: number
@@ -82884,6 +85419,19 @@ export namespace Prisma {
     errorMessage?: string | null
     createdAt?: Date | string
     completedAt?: Date | string | null
+  }
+
+  export type RecordSealCreateManyMeetingInput = {
+    id?: string
+    workspaceId: string
+    packHash: string
+    sealedAt: Date | string
+    sealedByUserId: string
+    storageUri: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
   }
 
   export type VersionUpdateWithoutMeetingInput = {
@@ -83117,6 +85665,45 @@ export namespace Prisma {
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type RecordSealUpdateWithoutMeetingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    packHash?: StringFieldUpdateOperationsInput | string
+    sealedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sealedByUserId?: StringFieldUpdateOperationsInput | string
+    storageUri?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutRecordSealsNestedInput
+  }
+
+  export type RecordSealUncheckedUpdateWithoutMeetingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    packHash?: StringFieldUpdateOperationsInput | string
+    sealedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sealedByUserId?: StringFieldUpdateOperationsInput | string
+    storageUri?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type RecordSealUncheckedUpdateManyWithoutMeetingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    packHash?: StringFieldUpdateOperationsInput | string
+    sealedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sealedByUserId?: StringFieldUpdateOperationsInput | string
+    storageUri?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ActionItemCreateManyResolutionInput = {
@@ -83671,6 +86258,7 @@ export namespace Prisma {
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutMeetingNestedInput
     cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
     ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
   }
@@ -83723,6 +86311,7 @@ export namespace Prisma {
     flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
   export type MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserInput = {
@@ -83816,6 +86405,7 @@ export namespace Prisma {
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutMeetingNestedInput
     advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
     ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
   }
@@ -83868,6 +86458,7 @@ export namespace Prisma {
     flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
   export type MeetingUncheckedUpdateManyWithoutCmReviewedByUserInput = {
@@ -83961,6 +86552,7 @@ export namespace Prisma {
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutMeetingNestedInput
     advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
     cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
   }
@@ -84013,6 +86605,7 @@ export namespace Prisma {
     flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
   export type MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserInput = {
@@ -84711,6 +87304,7 @@ export namespace Prisma {
     flags?: FlagUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutMeetingNestedInput
     advisorCertifiedByUser?: UserUpdateOneWithoutMeetingsAdvisorCertifiedNestedInput
     cmReviewedByUser?: UserUpdateOneWithoutMeetingsCmReviewedNestedInput
     ccoSignedOffByUser?: UserUpdateOneWithoutMeetingsCcoSignedOffNestedInput
@@ -84764,6 +87358,7 @@ export namespace Prisma {
     flags?: FlagUncheckedUpdateManyWithoutMeetingNestedInput
     resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutMeetingNestedInput
     integrationSyncLogs?: IntegrationSyncLogUncheckedUpdateManyWithoutMeetingNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
   export type MeetingUncheckedUpdateManyWithoutClientInput = {

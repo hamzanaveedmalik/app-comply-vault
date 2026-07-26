@@ -7,7 +7,10 @@ import { generateAuditPack, generateExportFilename } from "~/server/export";
 import type { ExtractionData } from "~/server/extraction/types";
 import type { TranscriptSegment } from "~/server/transcription/types";
 import type { Meeting, User } from "~/server/export/types";
-import { getEntitlements, isTrialExpired } from "~/server/billing/entitlements";
+import {
+  resolveExportWatermark,
+  type ExportPurpose,
+} from "~/server/export/watermark";
 import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
 import {
   buildEmailCorrespondenceSection,
@@ -20,6 +23,7 @@ export type BuildAuditPackResult =
 
 /**
  * Produces the same audit pack ZIP as POST /api/meetings/:id/export (without audit log / HTTP).
+ * Pass purpose "seal" for bytes that will be hashed / object-locked (CV-TR-19: never watermarked).
  */
 const EXPORTABLE_MEETING_STATUSES = new Set([
   "FINALIZED",
@@ -34,8 +38,10 @@ export async function buildAuditPackZipForMeeting(args: {
   meetingId: string;
   workspaceId: string;
   exportingUserName: string;
+  /** CV-TR-19: "seal" forces unwatermarked canonical bytes. Default "draft". */
+  purpose?: ExportPurpose;
 }): Promise<BuildAuditPackResult> {
-  const { meetingId, workspaceId, exportingUserName } = args;
+  const { meetingId, workspaceId, exportingUserName, purpose = "draft" } = args;
 
   const meeting = await db.meeting.findFirst({
     where: { id: meetingId, workspaceId },
@@ -71,13 +77,14 @@ export async function buildAuditPackZipForMeeting(args: {
     return { success: false, error: "Workspace not found" };
   }
 
-  const trialExpired = workspace.billingStatus === "TRIALING" && isTrialExpired(workspace.trialEndsAt);
-  const entitlements = getEntitlements({
-    billingStatus: workspace.billingStatus,
-    planTier: workspace.planTier,
-    trialEndsAt: workspace.trialEndsAt,
+  const watermarked = resolveExportWatermark({
+    purpose,
+    workspace: {
+      billingStatus: workspace.billingStatus,
+      planTier: workspace.planTier,
+      trialEndsAt: workspace.trialEndsAt,
+    },
   });
-  const watermarked = (entitlements?.exportsWatermarked ?? false) || trialExpired;
 
   let finalizedByUser = null;
   if (meeting.finalizedBy) {

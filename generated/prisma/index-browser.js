@@ -130,6 +130,7 @@ exports.Prisma.WorkspaceScalarFieldEnum = {
   mediaPosture: 'mediaPosture',
   postureSetById: 'postureSetById',
   postureSetAt: 'postureSetAt',
+  retentionAnchoringNoticePending: 'retentionAnchoringNoticePending',
   legalHold: 'legalHold',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -228,6 +229,20 @@ exports.Prisma.VersionScalarFieldEnum = {
   whatChanged: 'whatChanged',
   reason: 'reason',
   timestamp: 'timestamp'
+};
+
+exports.Prisma.RecordSealScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  meetingId: 'meetingId',
+  packHash: 'packHash',
+  sealedAt: 'sealedAt',
+  sealedByUserId: 'sealedByUserId',
+  storageUri: 'storageUri',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.FlagScalarFieldEnum = {
@@ -896,7 +911,8 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   MEDIA_POSTURE_SET: 'MEDIA_POSTURE_SET',
   INGEST_PARKED: 'INGEST_PARKED',
   INGEST_REPLAYED: 'INGEST_REPLAYED',
-  MEDIA_DISCARDED: 'MEDIA_DISCARDED'
+  MEDIA_DISCARDED: 'MEDIA_DISCARDED',
+  RECORD_SEALED: 'RECORD_SEALED'
 };
 
 exports.IntegrationProvider = exports.$Enums.IntegrationProvider = {
@@ -1055,6 +1071,7 @@ exports.Prisma.ModelName = {
   UserWorkspace: 'UserWorkspace',
   Meeting: 'Meeting',
   Version: 'Version',
+  RecordSeal: 'RecordSeal',
   Flag: 'Flag',
   ResolutionRecord: 'ResolutionRecord',
   EvidenceClassification: 'EvidenceClassification',

@@ -237,6 +237,12 @@ model Meeting {
   ccoSignedOffByUserId     String?
   /// Summary counts when CM completes review: { resolved, noted, escalated }
   cmReviewSummary          Json?
+  /// CV-TR-16: this meeting is a correction that replaces the referenced sealed meeting.
+  supersedesId             String?
+  /// CV-TR-16: this sealed meeting has been replaced by the referenced meeting.
+  supersededById           String?                       @unique
+  /// CV-TR-16: mandatory narrative reason (stored on original; copied onto replacement).
+  supersedeReason          String?                       @db.Text
   createdAt                DateTime                      @default(now())
   updatedAt                DateTime                      @updatedAt
 
@@ -252,6 +258,10 @@ model Meeting {
   advisorCertifiedByUser User?                @relation("MeetingAdvisorCertifiedBy", fields: [advisorCertifiedByUserId], references: [id], onDelete: SetNull)
   cmReviewedByUser       User?                @relation("MeetingCmReviewedBy", fields: [cmReviewedByUserId], references: [id], onDelete: SetNull)
   ccoSignedOffByUser     User?                @relation("MeetingCcoSignedOffBy", fields: [ccoSignedOffByUserId], references: [id], onDelete: SetNull)
+  supersedes             Meeting?             @relation("MeetingSupersedesParent", fields: [supersedesId], references: [id], onDelete: Restrict)
+  supersededByChildren   Meeting[]            @relation("MeetingSupersedesParent")
+  supersededBy           Meeting?             @relation("MeetingSupersededByChild", fields: [supersededById], references: [id], onDelete: Restrict)
+  supersedesParent       Meeting?             @relation("MeetingSupersededByChild")
   // Note: searchableText is NOT indexed with btree (too large for index)
   // We use PostgreSQL's native full-text search via to_tsvector() in queries
   // The field is limited to 50KB to prevent database issues
@@ -262,6 +272,7 @@ model Meeting {
   @@index([workspaceId, clientId])
   @@index([workspaceId, clientMatchConfidence])
   @@index([workspaceId, meetingDate])
+  @@index([supersedesId])
 }
 
 model Version {
@@ -327,6 +338,7 @@ enum AuditAction {
   INGEST_REPLAYED
   MEDIA_DISCARDED
   RECORD_SEALED
+  RECORD_SUPERSEDED
 }
 
 /// CV-TR-01/02 — append-only ledger entry for immutable audit-pack bytes.

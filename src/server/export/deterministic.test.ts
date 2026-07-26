@@ -239,6 +239,7 @@ async function packOnce(): Promise<Buffer> {
     exportingUserName: "Casey Owner",
     packTimestamp: PACK_AT,
     firmDisclosureProfile: emptyFirmProfile,
+    supersessionChainText: null,
   });
 }
 

@@ -24,6 +24,7 @@ import {
 } from "~/components/ui/table";
 import { Badge } from "~/components/ui/badge";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { SupersessionBadge } from "~/components/meetings/supersession-badge";
 
 interface InteractionLogMeeting {
   id: string;
@@ -33,6 +34,8 @@ interface InteractionLogMeeting {
   keywords: string;
   hasRecommendations: boolean;
   isFinalized: boolean;
+  supersededById: string | null;
+  supersedesId: string | null;
 }
 
 interface InteractionLogClientProps {
@@ -256,7 +259,13 @@ export default function InteractionLogClient({
                   {initialMeetings.map((meeting) => (
                     <TableRow key={meeting.id}>
                       <TableCell className="font-medium">
-                        {meeting.clientName}
+                        <div className="flex flex-col gap-1">
+                          <span>{meeting.clientName}</span>
+                          <SupersessionBadge
+                            supersededById={meeting.supersededById}
+                            supersedesId={meeting.supersedesId}
+                          />
+                        </div>
                       </TableCell>
                       <TableCell>
                         {new Date(meeting.date).toLocaleDateString()}

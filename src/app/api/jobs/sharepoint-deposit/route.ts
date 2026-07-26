@@ -119,6 +119,20 @@ async function handler(request: Request): Promise<Response> {
 
   // Derivative convenience copy — custody footer + ledger packHash on cover.
   // purpose "seal" keeps trial watermarks off (CV-TR-19); custodyFooter marks it derivative.
+  let supersedesSealId: string | null = null;
+  if (meeting.supersedesId) {
+    const priorSeal = await db.recordSeal.findUnique({
+      where: {
+        workspaceId_meetingId: {
+          workspaceId,
+          meetingId: meeting.supersedesId,
+        },
+      },
+      select: { id: true },
+    });
+    supersedesSealId = priorSeal?.id ?? null;
+  }
+
   const pack = await buildAuditPackZipForMeeting({
     meetingId,
     workspaceId,
@@ -130,7 +144,10 @@ async function handler(request: Request): Promise<Response> {
       sealedAt: seal.sealedAt,
       expiresAt: seal.expiresAt,
       packHash: seal.packHash,
-      custodyFooter: depositCustodyFooter(seal.id),
+      custodyFooter: depositCustodyFooter(seal.id, {
+        supersedesSealId,
+        supersedeReason: meeting.supersedeReason,
+      }),
     },
   });
 

@@ -32,6 +32,14 @@ export async function POST(
       return Response.json({ error: "Meeting not found" }, { status: 404 });
     }
 
+    const { assertSupersessionAllowsMutation } = await import(
+      "~/server/meetings/supersession-guards"
+    );
+    const chainGate = assertSupersessionAllowsMutation(meeting);
+    if (!chainGate.ok) {
+      return Response.json({ error: chainGate.error }, { status: chainGate.status });
+    }
+
     // Check if meeting is finalized (read-only) - return 403 Forbidden
     if (meeting.status === "FINALIZED") {
       return Response.json(

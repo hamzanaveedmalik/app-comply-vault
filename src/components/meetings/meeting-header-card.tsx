@@ -1,6 +1,7 @@
 import { Lock, CheckCircle2 } from "lucide-react";
 import { cn } from "~/lib/utils";
 import type { MeetingStatus } from "../../../generated/prisma";
+import { SupersessionBadge } from "~/components/meetings/supersession-badge";
 
 function MeetingStatusPill({ status }: { status: MeetingStatus | string }): React.ReactElement {
   const common = "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium";
@@ -73,6 +74,8 @@ export function MeetingHeaderCard({
   advisorLabel,
   firmLabel,
   status,
+  supersededById,
+  supersedesId,
 }: {
   clientName: string;
   meetingDate: Date;
@@ -80,12 +83,23 @@ export function MeetingHeaderCard({
   advisorLabel: string;
   firmLabel: string;
   status: MeetingStatus | string;
+  supersededById?: string | null;
+  supersedesId?: string | null;
 }): React.ReactElement {
   return (
     <div className="rounded-xl border border-border bg-card px-5 py-4 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <h2 className="text-[18px] font-medium leading-snug text-foreground">{clientName}</h2>
-        <MeetingStatusPill status={status} />
+        <div className="flex flex-col items-end gap-1.5">
+          <MeetingStatusPill status={status} />
+          {/* CV-TR-16 */}
+          {supersededById || supersedesId ? (
+            <SupersessionBadge
+              supersededById={supersededById}
+              supersedesId={supersedesId}
+            />
+          ) : null}
+        </div>
       </div>
       <dl className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>

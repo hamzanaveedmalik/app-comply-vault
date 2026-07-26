@@ -155,4 +155,14 @@ describe("CV-TR-02 seal cover payload", () => {
     expect(payload.seal?.custodyFooter).toContain("cseal123");
     expect(payload.seal?.custodyFooter).toContain("system of record");
   });
+
+  it("names supersession in deposit custody footer when replacement seals", () => {
+    const footer = depositCustodyFooter("seal_new", {
+      supersedesSealId: "seal_old",
+      supersedeReason: "Corrected fee disclosure",
+    });
+    expect(footer).toContain("seal_new");
+    expect(footer).toContain("supersedes seal seal_old");
+    expect(footer).toContain("Corrected fee disclosure");
+  });
 });

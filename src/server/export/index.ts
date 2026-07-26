@@ -16,6 +16,10 @@ import {
   sortVersions,
 } from "./deterministic";
 import type { PackSealMetadata } from "./seal-metadata";
+import {
+  formatSupersessionChainForPack,
+  resolveSupersessionChain,
+} from "./supersession-chain";
 
 export type ExportFlag = {
   type: string;
@@ -44,6 +48,8 @@ type ExportData = {
   firmDisclosureProfile?: FirmProfileExportSectionDto;
   /** CV-TR-02 / CV-TR-18 — omit for draft exports. */
   seal?: PackSealMetadata;
+  /** CV-TR-17 — precomputed supersession chronology text (optional). */
+  supersessionChainText?: string | null;
 };
 
 /**
@@ -82,6 +88,7 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
           packTimestamp: explicitPackTimestamp,
           firmDisclosureProfile: injectedProfile,
           seal,
+          supersessionChainText: injectedChainText,
         } = data;
 
         const packTimestamp = resolvePackTimestamp({
@@ -100,6 +107,19 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
           (await (
             await import("~/server/firm-profile/get-firm-profile-summary-for-export")
           ).getFirmProfileSummaryForExport(workspace.id));
+
+        let supersessionChainText: string | null;
+        if (injectedChainText !== undefined) {
+          supersessionChainText = injectedChainText;
+        } else {
+          const chain = await resolveSupersessionChain({
+            meetingId: meeting.id,
+            workspaceId: workspace.id,
+          });
+          supersessionChainText = chain
+            ? formatSupersessionChainForPack(chain)
+            : null;
+        }
 
         const sortedVersions = sortVersions(versions);
         const sortedTranscript = transcript?.segments
@@ -164,8 +184,20 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
           append(Buffer.from(emailContent, "utf-8"), "05_Email_Correspondence.csv");
         }
 
+        // 6. Supersession chain (CV-TR-17) — present only when this meeting is in a chain
+        if (supersessionChainText) {
+          const chainContent = watermarked
+            ? `TRIAL EXPORT - WATERMARKED\n${supersessionChainText}`
+            : supersessionChainText;
+          append(Buffer.from(chainContent, "utf-8"), "06_Supersession_Chain.txt");
+        }
+
         // README.txt
-        const readmeText = generateReadmeTXT(watermarked, Boolean(emailCorrespondenceCsv));
+        const readmeText = generateReadmeTXT(
+          watermarked,
+          Boolean(emailCorrespondenceCsv),
+          Boolean(supersessionChainText),
+        );
         append(Buffer.from(readmeText, "utf-8"), "README.txt");
 
         archive.finalize().catch((err) => {
@@ -210,7 +242,11 @@ export function generateExportFilename(
   return `${slugify(clientName)}_${exportDate}_AuditPack${sealPart}${suffix}.zip`;
 }
 
-function generateReadmeTXT(watermarked: boolean, includeEmail = false): string {
+function generateReadmeTXT(
+  watermarked: boolean,
+  includeEmail = false,
+  includeSupersession = false,
+): string {
   const prefix = watermarked ? "TRIAL EXPORT - WATERMARKED\n\n" : "";
   return (
     prefix +
@@ -229,6 +265,11 @@ function generateReadmeTXT(watermarked: boolean, includeEmail = false): string {
       ? "05_Email_Correspondence.csv\n" +
         "  Client email threads in range with SHA-256 hashes, classification results,\n" +
         "  flags, dispositions, and reviewer identity.\n\n"
+      : "") +
+    (includeSupersession
+      ? "06_Supersession_Chain.txt\n" +
+        "  Chronological supersession chain for this logical record (CV-TR-17):\n" +
+        "  each version with seal ID and timestamp, and the reason narrative between them.\n\n"
       : "") +
     "This pack is designed to satisfy examiner requests for source documentation.\n" +
     "complyvault.co"

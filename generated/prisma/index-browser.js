@@ -217,6 +217,9 @@ exports.Prisma.MeetingScalarFieldEnum = {
   ccoSignedOffAt: 'ccoSignedOffAt',
   ccoSignedOffByUserId: 'ccoSignedOffByUserId',
   cmReviewSummary: 'cmReviewSummary',
+  supersedesId: 'supersedesId',
+  supersededById: 'supersededById',
+  supersedeReason: 'supersedeReason',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -912,7 +915,8 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   INGEST_PARKED: 'INGEST_PARKED',
   INGEST_REPLAYED: 'INGEST_REPLAYED',
   MEDIA_DISCARDED: 'MEDIA_DISCARDED',
-  RECORD_SEALED: 'RECORD_SEALED'
+  RECORD_SEALED: 'RECORD_SEALED',
+  RECORD_SUPERSEDED: 'RECORD_SUPERSEDED'
 };
 
 exports.IntegrationProvider = exports.$Enums.IntegrationProvider = {

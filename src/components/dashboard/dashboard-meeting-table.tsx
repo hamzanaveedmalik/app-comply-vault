@@ -7,6 +7,7 @@ import type { MeetingRow } from "~/lib/dashboard-types";
 import { DashboardStatusBadge } from "~/components/dashboard/dashboard-status-badge";
 import { MeetingFlagsCell } from "~/components/dashboard/meeting-flags-cell";
 import { DashboardCard } from "~/components/dashboard/dashboard-card";
+import { SupersessionBadge } from "~/components/meetings/supersession-badge";
 
 type DashboardMeetingTableProps = {
   totalMeetings: number;
@@ -97,7 +98,15 @@ export function DashboardMeetingTable({
                     if (e.key === "Enter") router.push(`/meetings/${row.id}`);
                   }}
                 >
-                  <td className={`${TD} font-semibold text-[#141f19]`}>{row.clientName}</td>
+                  <td className={`${TD} font-semibold text-[#141f19]`}>
+                    <div className="flex flex-col gap-1">
+                      <span>{row.clientName}</span>
+                      <SupersessionBadge
+                        supersededById={row.supersededById}
+                        supersedesId={row.supersedesId}
+                      />
+                    </div>
+                  </td>
                   <td className={`${TD} text-[#79837d]`}>{row.meetingType}</td>
                   <td className={`${TD} text-[#79837d]`}>{dateFmt.format(new Date(row.date))}</td>
                   <td className={`${TD} text-right`}>

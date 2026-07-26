@@ -31,6 +31,8 @@ import { ExportCard } from "~/components/meetings/export-card";
 import { buildMeetingAuditTrailEntries } from "~/lib/meeting-audit-trail";
 import { parseCmReviewSummary, computeCmReviewSummaryFromFlags } from "~/lib/cm-review-summary";
 import { redirectPathForMissingWorkspace } from "~/server/workspace/no-workspace-redirect";
+import { SupersedeMeetingButton } from "~/components/meetings/supersede-meeting-button";
+import { isSupersessionMutationBlocked } from "~/server/meetings/supersession-guards";
 
 export default async function MeetingDetailPage({
   params,
@@ -222,6 +224,12 @@ export default async function MeetingDetailPage({
 
   const initialSyncToken = buildMeetingSyncToken(meeting.status, meeting.updatedAt, flags);
 
+  const chainMutationBlocked = isSupersessionMutationBlocked(meeting);
+  const flagsReadOnly =
+    session.user.role === "ADVISOR" ||
+    meeting.status === "FINALIZED" ||
+    Boolean(meeting.supersededById);
+
   const mappedFlags = flags.map((flag) => ({
     id: flag.id,
     type: flag.type,
@@ -298,7 +306,16 @@ export default async function MeetingDetailPage({
           }
           firmLabel={meeting.workspace.name}
           status={meeting.status}
+          supersededById={meeting.supersededById}
+          supersedesId={meeting.supersedesId}
         />
+
+        {meeting.supersedeReason && (meeting.supersededById || meeting.supersedesId) ? (
+          <div className="rounded-xl border border-[#F1EFE8] bg-[#FAFAF8] px-5 py-4 text-[13px] text-[#444441]">
+            <p className="font-medium text-[#0D2818]">Supersession reason</p>
+            <p className="mt-1 whitespace-pre-wrap">{meeting.supersedeReason}</p>
+          </div>
+        ) : null}
 
         {meeting.status === "ADVISOR_CERTIFIED" && isComplianceActor(session.user.role) && (
           <div className="rounded-xl border border-[#E6F1FB] bg-[#E6F1FB]/35 px-5 py-4 text-[13px] text-[#0C447C]">
@@ -340,8 +357,9 @@ export default async function MeetingDetailPage({
             flags={mappedFlags}
             userRole={session.user.role}
             currentUserId={session.user.id}
-            readOnlyCompliance={session.user.role === "ADVISOR"}
+            readOnlyCompliance={flagsReadOnly}
           />
+          {!chainMutationBlocked ? (
           <ReviewActionBar
             meetingId={meeting.id}
             clientName={meeting.clientName}
@@ -357,9 +375,25 @@ export default async function MeetingDetailPage({
             openCriticalFlagsCount={openCriticalFlags.length}
             openWarningFlagsCount={openWarningFlags.length}
           />
+          ) : null}
         </section>
 
-        <CcoRevertPanel meetingId={meeting.id} meetingStatus={meeting.status} userRole={session.user.role} />
+        {!chainMutationBlocked ? (
+          <CcoRevertPanel meetingId={meeting.id} meetingStatus={meeting.status} userRole={session.user.role} />
+        ) : null}
+
+        {meeting.status === "FINALIZED" &&
+          !meeting.supersededById &&
+          session.user.role === "OWNER_CCO" && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Correct sealed record</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <SupersedeMeetingButton meetingId={meeting.id} />
+              </CardContent>
+            </Card>
+          )}
 
         {zohoCrmCredential?.status === "CONNECTED" &&
           (meeting.status === "DRAFT_READY" || meeting.status === "DRAFT") && (
@@ -442,7 +476,7 @@ export default async function MeetingDetailPage({
                         }))}
                       />
                     )}
-                    {meeting.status !== "FINALIZED" && (
+                    {meeting.status !== "FINALIZED" && !chainMutationBlocked && (
                       <ReprocessButton
                         meetingId={meeting.id}
                         hasTranscript={!!(transcript && transcript.segments && transcript.segments.length > 0)}
@@ -496,7 +530,7 @@ export default async function MeetingDetailPage({
                         }))}
                       />
                     )}
-                    {meeting.status !== "FINALIZED" && (
+                    {meeting.status !== "FINALIZED" && !chainMutationBlocked && (
                       <ReprocessButton
                         meetingId={meeting.id}
                         hasTranscript={!!(transcript && transcript.segments && transcript.segments.length > 0)}
@@ -516,7 +550,7 @@ export default async function MeetingDetailPage({
                   ? "This meeting is being processed. The transcript will be available once processing is complete."
                   : "This meeting is still uploading. Please wait for processing to complete."}
               </p>
-              {meeting.status === "PROCESSING" && (
+              {meeting.status === "PROCESSING" && !chainMutationBlocked && (
                 <RetryButton
                   meetingId={meeting.id}
                   status={meeting.status}

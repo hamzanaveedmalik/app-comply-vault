@@ -23,6 +23,16 @@ export type PackSealMetadata = {
 export const SEAL_COVER_COPY =
   "This pack is sealed. Retain the seal ID and hash. ComplyVault can confirm on request that this hash matches its ledger entry.";
 
-export function depositCustodyFooter(sealId: string): string {
-  return `Convenience copy. The sealed record held by ComplyVault under seal ${sealId} is the system of record.`;
+export function depositCustodyFooter(
+  sealId: string,
+  options?: { supersedesSealId?: string | null; supersedeReason?: string | null },
+): string {
+  const base = `Convenience copy. The sealed record held by ComplyVault under seal ${sealId} is the system of record.`;
+  if (options?.supersedesSealId) {
+    const reason = options.supersedeReason?.trim()
+      ? ` Reason: ${options.supersedeReason.trim()}`
+      : "";
+    return `${base} This seal supersedes seal ${options.supersedesSealId}.${reason}`;
+  }
+  return base;
 }

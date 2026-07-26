@@ -189,6 +189,7 @@ describe("CV-TR-19 sealed pack hash stability across entitlements", () => {
       exportingUserName: "Casey Owner",
       packTimestamp: PACK_AT,
       firmDisclosureProfile: emptyFirmProfile,
+      supersessionChainText: null,
     });
   }
 

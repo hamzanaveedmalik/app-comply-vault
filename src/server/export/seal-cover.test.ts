@@ -115,6 +115,7 @@ describe("CV-TR-02 sealed pack cover + determinism", () => {
           suppressedCategories: [],
           statement: "",
         },
+        supersessionChainText: null,
       });
 
     const a = await once();

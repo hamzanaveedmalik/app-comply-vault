@@ -4,7 +4,7 @@
 **Epic:** EPIC-TR (Trust Layer)  
 **Supersedes:** `backlog-phase1-trust.md` v1.0  
 **Window:** Weeks 1 to 7  
-**Status:** 🔨 in progress — CV-TR-02a ✅; CV-TR-04 / 04a ✅; CV-TR-06 / 06a ✅; CV-TR-07 ✅; CV-TR-19 ✅; CV-TR-01 / 02 / 18 ✅ code (2026-07-26)
+**Status:** 🔨 in progress — CV-TR-02a ✅; CV-TR-04 / 04a ✅; CV-TR-06 / 06a ✅; CV-TR-07 ✅; CV-TR-19 ✅; CV-TR-01 / 02 / 18 ✅; CV-TR-16 / 17 ✅ code (2026-07-26)
 
 **Patch summary.** Added CV-TR-02a (deterministic bytes, fail-closed gate), CV-TR-04a and CV-TR-06a (existing-tenant migrations), CV-TR-18 (external deposit custody), CV-TR-19 (watermark exclusion). Rewrote CV-TR-01 dual-write as a content-addressed idempotent protocol. Removed coverage AC from CV-TR-17. Corrected cover-page copy, retention default conflict, timezone arithmetic, role names, discard scope, and the CV-WEB-02 integration inventory. Fixed `postureSetById` / `postureSetAt`.
 
@@ -133,10 +133,30 @@ Deposit failure leaves FINALIZED + seal intact.
 
 ---
 
+## CV-TR-16 — Supersede a sealed record ✅ code (2026-07-26)
+
+New `Meeting` row via `supersedeMeeting`; original stays FINALIZED with seal and
+flags untouched. OWNER_CCO + mandatory reason; `RECORD_SUPERSEDED` audit event.
+Revert / reprocess / retry blocked on superseded originals and sealed replacements.
+List/detail badges link original ↔ replacement. Deposit footer names prior seal
+when the replacement seals (CV-TR-18).
+
+**Migration:** `npx prisma migrate deploy` (or `migrate dev --name meeting_supersession`).
+
+---
+
+## CV-TR-17 — Supersession chain in exam pack ✅ code (2026-07-26)
+
+`resolveSupersessionChain` + `06_Supersession_Chain.txt` in audit packs (ExamPack
+consumer when EPIC-D lands). Chronological versions with seal IDs and reason
+narratives between them; presented as one logical record.
+
+---
+
 ## Remaining Phase 1 stories
 
 CV-TR-01a (deployment verification), ops for sealed bucket / COMPLIANCE mode,
-CV-TR-16, CV-TR-17, CV-TR-11, CV-WEB-01..04.
+CV-TR-11 (SOC 2, non-engineering), CV-WEB-01..04.
 
 ### Sequencing (revised)
 
@@ -149,7 +169,7 @@ week 1 ── CV-TR-11 (external, runs throughout)
 
 CV-TR-02a ✅ + CV-TR-01a + CV-TR-19 ✅ ── CV-TR-01 ✅ ── CV-TR-02 ✅
                                       └── CV-TR-18 ✅ (same release as TR-01)
-                                          └── CV-TR-16 ── CV-TR-17
+                                          └── CV-TR-16 ✅ ── CV-TR-17 ✅
 
 CV-WEB-02, 03, 04 independent
 CV-WEB-01 gated on CV-TR-11 start date

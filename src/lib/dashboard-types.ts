@@ -33,6 +33,9 @@ export type MeetingRow = {
   /** Raw Prisma status for polling */
   rawStatus: string;
   flagCount: number;
+  /** CV-TR-16 */
+  supersededById?: string | null;
+  supersedesId?: string | null;
 };
 
 export type HealthTrendPoint = {

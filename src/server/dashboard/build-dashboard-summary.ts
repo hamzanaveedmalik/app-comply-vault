@@ -141,6 +141,8 @@ export async function buildDashboardSummary(
         status: true,
         createdAt: true,
         updatedAt: true,
+        supersededById: true,
+        supersedesId: true,
         flags: {
           where: { status: { in: [...OPEN_FLAG_STATUSES] } },
           select: { id: true },
@@ -804,6 +806,8 @@ export async function buildDashboardSummary(
       statusLabel: resolveStatusLabel(m.status, ui),
       rawStatus: m.status,
       flagCount: openCount,
+      supersededById: m.supersededById,
+      supersedesId: m.supersedesId,
     };
   });
 

@@ -95,6 +95,8 @@ export default async function InteractionLogPage({
       meetingType: true,
       status: true,
       extraction: true,
+      supersededById: true,
+      supersedesId: true,
     },
     orderBy,
   });
@@ -163,6 +165,8 @@ export default async function InteractionLogPage({
       keywords: keywordsList.join(", "),
       hasRecommendations,
       isFinalized: meeting.status === "FINALIZED",
+      supersededById: meeting.supersededById,
+      supersedesId: meeting.supersedesId,
     };
   });
 

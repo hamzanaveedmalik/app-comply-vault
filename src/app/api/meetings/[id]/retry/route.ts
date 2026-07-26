@@ -50,8 +50,15 @@ export async function POST(
       );
     }
 
+    const { assertSupersessionAllowsMutation, assertSupersessionAllowsUploadRetry } =
+      await import("~/server/meetings/supersession-guards");
+
     // Determine what to retry based on type and current status
     if (type === "upload") {
+      const uploadGate = assertSupersessionAllowsUploadRetry(meeting);
+      if (!uploadGate.ok) {
+        throw new AppError(uploadGate.error, uploadGate.status, uploadGate.error, "SUPERSESSION_BLOCKED");
+      }
       // Retry upload - reset to UPLOADING status
       if (meeting.status === "FINALIZED") {
         throw new AppError(
@@ -96,6 +103,10 @@ export async function POST(
         status: "UPLOADING",
       });
     } else {
+      const chainGate = assertSupersessionAllowsMutation(meeting);
+      if (!chainGate.ok) {
+        throw new AppError(chainGate.error, chainGate.status, chainGate.error, "SUPERSESSION_BLOCKED");
+      }
       // Retry processing - republish QStash job
       if (!meeting.fileUrl) {
         throw new AppError(

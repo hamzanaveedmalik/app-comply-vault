@@ -37,6 +37,17 @@ export async function POST(
       return Response.json({ success: false, error: "Meeting not found" }, { status: 404 });
     }
 
+    const { assertSupersessionAllowsMutation } = await import(
+      "~/server/meetings/supersession-guards"
+    );
+    const chainGate = assertSupersessionAllowsMutation(meeting);
+    if (!chainGate.ok) {
+      return Response.json(
+        { success: false, error: chainGate.error },
+        { status: chainGate.status },
+      );
+    }
+
     const order: MeetingStatus[] = [
       "ADVISOR_CERTIFIED",
       "CM_REVIEWED",

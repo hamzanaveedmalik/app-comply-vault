@@ -193,6 +193,18 @@ async function handler(request: Request) {
         },
       });
 
+      // Step 8b (CV-TR-07): persist the canonical transcript hash; under
+      // DISCARD posture this also deletes the source media, gated on a
+      // readback of the persisted transcript. Runs only after DRAFT_READY so
+      // a QStash retry of a failed extraction never needs the deleted media.
+      const { secureTranscript } = await import("~/server/retention/secure-transcript");
+      const secureResult = await secureTranscript({ meetingId, workspaceId });
+      if (!secureResult.secured) {
+        console.error(
+          `⚠️ Transcript securing failed for meeting ${meetingId}: ${secureResult.reason}. Media retained.`
+        );
+      }
+
       // Step 9: Generate missing disclosure flags (profile-aware)
       const disclosureProfile = await getDisclosureProfileForWorkspace(workspaceId);
       const missingDisclosureFlags = detectMissingDisclosureFlags(extractionData, {

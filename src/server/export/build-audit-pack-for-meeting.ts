@@ -154,6 +154,9 @@ export async function buildAuditPackZipForMeeting(args: {
     emailCorrespondenceCsv,
   });
 
-  const filename = generateExportFilename(workspace.name, meeting.clientName, { watermarked });
+  const filename = generateExportFilename(workspace.name, meeting.clientName, {
+    watermarked,
+    date: meeting.meetingDate,
+  });
   return { success: true, buffer, filename };
 }

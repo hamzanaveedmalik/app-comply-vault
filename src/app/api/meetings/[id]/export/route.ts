@@ -223,7 +223,10 @@ const EXPORTABLE_MEETING_STATUSES = new Set([
     });
 
     // Generate filename
-    const filename = generateExportFilename(workspace.name, meeting.clientName, { watermarked });
+    const filename = generateExportFilename(workspace.name, meeting.clientName, {
+      watermarked,
+      date: meeting.meetingDate,
+    });
 
     // Log export event
     // requireAppAccess ensures session exists and has user

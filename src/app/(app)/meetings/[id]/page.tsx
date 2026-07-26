@@ -307,6 +307,22 @@ export default async function MeetingDetailPage({
           </div>
         )}
 
+        {meeting.mediaDiscardedAt && (
+          <div className="rounded-xl border border-input bg-muted/40 px-5 py-4 text-[13px] text-muted-foreground">
+            Source media discarded by policy on{" "}
+            {meeting.mediaDiscardedAt.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+            . Evidence links resolve to the secured transcript
+            {meeting.transcriptSha256
+              ? ` (SHA-256 ${meeting.transcriptSha256.slice(0, 12)}…)`
+              : ""}
+            .
+          </div>
+        )}
+
         <MeetingWorkflowProgress
           meetingStatus={meeting.status}
           userRole={session.user.role}

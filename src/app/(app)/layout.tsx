@@ -4,6 +4,7 @@ import { db } from "~/server/db";
 import { redirect } from "next/navigation";
 import { AppSidebar } from "~/components/app-sidebar";
 import { AppShell } from "~/components/layout/app-shell";
+import { MediaPostureBanner } from "~/components/layout/media-posture-banner";
 import { TopBar } from "~/components/top-bar";
 import { listWorkspacesForUser } from "~/server/workspace/list-workspaces-for-user";
 import type { WorkspaceListItemDto } from "~/lib/workspace-types";
@@ -27,6 +28,7 @@ export default async function AppLayout({
   let reviewQueueCount = 0;
   let billingStatus: string | null = null;
   let workspaces: WorkspaceListItemDto[] = [];
+  let mediaPostureUnset = false;
 
   if (session.user.workspaceId && session.user.workspaceId !== "") {
     const [workspace, reviewCount, wsList] = await Promise.all([
@@ -34,6 +36,7 @@ export default async function AppLayout({
         where: { id: session.user.workspaceId },
         select: {
           billingStatus: true,
+          mediaPosture: true,
         },
       }),
       db.meeting.count({
@@ -45,6 +48,7 @@ export default async function AppLayout({
       listWorkspacesForUser(session.user.id),
     ]);
     billingStatus = workspace?.billingStatus ?? null;
+    mediaPostureUnset = workspace ? workspace.mediaPosture === null : false;
     reviewQueueCount = reviewCount;
     workspaces = wsList;
   }
@@ -72,6 +76,9 @@ export default async function AppLayout({
           />
         }
       >
+        {mediaPostureUnset && (
+          <MediaPostureBanner isCco={session.user.role === "OWNER_CCO"} />
+        )}
         {children}
       </AppShell>
     </div>

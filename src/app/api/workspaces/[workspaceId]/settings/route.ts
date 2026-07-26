@@ -1,16 +1,19 @@
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { z } from "zod";
+import { updateWorkspaceRetentionPolicy } from "~/server/retention/update-policy";
 
 const updateSettingsSchema = z.object({
-  retentionYears: z.number().min(5, "Retention must be at least 5 years").max(10),
-  legalHold: z.boolean(),
+  retentionYears: z.number().int().min(5).max(25).optional(),
+  fiscalYearEndMonth: z.number().int().min(1).max(12).optional(),
+  fiscalTimezone: z.string().min(3).max(64).optional(),
+  legalHold: z.boolean().optional(),
 });
 
 export async function PATCH(
   request: Request,
-  { params }: { params: Promise<{ workspaceId: string }> }
-) {
+  { params }: { params: Promise<{ workspaceId: string }> },
+): Promise<Response> {
   try {
     const session = await auth();
     if (!session?.user) {
@@ -19,14 +22,12 @@ export async function PATCH(
 
     const { workspaceId } = await params;
 
-    // Only OWNER_CCO can update settings
     if (session.user.role !== "OWNER_CCO") {
       return new Response("Forbidden: Only workspace owners can update settings", {
         status: 403,
       });
     }
 
-    // Verify workspace exists and user belongs to it
     const workspace = await db.workspace.findFirst({
       where: {
         id: workspaceId,
@@ -46,50 +47,33 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { retentionYears, legalHold } = updateSettingsSchema.parse(body);
+    const input = updateSettingsSchema.parse(body);
 
-    // Update workspace settings
-    const updated = await db.workspace.update({
-      where: { id: workspaceId },
-      data: {
-        retentionYears,
-        legalHold,
-      },
+    const result = await updateWorkspaceRetentionPolicy({
+      workspaceId,
+      userId: session.user.id,
+      input,
     });
 
-    // Log settings change
-    await db.auditEvent.create({
-      data: {
-        workspaceId,
-        userId: session.user.id,
-        action: "UPLOAD", // Placeholder - settings action can be added later
-        resourceType: "workspace",
-        resourceId: workspaceId,
-        metadata: {
-          action: "settings_updated",
-          retentionYears,
-          legalHold,
-        },
-      },
-    });
+    if (!result.success) {
+      return Response.json({ success: false, error: result.error }, { status: 400 });
+    }
 
     return Response.json({
+      success: true,
       workspace: {
-        id: updated.id,
-        retentionYears: updated.retentionYears,
-        legalHold: updated.legalHold,
+        id: workspaceId,
+        ...result.data,
       },
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return Response.json({ error: error.errors }, { status: 400 });
+      return Response.json({ success: false, error: error.errors }, { status: 400 });
     }
     console.error("Error updating workspace settings:", error);
     return Response.json(
-      { error: "Failed to update settings" },
-      { status: 500 }
+      { success: false, error: "Failed to update settings" },
+      { status: 500 },
     );
   }
 }
-
-

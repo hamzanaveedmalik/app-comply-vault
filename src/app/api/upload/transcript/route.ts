@@ -7,6 +7,7 @@ import { toExtractionData, validateEvidenceCoverage } from "~/server/extraction/
 import { generateSearchableText } from "~/server/search/index";
 import { detectMissingDisclosureFlags } from "~/server/flags";
 import { getDisclosureProfileForWorkspace } from "~/server/firm-profile/get-disclosure-profile-for-workspace";
+import { assertMediaPostureSet } from "~/server/retention/media-posture";
 
 const transcriptUploadSchema = z.object({
   clientName: z.string().min(1, "Client name is required"),
@@ -26,6 +27,11 @@ export async function POST(request: Request) {
     const session = await auth();
     if (!session?.user?.workspaceId) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const posture = await assertMediaPostureSet(session.user.workspaceId);
+    if (!posture.ok) {
+      return Response.json({ error: posture.error }, { status: posture.status });
     }
 
     const body = await request.json();
@@ -52,6 +58,13 @@ export async function POST(request: Request) {
         sourceUploadedAt: new Date(),
       },
     });
+    // CV-TR-07: persist the canonical transcript hash (no media on this path).
+    const { secureTranscript } = await import("~/server/retention/secure-transcript");
+    await secureTranscript({
+      meetingId: meeting.id,
+      workspaceId: session.user.workspaceId,
+    });
+
     const { attributeMeeting } = await import("~/server/meetings/client-attribution");
     await attributeMeeting({
       meetingId: meeting.id,

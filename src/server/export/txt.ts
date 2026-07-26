@@ -1,4 +1,18 @@
 import type { TranscriptSegment } from "../transcription/types";
+import { sortSegmentsByStart } from "./deterministic";
+
+/**
+ * CV-TR-07: the canonical transcript serialisation.
+ *
+ * This is the single authoritative byte form of a transcript. It is used for
+ * BOTH `Meeting.transcriptSha256` AND the pack's 04_Transcript.txt entry, so
+ * there is exactly one hash of a transcript and no ambiguity about which is
+ * authoritative. Any change here changes pack bytes — the CV-TR-02a
+ * determinism suite must be updated deliberately alongside it.
+ */
+export function canonicalTranscriptText(segments: TranscriptSegment[]): string {
+  return generateTranscriptTXT(sortSegmentsByStart(segments));
+}
 
 /**
  * Generate Transcript Export (TXT)

@@ -88,10 +88,19 @@ function safeString(val: unknown): string {
 export async function generateComplianceNotePDF(payload: ExportPayload): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     try {
+      // CV-TR-02a: fixed CreationDate/ModDate so PDF file ID is content-derived, not wall-clock.
+      const packDate = new Date(payload.pack_timestamp);
       const doc = new PDFDocument({
         size: "letter",
         margins: { top: TOP, bottom: BOTTOM, left: LEFT, right: RIGHT },
         bufferPages: true,
+        info: {
+          Producer: "ComplyVault",
+          Creator: "ComplyVault",
+          Title: "Compliance Audit Pack",
+          CreationDate: packDate,
+          ModDate: packDate,
+        },
       });
 
       const chunks: Buffer[] = [];

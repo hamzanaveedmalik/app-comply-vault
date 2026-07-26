@@ -36,20 +36,32 @@ const DEMO_FIRM = {
   aumUsd: 8_400_000,
 } as const;
 
-type SyntheticClient = {
+const SYNTHETIC_CLIENTS: Array<{
   name: string;
   email: string;
   feeBody: string;
   lastTopic: string;
-};
-
-const SYNTHETIC_CLIENTS: SyntheticClient[] = [
+  emailFlag?: {
+    type: "FEE_DISPUTE" | "CLIENT_COMPLAINT" | "TRADE_INSTRUCTION";
+    severity: "INFO" | "WARN" | "CRITICAL";
+    excerpt: string;
+    rationale: string;
+  };
+}> = [
   {
     name: "Margaret Ellison",
     email: "margaret.ellison@example.com",
     feeBody:
       "Hi team - I am unhappy about what we charge. The 1.25% advisory fee feels high versus last year. Can we revisit the fee schedule before the April review?",
     lastTopic: "quarterly portfolio rebalance and tax-loss harvesting plan",
+    emailFlag: {
+      type: "FEE_DISPUTE",
+      severity: "WARN",
+      excerpt:
+        "I am unhappy about what we charge. The 1.25% advisory fee feels high",
+      rationale:
+        "Client expressed dissatisfaction with advisory fees and asked to revisit the fee schedule.",
+    },
   },
   {
     name: "James Whitfield",
@@ -85,6 +97,20 @@ const PERFORMANCE_EMAIL = {
   clientName: "James Whitfield",
   subject: "Market outlook note",
   body: "Quick note in writing: we cannot promise or guarantee investment performance. Past results do not ensure future returns. Happy to walk through scenarios on our next call.",
+};
+
+const ADVICE_EMAIL = {
+  clientName: "James Whitfield",
+  subject: "Pension consolidation recommendation",
+  body: "Hey James Whitfield - we are advising you to move your pension funds into our discretionary managed account this week. Please confirm so we can place the trade.",
+  flag: {
+    type: "TRADE_INSTRUCTION" as const,
+    severity: "CRITICAL" as const,
+    excerpt:
+      "advising you to move your pension funds into our discretionary managed account this week. Please confirm so we can place the trade.",
+    rationale:
+      "Outbound message contains an investment recommendation and a request to confirm a trade instruction by email.",
+  },
 };
 
 function parseArgs(argv: string[]): {
@@ -441,7 +467,7 @@ async function main(): Promise<void> {
           classificationStatus: "COMPLETE",
         },
       });
-      await prisma.communication.create({
+      const feeComm = await prisma.communication.create({
         data: {
           threadId: thread.id,
           evidenceItemId: evidence.id,
@@ -466,6 +492,160 @@ async function main(): Promise<void> {
           evidenceItemId: evidence.id,
           threadId: thread.id,
           contentSha256: feeHash,
+        },
+      });
+      if (c.emailFlag) {
+        await prisma.evidenceClassification.create({
+          data: {
+            workspaceId,
+            evidenceItemId: evidence.id,
+            communicationId: feeComm.id,
+            contentHash: feeHash,
+            result: "FLAGGED",
+            modelId: "demo-seed",
+            promptVersion: "email-taxonomy-v1",
+            signalCount: 1,
+            rawResponse: {
+              clean: false,
+              signals: [
+                {
+                  category: c.emailFlag.type,
+                  severity: c.emailFlag.severity,
+                  confidence: 0.91,
+                  excerpt: c.emailFlag.excerpt,
+                  rationale: c.emailFlag.rationale,
+                },
+              ],
+            },
+          },
+        });
+        await prisma.flag.create({
+          data: {
+            workspaceId,
+            sourceType: "EMAIL",
+            sourceId: thread.id,
+            communicationId: feeComm.id,
+            type: c.emailFlag.type,
+            severity: c.emailFlag.severity,
+            status: "OPEN",
+            createdAt: daysAgo(1),
+            dedupeKey: `email:${feeComm.id}:${c.emailFlag.type}`,
+            evidence: {
+              excerpt: c.emailFlag.excerpt,
+              rationale: c.emailFlag.rationale,
+              confidence: 0.91,
+              communicationId: feeComm.id,
+              threadId: thread.id,
+              evidenceItemId: evidence.id,
+              contentSha256: feeHash,
+            },
+          },
+        });
+      }
+    }
+
+    // Advice / trade-instruction email (open EMAIL flag for Review Queue)
+    const adviceClient = createdClients.find(
+      (c) => c.name === ADVICE_EMAIL.clientName
+    );
+    if (adviceClient) {
+      const occurredAt = daysAgo(2);
+      const hash = sha256(`${ADVICE_EMAIL.subject}\n${ADVICE_EMAIL.body}`);
+      const thread = await prisma.communicationThread.create({
+        data: {
+          workspaceId,
+          channel: "EMAIL_GMAIL",
+          externalThreadId: `demo-advice-${adviceClient.id}`,
+          subject: ADVICE_EMAIL.subject,
+          participants: [{ email: adviceClient.email, role: "client" }],
+        },
+      });
+      const evidence = await prisma.evidenceItem.create({
+        data: {
+          workspaceId,
+          clientId: adviceClient.id,
+          sourceType: "EMAIL",
+          title: ADVICE_EMAIL.subject,
+          occurredAt,
+          contentSha256: hash,
+          searchableText: emailSearchable(
+            ADVICE_EMAIL.subject,
+            ADVICE_EMAIL.body
+          ),
+          classificationStatus: "COMPLETE",
+        },
+      });
+      const communication = await prisma.communication.create({
+        data: {
+          threadId: thread.id,
+          evidenceItemId: evidence.id,
+          direction: "OUTBOUND",
+          sentAt: occurredAt,
+          fromAddress: "compliance@demo.complyvault.co",
+          toAddresses: [adviceClient.email],
+          ccAddresses: [],
+          bodyText: ADVICE_EMAIL.body,
+          internetMessageId: `<demo-advice-${adviceClient.id}@example.com>`,
+        },
+      });
+      await prisma.clientActivity.create({
+        data: {
+          workspaceId,
+          clientId: adviceClient.id,
+          type: "EMAIL_SENT",
+          occurredAt,
+          title: ADVICE_EMAIL.subject,
+          direction: "OUTBOUND",
+          counterparties: [adviceClient.email],
+          evidenceItemId: evidence.id,
+          threadId: thread.id,
+          contentSha256: hash,
+        },
+      });
+      await prisma.evidenceClassification.create({
+        data: {
+          workspaceId,
+          evidenceItemId: evidence.id,
+          communicationId: communication.id,
+          contentHash: hash,
+          result: "FLAGGED",
+          modelId: "demo-seed",
+          promptVersion: "email-taxonomy-v1",
+          signalCount: 1,
+          rawResponse: {
+            clean: false,
+            signals: [
+              {
+                category: ADVICE_EMAIL.flag.type,
+                severity: ADVICE_EMAIL.flag.severity,
+                confidence: 0.94,
+                excerpt: ADVICE_EMAIL.flag.excerpt,
+                rationale: ADVICE_EMAIL.flag.rationale,
+              },
+            ],
+          },
+        },
+      });
+      await prisma.flag.create({
+        data: {
+          workspaceId,
+          sourceType: "EMAIL",
+          sourceId: thread.id,
+          communicationId: communication.id,
+          type: ADVICE_EMAIL.flag.type,
+          severity: ADVICE_EMAIL.flag.severity,
+          status: "OPEN",
+          createdAt: daysAgo(1),
+          dedupeKey: `email:${communication.id}:${ADVICE_EMAIL.flag.type}`,
+          evidence: {
+            excerpt: ADVICE_EMAIL.flag.excerpt,
+            rationale: ADVICE_EMAIL.flag.rationale,
+            confidence: 0.94,
+            communicationId: communication.id,
+            threadId: thread.id,
+            evidenceItemId: evidence.id,
+            contentSha256: hash,
+          },
         },
       });
     }

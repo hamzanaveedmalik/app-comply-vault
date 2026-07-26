@@ -4,18 +4,26 @@ import type { ExtractionData } from "../extraction/types";
 import type { TranscriptSegment } from "../transcription/types";
 import { generateComplianceNotePDF } from "./pdf";
 import { generateEvidenceMapCSV, generateVersionHistoryCSV } from "./csv";
-import { generateTranscriptTXT } from "./txt";
+import { canonicalTranscriptText } from "./txt";
 import { buildExportPayload } from "./export-payload";
-import { getFirmProfileSummaryForExport } from "~/server/firm-profile/get-firm-profile-summary-for-export";
+import type { FirmProfileExportSectionDto } from "~/lib/firm-profile-types";
+import {
+  ZIP_COMPRESSION_LEVEL,
+  ZIP_ENTRY_EPOCH,
+  formatUtcDate,
+  resolvePackTimestamp,
+  sortSegmentsByStart,
+  sortVersions,
+} from "./deterministic";
 
-export interface ExportFlag {
+export type ExportFlag = {
   type: string;
   severity: string;
   status: string;
   evidence?: unknown;
-}
+};
 
-interface ExportData {
+type ExportData = {
   meeting: Meeting & { finalizedBy?: User | null };
   extraction: ExtractionData;
   transcript: { segments: TranscriptSegment[] } | null;
@@ -26,15 +34,23 @@ interface ExportData {
   exportingUserName?: string;
   /** Optional Email Correspondence CSV (Email Intelligence Phase 2). */
   emailCorrespondenceCsv?: string | null;
-}
+  /**
+   * Instant captured once for this pack (seal protocol start).
+   * Injected into content; never wall-clock now.
+   */
+  packTimestamp?: Date;
+  /** When provided, skips DB lookup (tests / seal path with preloaded profile). */
+  firmDisclosureProfile?: FirmProfileExportSectionDto;
+};
 
 /**
- * Generate complete audit pack as ZIP buffer
+ * Generate complete audit pack as ZIP buffer.
+ * CV-TR-02a: fixed compression, fixed entry mtimes, deterministic entry order.
  */
 export async function generateAuditPack(data: ExportData): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     const archive = archiver("zip", {
-      zlib: { level: 9 }, // Maximum compression
+      zlib: { level: ZIP_COMPRESSION_LEVEL },
     });
 
     const buffers: Buffer[] = [];
@@ -48,7 +64,6 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
       reject(err);
     });
 
-    // Use async IIFE to handle async operations
     (async () => {
       try {
         const {
@@ -61,63 +76,79 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
           watermarked = false,
           exportingUserName,
           emailCorrespondenceCsv = null,
+          packTimestamp: explicitPackTimestamp,
+          firmDisclosureProfile: injectedProfile,
         } = data;
 
-        // Slugify: lowercase, letters/numbers/underscores only, spaces → underscores
-        const slugify = (str: string): string => {
-          return str
-            .toLowerCase()
-            .replace(/\s+/g, "_")
-            .replace(/[^a-z0-9_]/g, "")
-            .replace(/_+/g, "_")
-            .replace(/^_|_$/g, "") || "client";
+        const packTimestamp = resolvePackTimestamp({
+          packTimestamp: explicitPackTimestamp,
+          finalizedAt: meeting.finalizedAt,
+          ccoSignedOffAt: meeting.ccoSignedOffAt,
+          cmReviewedAt: meeting.cmReviewedAt,
+          advisorCertifiedAt: meeting.advisorCertifiedAt,
+          draftReadyAt: meeting.draftReadyAt,
+          updatedAt: meeting.updatedAt,
+          createdAt: meeting.createdAt,
+        });
+
+        const firmDisclosureProfile =
+          injectedProfile ??
+          (await (
+            await import("~/server/firm-profile/get-firm-profile-summary-for-export")
+          ).getFirmProfileSummaryForExport(workspace.id));
+
+        const sortedVersions = sortVersions(versions);
+        const sortedTranscript = transcript?.segments
+          ? { segments: sortSegmentsByStart(transcript.segments) }
+          : transcript;
+
+        const append = (buf: Buffer, name: string): void => {
+          archive.append(buf, { name, date: ZIP_ENTRY_EPOCH });
         };
 
-        // 1. Generate branded PDF (PDFKit)
-        const firmDisclosureProfile = await getFirmProfileSummaryForExport(workspace.id);
+        // 1. Branded PDF (PDFKit) — CreationDate locked to packTimestamp
         const payload = buildExportPayload(
           meeting,
           extraction,
-          transcript,
-          versions,
+          sortedTranscript,
+          sortedVersions,
           workspace,
           flags,
           watermarked,
-          { exportingUserName, firmDisclosureProfile },
+          {
+            exportingUserName,
+            firmDisclosureProfile,
+            packTimestamp,
+          },
         );
         const pdfBuffer = await generateComplianceNotePDF(payload);
-        archive.append(pdfBuffer, { name: "01_Compliance_Note.pdf" });
+        append(pdfBuffer, "01_Compliance_Note.pdf");
 
         // 2. Evidence Map CSV
         const evidenceMapCSV = generateEvidenceMapCSV(
           extraction,
-          transcript?.segments
+          sortedTranscript?.segments,
         );
         const evidenceContent = watermarked
           ? `TRIAL EXPORT - WATERMARKED\n${evidenceMapCSV}`
           : evidenceMapCSV;
-        archive.append(Buffer.from(evidenceContent, "utf-8"), {
-          name: "02_Evidence_Map.csv",
-        });
+        append(Buffer.from(evidenceContent, "utf-8"), "02_Evidence_Map.csv");
 
         // 3. Version History CSV
-        const versionHistoryCSV = generateVersionHistoryCSV(versions);
+        const versionHistoryCSV = generateVersionHistoryCSV(sortedVersions);
         const versionContent = watermarked
           ? `TRIAL EXPORT - WATERMARKED\n${versionHistoryCSV}`
           : versionHistoryCSV;
-        archive.append(Buffer.from(versionContent, "utf-8"), {
-          name: "03_Version_History.csv",
-        });
+        append(Buffer.from(versionContent, "utf-8"), "03_Version_History.csv");
 
-        // 4. Transcript TXT
-        if (transcript?.segments) {
-          const transcriptTXT = generateTranscriptTXT(transcript.segments);
+        // 4. Transcript TXT — canonical serialisation, byte-identical to what
+        // Meeting.transcriptSha256 hashes (CV-TR-07).
+        if (sortedTranscript?.segments) {
+          const transcriptTXT = canonicalTranscriptText(sortedTranscript.segments);
           const transcriptContent = watermarked
             ? `TRIAL EXPORT - WATERMARKED\n${transcriptTXT}`
             : transcriptTXT;
-          archive.append(Buffer.from(transcriptContent, "utf-8"), {
-            name: "04_Transcript.txt",
-          });
+          append(Buffer.from(transcriptContent, "utf-8"), "04_Transcript.txt");
         }
 
         // 5. Email Correspondence (optional)
@@ -125,16 +156,13 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
           const emailContent = watermarked
             ? `TRIAL EXPORT - WATERMARKED\n${emailCorrespondenceCsv}`
             : emailCorrespondenceCsv;
-          archive.append(Buffer.from(emailContent, "utf-8"), {
-            name: "05_Email_Correspondence.csv",
-          });
+          append(Buffer.from(emailContent, "utf-8"), "05_Email_Correspondence.csv");
         }
 
         // README.txt
         const readmeText = generateReadmeTXT(watermarked, Boolean(emailCorrespondenceCsv));
-        archive.append(Buffer.from(readmeText, "utf-8"), { name: "README.txt" });
+        append(Buffer.from(readmeText, "utf-8"), "README.txt");
 
-        // Finalize the archive
         archive.finalize().catch((err) => {
           console.error("Archive finalize error:", err);
           reject(err);
@@ -148,13 +176,13 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
 }
 
 /**
- * Generate export filename
- * Format: [SlugifiedClientName]_[YYYY-MM-DD]_AuditPack.zip
+ * Generate export filename.
+ * Date component comes from meeting date (or packTimestamp), never wall-clock today.
  */
 export function generateExportFilename(
   _workspaceName: string,
   clientName: string,
-  options?: { watermarked?: boolean }
+  options?: { watermarked?: boolean; date?: Date | string },
 ): string {
   const slugify = (str: string): string =>
     str
@@ -164,7 +192,9 @@ export function generateExportFilename(
       .replace(/_+/g, "_")
       .replace(/^_|_$/g, "") || "client";
 
-  const exportDate = new Date().toISOString().split("T")[0];
+  const exportDate = options?.date
+    ? formatUtcDate(options.date)
+    : formatUtcDate(new Date(0));
   const suffix = options?.watermarked ? "_trial" : "";
   return `${slugify(clientName)}_${exportDate}_AuditPack${suffix}.zip`;
 }

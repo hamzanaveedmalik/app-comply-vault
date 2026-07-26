@@ -21,7 +21,16 @@ datasource db {
 model Workspace {
   id             String   @id @default(cuid())
   name           String
-  retentionYears Int      @default(6) // Minimum 5, default 6 (SEC requirement + buffer)
+  /// Years of retention measured from fiscal year end (Rule 204-2). Floor is 5; never shorten.
+  retentionYears Int      @default(5)
+  /// Month (1-12) on which the firm's fiscal year ends. Default December.
+  fiscalYearEndMonth Int  @default(12)
+  /// IANA timezone for fiscal date-only arithmetic (e.g. America/Phoenix).
+  fiscalTimezone String   @default("America/New_York")
+  /// Meeting source-media policy. Null until OWNER_CCO decides (CV-TR-06).
+  mediaPosture   MediaPosture?
+  postureSetById String?
+  postureSetAt   DateTime?
   legalHold      Boolean  @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -62,6 +71,7 @@ model Workspace {
   ingestJobs            IngestJob[]
   evidenceClassifications EvidenceClassification[]
   evidenceEmbeddings    EvidenceEmbedding[]
+  parkedIngests         ParkedIngest[]
 
   @@index([createdAt])
 }
@@ -72,6 +82,49 @@ enum BillingStatus {
   ACTIVE
   PAST_DUE
   CANCELED
+}
+
+/// CV-TR-06: explicit decision whether meeting source media is retained after transcription.
+enum MediaPosture {
+  RETAIN
+  DISCARD
+}
+
+/// CV-TR-06a: automated ingest refused because no media posture decision existed.
+enum ParkedIngestStatus {
+  PARKED
+  REPLAY_REQUESTED
+  INGESTED
+}
+
+/// Durable record of a refused automated ingest — replayable work item, not just a log line.
+/// These rows are proto coverage gaps and feed the CV-COV-06 coverage queue when it lands.
+model ParkedIngest {
+  id           String   @id @default(cuid())
+  workspaceId  String
+  /// "zoom" | "teams"
+  source       String
+  /// External recording/meeting identifier at the source system.
+  externalRef  String
+  /// Original job payload, sufficient to re-publish the ingest job unchanged.
+  payload      Json
+  /// Meeting start time at the source, when known. Ages the gap.
+  occurredAt   DateTime?
+  status       ParkedIngestStatus @default(PARKED)
+  parkedAt     DateTime @default(now())
+  replayRequestedAt   DateTime?
+  replayRequestedById String?
+  /// Set when a later successful ingest matches this row.
+  meetingId    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  deletedAt    DateTime?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, source, externalRef])
+  @@index([workspaceId, status])
+  @@index([workspaceId, parkedAt])
 }
 
 enum PlanTier {
@@ -145,6 +198,10 @@ model Meeting {
   meetingDate  DateTime
   status       MeetingStatus @default(UPLOADING)
   fileUrl      String? // S3/R2 storage URL
+  /// CV-TR-07: SHA-256 of the canonical transcript serialisation. Must exist before any media delete.
+  transcriptSha256 String?
+  /// CV-TR-07: set when source media was deleted under DISCARD posture. UI shows this instead of playback.
+  mediaDiscardedAt DateTime?
   sourceFileSha256 String?
   sourceFileName   String?
   sourceFileSize   Int?
@@ -260,6 +317,11 @@ enum AuditAction {
   EMAIL_TRIAGE_RESOLVED
   THREAD_EXPORT
   MEETING_CLIENT_ATTRIBUTED
+  RETENTION_POLICY_UPDATED
+  MEDIA_POSTURE_SET
+  INGEST_PARKED
+  INGEST_REPLAYED
+  MEDIA_DISCARDED
 }
 
 /// How Meeting.clientId was resolved. NAME_EXACT is low-confidence (reviewable).

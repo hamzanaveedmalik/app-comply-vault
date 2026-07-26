@@ -12,6 +12,9 @@ import { publishProcessMeetingJob } from "~/server/qstash";
 import { verifySignatureAppRouter } from "@upstash/qstash/nextjs";
 import { z } from "zod";
 import { activeUserWorkspaceWhere } from "~/lib/user-workspace-filters";
+import { assertMediaPostureSet } from "~/server/retention/media-posture";
+import { parkIngest, resolveParkedIngest } from "~/server/retention/parked-ingest";
+import { secureTranscript } from "~/server/retention/secure-transcript";
 
 const zoomIngestSchema = z.object({
   zoomMeetingId: z.string(),
@@ -116,6 +119,26 @@ async function handler(request: Request) {
     }
 
     const workspaceId = config.workspaceId;
+
+    // CV-TR-06a: park before any Meeting row or media download when posture is unset.
+    const posture = await assertMediaPostureSet(workspaceId);
+    if (!posture.ok) {
+      // Durable, replayable row — the payload is enough to re-publish this job unchanged.
+      await parkIngest({
+        workspaceId,
+        source: "zoom",
+        externalRef: payload.zoomMeetingId,
+        payload,
+        occurredAt: payload.startTime ? new Date(payload.startTime) : null,
+      });
+      // 200 so QStash does not retry; replay happens from the parked recordings list.
+      return Response.json({
+        success: true,
+        parked: true,
+        reason: "media_posture_unset",
+      });
+    }
+
     const recordingScope = (config.config as { recordingScope?: string } | null)?.recordingScope ?? "all";
     const zoomMeetingKey = payload.zoomMeetingNumericId ?? payload.zoomMeetingId;
     const { hasExternal, emails: participantEmails } = await fetchZoomParticipantEmails(
@@ -190,6 +213,14 @@ async function handler(request: Request) {
     const { attributeMeeting } = await import("~/server/meetings/client-attribution");
     await attributeMeeting({ meetingId: meeting.id, workspaceId });
 
+    // Close out any parked row for this recording (replay path).
+    await resolveParkedIngest({
+      workspaceId,
+      source: "zoom",
+      externalRef: payload.zoomMeetingId,
+      meetingId: meeting.id,
+    });
+
     await db.auditEvent.create({
       data: {
         workspaceId,
@@ -223,6 +254,9 @@ async function handler(request: Request) {
             sourceFileMime: "text/vtt",
           },
         });
+
+        // CV-TR-07: persist the canonical transcript hash (no media to discard on this path).
+        await secureTranscript({ meetingId: meeting.id, workspaceId });
 
         const { extractFields } = await import("~/server/extraction");
         const { toExtractionData, validateEvidenceCoverage } = await import(

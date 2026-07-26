@@ -81,7 +81,9 @@ export async function POST(request: Request) {
     const workspace = await db.workspace.create({
       data: {
         name,
-        retentionYears: 6, // Default per SEC requirement + buffer
+        retentionYears: 5,
+        fiscalYearEndMonth: 12,
+        fiscalTimezone: "America/New_York",
         legalHold: false,
         billingStatus: isTrialIntent ? "TRIALING" : "PILOT",
         planTier,

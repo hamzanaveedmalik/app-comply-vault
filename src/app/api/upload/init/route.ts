@@ -3,6 +3,7 @@ import { db } from "~/server/db";
 import { generatePresignedUploadUrl } from "~/server/storage";
 import { validateFile, getContentType } from "~/server/storage-utils";
 import { createErrorResponse, ErrorMessages, AppError } from "~/server/errors";
+import { assertMediaPostureSet } from "~/server/retention/media-posture";
 import { z } from "zod";
 
 const initUploadSchema = z.object({
@@ -27,6 +28,11 @@ export async function POST(request: Request) {
       return Response.json({ error: access.error }, { status: access.status });
     }
     const { session, workspaceId } = access;
+
+    const posture = await assertMediaPostureSet(workspaceId);
+    if (!posture.ok) {
+      return Response.json({ error: posture.error }, { status: posture.status });
+    }
 
     const body = await request.json();
     const validation = initUploadSchema.parse(body);

@@ -7,6 +7,7 @@ import { sha256FromBuffer } from "~/server/hash";
 import { env } from "~/env";
 import { z } from "zod";
 import { assertCanUpload } from "~/server/billing/guards";
+import { assertMediaPostureSet } from "~/server/retention/media-posture";
 
 const uploadSchema = z.object({
   clientName: z.string().min(1, "Client name is required"),
@@ -29,6 +30,11 @@ export async function POST(request: Request) {
     const gate = await assertCanUpload(session.user.workspaceId);
     if (!gate.ok) {
       return Response.json({ error: gate.error }, { status: gate.status });
+    }
+
+    const posture = await assertMediaPostureSet(session.user.workspaceId);
+    if (!posture.ok) {
+      return Response.json({ error: posture.error }, { status: posture.status });
     }
 
     const formData = await request.formData();

@@ -2,6 +2,12 @@ import type { ExtractionData } from "../extraction/types";
 import type { TranscriptSegment } from "../transcription/types";
 import { topicToString } from "~/lib/topics";
 import type { Version } from "./types";
+import {
+  formatUtcDate,
+  formatUtcIso,
+  sortByStartTimeThenClaim,
+  sortVersions,
+} from "./deterministic";
 
 function getSpeakerAtTime(segments: TranscriptSegment[], startTime: number): string {
   for (const s of segments) {
@@ -46,7 +52,7 @@ export function generateEvidenceMapCSV(
   }
 
   const segs = segments ?? [];
-  extraction.evidenceMap.forEach((item, i) => {
+  sortByStartTimeThenClaim(extraction.evidenceMap).forEach((item, i) => {
     const startTime = item.startTime ?? 0;
     const timestamp = formatTime(startTime);
     const speaker = getSpeakerAtTime(segs, startTime);
@@ -97,8 +103,9 @@ export function generateVersionHistoryCSV(versions: Version[]): string {
     return value;
   };
 
-  versions.forEach((version) => {
-    const timestamp = new Date(version.timestamp).toLocaleString();
+  const sorted = sortVersions(versions);
+  sorted.forEach((version) => {
+    const timestamp = formatUtcIso(version.timestamp);
     const whatChanged = version.whatChanged || "";
     const reason = version.reason || "";
     rows.push([
@@ -115,7 +122,7 @@ export function generateVersionHistoryCSV(versions: Version[]): string {
     ]);
   });
 
-  if (versions.length === 0) {
+  if (sorted.length === 0) {
     return headers.join(",") + "\n";
   }
 
@@ -141,7 +148,7 @@ export function generateInteractionLogCSV(
   // Finalized Y/N
   const isFinalized = meeting.status === "FINALIZED" ? "Y" : "N";
 
-  const date = new Date(meeting.meetingDate).toLocaleDateString();
+  const date = formatUtcDate(meeting.meetingDate);
 
   // Escape CSV values
   const escapeCSV = (value: string): string => {

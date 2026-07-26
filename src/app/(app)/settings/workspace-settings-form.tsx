@@ -17,9 +17,26 @@ type Workspace = {
   id: string;
   name: string;
   retentionYears: number;
+  fiscalYearEndMonth: number;
+  fiscalTimezone: string;
   legalHold: boolean;
   billingStatus: string;
 };
+
+const MONTH_OPTIONS = [
+  { value: 1, label: "January" },
+  { value: 2, label: "February" },
+  { value: 3, label: "March" },
+  { value: 4, label: "April" },
+  { value: 5, label: "May" },
+  { value: 6, label: "June" },
+  { value: 7, label: "July" },
+  { value: 8, label: "August" },
+  { value: 9, label: "September" },
+  { value: 10, label: "October" },
+  { value: 11, label: "November" },
+  { value: 12, label: "December" },
+];
 
 export function WorkspaceSettingsForm({
   workspace,
@@ -37,7 +54,14 @@ export function WorkspaceSettingsForm({
 }) {
   const router = useRouter();
   const [retentionYears, setRetentionYears] = useState(workspace.retentionYears);
+  const [fiscalYearEndMonth, setFiscalYearEndMonth] = useState(
+    workspace.fiscalYearEndMonth ?? 12,
+  );
+  const [fiscalTimezone, setFiscalTimezone] = useState(
+    workspace.fiscalTimezone ?? "America/New_York",
+  );
   const [legalHold, setLegalHold] = useState(workspace.legalHold);
+  const [expiryPreview, setExpiryPreview] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isRemoving, setIsRemoving] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -57,15 +81,22 @@ export function WorkspaceSettingsForm({
         },
         body: JSON.stringify({
           retentionYears,
+          fiscalYearEndMonth,
+          fiscalTimezone,
           legalHold,
         }),
       });
 
+      const data = await response.json();
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to update settings");
+        throw new Error(
+          typeof data.error === "string" ? data.error : "Failed to update settings",
+        );
       }
 
+      if (typeof data.workspace?.expiryPreview === "string") {
+        setExpiryPreview(data.workspace.expiryPreview);
+      }
       setSuccess(true);
       router.refresh();
     } catch (err) {
@@ -187,23 +218,55 @@ export function WorkspaceSettingsForm({
         <CardHeader>
           <CardTitle>Retention & Legal Hold</CardTitle>
           <CardDescription>
-            Configure data retention and legal hold settings
+            Retention is measured from fiscal year end (Rule 204-2). Retention years
+            can be increased but never shortened.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="retentionYears">Retention Years (Minimum 5)</Label>
+              <Label htmlFor="retentionYears">Retention years (minimum 5)</Label>
               <Input
                 id="retentionYears"
                 type="number"
-                min={5}
-                max={10}
+                min={workspace.retentionYears}
+                max={25}
                 value={retentionYears}
                 onChange={(e) => setRetentionYears(parseInt(e.target.value, 10))}
               />
               <p className="text-xs text-muted-foreground">
-                SEC requires minimum 5 years retention. Default is 6 years.
+                Current floor: {workspace.retentionYears} years. Reducing below this
+                value is rejected.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="fiscalYearEndMonth">Fiscal year end month</Label>
+              <select
+                id="fiscalYearEndMonth"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={fiscalYearEndMonth}
+                onChange={(e) => setFiscalYearEndMonth(parseInt(e.target.value, 10))}
+              >
+                {MONTH_OPTIONS.map((m) => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="fiscalTimezone">Fiscal timezone (IANA)</Label>
+              <Input
+                id="fiscalTimezone"
+                value={fiscalTimezone}
+                onChange={(e) => setFiscalTimezone(e.target.value)}
+                placeholder="America/New_York"
+              />
+              <p className="text-xs text-muted-foreground">
+                Date-only arithmetic for expiry uses this timezone (e.g.
+                America/Phoenix).
               </p>
             </div>
 
@@ -220,10 +283,17 @@ export function WorkspaceSettingsForm({
                   Legal Hold
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  When enabled, prevents deletion of workspace data
+                  Flag only in Phase 1 — purge enforcement ships with CV-TR-05. When
+                  enabled later, it will prevent deletion after retention expiry.
                 </p>
               </div>
             </div>
+
+            {expiryPreview && (
+              <Alert>
+                <AlertDescription>{expiryPreview}</AlertDescription>
+              </Alert>
+            )}
 
             {error && (
               <Alert variant="destructive">

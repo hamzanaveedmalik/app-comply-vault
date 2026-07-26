@@ -32,6 +32,14 @@ const CLIENTS = [
     feeBody:
       "Hi team - I am unhappy about what we charge. The 1.25% advisory fee feels high versus last year. Can we revisit the fee schedule before the April review?",
     lastTopic: "quarterly portfolio rebalance and tax-loss harvesting plan",
+    // Demo: open email signal in Review Queue
+    emailFlag: {
+      type: "FEE_DISPUTE",
+      severity: "WARN",
+      excerpt: "I am unhappy about what we charge. The 1.25% advisory fee feels high",
+      rationale:
+        "Client expressed dissatisfaction with advisory fees and asked to revisit the fee schedule.",
+    },
   },
   {
     name: "James Whitfield",
@@ -62,6 +70,20 @@ const CLIENTS = [
     lastTopic: "estate planning coordination with outside counsel",
   },
 ];
+
+const ADVICE_EMAIL = {
+  clientName: "James Whitfield",
+  subject: "Pension consolidation recommendation",
+  body: "Hey James Whitfield - we are advising you to move your pension funds into our discretionary managed account this week. Please confirm so we can place the trade.",
+  flag: {
+    type: "TRADE_INSTRUCTION",
+    severity: "CRITICAL",
+    excerpt:
+      "advising you to move your pension funds into our discretionary managed account this week. Please confirm so we can place the trade.",
+    rationale:
+      "Outbound message contains an investment recommendation and a request to confirm a trade instruction by email.",
+  },
+};
 
 function cuid() {
   return "c" + crypto.randomBytes(12).toString("hex");
@@ -235,6 +257,7 @@ for (const [i, c] of CLIENTS.entries()) {
   const feeOccurredAt = daysAgo(10 + i);
   const threadId = cuid();
   const evidenceId = cuid();
+  const communicationId = cuid();
   const searchable = emailSearchable(feeSubject, c.feeBody);
   await sql`insert into "CommunicationThread"
     (id, "workspaceId", channel, "externalThreadId", subject, participants, "createdAt", "updatedAt")
@@ -250,7 +273,7 @@ for (const [i, c] of CLIENTS.entries()) {
   await sql`insert into "Communication"
     (id, "threadId", "evidenceItemId", direction, "sentAt", "fromAddress", "toAddresses",
      "ccAddresses", "bodyText", "internetMessageId", "createdAt", "updatedAt")
-    values (${cuid()}, ${threadId}, ${evidenceId}, 'INBOUND', ${feeOccurredAt}::timestamptz,
+    values (${communicationId}, ${threadId}, ${evidenceId}, 'INBOUND', ${feeOccurredAt}::timestamptz,
       ${c.email}, ${["compliance@demo.complyvault.co"]}::text[], '{}'::text[], ${c.feeBody},
       ${`<demo-fee-${clientId}@example.com>`}, ${now}::timestamptz, ${now}::timestamptz)`;
   await sql`insert into "ClientActivity"
@@ -260,7 +283,115 @@ for (const [i, c] of CLIENTS.entries()) {
       ${feeSubject}, 'INBOUND', ${[c.email]}::text[], ${evidenceId}, ${threadId}, ${feeHash},
       ${now}::timestamptz, ${now}::timestamptz)`;
 
+  if (c.emailFlag) {
+    const classId = cuid();
+    await sql`insert into "EvidenceClassification"
+      (id, "workspaceId", "evidenceItemId", "communicationId", "contentHash", result, "modelId",
+       "promptVersion", "signalCount", "rawResponse", "createdAt", "updatedAt")
+      values (${classId}, ${WORKSPACE_ID}, ${evidenceId}, ${communicationId}, ${feeHash}, 'FLAGGED',
+        'demo-seed', 'email-taxonomy-v1', 1,
+        ${JSON.stringify({
+          clean: false,
+          signals: [
+            {
+              category: c.emailFlag.type,
+              severity: c.emailFlag.severity,
+              confidence: 0.91,
+              excerpt: c.emailFlag.excerpt,
+              rationale: c.emailFlag.rationale,
+            },
+          ],
+        })}::jsonb,
+        ${now}::timestamptz, ${now}::timestamptz)`;
+    await sql`insert into "Flag"
+      (id, "workspaceId", "sourceType", "sourceId", "communicationId", type, severity, status,
+       evidence, "dedupeKey", "createdByType", "createdAt", "updatedAt")
+      values (${cuid()}, ${WORKSPACE_ID}, 'EMAIL', ${threadId}, ${communicationId},
+        ${c.emailFlag.type}, ${c.emailFlag.severity}, 'OPEN',
+        ${JSON.stringify({
+          excerpt: c.emailFlag.excerpt,
+          rationale: c.emailFlag.rationale,
+          confidence: 0.91,
+          communicationId,
+          threadId,
+          evidenceItemId: evidenceId,
+          contentSha256: feeHash,
+        })}::jsonb,
+        ${`email:${communicationId}:${c.emailFlag.type}`}, 'SYSTEM',
+        ${daysAgo(1)}::timestamptz, ${now}::timestamptz)`;
+  }
+
   created.push({ clientId, name: c.name, email: c.email });
+}
+
+// Advice / trade-instruction email (open EMAIL flag for Review Queue)
+const adviceClient = created.find((c) => c.name === ADVICE_EMAIL.clientName);
+if (adviceClient) {
+  const occurredAt = daysAgo(2);
+  const hash = sha256(`${ADVICE_EMAIL.subject}\n${ADVICE_EMAIL.body}`);
+  const threadId = cuid();
+  const evidenceId = cuid();
+  const communicationId = cuid();
+  const searchable = emailSearchable(ADVICE_EMAIL.subject, ADVICE_EMAIL.body);
+  await sql`insert into "CommunicationThread"
+    (id, "workspaceId", channel, "externalThreadId", subject, participants, "createdAt", "updatedAt")
+    values (${threadId}, ${WORKSPACE_ID}, 'EMAIL_GMAIL', ${`demo-advice-${adviceClient.clientId}`},
+      ${ADVICE_EMAIL.subject},
+      ${JSON.stringify([{ email: adviceClient.email, role: "client" }])}::jsonb,
+      ${now}::timestamptz, ${now}::timestamptz)`;
+  await sql`insert into "EvidenceItem"
+    (id, "workspaceId", "clientId", "sourceType", title, "occurredAt", "contentSha256",
+     "searchableText", "classificationStatus", "createdAt", "updatedAt")
+    values (${evidenceId}, ${WORKSPACE_ID}, ${adviceClient.clientId}, 'EMAIL', ${ADVICE_EMAIL.subject},
+      ${occurredAt}::timestamptz, ${hash}, ${searchable}, 'COMPLETE',
+      ${now}::timestamptz, ${now}::timestamptz)`;
+  await sql`insert into "Communication"
+    (id, "threadId", "evidenceItemId", direction, "sentAt", "fromAddress", "toAddresses",
+     "ccAddresses", "bodyText", "internetMessageId", "createdAt", "updatedAt")
+    values (${communicationId}, ${threadId}, ${evidenceId}, 'OUTBOUND', ${occurredAt}::timestamptz,
+      'compliance@demo.complyvault.co', ${[adviceClient.email]}::text[], '{}'::text[],
+      ${ADVICE_EMAIL.body}, ${`<demo-advice-${adviceClient.clientId}@example.com>`},
+      ${now}::timestamptz, ${now}::timestamptz)`;
+  await sql`insert into "ClientActivity"
+    (id, "workspaceId", "clientId", type, "occurredAt", title, direction, counterparties,
+     "evidenceItemId", "threadId", "contentSha256", "createdAt", "updatedAt")
+    values (${cuid()}, ${WORKSPACE_ID}, ${adviceClient.clientId}, 'EMAIL_SENT', ${occurredAt}::timestamptz,
+      ${ADVICE_EMAIL.subject}, 'OUTBOUND', ${[adviceClient.email]}::text[], ${evidenceId}, ${threadId},
+      ${hash}, ${now}::timestamptz, ${now}::timestamptz)`;
+  await sql`insert into "EvidenceClassification"
+    (id, "workspaceId", "evidenceItemId", "communicationId", "contentHash", result, "modelId",
+     "promptVersion", "signalCount", "rawResponse", "createdAt", "updatedAt")
+    values (${cuid()}, ${WORKSPACE_ID}, ${evidenceId}, ${communicationId}, ${hash}, 'FLAGGED',
+      'demo-seed', 'email-taxonomy-v1', 1,
+      ${JSON.stringify({
+        clean: false,
+        signals: [
+          {
+            category: ADVICE_EMAIL.flag.type,
+            severity: ADVICE_EMAIL.flag.severity,
+            confidence: 0.94,
+            excerpt: ADVICE_EMAIL.flag.excerpt,
+            rationale: ADVICE_EMAIL.flag.rationale,
+          },
+        ],
+      })}::jsonb,
+      ${now}::timestamptz, ${now}::timestamptz)`;
+  await sql`insert into "Flag"
+    (id, "workspaceId", "sourceType", "sourceId", "communicationId", type, severity, status,
+     evidence, "dedupeKey", "createdByType", "createdAt", "updatedAt")
+    values (${cuid()}, ${WORKSPACE_ID}, 'EMAIL', ${threadId}, ${communicationId},
+      ${ADVICE_EMAIL.flag.type}, ${ADVICE_EMAIL.flag.severity}, 'OPEN',
+      ${JSON.stringify({
+        excerpt: ADVICE_EMAIL.flag.excerpt,
+        rationale: ADVICE_EMAIL.flag.rationale,
+        confidence: 0.94,
+        communicationId,
+        threadId,
+        evidenceItemId: evidenceId,
+        contentSha256: hash,
+      })}::jsonb,
+      ${`email:${communicationId}:${ADVICE_EMAIL.flag.type}`}, 'SYSTEM',
+      ${daysAgo(1)}::timestamptz, ${now}::timestamptz)`;
 }
 
 // Performance email

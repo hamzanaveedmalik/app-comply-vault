@@ -125,6 +125,11 @@ exports.Prisma.WorkspaceScalarFieldEnum = {
   id: 'id',
   name: 'name',
   retentionYears: 'retentionYears',
+  fiscalYearEndMonth: 'fiscalYearEndMonth',
+  fiscalTimezone: 'fiscalTimezone',
+  mediaPosture: 'mediaPosture',
+  postureSetById: 'postureSetById',
+  postureSetAt: 'postureSetAt',
   legalHold: 'legalHold',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -141,6 +146,23 @@ exports.Prisma.WorkspaceScalarFieldEnum = {
   currentPeriodEnd: 'currentPeriodEnd',
   onboardingType: 'onboardingType',
   onboardingPaidAt: 'onboardingPaidAt'
+};
+
+exports.Prisma.ParkedIngestScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  source: 'source',
+  externalRef: 'externalRef',
+  payload: 'payload',
+  occurredAt: 'occurredAt',
+  status: 'status',
+  parkedAt: 'parkedAt',
+  replayRequestedAt: 'replayRequestedAt',
+  replayRequestedById: 'replayRequestedById',
+  meetingId: 'meetingId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.UserWorkspaceScalarFieldEnum = {
@@ -163,6 +185,8 @@ exports.Prisma.MeetingScalarFieldEnum = {
   meetingDate: 'meetingDate',
   status: 'status',
   fileUrl: 'fileUrl',
+  transcriptSha256: 'transcriptSha256',
+  mediaDiscardedAt: 'mediaDiscardedAt',
   sourceFileSha256: 'sourceFileSha256',
   sourceFileName: 'sourceFileName',
   sourceFileSize: 'sourceFileSize',
@@ -669,12 +693,12 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
-exports.Prisma.NullableJsonNullValueInput = {
-  DbNull: Prisma.DbNull,
+exports.Prisma.JsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
 
-exports.Prisma.JsonNullValueInput = {
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
   JsonNull: Prisma.JsonNull
 };
 
@@ -693,6 +717,11 @@ exports.Prisma.JsonNullValueFilter = {
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
 };
+exports.MediaPosture = exports.$Enums.MediaPosture = {
+  RETAIN: 'RETAIN',
+  DISCARD: 'DISCARD'
+};
+
 exports.BillingStatus = exports.$Enums.BillingStatus = {
   PILOT: 'PILOT',
   TRIALING: 'TRIALING',
@@ -710,6 +739,12 @@ exports.PlanTier = exports.$Enums.PlanTier = {
 exports.BillingCurrency = exports.$Enums.BillingCurrency = {
   USD: 'USD',
   GBP: 'GBP'
+};
+
+exports.ParkedIngestStatus = exports.$Enums.ParkedIngestStatus = {
+  PARKED: 'PARKED',
+  REPLAY_REQUESTED: 'REPLAY_REQUESTED',
+  INGESTED: 'INGESTED'
 };
 
 exports.WorkspaceRole = exports.$Enums.WorkspaceRole = {
@@ -856,7 +891,12 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   EVIDENCE_TAG: 'EVIDENCE_TAG',
   EMAIL_TRIAGE_RESOLVED: 'EMAIL_TRIAGE_RESOLVED',
   THREAD_EXPORT: 'THREAD_EXPORT',
-  MEETING_CLIENT_ATTRIBUTED: 'MEETING_CLIENT_ATTRIBUTED'
+  MEETING_CLIENT_ATTRIBUTED: 'MEETING_CLIENT_ATTRIBUTED',
+  RETENTION_POLICY_UPDATED: 'RETENTION_POLICY_UPDATED',
+  MEDIA_POSTURE_SET: 'MEDIA_POSTURE_SET',
+  INGEST_PARKED: 'INGEST_PARKED',
+  INGEST_REPLAYED: 'INGEST_REPLAYED',
+  MEDIA_DISCARDED: 'MEDIA_DISCARDED'
 };
 
 exports.IntegrationProvider = exports.$Enums.IntegrationProvider = {
@@ -1011,6 +1051,7 @@ exports.EmailTriageStatus = exports.$Enums.EmailTriageStatus = {
 
 exports.Prisma.ModelName = {
   Workspace: 'Workspace',
+  ParkedIngest: 'ParkedIngest',
   UserWorkspace: 'UserWorkspace',
   Meeting: 'Meeting',
   Version: 'Version',

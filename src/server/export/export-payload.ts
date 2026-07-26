@@ -1,6 +1,8 @@
 /**
  * Build export payload for PDF generation.
  * Used by PDFKit implementation.
+ *
+ * CV-TR-02a: no wall-clock timestamps; all dates from stored fields / packTimestamp.
  */
 
 import type { Meeting, User, Version, Workspace } from "./types";
@@ -8,8 +10,17 @@ import type { ExtractionData } from "../extraction/types";
 import { normalizeTopic } from "~/lib/topics";
 import type { TranscriptSegment } from "../transcription/types";
 import type { FirmProfileExportSectionDto } from "~/lib/firm-profile-types";
+import {
+  formatUtcDate,
+  formatUtcIso,
+  resolvePackTimestamp,
+  sortByStartTimeThenClaim,
+  sortFlags,
+  sortSegmentsByStart,
+  sortVersions,
+} from "./deterministic";
 
-export interface ExportPayload {
+export type ExportPayload = {
   client_name: string;
   firm_name: string;
   advisor_name: string;
@@ -38,14 +49,13 @@ export interface ExportPayload {
   date_reviewed?: string;
   date_signed?: string;
   watermarked?: boolean;
+  /** Instant used for PDF CreationDate / ModDate (deterministic file ID). */
+  pack_timestamp: string;
   _transcript_segments?: TranscriptSegment[];
   firm_disclosure_profile?: FirmProfileExportSectionDto;
-}
+};
 
-function getSpeakerAtTime(
-  segments: TranscriptSegment[],
-  startTime: number
-): string {
+function getSpeakerAtTime(segments: TranscriptSegment[], startTime: number): string {
   for (const s of segments) {
     const start = s.startTime ?? 0;
     const end = s.endTime ?? start + 60;
@@ -65,6 +75,16 @@ function formatDuration(segments: TranscriptSegment[]): string {
   const h = Math.floor(totalMinutes / 60);
   const m = totalMinutes % 60;
   return m > 0 ? `${h}h ${m}m` : `${h}h`;
+}
+
+function resolveMeetingFormat(meeting: Meeting): string {
+  if (!meeting.fileUrl && meeting.sourceFileMime === "text/plain") {
+    return "Transcript Upload";
+  }
+  if (meeting.sourceFileMime === "text/vtt") {
+    return "Teams";
+  }
+  return "Virtual / Zoom";
 }
 
 /**
@@ -91,12 +111,24 @@ export function buildExportPayload(
   options?: {
     exportingUserName?: string;
     firmDisclosureProfile?: FirmProfileExportSectionDto;
+    /** Captured once at seal protocol start (or equivalent). Never wall-clock now. */
+    packTimestamp?: Date;
   },
 ): ExportPayload {
-  const segments = transcript?.segments ?? [];
-  const dateStr: string = meeting.meetingDate
-    ? (new Date(meeting.meetingDate).toISOString().split("T")[0] ?? "")
-    : "";
+  const packAt = resolvePackTimestamp({
+    packTimestamp: options?.packTimestamp,
+    finalizedAt: meeting.finalizedAt,
+    ccoSignedOffAt: meeting.ccoSignedOffAt,
+    cmReviewedAt: meeting.cmReviewedAt,
+    advisorCertifiedAt: meeting.advisorCertifiedAt,
+    draftReadyAt: meeting.draftReadyAt,
+    updatedAt: meeting.updatedAt,
+    createdAt: meeting.createdAt,
+  });
+  const packIso = formatUtcIso(packAt);
+
+  const segments = sortSegmentsByStart(transcript?.segments ?? []);
+  const dateStr: string = meeting.meetingDate ? formatUtcDate(meeting.meetingDate) : "";
 
   const advisorName =
     meeting.finalizedBy?.name ??
@@ -105,7 +137,8 @@ export function buildExportPayload(
     options?.exportingUserName ??
     "Advisor";
 
-  const evidenceLinks = (extraction.evidenceMap ?? []).map((ev, i) => ({
+  const sortedEvidence = sortByStartTimeThenClaim(extraction.evidenceMap ?? []);
+  const evidenceLinks = sortedEvidence.map((ev, i) => ({
     id: `E${i + 1}`,
     claim: ev.claim ?? "",
     startTime: ev.startTime ?? 0,
@@ -122,58 +155,55 @@ export function buildExportPayload(
   }));
 
   const wordCount =
-    segments.reduce((acc, s) => acc + (s.text?.split(/\s+/).length ?? 0), 0) ||
-    0;
+    segments.reduce((acc, s) => acc + (s.text?.split(/\s+/).length ?? 0), 0) || 0;
 
-  const highCount = flags.filter((f) => f.severity === "CRITICAL").length;
-  const medCount = flags.filter((f) => f.severity === "WARN").length;
-  const infoCount = flags.filter((f) => f.severity === "INFO").length;
+  const sortedFlags = sortFlags(flags);
+  const highCount = sortedFlags.filter((f) => f.severity === "CRITICAL").length;
+  const medCount = sortedFlags.filter((f) => f.severity === "WARN").length;
+  const infoCount = sortedFlags.filter((f) => f.severity === "INFO").length;
 
-  // Transcript upload (no recording file) vs Virtual/Zoom vs Teams
-  const format =
-    !meeting.fileUrl && meeting.sourceFileMime === "text/plain"
-      ? "Transcript Upload"
-      : meeting.sourceFileMime === "text/vtt"
-        ? "Teams"
-        : "Virtual / Zoom";
+  const format = resolveMeetingFormat(meeting);
   const duration = formatDuration(segments);
   const exportingUser = options?.exportingUserName ?? "System";
+  const sortedVersions = sortVersions(versions);
+
+  const extractionGeneratedAt = extraction.extractedAt
+    ? formatUtcIso(extraction.extractedAt)
+    : packIso;
 
   const auditTrail: ExportPayload["audit_trail"] = [
     {
       timestamp: meeting.sourceUploadedAt
-        ? new Date(meeting.sourceUploadedAt).toLocaleString()
-        : new Date(meeting.createdAt).toLocaleString(),
+        ? formatUtcIso(meeting.sourceUploadedAt)
+        : formatUtcIso(meeting.createdAt),
       event: "Meeting recording uploaded",
       user: "System",
       detail: `${format} — ${duration}`,
     },
     {
       timestamp: meeting.draftReadyAt
-        ? new Date(meeting.draftReadyAt).toLocaleString()
-        : new Date(meeting.updatedAt).toLocaleString(),
+        ? formatUtcIso(meeting.draftReadyAt)
+        : formatUtcIso(meeting.updatedAt),
       event: "Transcription completed",
       user: "System",
       detail: `Speaker-labeled transcript — ${wordCount} words`,
     },
     {
-      timestamp: extraction.extractedAt
-        ? new Date(extraction.extractedAt).toLocaleString()
-        : new Date().toLocaleString(),
+      timestamp: extractionGeneratedAt,
       event: "Compliance note generated",
       user: "System (AI)",
       detail: `Initial draft — ${extraction.topics?.length ?? 0} sections, ${evidenceLinks.length} evidence links`,
     },
     {
-      timestamp: new Date().toLocaleString(),
+      timestamp: extractionGeneratedAt,
       event: "Compliance flags raised",
       user: "System (AI)",
-      detail: `${flags.length} flags: ${highCount} HIGH, ${medCount} MEDIUM, ${infoCount} INFO`,
+      detail: `${sortedFlags.length} flags: ${highCount} HIGH, ${medCount} MEDIUM, ${infoCount} INFO`,
     },
     ...(meeting.advisorCertifiedAt
       ? [
           {
-            timestamp: new Date(meeting.advisorCertifiedAt).toLocaleString(),
+            timestamp: formatUtcIso(meeting.advisorCertifiedAt),
             event: "Advisor certified transcript",
             user:
               meeting.advisorCertifiedByUser?.name ??
@@ -186,7 +216,7 @@ export function buildExportPayload(
     ...(meeting.cmReviewedAt
       ? [
           {
-            timestamp: new Date(meeting.cmReviewedAt).toLocaleString(),
+            timestamp: formatUtcIso(meeting.cmReviewedAt),
             event: "CM review completed",
             user:
               meeting.cmReviewedByUser?.name ??
@@ -199,7 +229,7 @@ export function buildExportPayload(
     ...(meeting.ccoSignedOffAt
       ? [
           {
-            timestamp: new Date(meeting.ccoSignedOffAt).toLocaleString(),
+            timestamp: formatUtcIso(meeting.ccoSignedOffAt),
             event: "CCO compliance sign-off",
             user:
               meeting.ccoSignedOffByUser?.name ??
@@ -210,15 +240,13 @@ export function buildExportPayload(
         ]
       : []),
     {
-      timestamp: new Date().toLocaleString(),
+      timestamp: packIso,
       event: "Pack exported",
       user: exportingUser,
       detail: "PDF + Evidence CSV + Version History + Transcript TXT",
     },
     {
-      timestamp: meeting.finalizedAt
-        ? new Date(meeting.finalizedAt).toLocaleString()
-        : "Pending",
+      timestamp: meeting.finalizedAt ? formatUtcIso(meeting.finalizedAt) : "Pending",
       event: "Advisor sign-off",
       user: meeting.finalizedAt ? advisorName : exportingUser,
       detail: meeting.finalizedAt ? "Completed" : "Awaiting review and digital signature",
@@ -231,17 +259,12 @@ export function buildExportPayload(
     advisor_name: advisorName,
     date: dateStr,
     meeting_type: meeting.meetingType ?? "N/A",
-    duration: formatDuration(segments),
-    format:
-      !meeting.fileUrl && meeting.sourceFileMime === "text/plain"
-        ? "Transcript Upload"
-        : meeting.sourceFileMime === "text/vtt"
-          ? "Teams"
-          : "Virtual / Zoom",
-    generated_at: (extraction.extractedAt as string | undefined) ?? new Date().toISOString(),
+    duration,
+    format,
+    generated_at: extractionGeneratedAt,
     review_status: meeting.status ?? "N/A",
-    pack_version: versions.length || 1,
-    flags: flags.map((f) => ({
+    pack_version: sortedVersions.length || 1,
+    flags: sortedFlags.map((f) => ({
       type: f.type,
       severity: f.severity,
       status: f.status,
@@ -250,23 +273,18 @@ export function buildExportPayload(
     action_items: actionItems,
     topics: (extraction.topics ?? []).map((t) => normalizeTopic(t)),
     recommendations: (extraction.recommendations ?? []).map((r) => ({
-      text: typeof r === "string" ? r : r.text ?? "",
+      text: typeof r === "string" ? r : (r.text ?? ""),
     })),
     disclosures: (extraction.disclosures ?? []).map((d) => ({
-      text: typeof d === "string" ? d : d.text ?? "",
+      text: typeof d === "string" ? d : (d.text ?? ""),
     })),
     evidence_links: evidenceLinks,
     audit_trail: auditTrail,
-    finalized_at: meeting.finalizedAt
-      ? new Date(meeting.finalizedAt).toISOString()
-      : undefined,
-    date_reviewed: meeting.finalizedAt
-      ? new Date(meeting.finalizedAt).toISOString().slice(0, 10)
-      : undefined,
-    date_signed: meeting.finalizedAt
-      ? new Date(meeting.finalizedAt).toISOString().slice(0, 10)
-      : undefined,
+    finalized_at: meeting.finalizedAt ? formatUtcIso(meeting.finalizedAt) : undefined,
+    date_reviewed: meeting.finalizedAt ? formatUtcDate(meeting.finalizedAt) : undefined,
+    date_signed: meeting.finalizedAt ? formatUtcDate(meeting.finalizedAt) : undefined,
     watermarked,
+    pack_timestamp: packIso,
     _transcript_segments: segments,
     firm_disclosure_profile: options?.firmDisclosureProfile,
   };

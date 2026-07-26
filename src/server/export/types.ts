@@ -58,6 +58,8 @@ export interface Workspace {
   id: string;
   name: string;
   retentionYears: number;
+  fiscalYearEndMonth?: number;
+  fiscalTimezone?: string;
   legalHold: boolean;
   createdAt: Date;
   updatedAt: Date;

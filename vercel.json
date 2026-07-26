@@ -4,6 +4,7 @@
   "crons": [
       {"path": "/api/jobs/integration-token-refresh", "schedule": "0 0 * * *"},
       {"path": "/api/jobs/process-integration-queue", "schedule": "0 6 * * *"},
-      {"path": "/api/cron/weekly-digest", "schedule": "0 8 * * 1"}
+      {"path": "/api/cron/weekly-digest", "schedule": "0 8 * * 1"},
+      {"path": "/api/cron/seal-reconcile", "schedule": "15 5 * * *"}
     ]
 }

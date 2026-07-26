@@ -11,6 +11,7 @@ import {
   resolveExportWatermark,
   type ExportPurpose,
 } from "~/server/export/watermark";
+import type { PackSealMetadata } from "~/server/export/seal-metadata";
 import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
 import {
   buildEmailCorrespondenceSection,
@@ -40,8 +41,19 @@ export async function buildAuditPackZipForMeeting(args: {
   exportingUserName: string;
   /** CV-TR-19: "seal" forces unwatermarked canonical bytes. Default "draft". */
   purpose?: ExportPurpose;
+  /** CV-TR-01: sealedAt captured once at protocol start. */
+  packTimestamp?: Date;
+  /** CV-TR-02 / CV-TR-18 seal cover + optional custody footer. */
+  seal?: PackSealMetadata;
 }): Promise<BuildAuditPackResult> {
-  const { meetingId, workspaceId, exportingUserName, purpose = "draft" } = args;
+  const {
+    meetingId,
+    workspaceId,
+    exportingUserName,
+    purpose = "draft",
+    packTimestamp,
+    seal,
+  } = args;
 
   const meeting = await db.meeting.findFirst({
     where: { id: meetingId, workspaceId },
@@ -67,7 +79,10 @@ export async function buildAuditPackZipForMeeting(args: {
   if (!extraction.decisions) extraction.decisions = [];
   if (!extraction.followUps) extraction.followUps = [];
 
-  const transcript = meeting.transcript as { segments: TranscriptSegment[] } | null | undefined;
+  const transcript = meeting.transcript as
+    | { segments: TranscriptSegment[] }
+    | null
+    | undefined;
   if (!transcript?.segments) {
     return { success: false, error: "Meeting does not have a transcript" };
   }
@@ -91,17 +106,18 @@ export async function buildAuditPackZipForMeeting(args: {
     finalizedByUser = await db.user.findUnique({ where: { id: meeting.finalizedBy } });
   }
 
-  const [advisorCertifiedByUser, cmReviewedByUser, ccoSignedOffByUser] = await Promise.all([
-    meeting.advisorCertifiedByUserId
-      ? db.user.findUnique({ where: { id: meeting.advisorCertifiedByUserId } })
-      : null,
-    meeting.cmReviewedByUserId
-      ? db.user.findUnique({ where: { id: meeting.cmReviewedByUserId } })
-      : null,
-    meeting.ccoSignedOffByUserId
-      ? db.user.findUnique({ where: { id: meeting.ccoSignedOffByUserId } })
-      : null,
-  ]);
+  const [advisorCertifiedByUser, cmReviewedByUser, ccoSignedOffByUser] =
+    await Promise.all([
+      meeting.advisorCertifiedByUserId
+        ? db.user.findUnique({ where: { id: meeting.advisorCertifiedByUserId } })
+        : null,
+      meeting.cmReviewedByUserId
+        ? db.user.findUnique({ where: { id: meeting.cmReviewedByUserId } })
+        : null,
+      meeting.ccoSignedOffByUserId
+        ? db.user.findUnique({ where: { id: meeting.ccoSignedOffByUserId } })
+        : null,
+    ]);
 
   const flagsRaw = await db.flag.findMany({ where: { meetingId: meeting.id } });
   const flags = flagsRaw.map((f) => ({
@@ -132,7 +148,7 @@ export async function buildAuditPackZipForMeeting(args: {
     advisorCertifiedByUser: advisorCertifiedByUser ?? undefined,
     cmReviewedByUser: cmReviewedByUser ?? undefined,
     ccoSignedOffByUser: ccoSignedOffByUser ?? undefined,
-  } as Meeting & { finalizedBy?: User | null };
+  } as Meeting & { finalizedBy?: User | null }; // CAST: Meeting.finalizedBy is userId string; export expects User
 
   let emailCorrespondenceCsv: string | null = null;
   if (isEmailIntelligenceEnabled() && meeting.clientId) {
@@ -159,11 +175,14 @@ export async function buildAuditPackZipForMeeting(args: {
     watermarked,
     exportingUserName,
     emailCorrespondenceCsv,
+    packTimestamp,
+    seal,
   });
 
   const filename = generateExportFilename(workspace.name, meeting.clientName, {
     watermarked,
     date: meeting.meetingDate,
+    sealId: seal?.sealId,
   });
   return { success: true, buffer, filename };
 }

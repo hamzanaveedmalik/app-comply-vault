@@ -153,6 +153,14 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
         width: 250,
         align: "right",
       });
+      // CV-TR-18 — custody line on convenience / deposit copies only
+      if (payload.seal?.custodyFooter) {
+        doc.fillColor(COLORS.WHITE).fontSize(6).font("Helvetica");
+        doc.text(payload.seal.custodyFooter, LEFT, 2, {
+          width: PAGE_W - LEFT - RIGHT,
+          align: "center",
+        });
+      }
       doc.restore();
     };
 
@@ -178,6 +186,22 @@ export async function generateComplianceNotePDF(payload: ExportPayload): Promise
 
     // Spacer 6pt
     y += 6;
+
+    // CV-TR-02 — seal block (sealed / deposit packs only; drafts omit)
+    if (payload.seal) {
+      const seal = payload.seal;
+      const sealBlockH = 72;
+      drawRect(doc, LEFT, y, USABLE, sealBlockH, COLORS.LIGHT_GREEN, COLORS.ACCENT_GREEN);
+      doc.fillColor(COLORS.DARK_GREEN).fontSize(9).font("Helvetica-Bold");
+      doc.text("SEALED RECORD", LEFT + 10, y + 8);
+      doc.fillColor(COLORS.DARK_TEXT).fontSize(8).font("Helvetica");
+      doc.text(`Seal ID: ${seal.sealId}`, LEFT + 10, y + 22, { width: USABLE - 20 });
+      doc.text(`Sealed at: ${seal.sealedAt}`, LEFT + 10, y + 34, { width: USABLE - 20 });
+      doc.text(`Pack SHA-256: ${seal.packHash}`, LEFT + 10, y + 46, { width: USABLE - 20 });
+      doc.fillColor(COLORS.NOTICE_TEXT).fontSize(7.5).font("Helvetica-Oblique");
+      doc.text(seal.coverCopy, LEFT + 10, y + 58, { width: USABLE - 20 });
+      y += sealBlockH + 10;
+    }
 
     // 1. DISCLAIMER BANNER
     const disclaimerH = 40;

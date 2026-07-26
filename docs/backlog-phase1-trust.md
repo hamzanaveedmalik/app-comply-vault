@@ -4,7 +4,7 @@
 **Epic:** EPIC-TR (Trust Layer)  
 **Supersedes:** `backlog-phase1-trust.md` v1.0  
 **Window:** Weeks 1 to 7  
-**Status:** 🔨 in progress — CV-TR-02a ✅; CV-TR-04 / 04a ✅; CV-TR-06 / 06a ✅; CV-TR-07 ✅; CV-TR-19 ✅ (2026-07-26)
+**Status:** 🔨 in progress — CV-TR-02a ✅; CV-TR-04 / 04a ✅; CV-TR-06 / 06a ✅; CV-TR-07 ✅; CV-TR-19 ✅; CV-TR-01 / 02 / 18 ✅ code (2026-07-26)
 
 **Patch summary.** Added CV-TR-02a (deterministic bytes, fail-closed gate), CV-TR-04a and CV-TR-06a (existing-tenant migrations), CV-TR-18 (external deposit custody), CV-TR-19 (watermark exclusion). Rewrote CV-TR-01 dual-write as a content-addressed idempotent protocol. Removed coverage AC from CV-TR-17. Corrected cover-page copy, retention default conflict, timezone arithmetic, role names, discard scope, and the CV-WEB-02 integration inventory. Fixed `postureSetById` / `postureSetAt`.
 
@@ -92,17 +92,51 @@ as defense in depth. `scripts/provision-neon-app-role.sql` prompts for the
 runtime password without storing it. The provisioned-DB integration test asserts
 the app role is not the owner and that Postgres rejects UPDATE and DELETE.
 
-**Remaining for full AC:** rotate the exposed Neon owner credential, deploy the
-migration with the owner/direct URL, provision `complyvault_app`, switch runtime
-`DATABASE_URL` to its pooled URL, and run CI with
+**Remaining for full AC:** rotate the exposed Neon owner credential, run
+`scripts/provision-neon-app-role.sql` to enable LOGIN on `complyvault_app`,
+switch runtime `DATABASE_URL` to its pooled URL, and run CI with
 `RECORD_SEAL_PRIVILEGE_TEST_DATABASE_URL` on a disposable Neon branch.
+
+Neon note: table ownership remains with `neondb_owner` (Neon rejects
+cross-role `OWNER TO`). The app role is still not the owner and has
+SELECT/INSERT only.
+
+---
+
+## CV-TR-01 — Seal finalised packs to Object Lock ✅ code (2026-07-26)
+
+`sealAndFinalizeMeeting` dual-write: generate sealed pack → SHA-256 → PUT
+`SEALED_S3_BUCKET_NAME` keyed by hash with Object Lock retain-until `expiresAt` →
+INSERT `RecordSeal` → UPDATE FINALIZED. Mode gated by `SEALED_OBJECT_LOCK_MODE`
+(fail closed to GOVERNANCE). Nightly `/api/cron/seal-reconcile` asserts the
+FINALIZED ↔ RecordSeal invariant (advance stuck seals; never un-finalise).
+
+**Ops remaining:** provision Object Lock bucket; set `SEALED_S3_BUCKET_NAME` and
+explicit `SEALED_OBJECT_LOCK_MODE=COMPLIANCE` only in production.
+
+---
+
+## CV-TR-02 — Hash ledger + pack cover ✅ code (2026-07-26)
+
+Cover seal block: seal ID, pack hash (pass-1 content digest), sealed-at, Phase 1
+copy (no verify URL). Ledger `packHash` = SHA-256 of complete sealed ZIP bytes.
+FINALIZED export streams sealed object (hash matches ledger). Drafts omit seal
+fields and may watermark.
+
+---
+
+## CV-TR-18 — External deposit custody ✅ code (2026-07-26)
+
+SharePoint deposit runs only after seal commit. Filename includes seal ID;
+deposit PDF carries custody footer naming the sealed record as system of record.
+Deposit failure leaves FINALIZED + seal intact.
 
 ---
 
 ## Remaining Phase 1 stories
 
-CV-TR-01a (deployment verification), CV-TR-01, CV-TR-02,
-CV-TR-18, CV-TR-16, CV-TR-17, CV-TR-11, CV-WEB-01..04.
+CV-TR-01a (deployment verification), ops for sealed bucket / COMPLIANCE mode,
+CV-TR-16, CV-TR-17, CV-TR-11, CV-WEB-01..04.
 
 ### Sequencing (revised)
 
@@ -113,8 +147,8 @@ week 1 ── CV-TR-11 (external, runs throughout)
        ── CV-TR-04 ✅ ─┬─ CV-TR-04a ✅
                       └─ CV-TR-06 ✅ ─── CV-TR-06a ✅ ─── CV-TR-07 ✅
 
-CV-TR-02a ✅ + CV-TR-01a + CV-TR-19 ✅ ── CV-TR-01 ── CV-TR-02
-                                      └── CV-TR-18 (same release as TR-01)
+CV-TR-02a ✅ + CV-TR-01a + CV-TR-19 ✅ ── CV-TR-01 ✅ ── CV-TR-02 ✅
+                                      └── CV-TR-18 ✅ (same release as TR-01)
                                           └── CV-TR-16 ── CV-TR-17
 
 CV-WEB-02, 03, 04 independent

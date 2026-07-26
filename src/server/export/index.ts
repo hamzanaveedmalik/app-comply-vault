@@ -15,6 +15,7 @@ import {
   sortSegmentsByStart,
   sortVersions,
 } from "./deterministic";
+import type { PackSealMetadata } from "./seal-metadata";
 
 export type ExportFlag = {
   type: string;
@@ -41,6 +42,8 @@ type ExportData = {
   packTimestamp?: Date;
   /** When provided, skips DB lookup (tests / seal path with preloaded profile). */
   firmDisclosureProfile?: FirmProfileExportSectionDto;
+  /** CV-TR-02 / CV-TR-18 — omit for draft exports. */
+  seal?: PackSealMetadata;
 };
 
 /**
@@ -78,6 +81,7 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
           emailCorrespondenceCsv = null,
           packTimestamp: explicitPackTimestamp,
           firmDisclosureProfile: injectedProfile,
+          seal,
         } = data;
 
         const packTimestamp = resolvePackTimestamp({
@@ -119,6 +123,7 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
             exportingUserName,
             firmDisclosureProfile,
             packTimestamp,
+            seal,
           },
         );
         const pdfBuffer = await generateComplianceNotePDF(payload);
@@ -182,7 +187,12 @@ export async function generateAuditPack(data: ExportData): Promise<Buffer> {
 export function generateExportFilename(
   _workspaceName: string,
   clientName: string,
-  options?: { watermarked?: boolean; date?: Date | string },
+  options?: {
+    watermarked?: boolean;
+    date?: Date | string;
+    /** CV-TR-18 — deposit filenames include seal ID. */
+    sealId?: string;
+  },
 ): string {
   const slugify = (str: string): string =>
     str
@@ -196,7 +206,8 @@ export function generateExportFilename(
     ? formatUtcDate(options.date)
     : formatUtcDate(new Date(0));
   const suffix = options?.watermarked ? "_trial" : "";
-  return `${slugify(clientName)}_${exportDate}_AuditPack${suffix}.zip`;
+  const sealPart = options?.sealId ? `_seal-${options.sealId}` : "";
+  return `${slugify(clientName)}_${exportDate}_AuditPack${sealPart}${suffix}.zip`;
 }
 
 function generateReadmeTXT(watermarked: boolean, includeEmail = false): string {

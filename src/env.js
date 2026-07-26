@@ -36,6 +36,21 @@ export const env = createEnv({
     S3_SECRET_ACCESS_KEY: z.string().optional(),
     S3_REGION: z.string().optional(),
     S3_ENDPOINT: z.string().optional(), // For R2 or other S3-compatible storage
+    /**
+     * CV-TR-01: dedicated Object Lock bucket for sealed packs.
+     * Working media stays in S3_BUCKET_NAME (R2). Fails closed if unset at seal time.
+     */
+    SEALED_S3_BUCKET_NAME: z.string().optional(),
+    /**
+     * CV-TR-01: Object Lock retention mode.
+     * Must be set explicitly to "COMPLIANCE" for production seals.
+     * Anything else (unset, GOVERNANCE, typo) fails closed to GOVERNANCE —
+     * never infer COMPLIANCE from NODE_ENV.
+     */
+    SEALED_OBJECT_LOCK_MODE: z.preprocess(
+      (v) => (v === "" || v == null ? undefined : v),
+      z.enum(["COMPLIANCE", "GOVERNANCE"]).optional(),
+    ),
     QSTASH_TOKEN: z.string().optional(), // Upstash QStash token
     QSTASH_CURRENT_SIGNING_KEY: z.string().optional(), // QStash webhook signature verification
     QSTASH_NEXT_SIGNING_KEY: z.string().optional(), // QStash webhook signature verification (for key rotation)
@@ -136,6 +151,8 @@ export const env = createEnv({
     S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY,
     S3_REGION: process.env.S3_REGION,
     S3_ENDPOINT: process.env.S3_ENDPOINT,
+    SEALED_S3_BUCKET_NAME: process.env.SEALED_S3_BUCKET_NAME,
+    SEALED_OBJECT_LOCK_MODE: process.env.SEALED_OBJECT_LOCK_MODE,
     QSTASH_TOKEN: process.env.QSTASH_TOKEN,
     QSTASH_CURRENT_SIGNING_KEY: process.env.QSTASH_CURRENT_SIGNING_KEY,
     QSTASH_NEXT_SIGNING_KEY: process.env.QSTASH_NEXT_SIGNING_KEY,

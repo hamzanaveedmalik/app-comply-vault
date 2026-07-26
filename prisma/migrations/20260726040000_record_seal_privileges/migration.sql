@@ -58,26 +58,18 @@ ALTER TABLE "RecordSeal"
 
 -- SQL-created Neon roles do not inherit neon_superuser. Keep the application
 -- role separate from the migration role and grant only required privileges.
+-- Table ownership stays with the migration/owner role: Neon rejects
+-- `ALTER TABLE ... OWNER TO` across roles ("permission denied for schema public").
+-- CV-TR-01a AC is still met — complyvault_app is not the owner and cannot
+-- UPDATE/DELETE/TRUNCATE RecordSeal.
 DO $roles$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'complyvault_app') THEN
     CREATE ROLE complyvault_app
       NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;
   END IF;
-
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_roles WHERE rolname = 'complyvault_seal_owners'
-  ) THEN
-    CREATE ROLE complyvault_seal_owners
-      NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;
-  END IF;
 END
 $roles$;
-
--- The migration role may alter the table in future migrations, but the runtime
--- application role is deliberately not a member of the owner group.
-GRANT complyvault_seal_owners TO CURRENT_USER;
-ALTER TABLE "RecordSeal" OWNER TO complyvault_seal_owners;
 
 DO $database_grant$
 BEGIN

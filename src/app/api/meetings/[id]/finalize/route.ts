@@ -1,6 +1,7 @@
 import { requireAppAccess } from "~/server/auth/guards";
 import { db } from "~/server/db";
 import { z } from "zod";
+import { sealAndFinalizeMeeting } from "~/server/seal/seal-meeting";
 
 const finalizeSchema = z.object({
   finalizeReason: z.enum([
@@ -14,7 +15,7 @@ const finalizeSchema = z.object({
 
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const access = await requireAppAccess();
@@ -27,7 +28,7 @@ export async function POST(
     if (session.user.role !== "OWNER_CCO") {
       return Response.json(
         { error: "Forbidden: Only workspace owners (CCO) can finalize meetings" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -49,18 +50,50 @@ export async function POST(
 
     // Three-layer workflow: finalize only after CCO_SIGNED_OFF
     if (meeting.status !== "CCO_SIGNED_OFF") {
+      // Idempotent: already sealed+finalized
+      if (meeting.status === "FINALIZED") {
+        const seal = await db.recordSeal.findUnique({
+          where: {
+            workspaceId_meetingId: { workspaceId, meetingId: id },
+          },
+        });
+        if (seal) {
+          return Response.json({
+            success: true,
+            meeting: {
+              id: meeting.id,
+              status: meeting.status,
+              finalizedAt: meeting.finalizedAt,
+              finalizedBy: meeting.finalizedBy,
+              timeToFinalize: meeting.timeToFinalize,
+              finalizeReason: meeting.finalizeReason,
+              finalizeNote: meeting.finalizeNote,
+            },
+            seal: {
+              sealId: seal.id,
+              packHash: seal.packHash,
+              sealedAt: seal.sealedAt.toISOString(),
+              expiresAt: seal.expiresAt.toISOString(),
+              storageUri: seal.storageUri,
+            },
+          });
+        }
+      }
       return Response.json(
         {
           error: `Meeting must be CCO_SIGNED_OFF to finalize. Current status: ${meeting.status}`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    if ((finalizeReason === "OTHER" || finalizeReason === "EXCEPTION_APPROVED") && !finalizeNote?.trim()) {
+    if (
+      (finalizeReason === "OTHER" || finalizeReason === "EXCEPTION_APPROVED") &&
+      !finalizeNote?.trim()
+    ) {
       return Response.json(
         { error: "Finalize note is required for this reason" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -81,7 +114,8 @@ export async function POST(
     if (openCriticalFlags.length > 0 && finalizeReason !== "EXCEPTION_APPROVED") {
       return Response.json(
         {
-          error: "Critical flags must be resolved or explicitly overridden before finalization",
+          error:
+            "Critical flags must be resolved or explicitly overridden before finalization",
           flags: openCriticalFlags.map((flag) => ({
             id: flag.id,
             type: flag.type,
@@ -89,64 +123,46 @@ export async function POST(
             status: flag.status,
           })),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // Calculate Time-to-Finalize if draftReadyAt exists
     let timeToFinalize: number | null = null;
     const now = new Date();
     if (meeting.draftReadyAt) {
       const diffMs = now.getTime() - meeting.draftReadyAt.getTime();
-      timeToFinalize = Math.floor(diffMs / 1000); // Convert to seconds
+      timeToFinalize = Math.floor(diffMs / 1000);
     }
 
-    // Update the meeting to FINALIZED status
-    const finalizedMeeting = await db.meeting.update({
-      where: { id },
-      data: {
-        status: "FINALIZED",
-        finalizedBy: session.user.id,
-        finalizedAt: now,
-        timeToFinalize,
-        finalizeReason,
-        finalizeNote: finalizeNote?.trim() || null,
-      },
+    // CV-TR-01: seal to Object Lock before (and as the gate for) FINALIZED.
+    const sealed = await sealAndFinalizeMeeting({
+      meetingId: id,
+      workspaceId,
+      sealedByUserId: session.user.id,
+      finalizeReason,
+      finalizeNote,
+      timeToFinalize,
+      now,
     });
 
-    // Log FINALIZE audit event
-    await db.auditEvent.create({
-      data: {
-        workspaceId,
-        userId: session.user.id,
-        action: "FINALIZE",
-        resourceType: "meeting",
-        resourceId: meeting.id,
-        meetingId: meeting.id,
-        metadata: {
-          finalizedAt: now.toISOString(),
-          previousStatus: meeting.status,
-          timeToFinalize: timeToFinalize != null ? `${timeToFinalize}s` : undefined,
-          finalizeReason,
-          finalizeNote: finalizeNote?.trim() ?? undefined,
-          flagsOverridden: openCriticalFlags.length > 0,
-        },
-      },
-    });
+    if (!sealed.success) {
+      return Response.json({ error: sealed.error }, { status: 500 });
+    }
 
     const responseBody = {
       success: true,
-      meeting: {
-        id: finalizedMeeting.id,
-        status: finalizedMeeting.status,
-        finalizedAt: finalizedMeeting.finalizedAt,
-        finalizedBy: finalizedMeeting.finalizedBy,
-        timeToFinalize: finalizedMeeting.timeToFinalize,
-        finalizeReason: finalizedMeeting.finalizeReason,
-        finalizeNote: finalizedMeeting.finalizeNote,
+      meeting: sealed.meeting,
+      seal: {
+        sealId: sealed.sealId,
+        packHash: sealed.packHash,
+        sealedAt: sealed.sealedAt,
+        expiresAt: sealed.expiresAt,
+        storageUri: sealed.storageUri,
+        retentionMode: sealed.retentionMode,
       },
     };
 
+    // CV-TR-18: deposit only after seal commits; failure must not un-finalize.
     const spCred = await db.integrationCredential.findUnique({
       where: {
         workspaceId_provider: { workspaceId, provider: "SHAREPOINT" },
@@ -154,9 +170,11 @@ export async function POST(
     });
     if (spCred?.status === "CONNECTED") {
       const { publishSharePointDepositJob } = await import("~/server/qstash");
-      void publishSharePointDepositJob({ meetingId: id, workspaceId }).catch((e) => {
-        console.error("SharePoint deposit enqueue failed:", e);
-      });
+      void publishSharePointDepositJob({ meetingId: id, workspaceId }).catch(
+        (e) => {
+          console.error("SharePoint deposit enqueue failed:", e);
+        },
+      );
     }
 
     return Response.json(responseBody);
@@ -165,13 +183,15 @@ export async function POST(
     if (error instanceof z.ZodError) {
       return Response.json(
         { error: "Invalid request body", details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return Response.json(
-      { error: error instanceof Error ? error.message : "An unknown error occurred" },
-      { status: 500 }
+      {
+        error:
+          error instanceof Error ? error.message : "An unknown error occurred",
+      },
+      { status: 500 },
     );
   }
 }
-

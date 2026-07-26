@@ -19,6 +19,10 @@ import {
   sortSegmentsByStart,
   sortVersions,
 } from "./deterministic";
+import {
+  SEAL_COVER_COPY,
+  type PackSealMetadata,
+} from "./seal-metadata";
 
 export type ExportPayload = {
   client_name: string;
@@ -53,6 +57,14 @@ export type ExportPayload = {
   pack_timestamp: string;
   _transcript_segments?: TranscriptSegment[];
   firm_disclosure_profile?: FirmProfileExportSectionDto;
+  /** CV-TR-02 — present only on sealed / deposit packs. */
+  seal?: {
+    sealId: string;
+    sealedAt: string;
+    packHash: string;
+    coverCopy: string;
+    custodyFooter?: string;
+  };
 };
 
 function getSpeakerAtTime(segments: TranscriptSegment[], startTime: number): string {
@@ -113,6 +125,8 @@ export function buildExportPayload(
     firmDisclosureProfile?: FirmProfileExportSectionDto;
     /** Captured once at seal protocol start (or equivalent). Never wall-clock now. */
     packTimestamp?: Date;
+    /** CV-TR-02 / CV-TR-18 — omit for draft exports. */
+    seal?: PackSealMetadata;
   },
 ): ExportPayload {
   const packAt = resolvePackTimestamp({
@@ -287,5 +301,14 @@ export function buildExportPayload(
     pack_timestamp: packIso,
     _transcript_segments: segments,
     firm_disclosure_profile: options?.firmDisclosureProfile,
+    seal: options?.seal
+      ? {
+          sealId: options.seal.sealId,
+          sealedAt: formatUtcIso(options.seal.sealedAt),
+          packHash: options.seal.packHash,
+          coverCopy: SEAL_COVER_COPY,
+          custodyFooter: options.seal.custodyFooter,
+        }
+      : undefined,
   };
 }

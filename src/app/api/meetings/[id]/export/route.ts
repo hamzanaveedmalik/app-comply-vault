@@ -133,6 +133,68 @@ const EXPORTABLE_MEETING_STATUSES = new Set([
       return Response.json({ error: "Workspace not found" }, { status: 404 });
     }
 
+    // CV-TR-02: FINALIZED exports stream sealed Object Lock bytes (match ledger hash).
+    if (meeting.status === "FINALIZED") {
+      const seal = await db.recordSeal.findUnique({
+        where: {
+          workspaceId_meetingId: { workspaceId, meetingId: meeting.id },
+        },
+      });
+      if (seal) {
+        const { getSealedObject } = await import("~/server/seal/sealed-storage");
+        const zipBuffer = await getSealedObject(seal.packHash);
+        const filename = generateExportFilename(
+          workspace.name,
+          meeting.clientName,
+          {
+            watermarked: false,
+            date: meeting.meetingDate,
+            sealId: seal.id,
+          },
+        );
+
+        const userId = (session as { user?: { id?: string } })?.user?.id;
+        if (!userId) {
+          return Response.json(
+            { error: "User ID not found in session" },
+            { status: 401 },
+          );
+        }
+
+        await db.auditEvent.create({
+          data: {
+            workspaceId: workspaceId,
+            userId: userId,
+            action: "EXPORT",
+            resourceType: "meeting",
+            resourceId: meeting.id,
+            metadata: {
+              exportFormat: "audit_pack_zip",
+              filename,
+              exportedAt: new Date().toISOString(),
+              watermarked: false,
+              source: "sealed_object",
+              sealId: seal.id,
+              packHash: seal.packHash,
+              billingStatus: workspace.billingStatus,
+              planTier: workspace.planTier,
+            },
+          },
+        });
+
+        const uint8Array = new Uint8Array(zipBuffer);
+        return new Response(uint8Array, {
+          headers: {
+            "Content-Type": "application/zip",
+            "Content-Disposition": `attachment; filename="${filename}"`,
+            "Content-Length": zipBuffer.length.toString(),
+            "X-ComplyVault-Pack-Hash": seal.packHash,
+            "X-ComplyVault-Seal-Id": seal.id,
+          },
+        });
+      }
+    }
+
     // Manual export is a draft/convenience download — watermark per entitlement (CV-TR-19).
     // Sealed packs use purpose "seal" and are never watermarked.
     const watermarked = resolveExportWatermark({

@@ -37,6 +37,16 @@ import {
 } from "./prompt";
 import { scanForRegulatoryCitations } from "./regulatory-guard";
 import { defaultAskCompletion, resolveAskModel, type AskCompletionFn } from "./provider";
+import {
+  DEMO_COVERAGE_DEFAULTS,
+  evaluateHonestMiss,
+  type IndexCoverageManifest,
+} from "./coverage";
+import {
+  assertProvenanceContract,
+  labelAnswerElements,
+  populationStatement,
+} from "./provenance";
 import type {
   AskOutcome,
   Citation,
@@ -115,6 +125,8 @@ export type AskDependencies = {
   now?: () => Date;
   emailIntelligenceEnabled?: boolean;
   hybridRetrievalEnabled?: boolean;
+  /** Injected coverage manifest for tests / demo seed. */
+  coverageManifest?: IndexCoverageManifest;
 };
 
 /**
@@ -367,11 +379,96 @@ export async function askComplyVault(
     retrievalMode === "hybrid"
       ? rankAndExcerptHybrid(candidates, keywords, cosineByCandidateId, now)
       : rankAndExcerpt(candidates, keywords, now);
+
+  const populationCompleteness =
+    evidence.length > 0 &&
+    evidence.length >= candidatesScanned &&
+    Boolean(input.meetingId || input.windowDays)
+      ? ("complete_population" as const)
+      : ("ranked_sample" as const);
+
   const retrieval: RetrievalMeta = {
     candidatesScanned,
     candidatesUsed: evidence.length,
     mode: retrievalMode,
+    populationCompleteness,
+    populationStatement: populationStatement(populationCompleteness),
   };
+
+  const coverageManifest: IndexCoverageManifest =
+    deps.coverageManifest ??
+    ({
+      workspaceId: input.workspaceId,
+      sources: [
+        {
+          sourceType: "EMAIL" as const,
+          from: null,
+          to: null,
+          chunkCount: candidates.filter((c) => c.sourceType === "EMAIL").length,
+        },
+        {
+          sourceType: "MEETING" as const,
+          from: null,
+          to: null,
+          chunkCount: candidates.filter((c) => c.sourceType === "MEETING")
+            .length,
+        },
+      ].filter((s) => s.chunkCount > 0),
+      gapPeriods: DEMO_COVERAGE_DEFAULTS.gapPeriods,
+      unindexedSources: DEMO_COVERAGE_DEFAULTS.unindexedSources,
+      lastIndexedAt: now.toISOString(),
+    } satisfies IndexCoverageManifest);
+
+  const belowThreshold =
+    hybridEnabled &&
+    evidence.length === 0 &&
+    cosineByCandidateId.size > 0 &&
+    [...cosineByCandidateId.values()].every((v) => v < 0.35);
+
+  const honestMiss = evaluateHonestMiss({
+    question: input.question,
+    manifest: coverageManifest,
+    matchCount: evidence.length,
+    belowThreshold,
+  });
+
+  // CV-AX-06: unindexed / out-of-range / below-threshold must never answer
+  // from nearest available material — even if keyword hits exist.
+  if (honestMiss) {
+    const forceMiss =
+      honestMiss.missReason === "unindexed_source" ||
+      honestMiss.missReason === "out_of_range" ||
+      honestMiss.missReason === "below_threshold";
+    if (forceMiss || evidence.length === 0) {
+      await safeAudit(prisma, {
+        workspaceId: input.workspaceId,
+        userId: input.userId,
+        questionHash: hashQuestion(input.question),
+        questionLength: input.question.length,
+        retrievedMeetingIds: [],
+        retrievedEmailIds: [],
+        candidatesScanned,
+        candidatesUsed: 0,
+        model,
+        latencyMs: Date.now() - startedAt,
+        mode: retrievalMode,
+        outcome: "honest_miss",
+        missReason: honestMiss.missReason,
+        ...(input.meetingId ? { scopedToMeetingId: input.meetingId } : {}),
+        ...(input.windowDays ? { windowDays: input.windowDays } : {}),
+      });
+      return {
+        kind: "honest-miss",
+        missReason: honestMiss.missReason,
+        message: honestMiss.message,
+        missing: honestMiss.missing,
+        coveredRanges: honestMiss.coveredRanges,
+        retrieval,
+        model,
+        latencyMs: Date.now() - startedAt,
+      };
+    }
+  }
 
   if (evidence.length === 0) {
     const reason = emailIntel
@@ -477,7 +574,50 @@ export async function askComplyVault(
   }
 
   const citations = buildCitations(evidence);
-  const answer = coerceAnswerAgainstEvidence(rawAnswer, evidence);
+  let answer = coerceAnswerAgainstEvidence(rawAnswer, evidence);
+  const elements = labelAnswerElements({
+    answer,
+    citationCount: citations.length,
+  });
+  const provenanceCheck = assertProvenanceContract({
+    elements,
+    citationCount: citations.length,
+  });
+  if (!provenanceCheck.ok) {
+    await safeAudit(prisma, {
+      workspaceId: input.workspaceId,
+      userId: input.userId,
+      questionHash: hashQuestion(input.question),
+      questionLength: input.question.length,
+      retrievedMeetingIds: evidence
+        .filter((e) => e.candidate.sourceType === "MEETING")
+        .map((e) => e.candidate.id),
+      retrievedEmailIds: evidence
+        .filter((e) => e.candidate.sourceType === "EMAIL")
+        .map((e) => e.candidate.id),
+      candidatesScanned,
+      candidatesUsed: evidence.length,
+      model,
+      latencyMs: Date.now() - startedAt,
+      mode: retrievalMode,
+      outcome: "provenance_blocked",
+      provenanceReason: provenanceCheck.reason,
+      ...(input.meetingId ? { scopedToMeetingId: input.meetingId } : {}),
+      ...(input.windowDays ? { windowDays: input.windowDays } : {}),
+    });
+    return {
+      kind: "honest-miss",
+      missReason: "no_evidence",
+      message:
+        "I cannot return that answer: it would overstate what the evidence supports. " +
+        (retrieval.populationStatement ?? ""),
+      missing: "provenance-compliant answer",
+      coveredRanges: coverageManifest.sources,
+      retrieval,
+      model,
+      latencyMs: Date.now() - startedAt,
+    };
+  }
 
   await safeAudit(prisma, {
     workspaceId: input.workspaceId,
@@ -496,6 +636,7 @@ export async function askComplyVault(
     latencyMs: Date.now() - startedAt,
     mode: retrievalMode,
     outcome: "answered",
+    populationCompleteness,
     ...(answer !== rawAnswer ? { answerCoerced: true } : {}),
     ...(input.meetingId ? { scopedToMeetingId: input.meetingId } : {}),
     ...(input.windowDays ? { windowDays: input.windowDays } : {}),
@@ -505,6 +646,7 @@ export async function askComplyVault(
     kind: "answer",
     answer,
     citations,
+    elements,
     retrieval,
     model,
     latencyMs: Date.now() - startedAt,

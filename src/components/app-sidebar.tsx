@@ -14,6 +14,7 @@ import {
 } from "~/components/ui/tooltip";
 import {
   CheckSquare,
+  BriefcaseBusiness,
   FileText,
   LayoutGrid,
   LogOut,
@@ -26,6 +27,7 @@ import {
   Upload,
 } from "lucide-react";
 import { ROLE_CONFIG, type WorkspaceRoleKey } from "~/lib/role-config";
+import { isRelease1DemoEnabled } from "~/lib/feature-flags";
 import { cn } from "~/lib/utils";
 import { WorkspaceDropdown } from "~/components/layout/workspace-dropdown";
 import { useSidebar } from "~/components/layout/sidebar-context";
@@ -124,6 +126,21 @@ function AppSidebarPanel({
       ? [
           { href: "/integrations", label: "Integrations", icon: Settings },
           { href: "/audit-logs", label: "Audit Logs", icon: Shield },
+        ]
+      : []),
+    ...(isRelease1DemoEnabled()
+      ? [
+          { href: "/needs-attention", label: "Needs Attention", icon: CheckSquare },
+          { href: "/candidate-pack", label: "Candidate Pack", icon: FileText },
+          ...(userRole === "OWNER_CCO"
+            ? [
+                {
+                  href: "/partner/portfolio",
+                  label: "Partner Portfolio",
+                  icon: BriefcaseBusiness,
+                },
+              ]
+            : []),
         ]
       : []),
   ];

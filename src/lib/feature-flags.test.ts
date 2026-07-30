@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   isAskHybridRetrievalEnabled,
   isEmailIntelligenceEnabled,
+  isRelease1DemoEnabled,
 } from "~/lib/feature-flags";
 
 describe("isEmailIntelligenceEnabled", () => {
@@ -29,5 +30,20 @@ describe("isAskHybridRetrievalEnabled", () => {
     process.env.ASK_HYBRID_RETRIEVAL = "true";
     expect(isAskHybridRetrievalEnabled()).toBe(true);
     delete process.env.ASK_HYBRID_RETRIEVAL;
+  });
+});
+
+describe("isRelease1DemoEnabled", () => {
+  it("is false when unset", () => {
+    delete process.env.RELEASE1_DEMO_ENABLED;
+    delete process.env.NEXT_PUBLIC_RELEASE1_DEMO;
+    expect(isRelease1DemoEnabled()).toBe(false);
+  });
+
+  it("is true when RELEASE1_DEMO_ENABLED=true", () => {
+    process.env.RELEASE1_DEMO_ENABLED = "true";
+    delete process.env.NEXT_PUBLIC_RELEASE1_DEMO;
+    expect(isRelease1DemoEnabled()).toBe(true);
+    delete process.env.RELEASE1_DEMO_ENABLED;
   });
 });

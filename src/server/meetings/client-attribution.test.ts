@@ -191,7 +191,7 @@ describe("attributeMeeting", () => {
     expect(findManyClient).not.toHaveBeenCalled();
   });
 
-  it("falls back to name match only when there are no participant emails", async () => {
+  it("holds exact name match for confirmation — never auto-confirms (CV-OB-01)", async () => {
     findFirstMeeting.mockResolvedValue({
       id: "m1",
       clientName: "Robert Calloway",
@@ -200,7 +200,6 @@ describe("attributeMeeting", () => {
       participantEmails: [],
     });
     findManyClient.mockResolvedValue([{ id: "c1", name: "Robert Calloway" }]);
-    updateMeeting.mockResolvedValue({});
 
     const outcome = await attributeMeeting({
       meetingId: "m1",
@@ -208,14 +207,10 @@ describe("attributeMeeting", () => {
     });
 
     expect(outcome).toEqual({
-      status: "matched",
-      clientId: "c1",
-      confidence: "NAME_EXACT",
+      status: "ambiguous",
+      reason: "name_exact_held_for_confirmation",
     });
-    expect(updateMeeting).toHaveBeenCalledWith({
-      where: { id: "m1" },
-      data: { clientId: "c1", clientMatchConfidence: "NAME_EXACT" },
-    });
+    expect(updateMeeting).not.toHaveBeenCalled();
   });
 
   it("keeps MANUAL attribution after a client rename (does not re-match by name)", async () => {

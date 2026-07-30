@@ -149,6 +149,40 @@ exports.Prisma.WorkspaceScalarFieldEnum = {
   onboardingPaidAt: 'onboardingPaidAt'
 };
 
+exports.Prisma.CandidateResponsePackScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  requestText: 'requestText',
+  interpretedScope: 'interpretedScope',
+  confirmedScope: 'confirmedScope',
+  confirmedAt: 'confirmedAt',
+  confirmedByUserId: 'confirmedByUserId',
+  status: 'status',
+  coverageStatement: 'coverageStatement',
+  retrievalBasis: 'retrievalBasis',
+  meetingIds: 'meetingIds',
+  emailEvidenceIds: 'emailEvidenceIds',
+  auditChainRootId: 'auditChainRootId',
+  exportManifestSha: 'exportManifestSha',
+  approvedAt: 'approvedAt',
+  approvedByUserId: 'approvedByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.IndexCoverageManifestScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  sources: 'sources',
+  gapPeriods: 'gapPeriods',
+  unindexedSources: 'unindexedSources',
+  lastIndexedAt: 'lastIndexedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
 exports.Prisma.ParkedIngestScalarFieldEnum = {
   id: 'id',
   workspaceId: 'workspaceId',
@@ -759,6 +793,13 @@ exports.BillingCurrency = exports.$Enums.BillingCurrency = {
   GBP: 'GBP'
 };
 
+exports.CandidatePackStatus = exports.$Enums.CandidatePackStatus = {
+  DRAFT_SCOPE: 'DRAFT_SCOPE',
+  SCOPE_CONFIRMED: 'SCOPE_CONFIRMED',
+  GENERATED: 'GENERATED',
+  APPROVED: 'APPROVED'
+};
+
 exports.ParkedIngestStatus = exports.$Enums.ParkedIngestStatus = {
   PARKED: 'PARKED',
   REPLAY_REQUESTED: 'REPLAY_REQUESTED',
@@ -916,7 +957,10 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   INGEST_REPLAYED: 'INGEST_REPLAYED',
   MEDIA_DISCARDED: 'MEDIA_DISCARDED',
   RECORD_SEALED: 'RECORD_SEALED',
-  RECORD_SUPERSEDED: 'RECORD_SUPERSEDED'
+  RECORD_SUPERSEDED: 'RECORD_SUPERSEDED',
+  CANDIDATE_PACK_SCOPE_CONFIRMED: 'CANDIDATE_PACK_SCOPE_CONFIRMED',
+  CANDIDATE_PACK_GENERATED: 'CANDIDATE_PACK_GENERATED',
+  CANDIDATE_PACK_APPROVED: 'CANDIDATE_PACK_APPROVED'
 };
 
 exports.IntegrationProvider = exports.$Enums.IntegrationProvider = {
@@ -1071,6 +1115,8 @@ exports.EmailTriageStatus = exports.$Enums.EmailTriageStatus = {
 
 exports.Prisma.ModelName = {
   Workspace: 'Workspace',
+  CandidateResponsePack: 'CandidateResponsePack',
+  IndexCoverageManifest: 'IndexCoverageManifest',
   ParkedIngest: 'ParkedIngest',
   UserWorkspace: 'UserWorkspace',
   Meeting: 'Meeting',

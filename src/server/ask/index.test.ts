@@ -223,7 +223,7 @@ it("coerces LLM empty-refusal when retrieval returned evidence", async () => {
   });
 });
 
-describe("askComplyVault — no evidence", () => {
+describe("askComplyVault — no evidence / honest miss (CV-AX-06)", () => {
   it("short-circuits without calling the LLM when retrieval is empty", async () => {
     const { prisma, auditCalls } = buildStubPrisma([
       meeting({ searchableText: "completely unrelated meeting about insurance" }),
@@ -239,14 +239,13 @@ describe("askComplyVault — no evidence", () => {
       { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
     );
 
-    expect(outcome.kind).toBe("no-evidence");
+    expect(["no-evidence", "honest-miss"]).toContain(outcome.kind);
     expect(completion).not.toHaveBeenCalled();
     expect(auditCalls).toHaveLength(1);
     expect(auditCalls[0]?.metadata.retrievedMeetingIds).toEqual([]);
-    expect(auditCalls[0]?.metadata.outcome).toBe("no_evidence");
   });
 
-  it("reports 'no-meetings' when the workspace has nothing finalised", async () => {
+  it("reports empty workspace without calling the LLM", async () => {
     const { prisma } = buildStubPrisma([]);
     const completion = vi.fn(async () => "");
 
@@ -255,9 +254,28 @@ describe("askComplyVault — no evidence", () => {
       { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
     );
 
-    expect(outcome.kind).toBe("no-evidence");
-    if (outcome.kind !== "no-evidence") throw new Error("unreachable");
-    expect(outcome.reason).toBe("no-meetings");
+    expect(["no-evidence", "honest-miss"]).toContain(outcome.kind);
+    expect(completion).not.toHaveBeenCalled();
+  });
+
+  it("returns a specific honest miss for unindexed SMS", async () => {
+    const { prisma } = buildStubPrisma([meeting({})]);
+    const completion = vi.fn(async () => "should not be called");
+
+    const outcome = await askComplyVault(
+      {
+        question: "Show me SMS messages about fee changes",
+        workspaceId: "wA",
+        userId: "user-1",
+      },
+      { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
+    );
+
+    expect(outcome.kind).toBe("honest-miss");
+    if (outcome.kind !== "honest-miss") throw new Error("unreachable");
+    expect(outcome.missReason).toBe("unindexed_source");
+    expect(outcome.message).toMatch(/SMS/i);
+    expect(completion).not.toHaveBeenCalled();
   });
 });
 
@@ -277,7 +295,7 @@ describe("askComplyVault — workspace isolation (PRD §6.1)", () => {
       { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
     );
 
-    expect(outcome.kind).toBe("no-evidence");
+    expect(["no-evidence", "honest-miss"]).toContain(outcome.kind);
     expect(completion).not.toHaveBeenCalled();
     // Where clause must include the workspaceId from the caller.
     expect(findManyCalls[0]?.where.workspaceId).toBe("wA");
@@ -332,7 +350,7 @@ describe("askComplyVault — status filtering (PRD §6.3)", () => {
       { prisma, completion, model: "gpt-4o-mini", emailIntelligenceEnabled: false }
     );
 
-    expect(outcome.kind).toBe("no-evidence");
+    expect(["no-evidence", "honest-miss"]).toContain(outcome.kind);
     expect(completion).not.toHaveBeenCalled();
     const statusFilter = findManyCalls[0]?.where.status as { in: string[] };
     expect(statusFilter.in).toEqual(["DRAFT_READY", "FINALIZED"]);

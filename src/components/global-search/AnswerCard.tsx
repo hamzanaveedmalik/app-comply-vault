@@ -27,9 +27,22 @@ export type AnswerCardProps = {
         kind: "answer";
         answer: string;
         citations: AnswerCitation[];
-        retrieval: { candidatesScanned: number; candidatesUsed: number; mode: string };
+        retrieval: {
+          candidatesScanned: number;
+          candidatesUsed: number;
+          mode: string;
+          populationStatement?: string;
+        };
         model: string;
         latencyMs: number;
+        elements?: Array<{ text: string; provenance: string }>;
+      }
+    | {
+        kind: "honest-miss";
+        answer: string;
+        missReason?: string;
+        missing?: string;
+        populationStatement?: string;
       }
     | { kind: "no-evidence"; answer: string }
     | { kind: "rate-limited"; retryAfterSec: number }
@@ -120,7 +133,34 @@ export function AnswerCard({
         )}
 
         {state.kind === "answer" && (
-          <p className="whitespace-pre-wrap">{state.answer}</p>
+          <div className="space-y-2">
+            <p className="whitespace-pre-wrap">{state.answer}</p>
+            {state.elements?.[0]?.provenance && (
+              <p className="text-xs text-muted-foreground">
+                Provenance: {state.elements[0].provenance.replace(/_/g, " ")}
+              </p>
+            )}
+            {state.retrieval.populationStatement && (
+              <p className="text-xs text-muted-foreground">
+                {state.retrieval.populationStatement}
+              </p>
+            )}
+          </div>
+        )}
+
+        {state.kind === "honest-miss" && (
+          <div className="space-y-2">
+            <Badge variant="outline" className="font-normal">
+              Honest miss
+              {state.missReason ? ` · ${state.missReason.replace(/_/g, " ")}` : ""}
+            </Badge>
+            <p className="text-muted-foreground">{state.answer}</p>
+            {state.missing && (
+              <p className="text-xs text-muted-foreground">
+                Missing: {state.missing}
+              </p>
+            )}
+          </div>
         )}
 
         {state.kind === "no-evidence" && (

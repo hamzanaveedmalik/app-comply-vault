@@ -19,6 +19,16 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type Workspace = $Result.DefaultSelection<Prisma.$WorkspacePayload>
 /**
+ * Model CandidateResponsePack
+ * 
+ */
+export type CandidateResponsePack = $Result.DefaultSelection<Prisma.$CandidateResponsePackPayload>
+/**
+ * Model IndexCoverageManifest
+ * CV-AX-06 — per-workspace index coverage for honest-miss answers.
+ */
+export type IndexCoverageManifest = $Result.DefaultSelection<Prisma.$IndexCoverageManifestPayload>
+/**
  * Model ParkedIngest
  * Durable record of a refused automated ingest — replayable work item, not just a log line.
  * These rows are proto coverage gaps and feed the CV-COV-06 coverage queue when it lands.
@@ -222,7 +232,17 @@ export type Lead = $Result.DefaultSelection<Prisma.$LeadPayload>
  * Enums
  */
 export namespace $Enums {
-  export const BillingStatus: {
+  export const CandidatePackStatus: {
+  DRAFT_SCOPE: 'DRAFT_SCOPE',
+  SCOPE_CONFIRMED: 'SCOPE_CONFIRMED',
+  GENERATED: 'GENERATED',
+  APPROVED: 'APPROVED'
+};
+
+export type CandidatePackStatus = (typeof CandidatePackStatus)[keyof typeof CandidatePackStatus]
+
+
+export const BillingStatus: {
   PILOT: 'PILOT',
   TRIALING: 'TRIALING',
   ACTIVE: 'ACTIVE',
@@ -343,7 +363,10 @@ export const AuditAction: {
   INGEST_REPLAYED: 'INGEST_REPLAYED',
   MEDIA_DISCARDED: 'MEDIA_DISCARDED',
   RECORD_SEALED: 'RECORD_SEALED',
-  RECORD_SUPERSEDED: 'RECORD_SUPERSEDED'
+  RECORD_SUPERSEDED: 'RECORD_SUPERSEDED',
+  CANDIDATE_PACK_SCOPE_CONFIRMED: 'CANDIDATE_PACK_SCOPE_CONFIRMED',
+  CANDIDATE_PACK_GENERATED: 'CANDIDATE_PACK_GENERATED',
+  CANDIDATE_PACK_APPROVED: 'CANDIDATE_PACK_APPROVED'
 };
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction]
@@ -680,6 +703,10 @@ export type ClientActivityType = (typeof ClientActivityType)[keyof typeof Client
 
 }
 
+export type CandidatePackStatus = $Enums.CandidatePackStatus
+
+export const CandidatePackStatus: typeof $Enums.CandidatePackStatus
+
 export type BillingStatus = $Enums.BillingStatus
 
 export const BillingStatus: typeof $Enums.BillingStatus
@@ -971,6 +998,26 @@ export class PrismaClient<
     * ```
     */
   get workspace(): Prisma.WorkspaceDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.candidateResponsePack`: Exposes CRUD operations for the **CandidateResponsePack** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CandidateResponsePacks
+    * const candidateResponsePacks = await prisma.candidateResponsePack.findMany()
+    * ```
+    */
+  get candidateResponsePack(): Prisma.CandidateResponsePackDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.indexCoverageManifest`: Exposes CRUD operations for the **IndexCoverageManifest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more IndexCoverageManifests
+    * const indexCoverageManifests = await prisma.indexCoverageManifest.findMany()
+    * ```
+    */
+  get indexCoverageManifest(): Prisma.IndexCoverageManifestDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.parkedIngest`: Exposes CRUD operations for the **ParkedIngest** model.
@@ -1803,6 +1850,8 @@ export namespace Prisma {
 
   export const ModelName: {
     Workspace: 'Workspace',
+    CandidateResponsePack: 'CandidateResponsePack',
+    IndexCoverageManifest: 'IndexCoverageManifest',
     ParkedIngest: 'ParkedIngest',
     UserWorkspace: 'UserWorkspace',
     Meeting: 'Meeting',
@@ -1860,7 +1909,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "workspace" | "parkedIngest" | "userWorkspace" | "meeting" | "version" | "recordSeal" | "flag" | "resolutionRecord" | "evidenceClassification" | "actionItem" | "evidenceLink" | "verification" | "auditEvent" | "account" | "session" | "user" | "verificationToken" | "invitation" | "integrationCredential" | "integrationConfig" | "integrationSyncLog" | "firmProfile" | "disclosureCategory" | "suppressionLogEntry" | "firmProfileVersion" | "client" | "clientHousehold" | "clientHouseholdMember" | "clientActivity" | "emailAlias" | "evidenceItem" | "evidenceTag" | "evidenceEmbedding" | "communicationThread" | "communication" | "attachment" | "mailboxConnection" | "ingestJob" | "emailTriageItem" | "lead"
+      modelProps: "workspace" | "candidateResponsePack" | "indexCoverageManifest" | "parkedIngest" | "userWorkspace" | "meeting" | "version" | "recordSeal" | "flag" | "resolutionRecord" | "evidenceClassification" | "actionItem" | "evidenceLink" | "verification" | "auditEvent" | "account" | "session" | "user" | "verificationToken" | "invitation" | "integrationCredential" | "integrationConfig" | "integrationSyncLog" | "firmProfile" | "disclosureCategory" | "suppressionLogEntry" | "firmProfileVersion" | "client" | "clientHousehold" | "clientHouseholdMember" | "clientActivity" | "emailAlias" | "evidenceItem" | "evidenceTag" | "evidenceEmbedding" | "communicationThread" | "communication" | "attachment" | "mailboxConnection" | "ingestJob" | "emailTriageItem" | "lead"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1935,6 +1984,154 @@ export namespace Prisma {
           count: {
             args: Prisma.WorkspaceCountArgs<ExtArgs>
             result: $Utils.Optional<WorkspaceCountAggregateOutputType> | number
+          }
+        }
+      }
+      CandidateResponsePack: {
+        payload: Prisma.$CandidateResponsePackPayload<ExtArgs>
+        fields: Prisma.CandidateResponsePackFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CandidateResponsePackFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CandidateResponsePackPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CandidateResponsePackFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CandidateResponsePackPayload>
+          }
+          findFirst: {
+            args: Prisma.CandidateResponsePackFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CandidateResponsePackPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CandidateResponsePackFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CandidateResponsePackPayload>
+          }
+          findMany: {
+            args: Prisma.CandidateResponsePackFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CandidateResponsePackPayload>[]
+          }
+          create: {
+            args: Prisma.CandidateResponsePackCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CandidateResponsePackPayload>
+          }
+          createMany: {
+            args: Prisma.CandidateResponsePackCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CandidateResponsePackCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CandidateResponsePackPayload>[]
+          }
+          delete: {
+            args: Prisma.CandidateResponsePackDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CandidateResponsePackPayload>
+          }
+          update: {
+            args: Prisma.CandidateResponsePackUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CandidateResponsePackPayload>
+          }
+          deleteMany: {
+            args: Prisma.CandidateResponsePackDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CandidateResponsePackUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CandidateResponsePackUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CandidateResponsePackPayload>[]
+          }
+          upsert: {
+            args: Prisma.CandidateResponsePackUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CandidateResponsePackPayload>
+          }
+          aggregate: {
+            args: Prisma.CandidateResponsePackAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCandidateResponsePack>
+          }
+          groupBy: {
+            args: Prisma.CandidateResponsePackGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CandidateResponsePackGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CandidateResponsePackCountArgs<ExtArgs>
+            result: $Utils.Optional<CandidateResponsePackCountAggregateOutputType> | number
+          }
+        }
+      }
+      IndexCoverageManifest: {
+        payload: Prisma.$IndexCoverageManifestPayload<ExtArgs>
+        fields: Prisma.IndexCoverageManifestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.IndexCoverageManifestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IndexCoverageManifestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.IndexCoverageManifestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IndexCoverageManifestPayload>
+          }
+          findFirst: {
+            args: Prisma.IndexCoverageManifestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IndexCoverageManifestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.IndexCoverageManifestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IndexCoverageManifestPayload>
+          }
+          findMany: {
+            args: Prisma.IndexCoverageManifestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IndexCoverageManifestPayload>[]
+          }
+          create: {
+            args: Prisma.IndexCoverageManifestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IndexCoverageManifestPayload>
+          }
+          createMany: {
+            args: Prisma.IndexCoverageManifestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.IndexCoverageManifestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IndexCoverageManifestPayload>[]
+          }
+          delete: {
+            args: Prisma.IndexCoverageManifestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IndexCoverageManifestPayload>
+          }
+          update: {
+            args: Prisma.IndexCoverageManifestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IndexCoverageManifestPayload>
+          }
+          deleteMany: {
+            args: Prisma.IndexCoverageManifestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.IndexCoverageManifestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.IndexCoverageManifestUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IndexCoverageManifestPayload>[]
+          }
+          upsert: {
+            args: Prisma.IndexCoverageManifestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IndexCoverageManifestPayload>
+          }
+          aggregate: {
+            args: Prisma.IndexCoverageManifestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateIndexCoverageManifest>
+          }
+          groupBy: {
+            args: Prisma.IndexCoverageManifestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<IndexCoverageManifestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.IndexCoverageManifestCountArgs<ExtArgs>
+            result: $Utils.Optional<IndexCoverageManifestCountAggregateOutputType> | number
           }
         }
       }
@@ -4905,6 +5102,8 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     workspace?: WorkspaceOmit
+    candidateResponsePack?: CandidateResponsePackOmit
+    indexCoverageManifest?: IndexCoverageManifestOmit
     parkedIngest?: ParkedIngestOmit
     userWorkspace?: UserWorkspaceOmit
     meeting?: MeetingOmit
@@ -5045,6 +5244,8 @@ export namespace Prisma {
     evidenceEmbeddings: number
     parkedIngests: number
     recordSeals: number
+    candidateResponsePacks: number
+    indexCoverageManifests: number
   }
 
   export type WorkspaceCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5069,6 +5270,8 @@ export namespace Prisma {
     evidenceEmbeddings?: boolean | WorkspaceCountOutputTypeCountEvidenceEmbeddingsArgs
     parkedIngests?: boolean | WorkspaceCountOutputTypeCountParkedIngestsArgs
     recordSeals?: boolean | WorkspaceCountOutputTypeCountRecordSealsArgs
+    candidateResponsePacks?: boolean | WorkspaceCountOutputTypeCountCandidateResponsePacksArgs
+    indexCoverageManifests?: boolean | WorkspaceCountOutputTypeCountIndexCoverageManifestsArgs
   }
 
   // Custom InputTypes
@@ -5227,6 +5430,20 @@ export namespace Prisma {
    */
   export type WorkspaceCountOutputTypeCountRecordSealsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RecordSealWhereInput
+  }
+
+  /**
+   * WorkspaceCountOutputType without action
+   */
+  export type WorkspaceCountOutputTypeCountCandidateResponsePacksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CandidateResponsePackWhereInput
+  }
+
+  /**
+   * WorkspaceCountOutputType without action
+   */
+  export type WorkspaceCountOutputTypeCountIndexCoverageManifestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IndexCoverageManifestWhereInput
   }
 
 
@@ -6206,6 +6423,8 @@ export namespace Prisma {
     evidenceEmbeddings?: boolean | Workspace$evidenceEmbeddingsArgs<ExtArgs>
     parkedIngests?: boolean | Workspace$parkedIngestsArgs<ExtArgs>
     recordSeals?: boolean | Workspace$recordSealsArgs<ExtArgs>
+    candidateResponsePacks?: boolean | Workspace$candidateResponsePacksArgs<ExtArgs>
+    indexCoverageManifests?: boolean | Workspace$indexCoverageManifestsArgs<ExtArgs>
     _count?: boolean | WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["workspace"]>
 
@@ -6317,6 +6536,8 @@ export namespace Prisma {
     evidenceEmbeddings?: boolean | Workspace$evidenceEmbeddingsArgs<ExtArgs>
     parkedIngests?: boolean | Workspace$parkedIngestsArgs<ExtArgs>
     recordSeals?: boolean | Workspace$recordSealsArgs<ExtArgs>
+    candidateResponsePacks?: boolean | Workspace$candidateResponsePacksArgs<ExtArgs>
+    indexCoverageManifests?: boolean | Workspace$indexCoverageManifestsArgs<ExtArgs>
     _count?: boolean | WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type WorkspaceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -6347,6 +6568,8 @@ export namespace Prisma {
       evidenceEmbeddings: Prisma.$EvidenceEmbeddingPayload<ExtArgs>[]
       parkedIngests: Prisma.$ParkedIngestPayload<ExtArgs>[]
       recordSeals: Prisma.$RecordSealPayload<ExtArgs>[]
+      candidateResponsePacks: Prisma.$CandidateResponsePackPayload<ExtArgs>[]
+      indexCoverageManifests: Prisma.$IndexCoverageManifestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6805,6 +7028,8 @@ export namespace Prisma {
     evidenceEmbeddings<T extends Workspace$evidenceEmbeddingsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$evidenceEmbeddingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvidenceEmbeddingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     parkedIngests<T extends Workspace$parkedIngestsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$parkedIngestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParkedIngestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     recordSeals<T extends Workspace$recordSealsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$recordSealsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecordSealPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    candidateResponsePacks<T extends Workspace$candidateResponsePacksArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$candidateResponsePacksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CandidateResponsePackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    indexCoverageManifests<T extends Workspace$indexCoverageManifestsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$indexCoverageManifestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IndexCoverageManifestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7770,6 +7995,54 @@ export namespace Prisma {
   }
 
   /**
+   * Workspace.candidateResponsePacks
+   */
+  export type Workspace$candidateResponsePacksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CandidateResponsePack
+     */
+    select?: CandidateResponsePackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CandidateResponsePack
+     */
+    omit?: CandidateResponsePackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CandidateResponsePackInclude<ExtArgs> | null
+    where?: CandidateResponsePackWhereInput
+    orderBy?: CandidateResponsePackOrderByWithRelationInput | CandidateResponsePackOrderByWithRelationInput[]
+    cursor?: CandidateResponsePackWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CandidateResponsePackScalarFieldEnum | CandidateResponsePackScalarFieldEnum[]
+  }
+
+  /**
+   * Workspace.indexCoverageManifests
+   */
+  export type Workspace$indexCoverageManifestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IndexCoverageManifest
+     */
+    select?: IndexCoverageManifestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IndexCoverageManifest
+     */
+    omit?: IndexCoverageManifestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IndexCoverageManifestInclude<ExtArgs> | null
+    where?: IndexCoverageManifestWhereInput
+    orderBy?: IndexCoverageManifestOrderByWithRelationInput | IndexCoverageManifestOrderByWithRelationInput[]
+    cursor?: IndexCoverageManifestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: IndexCoverageManifestScalarFieldEnum | IndexCoverageManifestScalarFieldEnum[]
+  }
+
+  /**
    * Workspace without action
    */
   export type WorkspaceDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7785,6 +8058,2324 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: WorkspaceInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model CandidateResponsePack
+   */
+
+  export type AggregateCandidateResponsePack = {
+    _count: CandidateResponsePackCountAggregateOutputType | null
+    _min: CandidateResponsePackMinAggregateOutputType | null
+    _max: CandidateResponsePackMaxAggregateOutputType | null
+  }
+
+  export type CandidateResponsePackMinAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    requestText: string | null
+    confirmedAt: Date | null
+    confirmedByUserId: string | null
+    status: $Enums.CandidatePackStatus | null
+    retrievalBasis: string | null
+    auditChainRootId: string | null
+    exportManifestSha: string | null
+    approvedAt: Date | null
+    approvedByUserId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type CandidateResponsePackMaxAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    requestText: string | null
+    confirmedAt: Date | null
+    confirmedByUserId: string | null
+    status: $Enums.CandidatePackStatus | null
+    retrievalBasis: string | null
+    auditChainRootId: string | null
+    exportManifestSha: string | null
+    approvedAt: Date | null
+    approvedByUserId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type CandidateResponsePackCountAggregateOutputType = {
+    id: number
+    workspaceId: number
+    requestText: number
+    interpretedScope: number
+    confirmedScope: number
+    confirmedAt: number
+    confirmedByUserId: number
+    status: number
+    coverageStatement: number
+    retrievalBasis: number
+    meetingIds: number
+    emailEvidenceIds: number
+    auditChainRootId: number
+    exportManifestSha: number
+    approvedAt: number
+    approvedByUserId: number
+    createdAt: number
+    updatedAt: number
+    deletedAt: number
+    _all: number
+  }
+
+
+  export type CandidateResponsePackMinAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    requestText?: true
+    confirmedAt?: true
+    confirmedByUserId?: true
+    status?: true
+    retrievalBasis?: true
+    auditChainRootId?: true
+    exportManifestSha?: true
+    approvedAt?: true
+    approvedByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type CandidateResponsePackMaxAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    requestText?: true
+    confirmedAt?: true
+    confirmedByUserId?: true
+    status?: true
+    retrievalBasis?: true
+    auditChainRootId?: true
+    exportManifestSha?: true
+    approvedAt?: true
+    approvedByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type CandidateResponsePackCountAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    requestText?: true
+    interpretedScope?: true
+    confirmedScope?: true
+    confirmedAt?: true
+    confirmedByUserId?: true
+    status?: true
+    coverageStatement?: true
+    retrievalBasis?: true
+    meetingIds?: true
+    emailEvidenceIds?: true
+    auditChainRootId?: true
+    exportManifestSha?: true
+    approvedAt?: true
+    approvedByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+    _all?: true
+  }
+
+  export type CandidateResponsePackAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CandidateResponsePack to aggregate.
+     */
+    where?: CandidateResponsePackWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CandidateResponsePacks to fetch.
+     */
+    orderBy?: CandidateResponsePackOrderByWithRelationInput | CandidateResponsePackOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CandidateResponsePackWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CandidateResponsePacks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CandidateResponsePacks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CandidateResponsePacks
+    **/
+    _count?: true | CandidateResponsePackCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CandidateResponsePackMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CandidateResponsePackMaxAggregateInputType
+  }
+
+  export type GetCandidateResponsePackAggregateType<T extends CandidateResponsePackAggregateArgs> = {
+        [P in keyof T & keyof AggregateCandidateResponsePack]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCandidateResponsePack[P]>
+      : GetScalarType<T[P], AggregateCandidateResponsePack[P]>
+  }
+
+
+
+
+  export type CandidateResponsePackGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CandidateResponsePackWhereInput
+    orderBy?: CandidateResponsePackOrderByWithAggregationInput | CandidateResponsePackOrderByWithAggregationInput[]
+    by: CandidateResponsePackScalarFieldEnum[] | CandidateResponsePackScalarFieldEnum
+    having?: CandidateResponsePackScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CandidateResponsePackCountAggregateInputType | true
+    _min?: CandidateResponsePackMinAggregateInputType
+    _max?: CandidateResponsePackMaxAggregateInputType
+  }
+
+  export type CandidateResponsePackGroupByOutputType = {
+    id: string
+    workspaceId: string
+    requestText: string
+    interpretedScope: JsonValue
+    confirmedScope: JsonValue | null
+    confirmedAt: Date | null
+    confirmedByUserId: string | null
+    status: $Enums.CandidatePackStatus
+    coverageStatement: JsonValue | null
+    retrievalBasis: string | null
+    meetingIds: string[]
+    emailEvidenceIds: string[]
+    auditChainRootId: string | null
+    exportManifestSha: string | null
+    approvedAt: Date | null
+    approvedByUserId: string | null
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date | null
+    _count: CandidateResponsePackCountAggregateOutputType | null
+    _min: CandidateResponsePackMinAggregateOutputType | null
+    _max: CandidateResponsePackMaxAggregateOutputType | null
+  }
+
+  type GetCandidateResponsePackGroupByPayload<T extends CandidateResponsePackGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CandidateResponsePackGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CandidateResponsePackGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CandidateResponsePackGroupByOutputType[P]>
+            : GetScalarType<T[P], CandidateResponsePackGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CandidateResponsePackSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    requestText?: boolean
+    interpretedScope?: boolean
+    confirmedScope?: boolean
+    confirmedAt?: boolean
+    confirmedByUserId?: boolean
+    status?: boolean
+    coverageStatement?: boolean
+    retrievalBasis?: boolean
+    meetingIds?: boolean
+    emailEvidenceIds?: boolean
+    auditChainRootId?: boolean
+    exportManifestSha?: boolean
+    approvedAt?: boolean
+    approvedByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["candidateResponsePack"]>
+
+  export type CandidateResponsePackSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    requestText?: boolean
+    interpretedScope?: boolean
+    confirmedScope?: boolean
+    confirmedAt?: boolean
+    confirmedByUserId?: boolean
+    status?: boolean
+    coverageStatement?: boolean
+    retrievalBasis?: boolean
+    meetingIds?: boolean
+    emailEvidenceIds?: boolean
+    auditChainRootId?: boolean
+    exportManifestSha?: boolean
+    approvedAt?: boolean
+    approvedByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["candidateResponsePack"]>
+
+  export type CandidateResponsePackSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    requestText?: boolean
+    interpretedScope?: boolean
+    confirmedScope?: boolean
+    confirmedAt?: boolean
+    confirmedByUserId?: boolean
+    status?: boolean
+    coverageStatement?: boolean
+    retrievalBasis?: boolean
+    meetingIds?: boolean
+    emailEvidenceIds?: boolean
+    auditChainRootId?: boolean
+    exportManifestSha?: boolean
+    approvedAt?: boolean
+    approvedByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["candidateResponsePack"]>
+
+  export type CandidateResponsePackSelectScalar = {
+    id?: boolean
+    workspaceId?: boolean
+    requestText?: boolean
+    interpretedScope?: boolean
+    confirmedScope?: boolean
+    confirmedAt?: boolean
+    confirmedByUserId?: boolean
+    status?: boolean
+    coverageStatement?: boolean
+    retrievalBasis?: boolean
+    meetingIds?: boolean
+    emailEvidenceIds?: boolean
+    auditChainRootId?: boolean
+    exportManifestSha?: boolean
+    approvedAt?: boolean
+    approvedByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }
+
+  export type CandidateResponsePackOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "requestText" | "interpretedScope" | "confirmedScope" | "confirmedAt" | "confirmedByUserId" | "status" | "coverageStatement" | "retrievalBasis" | "meetingIds" | "emailEvidenceIds" | "auditChainRootId" | "exportManifestSha" | "approvedAt" | "approvedByUserId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["candidateResponsePack"]>
+  export type CandidateResponsePackInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+  export type CandidateResponsePackIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+  export type CandidateResponsePackIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+
+  export type $CandidateResponsePackPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CandidateResponsePack"
+    objects: {
+      workspace: Prisma.$WorkspacePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workspaceId: string
+      requestText: string
+      interpretedScope: Prisma.JsonValue
+      confirmedScope: Prisma.JsonValue | null
+      confirmedAt: Date | null
+      confirmedByUserId: string | null
+      status: $Enums.CandidatePackStatus
+      coverageStatement: Prisma.JsonValue | null
+      retrievalBasis: string | null
+      meetingIds: string[]
+      emailEvidenceIds: string[]
+      auditChainRootId: string | null
+      exportManifestSha: string | null
+      approvedAt: Date | null
+      approvedByUserId: string | null
+      createdAt: Date
+      updatedAt: Date
+      deletedAt: Date | null
+    }, ExtArgs["result"]["candidateResponsePack"]>
+    composites: {}
+  }
+
+  type CandidateResponsePackGetPayload<S extends boolean | null | undefined | CandidateResponsePackDefaultArgs> = $Result.GetResult<Prisma.$CandidateResponsePackPayload, S>
+
+  type CandidateResponsePackCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CandidateResponsePackFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CandidateResponsePackCountAggregateInputType | true
+    }
+
+  export interface CandidateResponsePackDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CandidateResponsePack'], meta: { name: 'CandidateResponsePack' } }
+    /**
+     * Find zero or one CandidateResponsePack that matches the filter.
+     * @param {CandidateResponsePackFindUniqueArgs} args - Arguments to find a CandidateResponsePack
+     * @example
+     * // Get one CandidateResponsePack
+     * const candidateResponsePack = await prisma.candidateResponsePack.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CandidateResponsePackFindUniqueArgs>(args: SelectSubset<T, CandidateResponsePackFindUniqueArgs<ExtArgs>>): Prisma__CandidateResponsePackClient<$Result.GetResult<Prisma.$CandidateResponsePackPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CandidateResponsePack that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CandidateResponsePackFindUniqueOrThrowArgs} args - Arguments to find a CandidateResponsePack
+     * @example
+     * // Get one CandidateResponsePack
+     * const candidateResponsePack = await prisma.candidateResponsePack.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CandidateResponsePackFindUniqueOrThrowArgs>(args: SelectSubset<T, CandidateResponsePackFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CandidateResponsePackClient<$Result.GetResult<Prisma.$CandidateResponsePackPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CandidateResponsePack that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CandidateResponsePackFindFirstArgs} args - Arguments to find a CandidateResponsePack
+     * @example
+     * // Get one CandidateResponsePack
+     * const candidateResponsePack = await prisma.candidateResponsePack.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CandidateResponsePackFindFirstArgs>(args?: SelectSubset<T, CandidateResponsePackFindFirstArgs<ExtArgs>>): Prisma__CandidateResponsePackClient<$Result.GetResult<Prisma.$CandidateResponsePackPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CandidateResponsePack that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CandidateResponsePackFindFirstOrThrowArgs} args - Arguments to find a CandidateResponsePack
+     * @example
+     * // Get one CandidateResponsePack
+     * const candidateResponsePack = await prisma.candidateResponsePack.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CandidateResponsePackFindFirstOrThrowArgs>(args?: SelectSubset<T, CandidateResponsePackFindFirstOrThrowArgs<ExtArgs>>): Prisma__CandidateResponsePackClient<$Result.GetResult<Prisma.$CandidateResponsePackPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CandidateResponsePacks that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CandidateResponsePackFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CandidateResponsePacks
+     * const candidateResponsePacks = await prisma.candidateResponsePack.findMany()
+     * 
+     * // Get first 10 CandidateResponsePacks
+     * const candidateResponsePacks = await prisma.candidateResponsePack.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const candidateResponsePackWithIdOnly = await prisma.candidateResponsePack.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CandidateResponsePackFindManyArgs>(args?: SelectSubset<T, CandidateResponsePackFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CandidateResponsePackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CandidateResponsePack.
+     * @param {CandidateResponsePackCreateArgs} args - Arguments to create a CandidateResponsePack.
+     * @example
+     * // Create one CandidateResponsePack
+     * const CandidateResponsePack = await prisma.candidateResponsePack.create({
+     *   data: {
+     *     // ... data to create a CandidateResponsePack
+     *   }
+     * })
+     * 
+     */
+    create<T extends CandidateResponsePackCreateArgs>(args: SelectSubset<T, CandidateResponsePackCreateArgs<ExtArgs>>): Prisma__CandidateResponsePackClient<$Result.GetResult<Prisma.$CandidateResponsePackPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CandidateResponsePacks.
+     * @param {CandidateResponsePackCreateManyArgs} args - Arguments to create many CandidateResponsePacks.
+     * @example
+     * // Create many CandidateResponsePacks
+     * const candidateResponsePack = await prisma.candidateResponsePack.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CandidateResponsePackCreateManyArgs>(args?: SelectSubset<T, CandidateResponsePackCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CandidateResponsePacks and returns the data saved in the database.
+     * @param {CandidateResponsePackCreateManyAndReturnArgs} args - Arguments to create many CandidateResponsePacks.
+     * @example
+     * // Create many CandidateResponsePacks
+     * const candidateResponsePack = await prisma.candidateResponsePack.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CandidateResponsePacks and only return the `id`
+     * const candidateResponsePackWithIdOnly = await prisma.candidateResponsePack.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CandidateResponsePackCreateManyAndReturnArgs>(args?: SelectSubset<T, CandidateResponsePackCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CandidateResponsePackPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CandidateResponsePack.
+     * @param {CandidateResponsePackDeleteArgs} args - Arguments to delete one CandidateResponsePack.
+     * @example
+     * // Delete one CandidateResponsePack
+     * const CandidateResponsePack = await prisma.candidateResponsePack.delete({
+     *   where: {
+     *     // ... filter to delete one CandidateResponsePack
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CandidateResponsePackDeleteArgs>(args: SelectSubset<T, CandidateResponsePackDeleteArgs<ExtArgs>>): Prisma__CandidateResponsePackClient<$Result.GetResult<Prisma.$CandidateResponsePackPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CandidateResponsePack.
+     * @param {CandidateResponsePackUpdateArgs} args - Arguments to update one CandidateResponsePack.
+     * @example
+     * // Update one CandidateResponsePack
+     * const candidateResponsePack = await prisma.candidateResponsePack.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CandidateResponsePackUpdateArgs>(args: SelectSubset<T, CandidateResponsePackUpdateArgs<ExtArgs>>): Prisma__CandidateResponsePackClient<$Result.GetResult<Prisma.$CandidateResponsePackPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CandidateResponsePacks.
+     * @param {CandidateResponsePackDeleteManyArgs} args - Arguments to filter CandidateResponsePacks to delete.
+     * @example
+     * // Delete a few CandidateResponsePacks
+     * const { count } = await prisma.candidateResponsePack.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CandidateResponsePackDeleteManyArgs>(args?: SelectSubset<T, CandidateResponsePackDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CandidateResponsePacks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CandidateResponsePackUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CandidateResponsePacks
+     * const candidateResponsePack = await prisma.candidateResponsePack.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CandidateResponsePackUpdateManyArgs>(args: SelectSubset<T, CandidateResponsePackUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CandidateResponsePacks and returns the data updated in the database.
+     * @param {CandidateResponsePackUpdateManyAndReturnArgs} args - Arguments to update many CandidateResponsePacks.
+     * @example
+     * // Update many CandidateResponsePacks
+     * const candidateResponsePack = await prisma.candidateResponsePack.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CandidateResponsePacks and only return the `id`
+     * const candidateResponsePackWithIdOnly = await prisma.candidateResponsePack.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CandidateResponsePackUpdateManyAndReturnArgs>(args: SelectSubset<T, CandidateResponsePackUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CandidateResponsePackPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CandidateResponsePack.
+     * @param {CandidateResponsePackUpsertArgs} args - Arguments to update or create a CandidateResponsePack.
+     * @example
+     * // Update or create a CandidateResponsePack
+     * const candidateResponsePack = await prisma.candidateResponsePack.upsert({
+     *   create: {
+     *     // ... data to create a CandidateResponsePack
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CandidateResponsePack we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CandidateResponsePackUpsertArgs>(args: SelectSubset<T, CandidateResponsePackUpsertArgs<ExtArgs>>): Prisma__CandidateResponsePackClient<$Result.GetResult<Prisma.$CandidateResponsePackPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CandidateResponsePacks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CandidateResponsePackCountArgs} args - Arguments to filter CandidateResponsePacks to count.
+     * @example
+     * // Count the number of CandidateResponsePacks
+     * const count = await prisma.candidateResponsePack.count({
+     *   where: {
+     *     // ... the filter for the CandidateResponsePacks we want to count
+     *   }
+     * })
+    **/
+    count<T extends CandidateResponsePackCountArgs>(
+      args?: Subset<T, CandidateResponsePackCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CandidateResponsePackCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CandidateResponsePack.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CandidateResponsePackAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CandidateResponsePackAggregateArgs>(args: Subset<T, CandidateResponsePackAggregateArgs>): Prisma.PrismaPromise<GetCandidateResponsePackAggregateType<T>>
+
+    /**
+     * Group by CandidateResponsePack.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CandidateResponsePackGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CandidateResponsePackGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CandidateResponsePackGroupByArgs['orderBy'] }
+        : { orderBy?: CandidateResponsePackGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CandidateResponsePackGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCandidateResponsePackGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CandidateResponsePack model
+   */
+  readonly fields: CandidateResponsePackFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CandidateResponsePack.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CandidateResponsePackClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CandidateResponsePack model
+   */
+  interface CandidateResponsePackFieldRefs {
+    readonly id: FieldRef<"CandidateResponsePack", 'String'>
+    readonly workspaceId: FieldRef<"CandidateResponsePack", 'String'>
+    readonly requestText: FieldRef<"CandidateResponsePack", 'String'>
+    readonly interpretedScope: FieldRef<"CandidateResponsePack", 'Json'>
+    readonly confirmedScope: FieldRef<"CandidateResponsePack", 'Json'>
+    readonly confirmedAt: FieldRef<"CandidateResponsePack", 'DateTime'>
+    readonly confirmedByUserId: FieldRef<"CandidateResponsePack", 'String'>
+    readonly status: FieldRef<"CandidateResponsePack", 'CandidatePackStatus'>
+    readonly coverageStatement: FieldRef<"CandidateResponsePack", 'Json'>
+    readonly retrievalBasis: FieldRef<"CandidateResponsePack", 'String'>
+    readonly meetingIds: FieldRef<"CandidateResponsePack", 'String[]'>
+    readonly emailEvidenceIds: FieldRef<"CandidateResponsePack", 'String[]'>
+    readonly auditChainRootId: FieldRef<"CandidateResponsePack", 'String'>
+    readonly exportManifestSha: FieldRef<"CandidateResponsePack", 'String'>
+    readonly approvedAt: FieldRef<"CandidateResponsePack", 'DateTime'>
+    readonly approvedByUserId: FieldRef<"CandidateResponsePack", 'String'>
+    readonly createdAt: FieldRef<"CandidateResponsePack", 'DateTime'>
+    readonly updatedAt: FieldRef<"CandidateResponsePack", 'DateTime'>
+    readonly deletedAt: FieldRef<"CandidateResponsePack", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CandidateResponsePack findUnique
+   */
+  export type CandidateResponsePackFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CandidateResponsePack
+     */
+    select?: CandidateResponsePackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CandidateResponsePack
+     */
+    omit?: CandidateResponsePackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CandidateResponsePackInclude<ExtArgs> | null
+    /**
+     * Filter, which CandidateResponsePack to fetch.
+     */
+    where: CandidateResponsePackWhereUniqueInput
+  }
+
+  /**
+   * CandidateResponsePack findUniqueOrThrow
+   */
+  export type CandidateResponsePackFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CandidateResponsePack
+     */
+    select?: CandidateResponsePackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CandidateResponsePack
+     */
+    omit?: CandidateResponsePackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CandidateResponsePackInclude<ExtArgs> | null
+    /**
+     * Filter, which CandidateResponsePack to fetch.
+     */
+    where: CandidateResponsePackWhereUniqueInput
+  }
+
+  /**
+   * CandidateResponsePack findFirst
+   */
+  export type CandidateResponsePackFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CandidateResponsePack
+     */
+    select?: CandidateResponsePackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CandidateResponsePack
+     */
+    omit?: CandidateResponsePackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CandidateResponsePackInclude<ExtArgs> | null
+    /**
+     * Filter, which CandidateResponsePack to fetch.
+     */
+    where?: CandidateResponsePackWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CandidateResponsePacks to fetch.
+     */
+    orderBy?: CandidateResponsePackOrderByWithRelationInput | CandidateResponsePackOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CandidateResponsePacks.
+     */
+    cursor?: CandidateResponsePackWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CandidateResponsePacks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CandidateResponsePacks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CandidateResponsePacks.
+     */
+    distinct?: CandidateResponsePackScalarFieldEnum | CandidateResponsePackScalarFieldEnum[]
+  }
+
+  /**
+   * CandidateResponsePack findFirstOrThrow
+   */
+  export type CandidateResponsePackFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CandidateResponsePack
+     */
+    select?: CandidateResponsePackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CandidateResponsePack
+     */
+    omit?: CandidateResponsePackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CandidateResponsePackInclude<ExtArgs> | null
+    /**
+     * Filter, which CandidateResponsePack to fetch.
+     */
+    where?: CandidateResponsePackWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CandidateResponsePacks to fetch.
+     */
+    orderBy?: CandidateResponsePackOrderByWithRelationInput | CandidateResponsePackOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CandidateResponsePacks.
+     */
+    cursor?: CandidateResponsePackWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CandidateResponsePacks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CandidateResponsePacks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CandidateResponsePacks.
+     */
+    distinct?: CandidateResponsePackScalarFieldEnum | CandidateResponsePackScalarFieldEnum[]
+  }
+
+  /**
+   * CandidateResponsePack findMany
+   */
+  export type CandidateResponsePackFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CandidateResponsePack
+     */
+    select?: CandidateResponsePackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CandidateResponsePack
+     */
+    omit?: CandidateResponsePackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CandidateResponsePackInclude<ExtArgs> | null
+    /**
+     * Filter, which CandidateResponsePacks to fetch.
+     */
+    where?: CandidateResponsePackWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CandidateResponsePacks to fetch.
+     */
+    orderBy?: CandidateResponsePackOrderByWithRelationInput | CandidateResponsePackOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CandidateResponsePacks.
+     */
+    cursor?: CandidateResponsePackWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CandidateResponsePacks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CandidateResponsePacks.
+     */
+    skip?: number
+    distinct?: CandidateResponsePackScalarFieldEnum | CandidateResponsePackScalarFieldEnum[]
+  }
+
+  /**
+   * CandidateResponsePack create
+   */
+  export type CandidateResponsePackCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CandidateResponsePack
+     */
+    select?: CandidateResponsePackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CandidateResponsePack
+     */
+    omit?: CandidateResponsePackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CandidateResponsePackInclude<ExtArgs> | null
+    /**
+     * The data needed to create a CandidateResponsePack.
+     */
+    data: XOR<CandidateResponsePackCreateInput, CandidateResponsePackUncheckedCreateInput>
+  }
+
+  /**
+   * CandidateResponsePack createMany
+   */
+  export type CandidateResponsePackCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CandidateResponsePacks.
+     */
+    data: CandidateResponsePackCreateManyInput | CandidateResponsePackCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CandidateResponsePack createManyAndReturn
+   */
+  export type CandidateResponsePackCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CandidateResponsePack
+     */
+    select?: CandidateResponsePackSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CandidateResponsePack
+     */
+    omit?: CandidateResponsePackOmit<ExtArgs> | null
+    /**
+     * The data used to create many CandidateResponsePacks.
+     */
+    data: CandidateResponsePackCreateManyInput | CandidateResponsePackCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CandidateResponsePackIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CandidateResponsePack update
+   */
+  export type CandidateResponsePackUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CandidateResponsePack
+     */
+    select?: CandidateResponsePackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CandidateResponsePack
+     */
+    omit?: CandidateResponsePackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CandidateResponsePackInclude<ExtArgs> | null
+    /**
+     * The data needed to update a CandidateResponsePack.
+     */
+    data: XOR<CandidateResponsePackUpdateInput, CandidateResponsePackUncheckedUpdateInput>
+    /**
+     * Choose, which CandidateResponsePack to update.
+     */
+    where: CandidateResponsePackWhereUniqueInput
+  }
+
+  /**
+   * CandidateResponsePack updateMany
+   */
+  export type CandidateResponsePackUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CandidateResponsePacks.
+     */
+    data: XOR<CandidateResponsePackUpdateManyMutationInput, CandidateResponsePackUncheckedUpdateManyInput>
+    /**
+     * Filter which CandidateResponsePacks to update
+     */
+    where?: CandidateResponsePackWhereInput
+    /**
+     * Limit how many CandidateResponsePacks to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CandidateResponsePack updateManyAndReturn
+   */
+  export type CandidateResponsePackUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CandidateResponsePack
+     */
+    select?: CandidateResponsePackSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CandidateResponsePack
+     */
+    omit?: CandidateResponsePackOmit<ExtArgs> | null
+    /**
+     * The data used to update CandidateResponsePacks.
+     */
+    data: XOR<CandidateResponsePackUpdateManyMutationInput, CandidateResponsePackUncheckedUpdateManyInput>
+    /**
+     * Filter which CandidateResponsePacks to update
+     */
+    where?: CandidateResponsePackWhereInput
+    /**
+     * Limit how many CandidateResponsePacks to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CandidateResponsePackIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CandidateResponsePack upsert
+   */
+  export type CandidateResponsePackUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CandidateResponsePack
+     */
+    select?: CandidateResponsePackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CandidateResponsePack
+     */
+    omit?: CandidateResponsePackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CandidateResponsePackInclude<ExtArgs> | null
+    /**
+     * The filter to search for the CandidateResponsePack to update in case it exists.
+     */
+    where: CandidateResponsePackWhereUniqueInput
+    /**
+     * In case the CandidateResponsePack found by the `where` argument doesn't exist, create a new CandidateResponsePack with this data.
+     */
+    create: XOR<CandidateResponsePackCreateInput, CandidateResponsePackUncheckedCreateInput>
+    /**
+     * In case the CandidateResponsePack was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CandidateResponsePackUpdateInput, CandidateResponsePackUncheckedUpdateInput>
+  }
+
+  /**
+   * CandidateResponsePack delete
+   */
+  export type CandidateResponsePackDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CandidateResponsePack
+     */
+    select?: CandidateResponsePackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CandidateResponsePack
+     */
+    omit?: CandidateResponsePackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CandidateResponsePackInclude<ExtArgs> | null
+    /**
+     * Filter which CandidateResponsePack to delete.
+     */
+    where: CandidateResponsePackWhereUniqueInput
+  }
+
+  /**
+   * CandidateResponsePack deleteMany
+   */
+  export type CandidateResponsePackDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CandidateResponsePacks to delete
+     */
+    where?: CandidateResponsePackWhereInput
+    /**
+     * Limit how many CandidateResponsePacks to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CandidateResponsePack without action
+   */
+  export type CandidateResponsePackDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CandidateResponsePack
+     */
+    select?: CandidateResponsePackSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CandidateResponsePack
+     */
+    omit?: CandidateResponsePackOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CandidateResponsePackInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model IndexCoverageManifest
+   */
+
+  export type AggregateIndexCoverageManifest = {
+    _count: IndexCoverageManifestCountAggregateOutputType | null
+    _min: IndexCoverageManifestMinAggregateOutputType | null
+    _max: IndexCoverageManifestMaxAggregateOutputType | null
+  }
+
+  export type IndexCoverageManifestMinAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    lastIndexedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type IndexCoverageManifestMaxAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    lastIndexedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type IndexCoverageManifestCountAggregateOutputType = {
+    id: number
+    workspaceId: number
+    sources: number
+    gapPeriods: number
+    unindexedSources: number
+    lastIndexedAt: number
+    createdAt: number
+    updatedAt: number
+    deletedAt: number
+    _all: number
+  }
+
+
+  export type IndexCoverageManifestMinAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    lastIndexedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type IndexCoverageManifestMaxAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    lastIndexedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type IndexCoverageManifestCountAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    sources?: true
+    gapPeriods?: true
+    unindexedSources?: true
+    lastIndexedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+    _all?: true
+  }
+
+  export type IndexCoverageManifestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which IndexCoverageManifest to aggregate.
+     */
+    where?: IndexCoverageManifestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IndexCoverageManifests to fetch.
+     */
+    orderBy?: IndexCoverageManifestOrderByWithRelationInput | IndexCoverageManifestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: IndexCoverageManifestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IndexCoverageManifests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IndexCoverageManifests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned IndexCoverageManifests
+    **/
+    _count?: true | IndexCoverageManifestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: IndexCoverageManifestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: IndexCoverageManifestMaxAggregateInputType
+  }
+
+  export type GetIndexCoverageManifestAggregateType<T extends IndexCoverageManifestAggregateArgs> = {
+        [P in keyof T & keyof AggregateIndexCoverageManifest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateIndexCoverageManifest[P]>
+      : GetScalarType<T[P], AggregateIndexCoverageManifest[P]>
+  }
+
+
+
+
+  export type IndexCoverageManifestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IndexCoverageManifestWhereInput
+    orderBy?: IndexCoverageManifestOrderByWithAggregationInput | IndexCoverageManifestOrderByWithAggregationInput[]
+    by: IndexCoverageManifestScalarFieldEnum[] | IndexCoverageManifestScalarFieldEnum
+    having?: IndexCoverageManifestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: IndexCoverageManifestCountAggregateInputType | true
+    _min?: IndexCoverageManifestMinAggregateInputType
+    _max?: IndexCoverageManifestMaxAggregateInputType
+  }
+
+  export type IndexCoverageManifestGroupByOutputType = {
+    id: string
+    workspaceId: string
+    sources: JsonValue
+    gapPeriods: JsonValue
+    unindexedSources: JsonValue
+    lastIndexedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date | null
+    _count: IndexCoverageManifestCountAggregateOutputType | null
+    _min: IndexCoverageManifestMinAggregateOutputType | null
+    _max: IndexCoverageManifestMaxAggregateOutputType | null
+  }
+
+  type GetIndexCoverageManifestGroupByPayload<T extends IndexCoverageManifestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<IndexCoverageManifestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof IndexCoverageManifestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], IndexCoverageManifestGroupByOutputType[P]>
+            : GetScalarType<T[P], IndexCoverageManifestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type IndexCoverageManifestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    sources?: boolean
+    gapPeriods?: boolean
+    unindexedSources?: boolean
+    lastIndexedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["indexCoverageManifest"]>
+
+  export type IndexCoverageManifestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    sources?: boolean
+    gapPeriods?: boolean
+    unindexedSources?: boolean
+    lastIndexedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["indexCoverageManifest"]>
+
+  export type IndexCoverageManifestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    sources?: boolean
+    gapPeriods?: boolean
+    unindexedSources?: boolean
+    lastIndexedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["indexCoverageManifest"]>
+
+  export type IndexCoverageManifestSelectScalar = {
+    id?: boolean
+    workspaceId?: boolean
+    sources?: boolean
+    gapPeriods?: boolean
+    unindexedSources?: boolean
+    lastIndexedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }
+
+  export type IndexCoverageManifestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "sources" | "gapPeriods" | "unindexedSources" | "lastIndexedAt" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["indexCoverageManifest"]>
+  export type IndexCoverageManifestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+  export type IndexCoverageManifestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+  export type IndexCoverageManifestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+
+  export type $IndexCoverageManifestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "IndexCoverageManifest"
+    objects: {
+      workspace: Prisma.$WorkspacePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workspaceId: string
+      sources: Prisma.JsonValue
+      gapPeriods: Prisma.JsonValue
+      unindexedSources: Prisma.JsonValue
+      lastIndexedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+      deletedAt: Date | null
+    }, ExtArgs["result"]["indexCoverageManifest"]>
+    composites: {}
+  }
+
+  type IndexCoverageManifestGetPayload<S extends boolean | null | undefined | IndexCoverageManifestDefaultArgs> = $Result.GetResult<Prisma.$IndexCoverageManifestPayload, S>
+
+  type IndexCoverageManifestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<IndexCoverageManifestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: IndexCoverageManifestCountAggregateInputType | true
+    }
+
+  export interface IndexCoverageManifestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['IndexCoverageManifest'], meta: { name: 'IndexCoverageManifest' } }
+    /**
+     * Find zero or one IndexCoverageManifest that matches the filter.
+     * @param {IndexCoverageManifestFindUniqueArgs} args - Arguments to find a IndexCoverageManifest
+     * @example
+     * // Get one IndexCoverageManifest
+     * const indexCoverageManifest = await prisma.indexCoverageManifest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends IndexCoverageManifestFindUniqueArgs>(args: SelectSubset<T, IndexCoverageManifestFindUniqueArgs<ExtArgs>>): Prisma__IndexCoverageManifestClient<$Result.GetResult<Prisma.$IndexCoverageManifestPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one IndexCoverageManifest that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {IndexCoverageManifestFindUniqueOrThrowArgs} args - Arguments to find a IndexCoverageManifest
+     * @example
+     * // Get one IndexCoverageManifest
+     * const indexCoverageManifest = await prisma.indexCoverageManifest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends IndexCoverageManifestFindUniqueOrThrowArgs>(args: SelectSubset<T, IndexCoverageManifestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__IndexCoverageManifestClient<$Result.GetResult<Prisma.$IndexCoverageManifestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first IndexCoverageManifest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IndexCoverageManifestFindFirstArgs} args - Arguments to find a IndexCoverageManifest
+     * @example
+     * // Get one IndexCoverageManifest
+     * const indexCoverageManifest = await prisma.indexCoverageManifest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends IndexCoverageManifestFindFirstArgs>(args?: SelectSubset<T, IndexCoverageManifestFindFirstArgs<ExtArgs>>): Prisma__IndexCoverageManifestClient<$Result.GetResult<Prisma.$IndexCoverageManifestPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first IndexCoverageManifest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IndexCoverageManifestFindFirstOrThrowArgs} args - Arguments to find a IndexCoverageManifest
+     * @example
+     * // Get one IndexCoverageManifest
+     * const indexCoverageManifest = await prisma.indexCoverageManifest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends IndexCoverageManifestFindFirstOrThrowArgs>(args?: SelectSubset<T, IndexCoverageManifestFindFirstOrThrowArgs<ExtArgs>>): Prisma__IndexCoverageManifestClient<$Result.GetResult<Prisma.$IndexCoverageManifestPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more IndexCoverageManifests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IndexCoverageManifestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all IndexCoverageManifests
+     * const indexCoverageManifests = await prisma.indexCoverageManifest.findMany()
+     * 
+     * // Get first 10 IndexCoverageManifests
+     * const indexCoverageManifests = await prisma.indexCoverageManifest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const indexCoverageManifestWithIdOnly = await prisma.indexCoverageManifest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends IndexCoverageManifestFindManyArgs>(args?: SelectSubset<T, IndexCoverageManifestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IndexCoverageManifestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a IndexCoverageManifest.
+     * @param {IndexCoverageManifestCreateArgs} args - Arguments to create a IndexCoverageManifest.
+     * @example
+     * // Create one IndexCoverageManifest
+     * const IndexCoverageManifest = await prisma.indexCoverageManifest.create({
+     *   data: {
+     *     // ... data to create a IndexCoverageManifest
+     *   }
+     * })
+     * 
+     */
+    create<T extends IndexCoverageManifestCreateArgs>(args: SelectSubset<T, IndexCoverageManifestCreateArgs<ExtArgs>>): Prisma__IndexCoverageManifestClient<$Result.GetResult<Prisma.$IndexCoverageManifestPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many IndexCoverageManifests.
+     * @param {IndexCoverageManifestCreateManyArgs} args - Arguments to create many IndexCoverageManifests.
+     * @example
+     * // Create many IndexCoverageManifests
+     * const indexCoverageManifest = await prisma.indexCoverageManifest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends IndexCoverageManifestCreateManyArgs>(args?: SelectSubset<T, IndexCoverageManifestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many IndexCoverageManifests and returns the data saved in the database.
+     * @param {IndexCoverageManifestCreateManyAndReturnArgs} args - Arguments to create many IndexCoverageManifests.
+     * @example
+     * // Create many IndexCoverageManifests
+     * const indexCoverageManifest = await prisma.indexCoverageManifest.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many IndexCoverageManifests and only return the `id`
+     * const indexCoverageManifestWithIdOnly = await prisma.indexCoverageManifest.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends IndexCoverageManifestCreateManyAndReturnArgs>(args?: SelectSubset<T, IndexCoverageManifestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IndexCoverageManifestPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a IndexCoverageManifest.
+     * @param {IndexCoverageManifestDeleteArgs} args - Arguments to delete one IndexCoverageManifest.
+     * @example
+     * // Delete one IndexCoverageManifest
+     * const IndexCoverageManifest = await prisma.indexCoverageManifest.delete({
+     *   where: {
+     *     // ... filter to delete one IndexCoverageManifest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends IndexCoverageManifestDeleteArgs>(args: SelectSubset<T, IndexCoverageManifestDeleteArgs<ExtArgs>>): Prisma__IndexCoverageManifestClient<$Result.GetResult<Prisma.$IndexCoverageManifestPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one IndexCoverageManifest.
+     * @param {IndexCoverageManifestUpdateArgs} args - Arguments to update one IndexCoverageManifest.
+     * @example
+     * // Update one IndexCoverageManifest
+     * const indexCoverageManifest = await prisma.indexCoverageManifest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends IndexCoverageManifestUpdateArgs>(args: SelectSubset<T, IndexCoverageManifestUpdateArgs<ExtArgs>>): Prisma__IndexCoverageManifestClient<$Result.GetResult<Prisma.$IndexCoverageManifestPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more IndexCoverageManifests.
+     * @param {IndexCoverageManifestDeleteManyArgs} args - Arguments to filter IndexCoverageManifests to delete.
+     * @example
+     * // Delete a few IndexCoverageManifests
+     * const { count } = await prisma.indexCoverageManifest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends IndexCoverageManifestDeleteManyArgs>(args?: SelectSubset<T, IndexCoverageManifestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more IndexCoverageManifests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IndexCoverageManifestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many IndexCoverageManifests
+     * const indexCoverageManifest = await prisma.indexCoverageManifest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends IndexCoverageManifestUpdateManyArgs>(args: SelectSubset<T, IndexCoverageManifestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more IndexCoverageManifests and returns the data updated in the database.
+     * @param {IndexCoverageManifestUpdateManyAndReturnArgs} args - Arguments to update many IndexCoverageManifests.
+     * @example
+     * // Update many IndexCoverageManifests
+     * const indexCoverageManifest = await prisma.indexCoverageManifest.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more IndexCoverageManifests and only return the `id`
+     * const indexCoverageManifestWithIdOnly = await prisma.indexCoverageManifest.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends IndexCoverageManifestUpdateManyAndReturnArgs>(args: SelectSubset<T, IndexCoverageManifestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IndexCoverageManifestPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one IndexCoverageManifest.
+     * @param {IndexCoverageManifestUpsertArgs} args - Arguments to update or create a IndexCoverageManifest.
+     * @example
+     * // Update or create a IndexCoverageManifest
+     * const indexCoverageManifest = await prisma.indexCoverageManifest.upsert({
+     *   create: {
+     *     // ... data to create a IndexCoverageManifest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the IndexCoverageManifest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends IndexCoverageManifestUpsertArgs>(args: SelectSubset<T, IndexCoverageManifestUpsertArgs<ExtArgs>>): Prisma__IndexCoverageManifestClient<$Result.GetResult<Prisma.$IndexCoverageManifestPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of IndexCoverageManifests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IndexCoverageManifestCountArgs} args - Arguments to filter IndexCoverageManifests to count.
+     * @example
+     * // Count the number of IndexCoverageManifests
+     * const count = await prisma.indexCoverageManifest.count({
+     *   where: {
+     *     // ... the filter for the IndexCoverageManifests we want to count
+     *   }
+     * })
+    **/
+    count<T extends IndexCoverageManifestCountArgs>(
+      args?: Subset<T, IndexCoverageManifestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], IndexCoverageManifestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a IndexCoverageManifest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IndexCoverageManifestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends IndexCoverageManifestAggregateArgs>(args: Subset<T, IndexCoverageManifestAggregateArgs>): Prisma.PrismaPromise<GetIndexCoverageManifestAggregateType<T>>
+
+    /**
+     * Group by IndexCoverageManifest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IndexCoverageManifestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends IndexCoverageManifestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: IndexCoverageManifestGroupByArgs['orderBy'] }
+        : { orderBy?: IndexCoverageManifestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, IndexCoverageManifestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetIndexCoverageManifestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the IndexCoverageManifest model
+   */
+  readonly fields: IndexCoverageManifestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for IndexCoverageManifest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__IndexCoverageManifestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the IndexCoverageManifest model
+   */
+  interface IndexCoverageManifestFieldRefs {
+    readonly id: FieldRef<"IndexCoverageManifest", 'String'>
+    readonly workspaceId: FieldRef<"IndexCoverageManifest", 'String'>
+    readonly sources: FieldRef<"IndexCoverageManifest", 'Json'>
+    readonly gapPeriods: FieldRef<"IndexCoverageManifest", 'Json'>
+    readonly unindexedSources: FieldRef<"IndexCoverageManifest", 'Json'>
+    readonly lastIndexedAt: FieldRef<"IndexCoverageManifest", 'DateTime'>
+    readonly createdAt: FieldRef<"IndexCoverageManifest", 'DateTime'>
+    readonly updatedAt: FieldRef<"IndexCoverageManifest", 'DateTime'>
+    readonly deletedAt: FieldRef<"IndexCoverageManifest", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * IndexCoverageManifest findUnique
+   */
+  export type IndexCoverageManifestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IndexCoverageManifest
+     */
+    select?: IndexCoverageManifestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IndexCoverageManifest
+     */
+    omit?: IndexCoverageManifestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IndexCoverageManifestInclude<ExtArgs> | null
+    /**
+     * Filter, which IndexCoverageManifest to fetch.
+     */
+    where: IndexCoverageManifestWhereUniqueInput
+  }
+
+  /**
+   * IndexCoverageManifest findUniqueOrThrow
+   */
+  export type IndexCoverageManifestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IndexCoverageManifest
+     */
+    select?: IndexCoverageManifestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IndexCoverageManifest
+     */
+    omit?: IndexCoverageManifestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IndexCoverageManifestInclude<ExtArgs> | null
+    /**
+     * Filter, which IndexCoverageManifest to fetch.
+     */
+    where: IndexCoverageManifestWhereUniqueInput
+  }
+
+  /**
+   * IndexCoverageManifest findFirst
+   */
+  export type IndexCoverageManifestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IndexCoverageManifest
+     */
+    select?: IndexCoverageManifestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IndexCoverageManifest
+     */
+    omit?: IndexCoverageManifestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IndexCoverageManifestInclude<ExtArgs> | null
+    /**
+     * Filter, which IndexCoverageManifest to fetch.
+     */
+    where?: IndexCoverageManifestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IndexCoverageManifests to fetch.
+     */
+    orderBy?: IndexCoverageManifestOrderByWithRelationInput | IndexCoverageManifestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for IndexCoverageManifests.
+     */
+    cursor?: IndexCoverageManifestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IndexCoverageManifests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IndexCoverageManifests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IndexCoverageManifests.
+     */
+    distinct?: IndexCoverageManifestScalarFieldEnum | IndexCoverageManifestScalarFieldEnum[]
+  }
+
+  /**
+   * IndexCoverageManifest findFirstOrThrow
+   */
+  export type IndexCoverageManifestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IndexCoverageManifest
+     */
+    select?: IndexCoverageManifestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IndexCoverageManifest
+     */
+    omit?: IndexCoverageManifestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IndexCoverageManifestInclude<ExtArgs> | null
+    /**
+     * Filter, which IndexCoverageManifest to fetch.
+     */
+    where?: IndexCoverageManifestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IndexCoverageManifests to fetch.
+     */
+    orderBy?: IndexCoverageManifestOrderByWithRelationInput | IndexCoverageManifestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for IndexCoverageManifests.
+     */
+    cursor?: IndexCoverageManifestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IndexCoverageManifests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IndexCoverageManifests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IndexCoverageManifests.
+     */
+    distinct?: IndexCoverageManifestScalarFieldEnum | IndexCoverageManifestScalarFieldEnum[]
+  }
+
+  /**
+   * IndexCoverageManifest findMany
+   */
+  export type IndexCoverageManifestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IndexCoverageManifest
+     */
+    select?: IndexCoverageManifestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IndexCoverageManifest
+     */
+    omit?: IndexCoverageManifestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IndexCoverageManifestInclude<ExtArgs> | null
+    /**
+     * Filter, which IndexCoverageManifests to fetch.
+     */
+    where?: IndexCoverageManifestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IndexCoverageManifests to fetch.
+     */
+    orderBy?: IndexCoverageManifestOrderByWithRelationInput | IndexCoverageManifestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing IndexCoverageManifests.
+     */
+    cursor?: IndexCoverageManifestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IndexCoverageManifests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IndexCoverageManifests.
+     */
+    skip?: number
+    distinct?: IndexCoverageManifestScalarFieldEnum | IndexCoverageManifestScalarFieldEnum[]
+  }
+
+  /**
+   * IndexCoverageManifest create
+   */
+  export type IndexCoverageManifestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IndexCoverageManifest
+     */
+    select?: IndexCoverageManifestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IndexCoverageManifest
+     */
+    omit?: IndexCoverageManifestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IndexCoverageManifestInclude<ExtArgs> | null
+    /**
+     * The data needed to create a IndexCoverageManifest.
+     */
+    data: XOR<IndexCoverageManifestCreateInput, IndexCoverageManifestUncheckedCreateInput>
+  }
+
+  /**
+   * IndexCoverageManifest createMany
+   */
+  export type IndexCoverageManifestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many IndexCoverageManifests.
+     */
+    data: IndexCoverageManifestCreateManyInput | IndexCoverageManifestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * IndexCoverageManifest createManyAndReturn
+   */
+  export type IndexCoverageManifestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IndexCoverageManifest
+     */
+    select?: IndexCoverageManifestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the IndexCoverageManifest
+     */
+    omit?: IndexCoverageManifestOmit<ExtArgs> | null
+    /**
+     * The data used to create many IndexCoverageManifests.
+     */
+    data: IndexCoverageManifestCreateManyInput | IndexCoverageManifestCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IndexCoverageManifestIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * IndexCoverageManifest update
+   */
+  export type IndexCoverageManifestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IndexCoverageManifest
+     */
+    select?: IndexCoverageManifestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IndexCoverageManifest
+     */
+    omit?: IndexCoverageManifestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IndexCoverageManifestInclude<ExtArgs> | null
+    /**
+     * The data needed to update a IndexCoverageManifest.
+     */
+    data: XOR<IndexCoverageManifestUpdateInput, IndexCoverageManifestUncheckedUpdateInput>
+    /**
+     * Choose, which IndexCoverageManifest to update.
+     */
+    where: IndexCoverageManifestWhereUniqueInput
+  }
+
+  /**
+   * IndexCoverageManifest updateMany
+   */
+  export type IndexCoverageManifestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update IndexCoverageManifests.
+     */
+    data: XOR<IndexCoverageManifestUpdateManyMutationInput, IndexCoverageManifestUncheckedUpdateManyInput>
+    /**
+     * Filter which IndexCoverageManifests to update
+     */
+    where?: IndexCoverageManifestWhereInput
+    /**
+     * Limit how many IndexCoverageManifests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * IndexCoverageManifest updateManyAndReturn
+   */
+  export type IndexCoverageManifestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IndexCoverageManifest
+     */
+    select?: IndexCoverageManifestSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the IndexCoverageManifest
+     */
+    omit?: IndexCoverageManifestOmit<ExtArgs> | null
+    /**
+     * The data used to update IndexCoverageManifests.
+     */
+    data: XOR<IndexCoverageManifestUpdateManyMutationInput, IndexCoverageManifestUncheckedUpdateManyInput>
+    /**
+     * Filter which IndexCoverageManifests to update
+     */
+    where?: IndexCoverageManifestWhereInput
+    /**
+     * Limit how many IndexCoverageManifests to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IndexCoverageManifestIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * IndexCoverageManifest upsert
+   */
+  export type IndexCoverageManifestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IndexCoverageManifest
+     */
+    select?: IndexCoverageManifestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IndexCoverageManifest
+     */
+    omit?: IndexCoverageManifestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IndexCoverageManifestInclude<ExtArgs> | null
+    /**
+     * The filter to search for the IndexCoverageManifest to update in case it exists.
+     */
+    where: IndexCoverageManifestWhereUniqueInput
+    /**
+     * In case the IndexCoverageManifest found by the `where` argument doesn't exist, create a new IndexCoverageManifest with this data.
+     */
+    create: XOR<IndexCoverageManifestCreateInput, IndexCoverageManifestUncheckedCreateInput>
+    /**
+     * In case the IndexCoverageManifest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<IndexCoverageManifestUpdateInput, IndexCoverageManifestUncheckedUpdateInput>
+  }
+
+  /**
+   * IndexCoverageManifest delete
+   */
+  export type IndexCoverageManifestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IndexCoverageManifest
+     */
+    select?: IndexCoverageManifestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IndexCoverageManifest
+     */
+    omit?: IndexCoverageManifestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IndexCoverageManifestInclude<ExtArgs> | null
+    /**
+     * Filter which IndexCoverageManifest to delete.
+     */
+    where: IndexCoverageManifestWhereUniqueInput
+  }
+
+  /**
+   * IndexCoverageManifest deleteMany
+   */
+  export type IndexCoverageManifestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which IndexCoverageManifests to delete
+     */
+    where?: IndexCoverageManifestWhereInput
+    /**
+     * Limit how many IndexCoverageManifests to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * IndexCoverageManifest without action
+   */
+  export type IndexCoverageManifestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IndexCoverageManifest
+     */
+    select?: IndexCoverageManifestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IndexCoverageManifest
+     */
+    omit?: IndexCoverageManifestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IndexCoverageManifestInclude<ExtArgs> | null
   }
 
 
@@ -53928,6 +56519,46 @@ export namespace Prisma {
   export type WorkspaceScalarFieldEnum = (typeof WorkspaceScalarFieldEnum)[keyof typeof WorkspaceScalarFieldEnum]
 
 
+  export const CandidateResponsePackScalarFieldEnum: {
+    id: 'id',
+    workspaceId: 'workspaceId',
+    requestText: 'requestText',
+    interpretedScope: 'interpretedScope',
+    confirmedScope: 'confirmedScope',
+    confirmedAt: 'confirmedAt',
+    confirmedByUserId: 'confirmedByUserId',
+    status: 'status',
+    coverageStatement: 'coverageStatement',
+    retrievalBasis: 'retrievalBasis',
+    meetingIds: 'meetingIds',
+    emailEvidenceIds: 'emailEvidenceIds',
+    auditChainRootId: 'auditChainRootId',
+    exportManifestSha: 'exportManifestSha',
+    approvedAt: 'approvedAt',
+    approvedByUserId: 'approvedByUserId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    deletedAt: 'deletedAt'
+  };
+
+  export type CandidateResponsePackScalarFieldEnum = (typeof CandidateResponsePackScalarFieldEnum)[keyof typeof CandidateResponsePackScalarFieldEnum]
+
+
+  export const IndexCoverageManifestScalarFieldEnum: {
+    id: 'id',
+    workspaceId: 'workspaceId',
+    sources: 'sources',
+    gapPeriods: 'gapPeriods',
+    unindexedSources: 'unindexedSources',
+    lastIndexedAt: 'lastIndexedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    deletedAt: 'deletedAt'
+  };
+
+  export type IndexCoverageManifestScalarFieldEnum = (typeof IndexCoverageManifestScalarFieldEnum)[keyof typeof IndexCoverageManifestScalarFieldEnum]
+
+
   export const ParkedIngestScalarFieldEnum: {
     id: 'id',
     workspaceId: 'workspaceId',
@@ -54775,6 +57406,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'CandidatePackStatus'
+   */
+  export type EnumCandidatePackStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CandidatePackStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'CandidatePackStatus[]'
+   */
+  export type ListEnumCandidatePackStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CandidatePackStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'ParkedIngestStatus'
    */
   export type EnumParkedIngestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ParkedIngestStatus'>
@@ -55374,6 +58019,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingListRelationFilter
     parkedIngests?: ParkedIngestListRelationFilter
     recordSeals?: RecordSealListRelationFilter
+    candidateResponsePacks?: CandidateResponsePackListRelationFilter
+    indexCoverageManifests?: IndexCoverageManifestListRelationFilter
   }
 
   export type WorkspaceOrderByWithRelationInput = {
@@ -55424,6 +58071,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingOrderByRelationAggregateInput
     parkedIngests?: ParkedIngestOrderByRelationAggregateInput
     recordSeals?: RecordSealOrderByRelationAggregateInput
+    candidateResponsePacks?: CandidateResponsePackOrderByRelationAggregateInput
+    indexCoverageManifests?: IndexCoverageManifestOrderByRelationAggregateInput
   }
 
   export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
@@ -55477,6 +58126,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingListRelationFilter
     parkedIngests?: ParkedIngestListRelationFilter
     recordSeals?: RecordSealListRelationFilter
+    candidateResponsePacks?: CandidateResponsePackListRelationFilter
+    indexCoverageManifests?: IndexCoverageManifestListRelationFilter
   }, "id">
 
   export type WorkspaceOrderByWithAggregationInput = {
@@ -55541,6 +58192,206 @@ export namespace Prisma {
     currentPeriodEnd?: DateTimeNullableWithAggregatesFilter<"Workspace"> | Date | string | null
     onboardingType?: StringNullableWithAggregatesFilter<"Workspace"> | string | null
     onboardingPaidAt?: DateTimeNullableWithAggregatesFilter<"Workspace"> | Date | string | null
+  }
+
+  export type CandidateResponsePackWhereInput = {
+    AND?: CandidateResponsePackWhereInput | CandidateResponsePackWhereInput[]
+    OR?: CandidateResponsePackWhereInput[]
+    NOT?: CandidateResponsePackWhereInput | CandidateResponsePackWhereInput[]
+    id?: StringFilter<"CandidateResponsePack"> | string
+    workspaceId?: StringFilter<"CandidateResponsePack"> | string
+    requestText?: StringFilter<"CandidateResponsePack"> | string
+    interpretedScope?: JsonFilter<"CandidateResponsePack">
+    confirmedScope?: JsonNullableFilter<"CandidateResponsePack">
+    confirmedAt?: DateTimeNullableFilter<"CandidateResponsePack"> | Date | string | null
+    confirmedByUserId?: StringNullableFilter<"CandidateResponsePack"> | string | null
+    status?: EnumCandidatePackStatusFilter<"CandidateResponsePack"> | $Enums.CandidatePackStatus
+    coverageStatement?: JsonNullableFilter<"CandidateResponsePack">
+    retrievalBasis?: StringNullableFilter<"CandidateResponsePack"> | string | null
+    meetingIds?: StringNullableListFilter<"CandidateResponsePack">
+    emailEvidenceIds?: StringNullableListFilter<"CandidateResponsePack">
+    auditChainRootId?: StringNullableFilter<"CandidateResponsePack"> | string | null
+    exportManifestSha?: StringNullableFilter<"CandidateResponsePack"> | string | null
+    approvedAt?: DateTimeNullableFilter<"CandidateResponsePack"> | Date | string | null
+    approvedByUserId?: StringNullableFilter<"CandidateResponsePack"> | string | null
+    createdAt?: DateTimeFilter<"CandidateResponsePack"> | Date | string
+    updatedAt?: DateTimeFilter<"CandidateResponsePack"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"CandidateResponsePack"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+  }
+
+  export type CandidateResponsePackOrderByWithRelationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    requestText?: SortOrder
+    interpretedScope?: SortOrder
+    confirmedScope?: SortOrderInput | SortOrder
+    confirmedAt?: SortOrderInput | SortOrder
+    confirmedByUserId?: SortOrderInput | SortOrder
+    status?: SortOrder
+    coverageStatement?: SortOrderInput | SortOrder
+    retrievalBasis?: SortOrderInput | SortOrder
+    meetingIds?: SortOrder
+    emailEvidenceIds?: SortOrder
+    auditChainRootId?: SortOrderInput | SortOrder
+    exportManifestSha?: SortOrderInput | SortOrder
+    approvedAt?: SortOrderInput | SortOrder
+    approvedByUserId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    workspace?: WorkspaceOrderByWithRelationInput
+  }
+
+  export type CandidateResponsePackWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: CandidateResponsePackWhereInput | CandidateResponsePackWhereInput[]
+    OR?: CandidateResponsePackWhereInput[]
+    NOT?: CandidateResponsePackWhereInput | CandidateResponsePackWhereInput[]
+    workspaceId?: StringFilter<"CandidateResponsePack"> | string
+    requestText?: StringFilter<"CandidateResponsePack"> | string
+    interpretedScope?: JsonFilter<"CandidateResponsePack">
+    confirmedScope?: JsonNullableFilter<"CandidateResponsePack">
+    confirmedAt?: DateTimeNullableFilter<"CandidateResponsePack"> | Date | string | null
+    confirmedByUserId?: StringNullableFilter<"CandidateResponsePack"> | string | null
+    status?: EnumCandidatePackStatusFilter<"CandidateResponsePack"> | $Enums.CandidatePackStatus
+    coverageStatement?: JsonNullableFilter<"CandidateResponsePack">
+    retrievalBasis?: StringNullableFilter<"CandidateResponsePack"> | string | null
+    meetingIds?: StringNullableListFilter<"CandidateResponsePack">
+    emailEvidenceIds?: StringNullableListFilter<"CandidateResponsePack">
+    auditChainRootId?: StringNullableFilter<"CandidateResponsePack"> | string | null
+    exportManifestSha?: StringNullableFilter<"CandidateResponsePack"> | string | null
+    approvedAt?: DateTimeNullableFilter<"CandidateResponsePack"> | Date | string | null
+    approvedByUserId?: StringNullableFilter<"CandidateResponsePack"> | string | null
+    createdAt?: DateTimeFilter<"CandidateResponsePack"> | Date | string
+    updatedAt?: DateTimeFilter<"CandidateResponsePack"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"CandidateResponsePack"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+  }, "id">
+
+  export type CandidateResponsePackOrderByWithAggregationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    requestText?: SortOrder
+    interpretedScope?: SortOrder
+    confirmedScope?: SortOrderInput | SortOrder
+    confirmedAt?: SortOrderInput | SortOrder
+    confirmedByUserId?: SortOrderInput | SortOrder
+    status?: SortOrder
+    coverageStatement?: SortOrderInput | SortOrder
+    retrievalBasis?: SortOrderInput | SortOrder
+    meetingIds?: SortOrder
+    emailEvidenceIds?: SortOrder
+    auditChainRootId?: SortOrderInput | SortOrder
+    exportManifestSha?: SortOrderInput | SortOrder
+    approvedAt?: SortOrderInput | SortOrder
+    approvedByUserId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    _count?: CandidateResponsePackCountOrderByAggregateInput
+    _max?: CandidateResponsePackMaxOrderByAggregateInput
+    _min?: CandidateResponsePackMinOrderByAggregateInput
+  }
+
+  export type CandidateResponsePackScalarWhereWithAggregatesInput = {
+    AND?: CandidateResponsePackScalarWhereWithAggregatesInput | CandidateResponsePackScalarWhereWithAggregatesInput[]
+    OR?: CandidateResponsePackScalarWhereWithAggregatesInput[]
+    NOT?: CandidateResponsePackScalarWhereWithAggregatesInput | CandidateResponsePackScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"CandidateResponsePack"> | string
+    workspaceId?: StringWithAggregatesFilter<"CandidateResponsePack"> | string
+    requestText?: StringWithAggregatesFilter<"CandidateResponsePack"> | string
+    interpretedScope?: JsonWithAggregatesFilter<"CandidateResponsePack">
+    confirmedScope?: JsonNullableWithAggregatesFilter<"CandidateResponsePack">
+    confirmedAt?: DateTimeNullableWithAggregatesFilter<"CandidateResponsePack"> | Date | string | null
+    confirmedByUserId?: StringNullableWithAggregatesFilter<"CandidateResponsePack"> | string | null
+    status?: EnumCandidatePackStatusWithAggregatesFilter<"CandidateResponsePack"> | $Enums.CandidatePackStatus
+    coverageStatement?: JsonNullableWithAggregatesFilter<"CandidateResponsePack">
+    retrievalBasis?: StringNullableWithAggregatesFilter<"CandidateResponsePack"> | string | null
+    meetingIds?: StringNullableListFilter<"CandidateResponsePack">
+    emailEvidenceIds?: StringNullableListFilter<"CandidateResponsePack">
+    auditChainRootId?: StringNullableWithAggregatesFilter<"CandidateResponsePack"> | string | null
+    exportManifestSha?: StringNullableWithAggregatesFilter<"CandidateResponsePack"> | string | null
+    approvedAt?: DateTimeNullableWithAggregatesFilter<"CandidateResponsePack"> | Date | string | null
+    approvedByUserId?: StringNullableWithAggregatesFilter<"CandidateResponsePack"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"CandidateResponsePack"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"CandidateResponsePack"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"CandidateResponsePack"> | Date | string | null
+  }
+
+  export type IndexCoverageManifestWhereInput = {
+    AND?: IndexCoverageManifestWhereInput | IndexCoverageManifestWhereInput[]
+    OR?: IndexCoverageManifestWhereInput[]
+    NOT?: IndexCoverageManifestWhereInput | IndexCoverageManifestWhereInput[]
+    id?: StringFilter<"IndexCoverageManifest"> | string
+    workspaceId?: StringFilter<"IndexCoverageManifest"> | string
+    sources?: JsonFilter<"IndexCoverageManifest">
+    gapPeriods?: JsonFilter<"IndexCoverageManifest">
+    unindexedSources?: JsonFilter<"IndexCoverageManifest">
+    lastIndexedAt?: DateTimeNullableFilter<"IndexCoverageManifest"> | Date | string | null
+    createdAt?: DateTimeFilter<"IndexCoverageManifest"> | Date | string
+    updatedAt?: DateTimeFilter<"IndexCoverageManifest"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"IndexCoverageManifest"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+  }
+
+  export type IndexCoverageManifestOrderByWithRelationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    sources?: SortOrder
+    gapPeriods?: SortOrder
+    unindexedSources?: SortOrder
+    lastIndexedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    workspace?: WorkspaceOrderByWithRelationInput
+  }
+
+  export type IndexCoverageManifestWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    workspaceId?: string
+    AND?: IndexCoverageManifestWhereInput | IndexCoverageManifestWhereInput[]
+    OR?: IndexCoverageManifestWhereInput[]
+    NOT?: IndexCoverageManifestWhereInput | IndexCoverageManifestWhereInput[]
+    sources?: JsonFilter<"IndexCoverageManifest">
+    gapPeriods?: JsonFilter<"IndexCoverageManifest">
+    unindexedSources?: JsonFilter<"IndexCoverageManifest">
+    lastIndexedAt?: DateTimeNullableFilter<"IndexCoverageManifest"> | Date | string | null
+    createdAt?: DateTimeFilter<"IndexCoverageManifest"> | Date | string
+    updatedAt?: DateTimeFilter<"IndexCoverageManifest"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"IndexCoverageManifest"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+  }, "id" | "workspaceId">
+
+  export type IndexCoverageManifestOrderByWithAggregationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    sources?: SortOrder
+    gapPeriods?: SortOrder
+    unindexedSources?: SortOrder
+    lastIndexedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    _count?: IndexCoverageManifestCountOrderByAggregateInput
+    _max?: IndexCoverageManifestMaxOrderByAggregateInput
+    _min?: IndexCoverageManifestMinOrderByAggregateInput
+  }
+
+  export type IndexCoverageManifestScalarWhereWithAggregatesInput = {
+    AND?: IndexCoverageManifestScalarWhereWithAggregatesInput | IndexCoverageManifestScalarWhereWithAggregatesInput[]
+    OR?: IndexCoverageManifestScalarWhereWithAggregatesInput[]
+    NOT?: IndexCoverageManifestScalarWhereWithAggregatesInput | IndexCoverageManifestScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"IndexCoverageManifest"> | string
+    workspaceId?: StringWithAggregatesFilter<"IndexCoverageManifest"> | string
+    sources?: JsonWithAggregatesFilter<"IndexCoverageManifest">
+    gapPeriods?: JsonWithAggregatesFilter<"IndexCoverageManifest">
+    unindexedSources?: JsonWithAggregatesFilter<"IndexCoverageManifest">
+    lastIndexedAt?: DateTimeNullableWithAggregatesFilter<"IndexCoverageManifest"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"IndexCoverageManifest"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"IndexCoverageManifest"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"IndexCoverageManifest"> | Date | string | null
   }
 
   export type ParkedIngestWhereInput = {
@@ -59177,6 +62028,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateInput = {
@@ -59227,6 +62080,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUpdateInput = {
@@ -59277,6 +62132,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateInput = {
@@ -59327,6 +62184,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateManyInput = {
@@ -59411,6 +62270,242 @@ export namespace Prisma {
     currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
     onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CandidateResponsePackCreateInput = {
+    id?: string
+    requestText: string
+    interpretedScope: JsonNullValueInput | InputJsonValue
+    confirmedScope?: NullableJsonNullValueInput | InputJsonValue
+    confirmedAt?: Date | string | null
+    confirmedByUserId?: string | null
+    status?: $Enums.CandidatePackStatus
+    coverageStatement?: NullableJsonNullValueInput | InputJsonValue
+    retrievalBasis?: string | null
+    meetingIds?: CandidateResponsePackCreatemeetingIdsInput | string[]
+    emailEvidenceIds?: CandidateResponsePackCreateemailEvidenceIdsInput | string[]
+    auditChainRootId?: string | null
+    exportManifestSha?: string | null
+    approvedAt?: Date | string | null
+    approvedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutCandidateResponsePacksInput
+  }
+
+  export type CandidateResponsePackUncheckedCreateInput = {
+    id?: string
+    workspaceId: string
+    requestText: string
+    interpretedScope: JsonNullValueInput | InputJsonValue
+    confirmedScope?: NullableJsonNullValueInput | InputJsonValue
+    confirmedAt?: Date | string | null
+    confirmedByUserId?: string | null
+    status?: $Enums.CandidatePackStatus
+    coverageStatement?: NullableJsonNullValueInput | InputJsonValue
+    retrievalBasis?: string | null
+    meetingIds?: CandidateResponsePackCreatemeetingIdsInput | string[]
+    emailEvidenceIds?: CandidateResponsePackCreateemailEvidenceIdsInput | string[]
+    auditChainRootId?: string | null
+    exportManifestSha?: string | null
+    approvedAt?: Date | string | null
+    approvedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type CandidateResponsePackUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requestText?: StringFieldUpdateOperationsInput | string
+    interpretedScope?: JsonNullValueInput | InputJsonValue
+    confirmedScope?: NullableJsonNullValueInput | InputJsonValue
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCandidatePackStatusFieldUpdateOperationsInput | $Enums.CandidatePackStatus
+    coverageStatement?: NullableJsonNullValueInput | InputJsonValue
+    retrievalBasis?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingIds?: CandidateResponsePackUpdatemeetingIdsInput | string[]
+    emailEvidenceIds?: CandidateResponsePackUpdateemailEvidenceIdsInput | string[]
+    auditChainRootId?: NullableStringFieldUpdateOperationsInput | string | null
+    exportManifestSha?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutCandidateResponsePacksNestedInput
+  }
+
+  export type CandidateResponsePackUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    requestText?: StringFieldUpdateOperationsInput | string
+    interpretedScope?: JsonNullValueInput | InputJsonValue
+    confirmedScope?: NullableJsonNullValueInput | InputJsonValue
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCandidatePackStatusFieldUpdateOperationsInput | $Enums.CandidatePackStatus
+    coverageStatement?: NullableJsonNullValueInput | InputJsonValue
+    retrievalBasis?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingIds?: CandidateResponsePackUpdatemeetingIdsInput | string[]
+    emailEvidenceIds?: CandidateResponsePackUpdateemailEvidenceIdsInput | string[]
+    auditChainRootId?: NullableStringFieldUpdateOperationsInput | string | null
+    exportManifestSha?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CandidateResponsePackCreateManyInput = {
+    id?: string
+    workspaceId: string
+    requestText: string
+    interpretedScope: JsonNullValueInput | InputJsonValue
+    confirmedScope?: NullableJsonNullValueInput | InputJsonValue
+    confirmedAt?: Date | string | null
+    confirmedByUserId?: string | null
+    status?: $Enums.CandidatePackStatus
+    coverageStatement?: NullableJsonNullValueInput | InputJsonValue
+    retrievalBasis?: string | null
+    meetingIds?: CandidateResponsePackCreatemeetingIdsInput | string[]
+    emailEvidenceIds?: CandidateResponsePackCreateemailEvidenceIdsInput | string[]
+    auditChainRootId?: string | null
+    exportManifestSha?: string | null
+    approvedAt?: Date | string | null
+    approvedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type CandidateResponsePackUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requestText?: StringFieldUpdateOperationsInput | string
+    interpretedScope?: JsonNullValueInput | InputJsonValue
+    confirmedScope?: NullableJsonNullValueInput | InputJsonValue
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCandidatePackStatusFieldUpdateOperationsInput | $Enums.CandidatePackStatus
+    coverageStatement?: NullableJsonNullValueInput | InputJsonValue
+    retrievalBasis?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingIds?: CandidateResponsePackUpdatemeetingIdsInput | string[]
+    emailEvidenceIds?: CandidateResponsePackUpdateemailEvidenceIdsInput | string[]
+    auditChainRootId?: NullableStringFieldUpdateOperationsInput | string | null
+    exportManifestSha?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CandidateResponsePackUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    requestText?: StringFieldUpdateOperationsInput | string
+    interpretedScope?: JsonNullValueInput | InputJsonValue
+    confirmedScope?: NullableJsonNullValueInput | InputJsonValue
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCandidatePackStatusFieldUpdateOperationsInput | $Enums.CandidatePackStatus
+    coverageStatement?: NullableJsonNullValueInput | InputJsonValue
+    retrievalBasis?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingIds?: CandidateResponsePackUpdatemeetingIdsInput | string[]
+    emailEvidenceIds?: CandidateResponsePackUpdateemailEvidenceIdsInput | string[]
+    auditChainRootId?: NullableStringFieldUpdateOperationsInput | string | null
+    exportManifestSha?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type IndexCoverageManifestCreateInput = {
+    id?: string
+    sources: JsonNullValueInput | InputJsonValue
+    gapPeriods: JsonNullValueInput | InputJsonValue
+    unindexedSources: JsonNullValueInput | InputJsonValue
+    lastIndexedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutIndexCoverageManifestsInput
+  }
+
+  export type IndexCoverageManifestUncheckedCreateInput = {
+    id?: string
+    workspaceId: string
+    sources: JsonNullValueInput | InputJsonValue
+    gapPeriods: JsonNullValueInput | InputJsonValue
+    unindexedSources: JsonNullValueInput | InputJsonValue
+    lastIndexedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type IndexCoverageManifestUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sources?: JsonNullValueInput | InputJsonValue
+    gapPeriods?: JsonNullValueInput | InputJsonValue
+    unindexedSources?: JsonNullValueInput | InputJsonValue
+    lastIndexedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutIndexCoverageManifestsNestedInput
+  }
+
+  export type IndexCoverageManifestUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    sources?: JsonNullValueInput | InputJsonValue
+    gapPeriods?: JsonNullValueInput | InputJsonValue
+    unindexedSources?: JsonNullValueInput | InputJsonValue
+    lastIndexedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type IndexCoverageManifestCreateManyInput = {
+    id?: string
+    workspaceId: string
+    sources: JsonNullValueInput | InputJsonValue
+    gapPeriods: JsonNullValueInput | InputJsonValue
+    unindexedSources: JsonNullValueInput | InputJsonValue
+    lastIndexedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type IndexCoverageManifestUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sources?: JsonNullValueInput | InputJsonValue
+    gapPeriods?: JsonNullValueInput | InputJsonValue
+    unindexedSources?: JsonNullValueInput | InputJsonValue
+    lastIndexedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type IndexCoverageManifestUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    sources?: JsonNullValueInput | InputJsonValue
+    gapPeriods?: JsonNullValueInput | InputJsonValue
+    unindexedSources?: JsonNullValueInput | InputJsonValue
+    lastIndexedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ParkedIngestCreateInput = {
@@ -63592,6 +66687,18 @@ export namespace Prisma {
     none?: RecordSealWhereInput
   }
 
+  export type CandidateResponsePackListRelationFilter = {
+    every?: CandidateResponsePackWhereInput
+    some?: CandidateResponsePackWhereInput
+    none?: CandidateResponsePackWhereInput
+  }
+
+  export type IndexCoverageManifestListRelationFilter = {
+    every?: IndexCoverageManifestWhereInput
+    some?: IndexCoverageManifestWhereInput
+    none?: IndexCoverageManifestWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -63678,6 +66785,14 @@ export namespace Prisma {
   }
 
   export type RecordSealOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CandidateResponsePackOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type IndexCoverageManifestOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -63925,17 +67040,203 @@ export namespace Prisma {
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type EnumCandidatePackStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CandidatePackStatus | EnumCandidatePackStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CandidatePackStatus[] | ListEnumCandidatePackStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CandidatePackStatus[] | ListEnumCandidatePackStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCandidatePackStatusFilter<$PrismaModel> | $Enums.CandidatePackStatus
+  }
+
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type WorkspaceScalarRelationFilter = {
+    is?: WorkspaceWhereInput
+    isNot?: WorkspaceWhereInput
+  }
+
+  export type CandidateResponsePackCountOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    requestText?: SortOrder
+    interpretedScope?: SortOrder
+    confirmedScope?: SortOrder
+    confirmedAt?: SortOrder
+    confirmedByUserId?: SortOrder
+    status?: SortOrder
+    coverageStatement?: SortOrder
+    retrievalBasis?: SortOrder
+    meetingIds?: SortOrder
+    emailEvidenceIds?: SortOrder
+    auditChainRootId?: SortOrder
+    exportManifestSha?: SortOrder
+    approvedAt?: SortOrder
+    approvedByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type CandidateResponsePackMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    requestText?: SortOrder
+    confirmedAt?: SortOrder
+    confirmedByUserId?: SortOrder
+    status?: SortOrder
+    retrievalBasis?: SortOrder
+    auditChainRootId?: SortOrder
+    exportManifestSha?: SortOrder
+    approvedAt?: SortOrder
+    approvedByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type CandidateResponsePackMinOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    requestText?: SortOrder
+    confirmedAt?: SortOrder
+    confirmedByUserId?: SortOrder
+    status?: SortOrder
+    retrievalBasis?: SortOrder
+    auditChainRootId?: SortOrder
+    exportManifestSha?: SortOrder
+    approvedAt?: SortOrder
+    approvedByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+  export type JsonWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type EnumCandidatePackStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CandidatePackStatus | EnumCandidatePackStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CandidatePackStatus[] | ListEnumCandidatePackStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CandidatePackStatus[] | ListEnumCandidatePackStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCandidatePackStatusWithAggregatesFilter<$PrismaModel> | $Enums.CandidatePackStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCandidatePackStatusFilter<$PrismaModel>
+    _max?: NestedEnumCandidatePackStatusFilter<$PrismaModel>
+  }
+
+  export type IndexCoverageManifestCountOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    sources?: SortOrder
+    gapPeriods?: SortOrder
+    unindexedSources?: SortOrder
+    lastIndexedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type IndexCoverageManifestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    lastIndexedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type IndexCoverageManifestMinOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    lastIndexedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
 
   export type EnumParkedIngestStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.ParkedIngestStatus | EnumParkedIngestStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ParkedIngestStatus[] | ListEnumParkedIngestStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.ParkedIngestStatus[] | ListEnumParkedIngestStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumParkedIngestStatusFilter<$PrismaModel> | $Enums.ParkedIngestStatus
-  }
-
-  export type WorkspaceScalarRelationFilter = {
-    is?: WorkspaceWhereInput
-    isNot?: WorkspaceWhereInput
   }
 
   export type ParkedIngestWorkspaceIdSourceExternalRefCompoundUniqueInput = {
@@ -63991,32 +67292,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
-  }
-  export type JsonWithAggregatesFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedJsonFilter<$PrismaModel>
-    _max?: NestedJsonFilter<$PrismaModel>
   }
 
   export type EnumParkedIngestStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -64095,14 +67370,6 @@ export namespace Prisma {
     not?: NestedEnumMeetingClientMatchConfidenceNullableFilter<$PrismaModel> | $Enums.MeetingClientMatchConfidence | null
   }
 
-  export type StringNullableListFilter<$PrismaModel = never> = {
-    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    has?: string | StringFieldRefInput<$PrismaModel> | null
-    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
-    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
-    isEmpty?: boolean
-  }
-
   export type EnumMeetingStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.MeetingStatus | EnumMeetingStatusFieldRefInput<$PrismaModel>
     in?: $Enums.MeetingStatus[] | ListEnumMeetingStatusFieldRefInput<$PrismaModel>
@@ -64119,29 +67386,6 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-  export type JsonNullableFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type EnumFinalizeReasonNullableFilter<$PrismaModel = never> = {
@@ -64366,32 +67610,6 @@ export namespace Prisma {
     _sum?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedIntNullableFilter<$PrismaModel>
     _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedJsonNullableFilter<$PrismaModel>
-    _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
   export type EnumFinalizeReasonNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -66920,6 +70138,20 @@ export namespace Prisma {
     connect?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
   }
 
+  export type CandidateResponsePackCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<CandidateResponsePackCreateWithoutWorkspaceInput, CandidateResponsePackUncheckedCreateWithoutWorkspaceInput> | CandidateResponsePackCreateWithoutWorkspaceInput[] | CandidateResponsePackUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: CandidateResponsePackCreateOrConnectWithoutWorkspaceInput | CandidateResponsePackCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: CandidateResponsePackCreateManyWorkspaceInputEnvelope
+    connect?: CandidateResponsePackWhereUniqueInput | CandidateResponsePackWhereUniqueInput[]
+  }
+
+  export type IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<IndexCoverageManifestCreateWithoutWorkspaceInput, IndexCoverageManifestUncheckedCreateWithoutWorkspaceInput> | IndexCoverageManifestCreateWithoutWorkspaceInput[] | IndexCoverageManifestUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: IndexCoverageManifestCreateOrConnectWithoutWorkspaceInput | IndexCoverageManifestCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: IndexCoverageManifestCreateManyWorkspaceInputEnvelope
+    connect?: IndexCoverageManifestWhereUniqueInput | IndexCoverageManifestWhereUniqueInput[]
+  }
+
   export type UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput = {
     create?: XOR<UserWorkspaceCreateWithoutWorkspaceInput, UserWorkspaceUncheckedCreateWithoutWorkspaceInput> | UserWorkspaceCreateWithoutWorkspaceInput[] | UserWorkspaceUncheckedCreateWithoutWorkspaceInput[]
     connectOrCreate?: UserWorkspaceCreateOrConnectWithoutWorkspaceInput | UserWorkspaceCreateOrConnectWithoutWorkspaceInput[]
@@ -67068,6 +70300,20 @@ export namespace Prisma {
     connectOrCreate?: RecordSealCreateOrConnectWithoutWorkspaceInput | RecordSealCreateOrConnectWithoutWorkspaceInput[]
     createMany?: RecordSealCreateManyWorkspaceInputEnvelope
     connect?: RecordSealWhereUniqueInput | RecordSealWhereUniqueInput[]
+  }
+
+  export type CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<CandidateResponsePackCreateWithoutWorkspaceInput, CandidateResponsePackUncheckedCreateWithoutWorkspaceInput> | CandidateResponsePackCreateWithoutWorkspaceInput[] | CandidateResponsePackUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: CandidateResponsePackCreateOrConnectWithoutWorkspaceInput | CandidateResponsePackCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: CandidateResponsePackCreateManyWorkspaceInputEnvelope
+    connect?: CandidateResponsePackWhereUniqueInput | CandidateResponsePackWhereUniqueInput[]
+  }
+
+  export type IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<IndexCoverageManifestCreateWithoutWorkspaceInput, IndexCoverageManifestUncheckedCreateWithoutWorkspaceInput> | IndexCoverageManifestCreateWithoutWorkspaceInput[] | IndexCoverageManifestUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: IndexCoverageManifestCreateOrConnectWithoutWorkspaceInput | IndexCoverageManifestCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: IndexCoverageManifestCreateManyWorkspaceInputEnvelope
+    connect?: IndexCoverageManifestWhereUniqueInput | IndexCoverageManifestWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -67414,6 +70660,34 @@ export namespace Prisma {
     deleteMany?: RecordSealScalarWhereInput | RecordSealScalarWhereInput[]
   }
 
+  export type CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<CandidateResponsePackCreateWithoutWorkspaceInput, CandidateResponsePackUncheckedCreateWithoutWorkspaceInput> | CandidateResponsePackCreateWithoutWorkspaceInput[] | CandidateResponsePackUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: CandidateResponsePackCreateOrConnectWithoutWorkspaceInput | CandidateResponsePackCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: CandidateResponsePackUpsertWithWhereUniqueWithoutWorkspaceInput | CandidateResponsePackUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: CandidateResponsePackCreateManyWorkspaceInputEnvelope
+    set?: CandidateResponsePackWhereUniqueInput | CandidateResponsePackWhereUniqueInput[]
+    disconnect?: CandidateResponsePackWhereUniqueInput | CandidateResponsePackWhereUniqueInput[]
+    delete?: CandidateResponsePackWhereUniqueInput | CandidateResponsePackWhereUniqueInput[]
+    connect?: CandidateResponsePackWhereUniqueInput | CandidateResponsePackWhereUniqueInput[]
+    update?: CandidateResponsePackUpdateWithWhereUniqueWithoutWorkspaceInput | CandidateResponsePackUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: CandidateResponsePackUpdateManyWithWhereWithoutWorkspaceInput | CandidateResponsePackUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: CandidateResponsePackScalarWhereInput | CandidateResponsePackScalarWhereInput[]
+  }
+
+  export type IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<IndexCoverageManifestCreateWithoutWorkspaceInput, IndexCoverageManifestUncheckedCreateWithoutWorkspaceInput> | IndexCoverageManifestCreateWithoutWorkspaceInput[] | IndexCoverageManifestUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: IndexCoverageManifestCreateOrConnectWithoutWorkspaceInput | IndexCoverageManifestCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: IndexCoverageManifestUpsertWithWhereUniqueWithoutWorkspaceInput | IndexCoverageManifestUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: IndexCoverageManifestCreateManyWorkspaceInputEnvelope
+    set?: IndexCoverageManifestWhereUniqueInput | IndexCoverageManifestWhereUniqueInput[]
+    disconnect?: IndexCoverageManifestWhereUniqueInput | IndexCoverageManifestWhereUniqueInput[]
+    delete?: IndexCoverageManifestWhereUniqueInput | IndexCoverageManifestWhereUniqueInput[]
+    connect?: IndexCoverageManifestWhereUniqueInput | IndexCoverageManifestWhereUniqueInput[]
+    update?: IndexCoverageManifestUpdateWithWhereUniqueWithoutWorkspaceInput | IndexCoverageManifestUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: IndexCoverageManifestUpdateManyWithWhereWithoutWorkspaceInput | IndexCoverageManifestUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: IndexCoverageManifestScalarWhereInput | IndexCoverageManifestScalarWhereInput[]
+  }
+
   export type UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput = {
     create?: XOR<UserWorkspaceCreateWithoutWorkspaceInput, UserWorkspaceUncheckedCreateWithoutWorkspaceInput> | UserWorkspaceCreateWithoutWorkspaceInput[] | UserWorkspaceUncheckedCreateWithoutWorkspaceInput[]
     connectOrCreate?: UserWorkspaceCreateOrConnectWithoutWorkspaceInput | UserWorkspaceCreateOrConnectWithoutWorkspaceInput[]
@@ -67712,6 +70986,84 @@ export namespace Prisma {
     update?: RecordSealUpdateWithWhereUniqueWithoutWorkspaceInput | RecordSealUpdateWithWhereUniqueWithoutWorkspaceInput[]
     updateMany?: RecordSealUpdateManyWithWhereWithoutWorkspaceInput | RecordSealUpdateManyWithWhereWithoutWorkspaceInput[]
     deleteMany?: RecordSealScalarWhereInput | RecordSealScalarWhereInput[]
+  }
+
+  export type CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<CandidateResponsePackCreateWithoutWorkspaceInput, CandidateResponsePackUncheckedCreateWithoutWorkspaceInput> | CandidateResponsePackCreateWithoutWorkspaceInput[] | CandidateResponsePackUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: CandidateResponsePackCreateOrConnectWithoutWorkspaceInput | CandidateResponsePackCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: CandidateResponsePackUpsertWithWhereUniqueWithoutWorkspaceInput | CandidateResponsePackUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: CandidateResponsePackCreateManyWorkspaceInputEnvelope
+    set?: CandidateResponsePackWhereUniqueInput | CandidateResponsePackWhereUniqueInput[]
+    disconnect?: CandidateResponsePackWhereUniqueInput | CandidateResponsePackWhereUniqueInput[]
+    delete?: CandidateResponsePackWhereUniqueInput | CandidateResponsePackWhereUniqueInput[]
+    connect?: CandidateResponsePackWhereUniqueInput | CandidateResponsePackWhereUniqueInput[]
+    update?: CandidateResponsePackUpdateWithWhereUniqueWithoutWorkspaceInput | CandidateResponsePackUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: CandidateResponsePackUpdateManyWithWhereWithoutWorkspaceInput | CandidateResponsePackUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: CandidateResponsePackScalarWhereInput | CandidateResponsePackScalarWhereInput[]
+  }
+
+  export type IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<IndexCoverageManifestCreateWithoutWorkspaceInput, IndexCoverageManifestUncheckedCreateWithoutWorkspaceInput> | IndexCoverageManifestCreateWithoutWorkspaceInput[] | IndexCoverageManifestUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: IndexCoverageManifestCreateOrConnectWithoutWorkspaceInput | IndexCoverageManifestCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: IndexCoverageManifestUpsertWithWhereUniqueWithoutWorkspaceInput | IndexCoverageManifestUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: IndexCoverageManifestCreateManyWorkspaceInputEnvelope
+    set?: IndexCoverageManifestWhereUniqueInput | IndexCoverageManifestWhereUniqueInput[]
+    disconnect?: IndexCoverageManifestWhereUniqueInput | IndexCoverageManifestWhereUniqueInput[]
+    delete?: IndexCoverageManifestWhereUniqueInput | IndexCoverageManifestWhereUniqueInput[]
+    connect?: IndexCoverageManifestWhereUniqueInput | IndexCoverageManifestWhereUniqueInput[]
+    update?: IndexCoverageManifestUpdateWithWhereUniqueWithoutWorkspaceInput | IndexCoverageManifestUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: IndexCoverageManifestUpdateManyWithWhereWithoutWorkspaceInput | IndexCoverageManifestUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: IndexCoverageManifestScalarWhereInput | IndexCoverageManifestScalarWhereInput[]
+  }
+
+  export type CandidateResponsePackCreatemeetingIdsInput = {
+    set: string[]
+  }
+
+  export type CandidateResponsePackCreateemailEvidenceIdsInput = {
+    set: string[]
+  }
+
+  export type WorkspaceCreateNestedOneWithoutCandidateResponsePacksInput = {
+    create?: XOR<WorkspaceCreateWithoutCandidateResponsePacksInput, WorkspaceUncheckedCreateWithoutCandidateResponsePacksInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutCandidateResponsePacksInput
+    connect?: WorkspaceWhereUniqueInput
+  }
+
+  export type EnumCandidatePackStatusFieldUpdateOperationsInput = {
+    set?: $Enums.CandidatePackStatus
+  }
+
+  export type CandidateResponsePackUpdatemeetingIdsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type CandidateResponsePackUpdateemailEvidenceIdsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type WorkspaceUpdateOneRequiredWithoutCandidateResponsePacksNestedInput = {
+    create?: XOR<WorkspaceCreateWithoutCandidateResponsePacksInput, WorkspaceUncheckedCreateWithoutCandidateResponsePacksInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutCandidateResponsePacksInput
+    upsert?: WorkspaceUpsertWithoutCandidateResponsePacksInput
+    connect?: WorkspaceWhereUniqueInput
+    update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutCandidateResponsePacksInput, WorkspaceUpdateWithoutCandidateResponsePacksInput>, WorkspaceUncheckedUpdateWithoutCandidateResponsePacksInput>
+  }
+
+  export type WorkspaceCreateNestedOneWithoutIndexCoverageManifestsInput = {
+    create?: XOR<WorkspaceCreateWithoutIndexCoverageManifestsInput, WorkspaceUncheckedCreateWithoutIndexCoverageManifestsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutIndexCoverageManifestsInput
+    connect?: WorkspaceWhereUniqueInput
+  }
+
+  export type WorkspaceUpdateOneRequiredWithoutIndexCoverageManifestsNestedInput = {
+    create?: XOR<WorkspaceCreateWithoutIndexCoverageManifestsInput, WorkspaceUncheckedCreateWithoutIndexCoverageManifestsInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutIndexCoverageManifestsInput
+    upsert?: WorkspaceUpsertWithoutIndexCoverageManifestsInput
+    connect?: WorkspaceWhereUniqueInput
+    update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutIndexCoverageManifestsInput, WorkspaceUpdateWithoutIndexCoverageManifestsInput>, WorkspaceUncheckedUpdateWithoutIndexCoverageManifestsInput>
   }
 
   export type WorkspaceCreateNestedOneWithoutParkedIngestsInput = {
@@ -70682,11 +74034,11 @@ export namespace Prisma {
     _max?: NestedEnumBillingCurrencyFilter<$PrismaModel>
   }
 
-  export type NestedEnumParkedIngestStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.ParkedIngestStatus | EnumParkedIngestStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ParkedIngestStatus[] | ListEnumParkedIngestStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ParkedIngestStatus[] | ListEnumParkedIngestStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumParkedIngestStatusFilter<$PrismaModel> | $Enums.ParkedIngestStatus
+  export type NestedEnumCandidatePackStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CandidatePackStatus | EnumCandidatePackStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CandidatePackStatus[] | ListEnumCandidatePackStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CandidatePackStatus[] | ListEnumCandidatePackStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCandidatePackStatusFilter<$PrismaModel> | $Enums.CandidatePackStatus
   }
   export type NestedJsonFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -70710,6 +74062,46 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedEnumCandidatePackStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CandidatePackStatus | EnumCandidatePackStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CandidatePackStatus[] | ListEnumCandidatePackStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CandidatePackStatus[] | ListEnumCandidatePackStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCandidatePackStatusWithAggregatesFilter<$PrismaModel> | $Enums.CandidatePackStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCandidatePackStatusFilter<$PrismaModel>
+    _max?: NestedEnumCandidatePackStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumParkedIngestStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ParkedIngestStatus | EnumParkedIngestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ParkedIngestStatus[] | ListEnumParkedIngestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ParkedIngestStatus[] | ListEnumParkedIngestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumParkedIngestStatusFilter<$PrismaModel> | $Enums.ParkedIngestStatus
   }
 
   export type NestedEnumParkedIngestStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -70805,29 +74197,6 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-  export type NestedJsonNullableFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<NestedJsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
-
-  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type NestedEnumFinalizeReasonNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -72373,6 +75742,90 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CandidateResponsePackCreateWithoutWorkspaceInput = {
+    id?: string
+    requestText: string
+    interpretedScope: JsonNullValueInput | InputJsonValue
+    confirmedScope?: NullableJsonNullValueInput | InputJsonValue
+    confirmedAt?: Date | string | null
+    confirmedByUserId?: string | null
+    status?: $Enums.CandidatePackStatus
+    coverageStatement?: NullableJsonNullValueInput | InputJsonValue
+    retrievalBasis?: string | null
+    meetingIds?: CandidateResponsePackCreatemeetingIdsInput | string[]
+    emailEvidenceIds?: CandidateResponsePackCreateemailEvidenceIdsInput | string[]
+    auditChainRootId?: string | null
+    exportManifestSha?: string | null
+    approvedAt?: Date | string | null
+    approvedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type CandidateResponsePackUncheckedCreateWithoutWorkspaceInput = {
+    id?: string
+    requestText: string
+    interpretedScope: JsonNullValueInput | InputJsonValue
+    confirmedScope?: NullableJsonNullValueInput | InputJsonValue
+    confirmedAt?: Date | string | null
+    confirmedByUserId?: string | null
+    status?: $Enums.CandidatePackStatus
+    coverageStatement?: NullableJsonNullValueInput | InputJsonValue
+    retrievalBasis?: string | null
+    meetingIds?: CandidateResponsePackCreatemeetingIdsInput | string[]
+    emailEvidenceIds?: CandidateResponsePackCreateemailEvidenceIdsInput | string[]
+    auditChainRootId?: string | null
+    exportManifestSha?: string | null
+    approvedAt?: Date | string | null
+    approvedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type CandidateResponsePackCreateOrConnectWithoutWorkspaceInput = {
+    where: CandidateResponsePackWhereUniqueInput
+    create: XOR<CandidateResponsePackCreateWithoutWorkspaceInput, CandidateResponsePackUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type CandidateResponsePackCreateManyWorkspaceInputEnvelope = {
+    data: CandidateResponsePackCreateManyWorkspaceInput | CandidateResponsePackCreateManyWorkspaceInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type IndexCoverageManifestCreateWithoutWorkspaceInput = {
+    id?: string
+    sources: JsonNullValueInput | InputJsonValue
+    gapPeriods: JsonNullValueInput | InputJsonValue
+    unindexedSources: JsonNullValueInput | InputJsonValue
+    lastIndexedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type IndexCoverageManifestUncheckedCreateWithoutWorkspaceInput = {
+    id?: string
+    sources: JsonNullValueInput | InputJsonValue
+    gapPeriods: JsonNullValueInput | InputJsonValue
+    unindexedSources: JsonNullValueInput | InputJsonValue
+    lastIndexedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type IndexCoverageManifestCreateOrConnectWithoutWorkspaceInput = {
+    where: IndexCoverageManifestWhereUniqueInput
+    create: XOR<IndexCoverageManifestCreateWithoutWorkspaceInput, IndexCoverageManifestUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type IndexCoverageManifestCreateManyWorkspaceInputEnvelope = {
+    data: IndexCoverageManifestCreateManyWorkspaceInput | IndexCoverageManifestCreateManyWorkspaceInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserWorkspaceUpsertWithWhereUniqueWithoutWorkspaceInput = {
     where: UserWorkspaceWhereUniqueInput
     update: XOR<UserWorkspaceUpdateWithoutWorkspaceInput, UserWorkspaceUncheckedUpdateWithoutWorkspaceInput>
@@ -73162,6 +76615,518 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"RecordSeal"> | Date | string | null
   }
 
+  export type CandidateResponsePackUpsertWithWhereUniqueWithoutWorkspaceInput = {
+    where: CandidateResponsePackWhereUniqueInput
+    update: XOR<CandidateResponsePackUpdateWithoutWorkspaceInput, CandidateResponsePackUncheckedUpdateWithoutWorkspaceInput>
+    create: XOR<CandidateResponsePackCreateWithoutWorkspaceInput, CandidateResponsePackUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type CandidateResponsePackUpdateWithWhereUniqueWithoutWorkspaceInput = {
+    where: CandidateResponsePackWhereUniqueInput
+    data: XOR<CandidateResponsePackUpdateWithoutWorkspaceInput, CandidateResponsePackUncheckedUpdateWithoutWorkspaceInput>
+  }
+
+  export type CandidateResponsePackUpdateManyWithWhereWithoutWorkspaceInput = {
+    where: CandidateResponsePackScalarWhereInput
+    data: XOR<CandidateResponsePackUpdateManyMutationInput, CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceInput>
+  }
+
+  export type CandidateResponsePackScalarWhereInput = {
+    AND?: CandidateResponsePackScalarWhereInput | CandidateResponsePackScalarWhereInput[]
+    OR?: CandidateResponsePackScalarWhereInput[]
+    NOT?: CandidateResponsePackScalarWhereInput | CandidateResponsePackScalarWhereInput[]
+    id?: StringFilter<"CandidateResponsePack"> | string
+    workspaceId?: StringFilter<"CandidateResponsePack"> | string
+    requestText?: StringFilter<"CandidateResponsePack"> | string
+    interpretedScope?: JsonFilter<"CandidateResponsePack">
+    confirmedScope?: JsonNullableFilter<"CandidateResponsePack">
+    confirmedAt?: DateTimeNullableFilter<"CandidateResponsePack"> | Date | string | null
+    confirmedByUserId?: StringNullableFilter<"CandidateResponsePack"> | string | null
+    status?: EnumCandidatePackStatusFilter<"CandidateResponsePack"> | $Enums.CandidatePackStatus
+    coverageStatement?: JsonNullableFilter<"CandidateResponsePack">
+    retrievalBasis?: StringNullableFilter<"CandidateResponsePack"> | string | null
+    meetingIds?: StringNullableListFilter<"CandidateResponsePack">
+    emailEvidenceIds?: StringNullableListFilter<"CandidateResponsePack">
+    auditChainRootId?: StringNullableFilter<"CandidateResponsePack"> | string | null
+    exportManifestSha?: StringNullableFilter<"CandidateResponsePack"> | string | null
+    approvedAt?: DateTimeNullableFilter<"CandidateResponsePack"> | Date | string | null
+    approvedByUserId?: StringNullableFilter<"CandidateResponsePack"> | string | null
+    createdAt?: DateTimeFilter<"CandidateResponsePack"> | Date | string
+    updatedAt?: DateTimeFilter<"CandidateResponsePack"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"CandidateResponsePack"> | Date | string | null
+  }
+
+  export type IndexCoverageManifestUpsertWithWhereUniqueWithoutWorkspaceInput = {
+    where: IndexCoverageManifestWhereUniqueInput
+    update: XOR<IndexCoverageManifestUpdateWithoutWorkspaceInput, IndexCoverageManifestUncheckedUpdateWithoutWorkspaceInput>
+    create: XOR<IndexCoverageManifestCreateWithoutWorkspaceInput, IndexCoverageManifestUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type IndexCoverageManifestUpdateWithWhereUniqueWithoutWorkspaceInput = {
+    where: IndexCoverageManifestWhereUniqueInput
+    data: XOR<IndexCoverageManifestUpdateWithoutWorkspaceInput, IndexCoverageManifestUncheckedUpdateWithoutWorkspaceInput>
+  }
+
+  export type IndexCoverageManifestUpdateManyWithWhereWithoutWorkspaceInput = {
+    where: IndexCoverageManifestScalarWhereInput
+    data: XOR<IndexCoverageManifestUpdateManyMutationInput, IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceInput>
+  }
+
+  export type IndexCoverageManifestScalarWhereInput = {
+    AND?: IndexCoverageManifestScalarWhereInput | IndexCoverageManifestScalarWhereInput[]
+    OR?: IndexCoverageManifestScalarWhereInput[]
+    NOT?: IndexCoverageManifestScalarWhereInput | IndexCoverageManifestScalarWhereInput[]
+    id?: StringFilter<"IndexCoverageManifest"> | string
+    workspaceId?: StringFilter<"IndexCoverageManifest"> | string
+    sources?: JsonFilter<"IndexCoverageManifest">
+    gapPeriods?: JsonFilter<"IndexCoverageManifest">
+    unindexedSources?: JsonFilter<"IndexCoverageManifest">
+    lastIndexedAt?: DateTimeNullableFilter<"IndexCoverageManifest"> | Date | string | null
+    createdAt?: DateTimeFilter<"IndexCoverageManifest"> | Date | string
+    updatedAt?: DateTimeFilter<"IndexCoverageManifest"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"IndexCoverageManifest"> | Date | string | null
+  }
+
+  export type WorkspaceCreateWithoutCandidateResponsePacksInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    fiscalYearEndMonth?: number
+    fiscalTimezone?: string
+    mediaPosture?: $Enums.MediaPosture | null
+    postureSetById?: string | null
+    postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    clientHouseholds?: ClientHouseholdCreateNestedManyWithoutWorkspaceInput
+    clientActivities?: ClientActivityCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
+    evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
+    parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceUncheckedCreateWithoutCandidateResponsePacksInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    fiscalYearEndMonth?: number
+    fiscalTimezone?: string
+    mediaPosture?: $Enums.MediaPosture | null
+    postureSetById?: string | null
+    postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    clientHouseholds?: ClientHouseholdUncheckedCreateNestedManyWithoutWorkspaceInput
+    clientActivities?: ClientActivityUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
+    parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceCreateOrConnectWithoutCandidateResponsePacksInput = {
+    where: WorkspaceWhereUniqueInput
+    create: XOR<WorkspaceCreateWithoutCandidateResponsePacksInput, WorkspaceUncheckedCreateWithoutCandidateResponsePacksInput>
+  }
+
+  export type WorkspaceUpsertWithoutCandidateResponsePacksInput = {
+    update: XOR<WorkspaceUpdateWithoutCandidateResponsePacksInput, WorkspaceUncheckedUpdateWithoutCandidateResponsePacksInput>
+    create: XOR<WorkspaceCreateWithoutCandidateResponsePacksInput, WorkspaceUncheckedCreateWithoutCandidateResponsePacksInput>
+    where?: WorkspaceWhereInput
+  }
+
+  export type WorkspaceUpdateToOneWithWhereWithoutCandidateResponsePacksInput = {
+    where?: WorkspaceWhereInput
+    data: XOR<WorkspaceUpdateWithoutCandidateResponsePacksInput, WorkspaceUncheckedUpdateWithoutCandidateResponsePacksInput>
+  }
+
+  export type WorkspaceUpdateWithoutCandidateResponsePacksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    fiscalYearEndMonth?: IntFieldUpdateOperationsInput | number
+    fiscalTimezone?: StringFieldUpdateOperationsInput | string
+    mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
+    postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
+    postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    clientHouseholds?: ClientHouseholdUpdateManyWithoutWorkspaceNestedInput
+    clientActivities?: ClientActivityUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
+    evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
+    parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type WorkspaceUncheckedUpdateWithoutCandidateResponsePacksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    fiscalYearEndMonth?: IntFieldUpdateOperationsInput | number
+    fiscalTimezone?: StringFieldUpdateOperationsInput | string
+    mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
+    postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
+    postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clientHouseholds?: ClientHouseholdUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clientActivities?: ClientActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type WorkspaceCreateWithoutIndexCoverageManifestsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    fiscalYearEndMonth?: number
+    fiscalTimezone?: string
+    mediaPosture?: $Enums.MediaPosture | null
+    postureSetById?: string | null
+    postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    clientHouseholds?: ClientHouseholdCreateNestedManyWithoutWorkspaceInput
+    clientActivities?: ClientActivityCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
+    evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
+    parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceUncheckedCreateWithoutIndexCoverageManifestsInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    fiscalYearEndMonth?: number
+    fiscalTimezone?: string
+    mediaPosture?: $Enums.MediaPosture | null
+    postureSetById?: string | null
+    postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    clientHouseholds?: ClientHouseholdUncheckedCreateNestedManyWithoutWorkspaceInput
+    clientActivities?: ClientActivityUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
+    parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceCreateOrConnectWithoutIndexCoverageManifestsInput = {
+    where: WorkspaceWhereUniqueInput
+    create: XOR<WorkspaceCreateWithoutIndexCoverageManifestsInput, WorkspaceUncheckedCreateWithoutIndexCoverageManifestsInput>
+  }
+
+  export type WorkspaceUpsertWithoutIndexCoverageManifestsInput = {
+    update: XOR<WorkspaceUpdateWithoutIndexCoverageManifestsInput, WorkspaceUncheckedUpdateWithoutIndexCoverageManifestsInput>
+    create: XOR<WorkspaceCreateWithoutIndexCoverageManifestsInput, WorkspaceUncheckedCreateWithoutIndexCoverageManifestsInput>
+    where?: WorkspaceWhereInput
+  }
+
+  export type WorkspaceUpdateToOneWithWhereWithoutIndexCoverageManifestsInput = {
+    where?: WorkspaceWhereInput
+    data: XOR<WorkspaceUpdateWithoutIndexCoverageManifestsInput, WorkspaceUncheckedUpdateWithoutIndexCoverageManifestsInput>
+  }
+
+  export type WorkspaceUpdateWithoutIndexCoverageManifestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    fiscalYearEndMonth?: IntFieldUpdateOperationsInput | number
+    fiscalTimezone?: StringFieldUpdateOperationsInput | string
+    mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
+    postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
+    postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    clientHouseholds?: ClientHouseholdUpdateManyWithoutWorkspaceNestedInput
+    clientActivities?: ClientActivityUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
+    evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
+    parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type WorkspaceUncheckedUpdateWithoutIndexCoverageManifestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    fiscalYearEndMonth?: IntFieldUpdateOperationsInput | number
+    fiscalTimezone?: StringFieldUpdateOperationsInput | string
+    mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
+    postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
+    postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clientHouseholds?: ClientHouseholdUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clientActivities?: ClientActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+  }
+
   export type WorkspaceCreateWithoutParkedIngestsInput = {
     id?: string
     name: string
@@ -73209,6 +77174,8 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutParkedIngestsInput = {
@@ -73258,6 +77225,8 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutParkedIngestsInput = {
@@ -73323,6 +77292,8 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutParkedIngestsInput = {
@@ -73372,6 +77343,8 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserCreateWithoutWorkspacesInput = {
@@ -73460,6 +77433,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutUsersInput = {
@@ -73509,6 +77484,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutUsersInput = {
@@ -73658,6 +77635,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutUsersInput = {
@@ -73707,6 +77686,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserUpsertWithoutRemovedWorkspaceMembershipsInput = {
@@ -73801,6 +77782,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutMeetingsInput = {
@@ -73850,6 +77833,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutMeetingsInput = {
@@ -74786,6 +78771,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutMeetingsInput = {
@@ -74835,6 +78822,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ClientUpsertWithoutMeetingsInput = {
@@ -75812,6 +79801,8 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutRecordSealsInput = {
@@ -75861,6 +79852,8 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutRecordSealsInput = {
@@ -76043,6 +80036,8 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutRecordSealsInput = {
@@ -76092,6 +80087,8 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type MeetingUpsertWithoutRecordSealsInput = {
@@ -76426,6 +80423,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutFlagsInput = {
@@ -76475,6 +80474,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutFlagsInput = {
@@ -76798,6 +80799,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutFlagsInput = {
@@ -76847,6 +80850,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ResolutionRecordUpsertWithoutFlagInput = {
@@ -77168,6 +81173,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutResolutionRecordsInput = {
@@ -77217,6 +81224,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutResolutionRecordsInput = {
@@ -77566,6 +81575,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutResolutionRecordsInput = {
@@ -77615,6 +81626,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ActionItemUpsertWithWhereUniqueWithoutResolutionInput = {
@@ -77756,6 +81769,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEvidenceClassificationsInput = {
@@ -77805,6 +81820,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEvidenceClassificationsInput = {
@@ -77870,6 +81887,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEvidenceClassificationsInput = {
@@ -77919,6 +81938,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ResolutionRecordCreateWithoutTasksInput = {
@@ -78376,6 +82397,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutAuditEventsInput = {
@@ -78425,6 +82448,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutAuditEventsInput = {
@@ -78607,6 +82632,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutAuditEventsInput = {
@@ -78656,6 +82683,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type MeetingUpsertWithoutAuditEventsInput = {
@@ -79795,6 +83824,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutInvitationsInput = {
@@ -79844,6 +83875,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutInvitationsInput = {
@@ -79948,6 +83981,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutInvitationsInput = {
@@ -79997,6 +84032,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserUpsertWithoutInvitationsSentInput = {
@@ -80091,6 +84128,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutIntegrationCredentialsInput = {
@@ -80140,6 +84179,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutIntegrationCredentialsInput = {
@@ -80205,6 +84246,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutIntegrationCredentialsInput = {
@@ -80254,6 +84297,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateWithoutIntegrationConfigsInput = {
@@ -80303,6 +84348,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutIntegrationConfigsInput = {
@@ -80352,6 +84399,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutIntegrationConfigsInput = {
@@ -80451,6 +84500,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutIntegrationConfigsInput = {
@@ -80500,6 +84551,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type IntegrationSyncLogUpsertWithWhereUniqueWithoutIntegrationConfigInput = {
@@ -80869,6 +84922,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutFirmProfileInput = {
@@ -80918,6 +84973,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutFirmProfileInput = {
@@ -81081,6 +85138,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutFirmProfileInput = {
@@ -81130,6 +85189,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type DisclosureCategoryUpsertWithWhereUniqueWithoutFirmProfileInput = {
@@ -81573,6 +85634,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutClientsInput = {
@@ -81622,6 +85685,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutClientsInput = {
@@ -81965,6 +86030,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutClientsInput = {
@@ -82014,6 +86081,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type EmailAliasUpsertWithWhereUniqueWithoutClientInput = {
@@ -82156,6 +86225,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutClientHouseholdsInput = {
@@ -82205,6 +86276,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutClientHouseholdsInput = {
@@ -82298,6 +86371,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutClientHouseholdsInput = {
@@ -82347,6 +86422,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ClientHouseholdMemberUpsertWithWhereUniqueWithoutHouseholdInput = {
@@ -82544,6 +86621,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutClientActivitiesInput = {
@@ -82593,6 +86672,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutClientActivitiesInput = {
@@ -82695,6 +86776,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutClientActivitiesInput = {
@@ -82744,6 +86827,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ClientUpsertWithoutActivitiesInput = {
@@ -82836,6 +86921,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEmailAliasesInput = {
@@ -82885,6 +86972,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEmailAliasesInput = {
@@ -83026,6 +87115,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEmailAliasesInput = {
@@ -83075,6 +87166,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserUpsertWithoutEmailAliasesInput = {
@@ -83212,6 +87305,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEvidenceItemsInput = {
@@ -83261,6 +87356,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEvidenceItemsInput = {
@@ -83438,6 +87535,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEvidenceItemsInput = {
@@ -83487,6 +87586,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type ClientUpsertWithoutEvidenceItemsInput = {
@@ -83760,6 +87861,8 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEvidenceEmbeddingsInput = {
@@ -83809,6 +87912,8 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEvidenceEmbeddingsInput = {
@@ -83874,6 +87979,8 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEvidenceEmbeddingsInput = {
@@ -83923,6 +88030,8 @@ export namespace Prisma {
     evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateWithoutCommunicationThreadsInput = {
@@ -83972,6 +88081,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutCommunicationThreadsInput = {
@@ -84021,6 +88132,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutCommunicationThreadsInput = {
@@ -84136,6 +88249,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutCommunicationThreadsInput = {
@@ -84185,6 +88300,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type CommunicationUpsertWithWhereUniqueWithoutThreadInput = {
@@ -84678,6 +88795,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutMailboxConnectionsInput = {
@@ -84727,6 +88846,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutMailboxConnectionsInput = {
@@ -84828,6 +88949,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutMailboxConnectionsInput = {
@@ -84877,6 +89000,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type IngestJobUpsertWithWhereUniqueWithoutConnectionInput = {
@@ -84942,6 +89067,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutIngestJobsInput = {
@@ -84991,6 +89118,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutIngestJobsInput = {
@@ -85097,6 +89226,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutIngestJobsInput = {
@@ -85146,6 +89277,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type MailboxConnectionUpsertWithoutIngestJobsInput = {
@@ -85242,6 +89375,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEmailTriageItemsInput = {
@@ -85291,6 +89426,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEmailTriageItemsInput = {
@@ -85356,6 +89493,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEmailTriageItemsInput = {
@@ -85405,6 +89544,8 @@ export namespace Prisma {
     evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserWorkspaceCreateManyWorkspaceInput = {
@@ -85711,6 +89852,38 @@ export namespace Prisma {
     sealedByUserId: string
     storageUri: string
     expiresAt: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type CandidateResponsePackCreateManyWorkspaceInput = {
+    id?: string
+    requestText: string
+    interpretedScope: JsonNullValueInput | InputJsonValue
+    confirmedScope?: NullableJsonNullValueInput | InputJsonValue
+    confirmedAt?: Date | string | null
+    confirmedByUserId?: string | null
+    status?: $Enums.CandidatePackStatus
+    coverageStatement?: NullableJsonNullValueInput | InputJsonValue
+    retrievalBasis?: string | null
+    meetingIds?: CandidateResponsePackCreatemeetingIdsInput | string[]
+    emailEvidenceIds?: CandidateResponsePackCreateemailEvidenceIdsInput | string[]
+    auditChainRootId?: string | null
+    exportManifestSha?: string | null
+    approvedAt?: Date | string | null
+    approvedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type IndexCoverageManifestCreateManyWorkspaceInput = {
+    id?: string
+    sources: JsonNullValueInput | InputJsonValue
+    gapPeriods: JsonNullValueInput | InputJsonValue
+    unindexedSources: JsonNullValueInput | InputJsonValue
+    lastIndexedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -86723,6 +90896,102 @@ export namespace Prisma {
     sealedByUserId?: StringFieldUpdateOperationsInput | string
     storageUri?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CandidateResponsePackUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requestText?: StringFieldUpdateOperationsInput | string
+    interpretedScope?: JsonNullValueInput | InputJsonValue
+    confirmedScope?: NullableJsonNullValueInput | InputJsonValue
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCandidatePackStatusFieldUpdateOperationsInput | $Enums.CandidatePackStatus
+    coverageStatement?: NullableJsonNullValueInput | InputJsonValue
+    retrievalBasis?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingIds?: CandidateResponsePackUpdatemeetingIdsInput | string[]
+    emailEvidenceIds?: CandidateResponsePackUpdateemailEvidenceIdsInput | string[]
+    auditChainRootId?: NullableStringFieldUpdateOperationsInput | string | null
+    exportManifestSha?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CandidateResponsePackUncheckedUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requestText?: StringFieldUpdateOperationsInput | string
+    interpretedScope?: JsonNullValueInput | InputJsonValue
+    confirmedScope?: NullableJsonNullValueInput | InputJsonValue
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCandidatePackStatusFieldUpdateOperationsInput | $Enums.CandidatePackStatus
+    coverageStatement?: NullableJsonNullValueInput | InputJsonValue
+    retrievalBasis?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingIds?: CandidateResponsePackUpdatemeetingIdsInput | string[]
+    emailEvidenceIds?: CandidateResponsePackUpdateemailEvidenceIdsInput | string[]
+    auditChainRootId?: NullableStringFieldUpdateOperationsInput | string | null
+    exportManifestSha?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requestText?: StringFieldUpdateOperationsInput | string
+    interpretedScope?: JsonNullValueInput | InputJsonValue
+    confirmedScope?: NullableJsonNullValueInput | InputJsonValue
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    confirmedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCandidatePackStatusFieldUpdateOperationsInput | $Enums.CandidatePackStatus
+    coverageStatement?: NullableJsonNullValueInput | InputJsonValue
+    retrievalBasis?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingIds?: CandidateResponsePackUpdatemeetingIdsInput | string[]
+    emailEvidenceIds?: CandidateResponsePackUpdateemailEvidenceIdsInput | string[]
+    auditChainRootId?: NullableStringFieldUpdateOperationsInput | string | null
+    exportManifestSha?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type IndexCoverageManifestUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sources?: JsonNullValueInput | InputJsonValue
+    gapPeriods?: JsonNullValueInput | InputJsonValue
+    unindexedSources?: JsonNullValueInput | InputJsonValue
+    lastIndexedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type IndexCoverageManifestUncheckedUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sources?: JsonNullValueInput | InputJsonValue
+    gapPeriods?: JsonNullValueInput | InputJsonValue
+    unindexedSources?: JsonNullValueInput | InputJsonValue
+    lastIndexedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sources?: JsonNullValueInput | InputJsonValue
+    gapPeriods?: JsonNullValueInput | InputJsonValue
+    unindexedSources?: JsonNullValueInput | InputJsonValue
+    lastIndexedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

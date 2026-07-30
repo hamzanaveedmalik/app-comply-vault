@@ -20,3 +20,14 @@ export function isEmailIntelligenceEnabled(): boolean {
 export function isAskHybridRetrievalEnabled(): boolean {
   return isTruthyEnv(process.env.ASK_HYBRID_RETRIEVAL);
 }
+
+/**
+ * Release 1 demo surfaces (Needs Attention, candidate pack, portfolio snapshot,
+ * fail-closed demo, commercial pages). DoD: all new routes/UI gated.
+ */
+export function isRelease1DemoEnabled(): boolean {
+  return (
+    isTruthyEnv(process.env.RELEASE1_DEMO_ENABLED) ||
+    isTruthyEnv(process.env.NEXT_PUBLIC_RELEASE1_DEMO)
+  );
+}

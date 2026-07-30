@@ -11,6 +11,7 @@ import { getDisclosureProfileForWorkspace } from "~/server/firm-profile/get-disc
 import { generateSearchableText } from "~/server/search/index";
 import { createErrorResponse, AppError, ErrorMessages } from "~/server/errors";
 import type { Transcript } from "~/server/transcription/types";
+import { isAskHybridRetrievalEnabled } from "~/lib/feature-flags";
 
 const processMeetingSchema = z.object({
   meetingId: z.string(),
@@ -231,6 +232,19 @@ async function handler(request: Request) {
             createdByType: "SYSTEM",
           })),
         });
+      }
+
+      // Step 9b (CV-AX-05a): embed meeting transcript segments when hybrid retrieval is on.
+      if (isAskHybridRetrievalEnabled()) {
+        try {
+          const { embedMeetingEvidence } = await import("~/server/ask/embeddings");
+          await embedMeetingEvidence({ workspaceId, meetingId });
+        } catch (embedErr) {
+          console.warn(
+            `Meeting embedding skipped for ${meetingId}:`,
+            embedErr instanceof Error ? embedErr.message : "unknown"
+          );
+        }
       }
 
       // Step 10: Log extraction completion

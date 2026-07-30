@@ -3,9 +3,12 @@
  *
  * Phase 1 retrieval mode is "keyword" — Phase 2 will add "hybrid" and "semantic".
  * Email Intelligence Phase 3 extends candidates/citations to EMAIL sources.
+ * Release 1: provenance labels, honest-miss, population completeness (CV-AX-00/01/06).
  */
 
 import { z } from "zod";
+import type { ProvenancedElement } from "./provenance";
+import type { HonestMissOutcome, IndexCoverageManifest } from "./coverage";
 
 export const AskRequestSchema = z.object({
   question: z.string().trim().min(3).max(500),
@@ -37,6 +40,9 @@ export type RetrievalMeta = {
   candidatesScanned: number;
   candidatesUsed: number;
   mode: RetrievalMode;
+  /** CV-AX-01: complete population vs ranked sample under stated filters. */
+  populationCompleteness?: "complete_population" | "ranked_sample";
+  populationStatement?: string;
 };
 
 export type AskOutcome =
@@ -44,6 +50,17 @@ export type AskOutcome =
       kind: "answer";
       answer: string;
       citations: Citation[];
+      elements: ProvenancedElement[];
+      retrieval: RetrievalMeta;
+      model: string;
+      latencyMs: number;
+    }
+  | {
+      kind: "honest-miss";
+      missReason: HonestMissOutcome["missReason"];
+      message: string;
+      missing: string;
+      coveredRanges: IndexCoverageManifest["sources"];
       retrieval: RetrievalMeta;
       model: string;
       latencyMs: number;
@@ -75,9 +92,14 @@ export type AskResponseSuccess = {
   data: {
     answer: string;
     citations: Citation[];
+    elements?: ProvenancedElement[];
     retrieval: RetrievalMeta;
     model: string;
     latencyMs: number;
+    kind?: "answer" | "honest-miss";
+    missReason?: HonestMissOutcome["missReason"];
+    missing?: string;
+    coveredRanges?: IndexCoverageManifest["sources"];
   };
 };
 

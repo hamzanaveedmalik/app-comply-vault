@@ -182,13 +182,15 @@ export async function attributeMeeting(args: {
     workspaceId: args.workspaceId,
     clientName: meeting.clientName,
   });
+  // CV-OB-01: name similarity never auto-confirms — hold for CCO confirmation.
   if (nameOutcome.status === "matched") {
-    await applyAttribution({
-      meetingId: meeting.id,
-      clientId: nameOutcome.clientId,
-      confidence: nameOutcome.confidence,
-    });
-    return nameOutcome;
+    if (meeting.clientId) {
+      await clearAttribution(meeting.id);
+    }
+    return {
+      status: "ambiguous",
+      reason: "name_exact_held_for_confirmation",
+    };
   }
 
   if (meeting.clientId) {

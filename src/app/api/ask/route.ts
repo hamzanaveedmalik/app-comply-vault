@@ -106,9 +106,27 @@ export const POST = withPerformance(
           data: {
             answer: outcome.answer,
             citations: outcome.citations,
+            elements: outcome.elements,
             retrieval: outcome.retrieval,
             model: outcome.model,
             latencyMs: outcome.latencyMs,
+            kind: "answer",
+          },
+        });
+
+      case "honest-miss":
+        return NextResponse.json<AskResponse>({
+          success: true,
+          data: {
+            answer: outcome.message,
+            citations: [],
+            retrieval: outcome.retrieval,
+            model: outcome.model,
+            latencyMs: outcome.latencyMs,
+            kind: "honest-miss",
+            missReason: outcome.missReason,
+            missing: outcome.missing,
+            coveredRanges: outcome.coveredRanges,
           },
         });
 

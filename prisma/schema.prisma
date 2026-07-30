@@ -75,8 +75,63 @@ model Workspace {
   evidenceEmbeddings    EvidenceEmbedding[]
   parkedIngests         ParkedIngest[]
   recordSeals           RecordSeal[]
+  candidateResponsePacks CandidateResponsePack[]
+  indexCoverageManifests IndexCoverageManifest[]
 
   @@index([createdAt])
+}
+
+/// CV-XR-01a — candidate examination-response pack (never labelled "responsive").
+enum CandidatePackStatus {
+  DRAFT_SCOPE
+  SCOPE_CONFIRMED
+  GENERATED
+  APPROVED
+}
+
+model CandidateResponsePack {
+  id                String              @id @default(cuid())
+  workspaceId       String
+  requestText       String              @db.Text
+  interpretedScope  Json
+  confirmedScope    Json?
+  confirmedAt       DateTime?
+  confirmedByUserId String?
+  status            CandidatePackStatus @default(DRAFT_SCOPE)
+  coverageStatement Json?
+  retrievalBasis    String?             @db.Text
+  meetingIds        String[]            @default([])
+  emailEvidenceIds  String[]            @default([])
+  auditChainRootId  String?
+  exportManifestSha String?
+  approvedAt        DateTime?
+  approvedByUserId  String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  deletedAt         DateTime?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status])
+  @@index([workspaceId, createdAt])
+}
+
+/// CV-AX-06 — per-workspace index coverage for honest-miss answers.
+model IndexCoverageManifest {
+  id               String   @id @default(cuid())
+  workspaceId      String
+  sources          Json
+  gapPeriods       Json
+  unindexedSources Json
+  lastIndexedAt    DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  deletedAt        DateTime?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId])
+  @@index([workspaceId])
 }
 
 enum BillingStatus {
@@ -339,6 +394,9 @@ enum AuditAction {
   MEDIA_DISCARDED
   RECORD_SEALED
   RECORD_SUPERSEDED
+  CANDIDATE_PACK_SCOPE_CONFIRMED
+  CANDIDATE_PACK_GENERATED
+  CANDIDATE_PACK_APPROVED
 }
 
 /// CV-TR-01/02 — append-only ledger entry for immutable audit-pack bytes.

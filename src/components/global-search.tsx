@@ -184,10 +184,30 @@ export function GlobalSearch({ className }: GlobalSearchProps): React.JSX.Elemen
         const inner = data.data as {
           answer: string;
           citations: AnswerCitation[];
-          retrieval: { candidatesScanned: number; candidatesUsed: number; mode: string };
+          retrieval: {
+            candidatesScanned: number;
+            candidatesUsed: number;
+            mode: string;
+            populationStatement?: string;
+          };
           model: string;
           latencyMs: number;
+          kind?: "answer" | "honest-miss";
+          missReason?: string;
+          missing?: string;
+          elements?: Array<{ text: string; provenance: string }>;
         };
+
+        if (inner.kind === "honest-miss") {
+          setAskState({
+            kind: "honest-miss",
+            answer: inner.answer,
+            missReason: inner.missReason,
+            missing: inner.missing,
+            populationStatement: inner.retrieval?.populationStatement,
+          });
+          return;
+        }
 
         if (inner.citations.length === 0) {
           setAskState({ kind: "no-evidence", answer: inner.answer });
@@ -201,6 +221,7 @@ export function GlobalSearch({ className }: GlobalSearchProps): React.JSX.Elemen
           retrieval: inner.retrieval,
           model: inner.model,
           latencyMs: inner.latencyMs,
+          elements: inner.elements,
         });
       } catch (err) {
         if (err instanceof DOMException && err.name === "AbortError") return;

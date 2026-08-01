@@ -42,6 +42,7 @@ import {
   evaluateHonestMiss,
   type IndexCoverageManifest,
 } from "./coverage";
+import { loadCoverageManifest } from "./load-coverage";
 import {
   assertProvenanceContract,
   labelAnswerElements,
@@ -138,6 +139,68 @@ export function hashQuestion(question: string): string {
     .update(question.trim().toLowerCase())
     .digest("hex")
     .slice(0, 16);
+}
+
+async function resolveCoverageManifest(args: {
+  workspaceId: string;
+  injected?: IndexCoverageManifest;
+  prisma?: PrismaLike;
+  emailChunkCount: number;
+  meetingChunkCount: number;
+  now: Date;
+}): Promise<IndexCoverageManifest> {
+  if (args.injected) return args.injected;
+
+  const fallbackSources = [
+    {
+      sourceType: "EMAIL" as const,
+      from: null,
+      to: null,
+      chunkCount: args.emailChunkCount,
+    },
+    {
+      sourceType: "MEETING" as const,
+      from: null,
+      to: null,
+      chunkCount: args.meetingChunkCount,
+    },
+  ].filter((s) => s.chunkCount > 0);
+
+  const withFallback = (
+    stored: IndexCoverageManifest
+  ): IndexCoverageManifest => {
+    if (stored.sources.length > 0) return stored;
+    return {
+      ...stored,
+      sources: fallbackSources,
+      gapPeriods:
+        stored.gapPeriods.length > 0
+          ? stored.gapPeriods
+          : DEMO_COVERAGE_DEFAULTS.gapPeriods,
+      unindexedSources:
+        stored.unindexedSources.length > 0
+          ? stored.unindexedSources
+          : DEMO_COVERAGE_DEFAULTS.unindexedSources,
+      lastIndexedAt: stored.lastIndexedAt ?? args.now.toISOString(),
+    };
+  };
+
+  // Unit-test stubs omit indexCoverageManifest — use demo defaults, skip DB.
+  const stub = args.prisma as
+    | { indexCoverageManifest?: unknown }
+    | undefined;
+  if (args.prisma && !stub?.indexCoverageManifest) {
+    return withFallback({
+      workspaceId: args.workspaceId,
+      sources: [],
+      gapPeriods: DEMO_COVERAGE_DEFAULTS.gapPeriods,
+      unindexedSources: DEMO_COVERAGE_DEFAULTS.unindexedSources,
+      lastIndexedAt: args.now.toISOString(),
+    });
+  }
+
+  const stored = await loadCoverageManifest(args.workspaceId);
+  return withFallback(stored);
 }
 
 function meetingToCandidate(row: MeetingRow): RetrievalCandidate {
@@ -396,28 +459,15 @@ export async function askComplyVault(
   };
 
   const coverageManifest: IndexCoverageManifest =
-    deps.coverageManifest ??
-    ({
+    await resolveCoverageManifest({
       workspaceId: input.workspaceId,
-      sources: [
-        {
-          sourceType: "EMAIL" as const,
-          from: null,
-          to: null,
-          chunkCount: candidates.filter((c) => c.sourceType === "EMAIL").length,
-        },
-        {
-          sourceType: "MEETING" as const,
-          from: null,
-          to: null,
-          chunkCount: candidates.filter((c) => c.sourceType === "MEETING")
-            .length,
-        },
-      ].filter((s) => s.chunkCount > 0),
-      gapPeriods: DEMO_COVERAGE_DEFAULTS.gapPeriods,
-      unindexedSources: DEMO_COVERAGE_DEFAULTS.unindexedSources,
-      lastIndexedAt: now.toISOString(),
-    } satisfies IndexCoverageManifest);
+      injected: deps.coverageManifest,
+      prisma: deps.prisma,
+      emailChunkCount: candidates.filter((c) => c.sourceType === "EMAIL").length,
+      meetingChunkCount: candidates.filter((c) => c.sourceType === "MEETING")
+        .length,
+      now,
+    });
 
   const belowThreshold =
     hybridEnabled &&

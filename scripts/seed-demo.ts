@@ -1,5 +1,6 @@
 /**
- * Partner-demo reseed: clean synthetic clients, healthy metrics, non-customer CRD.
+ * Partner-demo reseed (CV-DM-01): synthetic clients, Ask corpus, honest-miss
+ * coverage gaps, held identities, and a parked fail-closed ingest.
  *
  * Soft-deletes compliance records where the schema supports `deletedAt`.
  * Meetings/Flags have no soft-delete — they are healed in place (finalized / closed).
@@ -7,13 +8,10 @@
  * Usage:
  *   npx tsx scripts/seed-demo.ts --workspace=<workspaceId> --confirm
  *
- * Optional:
- *   DATABASE_URL=... npx tsx scripts/seed-demo.ts --workspace=... --confirm
+ * Then (optional embeddings):
+ *   npx tsx scripts/demo-embed-backfill.ts <workspaceId>
  *
- * Pre-tested Ask questions after seed (do not improvise live):
- *   1. "Show me every email where a client mentioned fees since April"
- *   2. "Has any advisor promised performance in writing?"
- *   3. "When did we last hear from Margaret Ellison and about what?"
+ * Tiered Ask questions — see console output and docs/demo/run-sheet.md.
  */
 
 import crypto from "node:crypto";
@@ -92,6 +90,30 @@ const SYNTHETIC_CLIENTS: Array<{
     lastTopic: "estate planning coordination with outside counsel",
   },
 ];
+
+/** Held for CCO confirmation — never auto-linked (CV-OB-01 / CV-DM-01). */
+const HELD_IDENTITIES = [
+  {
+    address: "jordan.lee.assistant@example.com",
+    notes: "Assistant writing on behalf of a household — confirm before linking",
+  },
+  {
+    address: "shared.family.trust@example.com",
+    notes: "Shared mailbox; could be client or prospect — held",
+  },
+  {
+    address: "unknown.sender.demo@example.com",
+    notes: "Inbound address with no alias — triage queue",
+  },
+] as const;
+
+/** Meeting left unmatched so Needs Attention shows held identity. */
+const HELD_MEETING = {
+  clientName: "Robert Chen",
+  lastTopic: "beneficiary designation update",
+  /** Matching client exists; meeting deliberately not auto-linked. */
+  createMatchingClient: true,
+} as const;
 
 const PERFORMANCE_EMAIL = {
   clientName: "James Whitfield",
@@ -728,6 +750,207 @@ async function main(): Promise<void> {
       });
     }
 
+    // ── CV-DM-01: held identities (ambiguous — never auto-confirm) ──
+    for (const held of HELD_IDENTITIES) {
+      await prisma.emailTriageItem.create({
+        data: {
+          workspaceId,
+          address: held.address,
+          status: "PENDING",
+          notes: held.notes,
+          createdAt: daysAgo(2),
+        },
+      });
+    }
+
+    let heldMeetingClientId: string | null = null;
+    if (HELD_MEETING.createMatchingClient) {
+      const heldClient = await prisma.client.create({
+        data: {
+          workspaceId,
+          name: HELD_MEETING.clientName,
+          status: "CLIENT",
+          lastContactAt: daysAgo(5),
+        },
+      });
+      heldMeetingClientId = heldClient.id;
+      // Deliberately no verified alias — name-only match must stay held.
+    }
+
+    const heldMeetingDate = daysAgo(5);
+    await prisma.meeting.create({
+      data: {
+        workspaceId,
+        clientId: null,
+        clientName: HELD_MEETING.clientName,
+        clientMatchConfidence: null,
+        participantEmails: [],
+        meetingType: "Annual Review",
+        meetingDate: heldMeetingDate,
+        status: "FINALIZED",
+        draftReadyAt: daysAgo(4),
+        finalizedAt: daysAgo(3),
+        timeToFinalize: 86_400,
+        finalizeReason: "COMPLETE_REVIEW",
+        searchableText: [
+          HELD_MEETING.clientName,
+          HELD_MEETING.lastTopic,
+          "held for confirmation demo",
+        ]
+          .join(" ")
+          .toLowerCase(),
+        transcript: {
+          segments: [
+            {
+              startTime: 10,
+              endTime: 35,
+              speaker: "Advisor",
+              text: `We discussed ${HELD_MEETING.lastTopic} with the household.`,
+            },
+          ],
+        },
+        extraction: {
+          topics: [HELD_MEETING.lastTopic],
+          recommendations: [],
+          disclosures: [],
+          decisions: [],
+          followUps: [
+            {
+              text: "CCO to confirm client identity before linking",
+              startTime: 35,
+            },
+          ],
+        },
+      },
+    });
+
+    // ── CV-DM-01 / CV-FC-01: parked ingest for fail-closed demo ──
+    await prisma.parkedIngest.deleteMany({
+      where: {
+        workspaceId,
+        externalRef: "demo-parked-zoom-recording-001",
+      },
+    });
+    await prisma.parkedIngest.create({
+      data: {
+        workspaceId,
+        source: "zoom",
+        externalRef: "demo-parked-zoom-recording-001",
+        payload: {
+          demo: true,
+          note: "Seeded parked ingest for fail-closed demonstration",
+          meetingTopic: "Q2 review — posture gate demo",
+        },
+        occurredAt: daysAgo(3),
+        status: "PARKED",
+        parkedAt: daysAgo(3),
+      },
+    });
+    await prisma.auditEvent.create({
+      data: {
+        workspaceId,
+        userId: "system",
+        action: "INGEST_PARKED",
+        resourceType: "workspace",
+        resourceId: workspaceId,
+        metadata: {
+          source: "zoom",
+          externalRef: "demo-parked-zoom-recording-001",
+          parked: true,
+          note: "Ingest refused because no media posture decision exists. Replay from the parked recordings list after the CCO decides.",
+          demoSeed: true,
+        },
+      },
+    });
+
+    // ── CV-DM-01 / CV-AX-06: index coverage manifest (honest miss) ──
+    const emailRange = await prisma.evidenceItem.aggregate({
+      where: {
+        workspaceId,
+        sourceType: "EMAIL",
+        deletedAt: null,
+      },
+      _min: { occurredAt: true },
+      _max: { occurredAt: true },
+      _count: { id: true },
+    });
+    const meetingRange = await prisma.meeting.aggregate({
+      where: {
+        workspaceId,
+        status: { in: ["DRAFT_READY", "FINALIZED"] },
+        searchableText: { not: "prior engagement archived demo reseed" },
+      },
+      _min: { meetingDate: true },
+      _max: { meetingDate: true },
+      _count: { id: true },
+    });
+
+    const coverageSources = [
+      {
+        sourceType: "EMAIL" as const,
+        from: emailRange._min.occurredAt?.toISOString() ?? "2025-04-01T00:00:00.000Z",
+        to: emailRange._max.occurredAt?.toISOString() ?? now.toISOString(),
+        chunkCount: emailRange._count.id,
+      },
+      {
+        sourceType: "MEETING" as const,
+        from: meetingRange._min.meetingDate?.toISOString() ?? "2025-04-01T00:00:00.000Z",
+        to: meetingRange._max.meetingDate?.toISOString() ?? now.toISOString(),
+        chunkCount: meetingRange._count.id,
+      },
+    ];
+
+    const gapPeriods = [
+      {
+        sourceType: "EMAIL",
+        from: "2024-01-01",
+        to: "2024-03-31",
+        reason: "Mailbox not connected for Q1 2024",
+      },
+      {
+        sourceType: "MEETING",
+        from: "2023-01-01",
+        to: "2023-12-31",
+        reason: "Meeting capture not enabled in 2023 — out-of-range for Ask",
+      },
+    ];
+
+    const unindexedSources = [
+      { name: "SMS", reason: "SMS channel not connected — demo honest miss" },
+      {
+        name: "WhatsApp",
+        reason: "Off-channel upload not indexed for Ask — demo honest miss",
+      },
+      {
+        name: "Teams chat",
+        reason: "Teams chat not in demo index — demo honest miss",
+      },
+    ];
+
+    await prisma.indexCoverageManifest.upsert({
+      where: { workspaceId },
+      create: {
+        workspaceId,
+        sources: coverageSources,
+        gapPeriods,
+        unindexedSources,
+        lastIndexedAt: now,
+      },
+      update: {
+        sources: coverageSources,
+        gapPeriods,
+        unindexedSources,
+        lastIndexedAt: now,
+        deletedAt: null,
+      },
+    });
+
+    // Soft-delete prior open candidate packs so Needs Attention stays clean
+    await prisma.candidateResponsePack.updateMany({
+      where: { workspaceId, deletedAt: null },
+      data: { deletedAt: softDeletedAt },
+    });
+
     const openFlags = await prisma.flag.count({
       where: {
         workspaceId,
@@ -740,8 +963,14 @@ async function main(): Promise<void> {
     const evidenceLive = await prisma.evidenceItem.count({
       where: { workspaceId, deletedAt: null },
     });
+    const triagePending = await prisma.emailTriageItem.count({
+      where: { workspaceId, status: "PENDING" },
+    });
+    const parked = await prisma.parkedIngest.count({
+      where: { workspaceId, status: "PARKED", deletedAt: null },
+    });
 
-    console.log("\nDemo seed complete.");
+    console.log("\nDemo seed complete (CV-DM-01).");
     console.log({
       firm: DEMO_FIRM.workspaceName,
       crd: DEMO_FIRM.crdNumber,
@@ -749,13 +978,30 @@ async function main(): Promise<void> {
       clients,
       evidenceLive,
       openFlags,
+      heldIdentities: triagePending,
+      heldMeetingClientName: HELD_MEETING.clientName,
+      heldMeetingMatchingClientId: heldMeetingClientId,
+      parkedIngests: parked,
+      coverageGaps: gapPeriods.length,
+      unindexedSources: unindexedSources.map((u) => u.name),
     });
-    console.log("\nAsk only these live:");
+    console.log("\n── Rehearsed Ask (expect cited answer) ──");
     console.log('  1. "Show me every email where a client mentioned fees since April"');
     console.log('  2. "Has any advisor promised performance in writing?"');
     console.log(
       '  3. "When did we last hear from Margaret Ellison and about what?"'
     );
+    console.log("\n── Honest miss (expect specific decline) ──");
+    console.log('  SMS:       "Show me SMS messages about fees"');
+    console.log('  Out-of-range: "What fee emails do we have from 2023-02-15?"');
+    console.log(
+      '  No evidence: "Any evidence of private jet gifts to clients?"'
+    );
+    console.log("\n── Demo surfaces ──");
+    console.log("  Held identities → /needs-attention or /mailbox/triage");
+    console.log("  Fail-closed     → /fail-closed");
+    console.log("  Portfolio       → /partner/portfolio");
+    console.log("\nNext: npx tsx scripts/demo-embed-backfill.ts " + workspaceId);
   } finally {
     await prisma.$disconnect();
     await pool.end();

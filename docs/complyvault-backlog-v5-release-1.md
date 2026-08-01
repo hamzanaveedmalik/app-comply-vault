@@ -29,7 +29,7 @@ None of these is a buyer requirement. All are hypotheses the demo is designed to
 | Ref | Hypothesis | Basis | Confidence |
 |---|---|---|---|
 | N1 | Source-linked answers to open questions differentiate ComplyVault from summarisation and note-taking tools | Plausible differentiator; consistent with the CCO evidence problem | Medium-high |
-| N2 | Low implementation friction matters decisively for a platform serving many adviser firms | Structural: setup cost is what kills tools in a 100+ adviser stack | High |
+| N2 | Zero setup to first evidence matters decisively for a platform serving many adviser firms | Structural: setup cost is what kills tools in a 100+ adviser stack | High |
 | N3 | Examination-response preparation is a material CCO pain point worth demonstrating | Known pain in RIA compliance; AdvizorStack has not requested this workflow | Medium-high |
 | N4 | Visible fail-closed behaviour builds trust with compliance buyers | Compliance-buyer pattern; not attributable to AdvizorStack specifically | High |
 | N5 | AdvizorStack's multi-firm structure makes a portfolio view strategically relevant | Inferred directly from their platform model | High |
@@ -46,7 +46,7 @@ None of these is a buyer requirement. All are hypotheses the demo is designed to
 | Epic | Tests |
 |---|---|
 | EPIC-AX Ask ComplyVault, demo slice | N1 |
-| EPIC-OB Immediate value, progressive resolution | N2 |
+| EPIC-OB Zero setup to first evidence | N2 |
 | EPIC-XR Candidate Response Pack | N3 |
 | EPIC-FC Fail-closed demonstration | N4 |
 | EPIC-PV Demo-only partner portfolio | N5 |
@@ -107,11 +107,13 @@ The Open tier is allowed to miss. A specific honest miss in front of a complianc
 
 ---
 
-## EPIC-OB: Immediate value, progressive resolution (N2) — 1.05d
+## EPIC-OB: Zero setup to first evidence (N2) — 1.05d
 
-**The promise:** connect a mailbox and see usable evidence immediately. High-confidence participants resolve automatically; ambiguous identities are visibly held for confirmation. No plausible-but-uncertain client attribution is ever silently accepted.
+**The promise (say this out loud):** zero setup to first evidence — connect a mailbox; nobody types client records; usable evidence and exposure appear immediately.
 
-(Not "zero setup." A mailbox cannot reveal client-versus-prospect status, households, joint accounts, assistants writing for clients, or multiple addresses per person, and promising otherwise stakes the demo on a claim the data cannot support.)
+**What zero setup means here:** no policy wizard, no client CRUD, no CSV import before value. OAuth → ingest → resolve → land on what the mailbox disclosed.
+
+**What it does not mean (never claim):** that every participant is a confirmed client. High-confidence addresses resolve automatically; ambiguous identities are **held in the open** as part of the first-evidence reveal. A mailbox cannot know client-versus-prospect, households, or assistants writing for clients — holding those is product judgement, not incomplete setup.
 
 ### CV-OB-01: Deterministic identity resolution — 0.5d, 9 tests, never cut ✅ done (2026-07-30)
 
@@ -250,7 +252,12 @@ N6 is the hypothesis most likely to determine the outcome and the only one that 
 
 ## EPIC-DM: Demo choreography — 1.0d (calendar-spread)
 
-### CV-DM-01: Seed and corpus — 0.3d 🔨 partial (eval set + backfill script; expand seed-demo for ambiguous mailbox)
+### CV-DM-01: Seed and corpus — 0.3d ✅ done (2026-08-01)
+
+- Corpus built to the tiered question plan: Rehearsed guaranteed, Paraphrased coverage measured by the evaluation set, plus a deliberately unindexed source and out-of-range window for the invocable honest miss.
+- Held identities (email triage + unmatched Robert Chen meeting), parked Zoom ingest, `IndexCoverageManifest` upserted per workspace.
+- Three seeded partner firms with distinct profiles (snapshot fixtures). Prepared demonstration mailbox identities in triage.
+- Run: `npx tsx scripts/seed-demo.ts --workspace=<id> --confirm` then `npx tsx scripts/demo-embed-backfill.ts <id>`.
 
 ### CV-DM-02: Run sheet, hypothesis test, fallbacks — 0.2d ✅ done (2026-07-30)
 
@@ -335,7 +342,7 @@ Unchanged: EPIC-MR marketing review (Hadrius sequencing constraint stands — bu
 | Ref | The hypothesis is tested when |
 |---|---|
 | N1 | All three question tiers behave as specified, including a specific honest miss when invoked — and Nico's reaction to the Open tier is observed and noted |
-| N2 | The controlled mailbox connects live, high-confidence identities resolve, an ambiguous identity is visibly held — and his reaction to the held state is noted |
+| N2 | Zero setup is stated; mailbox connects with no client typing; first evidence lands on exposure (held identity visible) — and his reaction to “held = product, not unfinished setup” is noted |
 | N3 | Interpreted scope shown, CCO confirms, candidate pack with coverage statement in under two minutes — and whether he asks about his own last document request is noted |
 | N4 | Refusal, reason, and stored audit event on one screen |
 | N5 | Three firms ranked with named factors, one drills into the real workspace, the production-access sentence said out loud — and whether he asks when he can have it is noted |

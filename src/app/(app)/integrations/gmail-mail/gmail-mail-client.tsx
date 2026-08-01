@@ -7,6 +7,9 @@ import { Input } from "~/components/ui/input";
 import { toast } from "sonner";
 import type { MailboxConnectionDto } from "~/lib/types/evidence";
 import type { GmailWorkspaceStatus } from "~/lib/types/evidence";
+import { isRelease1DemoEnabled } from "~/lib/feature-flags";
+import { ConnectProgress } from "~/app/(app)/mailbox/connect-progress";
+import { ZeroSetupReveal } from "~/components/mailbox/zero-setup-reveal";
 
 type MailFolder = { id: string; displayName: string };
 
@@ -36,15 +39,50 @@ export function GmailMailClient({
   const [folders, setFolders] = useState<MailFolder[]>([]);
   const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
   const [backfillFrom, setBackfillFrom] = useState("");
+  const [revealCounts, setRevealCounts] = useState({
+    heldIdentityCount: 0,
+    openFlagCount: 0,
+    parkedCount: 0,
+  });
+  const release1 = isRelease1DemoEnabled();
 
   useEffect(() => {
-    if (connected) toast.success("Mailbox connected");
+    if (connected) {
+      toast.success(
+        release1
+          ? "Mailbox connected — first evidence is ready"
+          : "Mailbox connected"
+      );
+    }
     if (error) toast.error(error);
-  }, [connected, error]);
+  }, [connected, error, release1]);
 
   useEffect(() => {
     void loadConnections();
   }, []);
+
+  useEffect(() => {
+    if (!release1) return;
+    void (async () => {
+      try {
+        const res = await fetch("/api/needs-attention");
+        const json = (await res.json()) as {
+          success?: boolean;
+          data?: Array<{ kind: string }>;
+        };
+        if (!json.success || !json.data) return;
+        setRevealCounts({
+          heldIdentityCount: json.data.filter((i) => i.kind === "held_identity")
+            .length,
+          openFlagCount: json.data.filter((i) => i.kind === "flag").length,
+          parkedCount: json.data.filter((i) => i.kind === "parked_ingest")
+            .length,
+        });
+      } catch {
+        // Reveal counts are best-effort for the demo surface.
+      }
+    })();
+  }, [release1, connections.length]);
 
   async function loadConnections(): Promise<void> {
     setLoading(true);
@@ -118,11 +156,31 @@ export function GmailMailClient({
   return (
     <div className="mx-auto max-w-4xl space-y-8 p-6">
       <div>
-        <h1 className="text-2xl font-semibold text-[#0D2818]">Gmail</h1>
+        <h1 className="text-2xl font-semibold text-[#0D2818]">
+          {release1 ? "Connect mailbox" : "Gmail"}
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Controlled ingestion — selected mailbox, labels and date ranges only.
+          {release1
+            ? "Zero setup to first evidence — no client records to type. Select labels and date range only."
+            : "Controlled ingestion — selected mailbox, labels and date ranges only."}
         </p>
       </div>
+
+      {release1 && (
+        <ConnectProgress
+          currentStage={
+            connections.length > 0
+              ? "resolving"
+              : connected
+                ? "ingesting"
+                : "authorising"
+          }
+        />
+      )}
+
+      {release1 && (connections.length > 0 || connected) && (
+        <ZeroSetupReveal {...revealCounts} />
+      )}
 
       {!workspaceStatus.oauthConfigured && (
         <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">

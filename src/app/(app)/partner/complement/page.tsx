@@ -18,9 +18,10 @@ const complements = [
   },
   {
     name: "FastTrackr AI",
-    does: "AI-assisted operational and practice workflows.",
-    doesNot: "Does not provide examination-request scope confirmation and candidate evidence assembly.",
-    complyVault: "ComplyVault interprets a request, requires CCO confirmation, and produces a reviewable candidate pack.",
+    does: "AI-assisted operational and practice workflows — data arrives without typing.",
+    doesNot: "Does not turn that intake into a supervision evidence trail or exam candidate pack.",
+    complyVault:
+      "Zero setup to first evidence: connect a mailbox, see what it disclosed, hold ambiguous identities in the open, then assemble candidate packs under confirmed scope.",
   },
 ];
 

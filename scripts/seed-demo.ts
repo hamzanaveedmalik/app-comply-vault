@@ -170,7 +170,9 @@ async function main(): Promise<void> {
   const { workspaceId, confirm } = parseArgs(process.argv.slice(2));
   if (!workspaceId || !confirm) {
     console.error(
-      "Usage: npx tsx scripts/seed-demo.ts --workspace=<id> --confirm"
+      "Usage: npx tsx scripts/seed-demo.ts --workspace=<id> --confirm\n" +
+        "If Prisma TLS/adapter fails under corp MitM, use:\n" +
+        "  node scripts/seed-demo-neon.mjs <workspaceId> --confirm"
     );
     process.exit(1);
   }

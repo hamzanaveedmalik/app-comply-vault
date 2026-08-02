@@ -439,6 +439,158 @@ if (perf) {
       ${daysAgo(7)}::timestamptz, ${now}::timestamptz)`;
 }
 
+// ── CV-DM-01: held identities ──
+const HELD = [
+  {
+    address: "jordan.lee.assistant@example.com",
+    notes: "Assistant writing on behalf of a household — confirm before linking",
+  },
+  {
+    address: "shared.family.trust@example.com",
+    notes: "Shared mailbox; could be client or prospect — held",
+  },
+  {
+    address: "unknown.sender.demo@example.com",
+    notes: "Inbound address with no alias — triage queue",
+  },
+];
+for (const h of HELD) {
+  await sql`insert into "EmailTriageItem"
+    (id, "workspaceId", address, status, notes, "createdAt", "updatedAt")
+    values (${cuid()}, ${WORKSPACE_ID}, ${h.address}, 'PENDING', ${h.notes},
+      ${daysAgo(2)}::timestamptz, ${now}::timestamptz)
+    on conflict ("workspaceId", address) do update set
+      status = 'PENDING', notes = excluded.notes, "updatedAt" = ${now}::timestamptz`;
+}
+
+const heldClientId = cuid();
+await sql`insert into "Client"
+  (id, "workspaceId", name, status, "lastContactAt", "createdAt", "updatedAt")
+  values (${heldClientId}, ${WORKSPACE_ID}, 'Robert Chen', 'CLIENT', ${daysAgo(5)}::timestamptz,
+    ${now}::timestamptz, ${now}::timestamptz)`;
+const heldMeetingId = cuid();
+const heldTranscript = JSON.stringify({
+  segments: [
+    {
+      startTime: 10,
+      endTime: 35,
+      speaker: "Advisor",
+      text: "We discussed beneficiary designation update with the household.",
+    },
+  ],
+});
+const heldExtraction = JSON.stringify({
+  topics: ["beneficiary designation update"],
+  recommendations: [],
+  disclosures: [],
+  decisions: [],
+  followUps: [
+    { text: "CCO to confirm client identity before linking", startTime: 35 },
+  ],
+});
+await sql`insert into "Meeting"
+  (id, "workspaceId", "clientName", "clientId", "clientMatchConfidence", "participantEmails",
+   "meetingType", "meetingDate", status, "draftReadyAt", "finalizedAt", "timeToFinalize",
+   "finalizeReason", "searchableText", transcript, extraction, "readyForCCO", "createdAt", "updatedAt")
+  values (${heldMeetingId}, ${WORKSPACE_ID}, 'Robert Chen', null, null, '{}'::text[],
+    'Annual Review', ${daysAgo(5)}::timestamptz, 'FINALIZED', ${daysAgo(4)}::timestamptz,
+    ${daysAgo(3)}::timestamptz, 86400, 'COMPLETE_REVIEW',
+    'robert chen beneficiary designation update held for confirmation demo',
+    ${heldTranscript}::jsonb, ${heldExtraction}::jsonb, false,
+    ${now}::timestamptz, ${now}::timestamptz)`;
+
+// ── CV-DM-01 / CV-FC-01: parked ingest ──
+await sql`delete from "ParkedIngest"
+  where "workspaceId" = ${WORKSPACE_ID} and "externalRef" = 'demo-parked-zoom-recording-001'`;
+await sql`insert into "ParkedIngest"
+  (id, "workspaceId", source, "externalRef", payload, "occurredAt", status, "parkedAt",
+   "createdAt", "updatedAt")
+  values (${cuid()}, ${WORKSPACE_ID}, 'zoom', 'demo-parked-zoom-recording-001',
+    ${JSON.stringify({
+      demo: true,
+      note: "Seeded parked ingest for fail-closed demonstration",
+      meetingTopic: "Q2 review — posture gate demo",
+    })}::jsonb,
+    ${daysAgo(3)}::timestamptz, 'PARKED', ${daysAgo(3)}::timestamptz,
+    ${now}::timestamptz, ${now}::timestamptz)`;
+await sql`insert into "AuditEvent"
+  (id, "workspaceId", "userId", action, "resourceType", "resourceId", metadata, timestamp)
+  values (${cuid()}, ${WORKSPACE_ID}, 'system', 'INGEST_PARKED', 'workspace', ${WORKSPACE_ID},
+    ${JSON.stringify({
+      source: "zoom",
+      externalRef: "demo-parked-zoom-recording-001",
+      parked: true,
+      note: "Ingest refused because no media posture decision exists. Replay from the parked recordings list after the CCO decides.",
+      demoSeed: true,
+    })}::jsonb,
+    ${now}::timestamptz)`;
+
+// ── CV-DM-01 / CV-AX-06: coverage manifest ──
+const emailAgg = await sql`
+  select min("occurredAt") as "from", max("occurredAt") as "to", count(*)::int as n
+  from "EvidenceItem"
+  where "workspaceId" = ${WORKSPACE_ID} and "sourceType" = 'EMAIL' and "deletedAt" is null`;
+const meetingAgg = await sql`
+  select min("meetingDate") as "from", max("meetingDate") as "to", count(*)::int as n
+  from "Meeting"
+  where "workspaceId" = ${WORKSPACE_ID}
+    and status in ('DRAFT_READY','FINALIZED')
+    and coalesce("searchableText",'') <> 'prior engagement archived demo reseed'`;
+const sources = [
+  {
+    sourceType: "EMAIL",
+    from: emailAgg[0]?.from?.toISOString?.() ?? emailAgg[0]?.from ?? "2025-04-01T00:00:00.000Z",
+    to: emailAgg[0]?.to?.toISOString?.() ?? emailAgg[0]?.to ?? now,
+    chunkCount: emailAgg[0]?.n ?? 0,
+  },
+  {
+    sourceType: "MEETING",
+    from: meetingAgg[0]?.from?.toISOString?.() ?? meetingAgg[0]?.from ?? "2025-04-01T00:00:00.000Z",
+    to: meetingAgg[0]?.to?.toISOString?.() ?? meetingAgg[0]?.to ?? now,
+    chunkCount: meetingAgg[0]?.n ?? 0,
+  },
+];
+const gapPeriods = [
+  {
+    sourceType: "EMAIL",
+    from: "2024-01-01",
+    to: "2024-03-31",
+    reason: "Mailbox not connected for Q1 2024",
+  },
+  {
+    sourceType: "MEETING",
+    from: "2023-01-01",
+    to: "2023-12-31",
+    reason: "Meeting capture not enabled in 2023 — out-of-range for Ask",
+  },
+];
+const unindexedSources = [
+  { name: "SMS", reason: "SMS channel not connected — demo honest miss" },
+  {
+    name: "WhatsApp",
+    reason: "Off-channel upload not indexed for Ask — demo honest miss",
+  },
+  {
+    name: "Teams chat",
+    reason: "Teams chat not in demo index — demo honest miss",
+  },
+];
+await sql`insert into "IndexCoverageManifest"
+  (id, "workspaceId", sources, "gapPeriods", "unindexedSources", "lastIndexedAt", "createdAt", "updatedAt")
+  values (${cuid()}, ${WORKSPACE_ID}, ${JSON.stringify(sources)}::jsonb,
+    ${JSON.stringify(gapPeriods)}::jsonb, ${JSON.stringify(unindexedSources)}::jsonb,
+    ${now}::timestamptz, ${now}::timestamptz, ${now}::timestamptz)
+  on conflict ("workspaceId") do update set
+    sources = excluded.sources,
+    "gapPeriods" = excluded."gapPeriods",
+    "unindexedSources" = excluded."unindexedSources",
+    "lastIndexedAt" = excluded."lastIndexedAt",
+    "deletedAt" = null,
+    "updatedAt" = ${now}::timestamptz`;
+
+await sql`update "CandidateResponsePack" set "deletedAt" = ${now}::timestamptz
+  where "workspaceId" = ${WORKSPACE_ID} and "deletedAt" is null`;
+
 const summary = await sql`
   select
     (select name from "Workspace" where id = ${WORKSPACE_ID}) as firm,
@@ -447,10 +599,21 @@ const summary = await sql`
     (select count(*)::int from "Client" where "workspaceId" = ${WORKSPACE_ID} and "deletedAt" is null) as clients,
     (select count(*)::int from "EvidenceItem" where "workspaceId" = ${WORKSPACE_ID} and "deletedAt" is null) as evidence,
     (select count(*)::int from "Flag" where "workspaceId" = ${WORKSPACE_ID}
-      and status in ('OPEN','IN_REMEDIATION','PENDING_VERIFICATION')) as "openFlags"
+      and status in ('OPEN','IN_REMEDIATION','PENDING_VERIFICATION')) as "openFlags",
+    (select count(*)::int from "EmailTriageItem" where "workspaceId" = ${WORKSPACE_ID} and status = 'PENDING') as held,
+    (select count(*)::int from "ParkedIngest" where "workspaceId" = ${WORKSPACE_ID} and status = 'PARKED' and "deletedAt" is null) as parked
 `;
-console.log("Demo seed complete.", summary[0]);
-console.log("Ask only these live:");
+console.log("Demo seed complete (CV-DM-01).", summary[0]);
+console.log("\n── Rehearsed Ask ──");
 console.log('  1. "Show me every email where a client mentioned fees since April"');
 console.log('  2. "Has any advisor promised performance in writing?"');
 console.log('  3. "When did we last hear from Margaret Ellison and about what?"');
+console.log("\n── Honest miss ──");
+console.log('  SMS: "Show me SMS messages about fees"');
+console.log('  Out-of-range: "What fee emails do we have from 2023-02-15?"');
+console.log('  No evidence: "Any evidence of private jet gifts to clients?"');
+console.log("\n── Surfaces ── /needs-attention  /fail-closed  /partner/portfolio");
+console.log(
+  "\nN1 corpus only — do not claim these rows are mailbox disclosure (N2)."
+);
+console.log("Next: npx tsx scripts/demo-embed-backfill.ts " + WORKSPACE_ID);

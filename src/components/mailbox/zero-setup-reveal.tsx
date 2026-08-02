@@ -5,21 +5,30 @@ import { ArrowRight } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { isRelease1DemoEnabled } from "~/lib/feature-flags";
+import { zeroSetupCopy } from "~/components/mailbox/zero-setup-copy";
 
 /**
  * CV-OB / N2 — Zero setup to first evidence.
- * After connect, land on exposure — not a client roster.
+ * Counts are workspace open items. Do not claim they came from Gmail
+ * unless a sync has actually produced them.
  */
 export function ZeroSetupReveal({
   heldIdentityCount = 0,
   openFlagCount = 0,
   parkedCount = 0,
+  lastSyncAt = null,
 }: {
   heldIdentityCount?: number;
   openFlagCount?: number;
   parkedCount?: number;
+  /** ISO timestamp of last mailbox sync, if any. */
+  lastSyncAt?: string | null;
 }): React.JSX.Element | null {
   if (!isRelease1DemoEnabled()) return null;
+
+  const synced = Boolean(lastSyncAt);
+  const total = heldIdentityCount + openFlagCount + parkedCount;
+  const copy = zeroSetupCopy({ synced, totalOpenItems: total });
 
   return (
     <section
@@ -35,17 +44,20 @@ export function ZeroSetupReveal({
             id="zero-setup-heading"
             className="mt-2 text-lg font-semibold tracking-tight text-[#0D2818]"
           >
-            First evidence — no client records typed
+            {copy.heading}
           </h2>
           <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-            Connect the mailbox and supervision evidence appears. Ambiguous
-            identities are held for confirmation rather than silently assigned —
-            that is the product working, not unfinished setup.
+            {copy.body}
           </p>
+          {synced && lastSyncAt && (
+            <p className="mt-1 text-xs text-muted-foreground">
+              Last mailbox sync: {new Date(lastSyncAt).toLocaleString()}
+            </p>
+          )}
         </div>
         <Button asChild className="bg-[#0D2818] hover:bg-[#0D2818]/90">
           <Link href="/needs-attention">
-            What the mailbox disclosed
+            {copy.cta}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>

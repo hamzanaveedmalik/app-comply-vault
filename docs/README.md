@@ -10,6 +10,8 @@ Documentation index for the ComplyVault RIA compliance platform.
 |----------|-------------|
 | [complyvault-backlog-v5-release-1.md](./complyvault-backlog-v5-release-1.md) | **Release 1 (10 Aug demo)** — hypothesis-testing backlog; build-ready source of truth |
 | [demo/run-sheet.md](./demo/run-sheet.md) | AdvizorStack demo run sheet (CV-DM-02) |
+| [demo/deploy-and-rehearsal.md](./demo/deploy-and-rehearsal.md) | CV-DM-03 deploy + rehearsal checklist |
+| [demo/vl-02-email.md](./demo/vl-02-email.md) | CV-VL-02 hypothesis-check email draft |
 | [product-as-built.md](./product-as-built.md) | **What is developed today** — as-built product document (prefer over PRDs) |
 | [app-functionality-overview.md](./app-functionality-overview.md) | Narrative functional overview (companion; may lag Trust Layer) |
 | [backlog-epics-and-stories.md](./backlog-epics-and-stories.md) | Product backlog epics and stories (pre–Release 1 families) |

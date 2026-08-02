@@ -252,16 +252,21 @@ N6 is the hypothesis most likely to determine the outcome and the only one that 
 
 ## EPIC-DM: Demo choreography — 1.0d (calendar-spread)
 
-### CV-DM-01: Seed and corpus — 0.3d ✅ done (2026-08-01)
+### CV-DM-01: Seed and corpus — 0.3d ✅ done (2026-08-01); neon parity (2026-08-03)
 
 - Corpus built to the tiered question plan: Rehearsed guaranteed, Paraphrased coverage measured by the evaluation set, plus a deliberately unindexed source and out-of-range window for the invocable honest miss.
 - Held identities (email triage + unmatched Robert Chen meeting), parked Zoom ingest, `IndexCoverageManifest` upserted per workspace.
 - Three seeded partner firms with distinct profiles (snapshot fixtures). Prepared demonstration mailbox identities in triage.
 - Run: `npx tsx scripts/seed-demo.ts --workspace=<id> --confirm` then `npx tsx scripts/demo-embed-backfill.ts <id>`.
+- Neon HTTP fallback (same CV-DM-01 extras): `node scripts/seed-demo-neon.mjs <id> --confirm`.
 
 ### CV-DM-02: Run sheet, hypothesis test, fallbacks — 0.2d ✅ done (2026-07-30)
 
-### CV-DM-03: Rehearsal and deployment — 0.5d ⏳ pending (calendar)
+### CV-DM-03: Rehearsal and deployment — 0.5d 🔨 checklist ready (2026-08-03); rehearsals pending (calendar)
+
+- Deploy + two-rehearsal checklist: `docs/demo/deploy-and-rehearsal.md`
+- Two-corpus rule documented in run sheet (live Gmail vs seed Ask corpus)
+- Calendar: complete Rehearsal 1 + Rehearsal 2 and day-before freeze before 10 Aug
 
 ---
 
@@ -271,9 +276,11 @@ N6 is the hypothesis most likely to determine the outcome and the only one that 
 
 Janice Powell or Miles Edwards reviews the candidate-pack language, the scope-confirmation flow, and the coverage-statement wording — specifically whether "answerable" and "partially answerable" survive contact with a former examiner. Starts Day 2.
 
-### CV-VL-02: Hypothesis check — send this week
+### CV-VL-02: Hypothesis check — send this week 🔨 draft ready (2026-08-03); send pending
 
 The one-sentence email or Elle Scott pre-call described in section 1. Highest leverage item in the document.
+
+- Draft: `docs/demo/vl-02-email.md` — copy, subject lines, reorder table after reply.
 
 ---
 

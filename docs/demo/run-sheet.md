@@ -1,7 +1,10 @@
 # Release 1 demo run sheet
 
 **Surface flags:** `RELEASE1_DEMO_ENABLED=true` and `NEXT_PUBLIC_RELEASE1_DEMO=true`  
-**Corpus:** `npx tsx scripts/seed-demo.ts --workspace=<id> --confirm` then `npx tsx scripts/demo-embed-backfill.ts <id>`
+
+**Two corpora — do not mix claims:**
+1. **Live mailbox (N2 zero setup):** Connect Gmail → Labels → **Backfill**. Counts must come from that sync only. Never say “what the mailbox disclosed” about DB seed rows.
+2. **Ask / honest-miss rehearsal (N1):** `node scripts/seed-demo-neon.mjs <id> --confirm` then embed backfill. Prepared synthetic evidence for known questions — label it as demo corpus if the live mailbox is empty.
 
 ## Open: test the hypotheses
 
@@ -15,8 +18,8 @@ Reorder the middle of the session around the answers. The default sequence below
 
 ## Default order
 
-1. **Zero setup to first evidence (N2).** Connect the prepared demo mailbox. Say: “Zero setup — nobody types client records.” Show staged progress, then land on **What the mailbox disclosed** (Needs Attention): held identities, open signals, parked fail-closed. Do **not** end on a client table. Line for held identity: “Held for confirmation is the product working, not unfinished setup.”
-2. **Tiered questions (N1).** Start with a rehearsed question, accept a paraphrased question, then offer an open question. Every answer should retain source links and its coverage context.
+1. **Zero setup to first evidence (N2).** Connect the prepared demo mailbox → Labels → **Backfill**. Say: “Zero setup — nobody types client records.” Only after a sync timestamp appears, use the CTA **What the mailbox disclosed** (Needs Attention): held identities, open signals, parked fail-closed. Do **not** end on a client table. Do **not** attribute DB seed rows to the mailbox. Line for held identity: “Held for confirmation is the product working, not unfinished setup.”
+2. **Tiered questions (N1).** Use the seeded Ask corpus (label it if the live mailbox is empty). Start with a rehearsed question, accept a paraphrased question, then offer an open question. Every answer should retain source links and its coverage context.
 3. **Honest miss fallback.** Invoke on purpose (seeded):
    - SMS: “Show me SMS messages about fees”
    - Out of range: “What fee emails do we have from 2023-02-15?”
@@ -52,3 +55,8 @@ Reorder the middle of the session around the answers. The default sequence below
 ## Close
 
 Propose a free pilot with two or three firms, agree the success criteria, and set a dated next step: select firms and a commercial shape by 17 August 2026.
+
+## Related
+
+- Deploy + rehearsal checklist: [deploy-and-rehearsal.md](./deploy-and-rehearsal.md) (CV-DM-03)
+- Hypothesis agenda email: [vl-02-email.md](./vl-02-email.md) (CV-VL-02)

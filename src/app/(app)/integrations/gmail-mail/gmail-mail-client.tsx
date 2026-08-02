@@ -179,7 +179,16 @@ export function GmailMailClient({
       )}
 
       {release1 && (connections.length > 0 || connected) && (
-        <ZeroSetupReveal {...revealCounts} />
+        <ZeroSetupReveal
+          {...revealCounts}
+          lastSyncAt={
+            connections
+              .map((c) => c.lastSyncAt)
+              .filter((v): v is string => Boolean(v))
+              .sort()
+              .at(-1) ?? null
+          }
+        />
       )}
 
       {!workspaceStatus.oauthConfigured && (

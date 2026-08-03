@@ -1,6 +1,6 @@
 ---
 stepsCompleted: ['step-01-validate-prerequisites', 'step-02-design-epics', 'step-03-create-stories', 'step-04-final-validation', 'review-refinement', 'dashboard-redesign', 'competitive-analysis-jump']
-inputDocuments: ['docs/complyvault-plugin-prd.md']
+inputDocuments: ['docs/product/complyvault-plugin-prd.md']
 lastUpdated: 'February 2026'
 ---
 

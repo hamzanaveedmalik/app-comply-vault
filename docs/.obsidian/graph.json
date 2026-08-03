@@ -1,0 +1,79 @@
+{
+  "collapse-filter": true,
+  "search": "",
+  "showTags": true,
+  "showAttachments": false,
+  "hideUnresolved": false,
+  "showOrphans": false,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "path:release-1",
+      "color": {
+        "a": 1,
+        "rgb": 2171109
+      }
+    },
+    {
+      "query": "path:product",
+      "color": {
+        "a": 1,
+        "rgb": 14725458
+      }
+    },
+    {
+      "query": "path:architecture",
+      "color": {
+        "a": 1,
+        "rgb": 8947848
+      }
+    },
+    {
+      "query": "path:ux",
+      "color": {
+        "a": 1,
+        "rgb": 4437377
+      }
+    },
+    {
+      "query": "path:guides",
+      "color": {
+        "a": 1,
+        "rgb": 3963124
+      }
+    },
+    {
+      "query": "path:founder-sales",
+      "color": {
+        "a": 1,
+        "rgb": 13323245
+      }
+    },
+    {
+      "query": "path:archive",
+      "color": {
+        "a": 1,
+        "rgb": 10066329
+      }
+    },
+    {
+      "query": "path:moc",
+      "color": {
+        "a": 1,
+        "rgb": 16750848
+      }
+    }
+  ],
+  "collapse-display": false,
+  "showArrow": false,
+  "textFadeMultiplier": -0.2,
+  "nodeSizeMultiplier": 1.2,
+  "lineSizeMultiplier": 1,
+  "collapse-forces": false,
+  "centerStrength": 0.3,
+  "repelStrength": 12,
+  "linkStrength": 0.7,
+  "linkDistance": 220,
+  "scale": 1,
+  "close": false
+}

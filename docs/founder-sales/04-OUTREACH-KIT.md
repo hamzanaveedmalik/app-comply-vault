@@ -1,3 +1,8 @@
+---
+tags:
+  - founder-sales
+---
+
 # 4) Outreach Kit
 
 ---

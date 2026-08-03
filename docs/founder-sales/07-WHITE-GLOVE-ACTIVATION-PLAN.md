@@ -1,3 +1,8 @@
+---
+tags:
+  - founder-sales
+---
+
 # 7) White-Glove Activation Plan (Prevent "Yes → Silence")
 
 ---

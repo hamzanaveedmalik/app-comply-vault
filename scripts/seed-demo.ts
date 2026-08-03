@@ -11,7 +11,7 @@
  * Then (optional embeddings):
  *   npx tsx scripts/demo-embed-backfill.ts <workspaceId>
  *
- * Tiered Ask questions — see console output and docs/demo/run-sheet.md.
+ * Tiered Ask questions — see console output and docs/release-1/demo/run-sheet.md.
  */
 
 import crypto from "node:crypto";

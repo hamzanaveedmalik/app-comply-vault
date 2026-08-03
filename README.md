@@ -28,7 +28,7 @@ Capture  →  AI triage  →  Human review & sign-off  →  Audit pack  →  Syn
 - **Ask ComplyVault** — hybrid-retrieval Q&A over a workspace's compliance records.
 - **Billing, notifications (email/in-app), and search** built in.
 
-See [`docs/app-functionality-overview.md`](./docs/app-functionality-overview.md) for the full functional breakdown and implementation status, and [`docs/README.md`](./docs/README.md) for the documentation index.
+See [`docs/product/app-functionality-overview.md`](./docs/product/app-functionality-overview.md) for the full functional breakdown and implementation status, and [`docs/README.md`](./docs/README.md) for the documentation index.
 
 ## Tech Stack
 
@@ -169,7 +169,7 @@ See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for full deployment instruction
 ## Documentation
 
 - [docs/README.md](./docs/README.md) — full documentation index (product, architecture, user journeys)
-- [docs/app-functionality-overview.md](./docs/app-functionality-overview.md) — what's implemented today vs. planned
+- [docs/product/app-functionality-overview.md](./docs/product/app-functionality-overview.md) — what's implemented today vs. planned
 - [SETUP_GUIDE.md](./SETUP_GUIDE.md) — complete setup instructions
 - [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) — GitHub + Vercel deployment
 

@@ -1,6 +1,25 @@
+---
+tags:
+  - index
+---
+
 # ComplyVault Documentation
 
 Documentation index for the ComplyVault RIA compliance platform.
+
+**Obsidian:** open this `docs/` folder as a vault. Start from the maps of content (MOCs) below — they give a cleaner graph than linking everything from this README alone.
+
+---
+
+## Maps of content (Obsidian)
+
+| Map | Use when |
+|-----|----------|
+| [MOC — Release 1](./moc/moc-release-1.md) | 10 Aug demo / v5 backlog |
+| [MOC — Product](./moc/moc-product.md) | As-built scope, PRDs, backlogs |
+| [MOC — Architecture](./moc/moc-architecture.md) | System design & diagrams |
+| [MOC — UX](./moc/moc-ux.md) | Journeys, cockpit, sign-off, workspaces |
+| [MOC — Archive](./moc/moc-archive.md) | Superseded briefs |
 
 ---
 
@@ -8,17 +27,17 @@ Documentation index for the ComplyVault RIA compliance platform.
 
 | Document | Description |
 |----------|-------------|
-| [complyvault-backlog-v5-release-1.md](./complyvault-backlog-v5-release-1.md) | **Release 1 (10 Aug demo)** — hypothesis-testing backlog; build-ready source of truth |
-| [demo/run-sheet.md](./demo/run-sheet.md) | AdvizorStack demo run sheet (CV-DM-02) |
-| [demo/deploy-and-rehearsal.md](./demo/deploy-and-rehearsal.md) | CV-DM-03 deploy + rehearsal checklist |
-| [demo/vl-02-email.md](./demo/vl-02-email.md) | CV-VL-02 hypothesis-check email draft |
-| [product-as-built.md](./product-as-built.md) | **What is developed today** — as-built product document (prefer over PRDs) |
-| [app-functionality-overview.md](./app-functionality-overview.md) | Narrative functional overview (companion; may lag Trust Layer) |
-| [backlog-epics-and-stories.md](./backlog-epics-and-stories.md) | Product backlog epics and stories (pre–Release 1 families) |
-| [backlog-phase1-trust.md](./backlog-phase1-trust.md) | Phase 1 Seal and Publish backlog + status |
-| [advizorstack-demo-brief.md](./advizorstack-demo-brief.md) | Superseded by v5 — retained for history (`CV-AS-*`) |
-| [complyvault-plugin-prd.md](./complyvault-plugin-prd.md) | Full Product Requirements Document — Plugin & Integration Strategy |
-| [prd-summary.md](./prd-summary.md) | Condensed PRD reference — epics, stories, phases |
+| [release-1/complyvault-backlog-v5-release-1.md](./release-1/complyvault-backlog-v5-release-1.md) | **Release 1 (10 Aug demo)** — hypothesis-testing backlog; build-ready source of truth |
+| [release-1/demo/run-sheet.md](./release-1/demo/run-sheet.md) | AdvizorStack demo run sheet (CV-DM-02) |
+| [release-1/demo/deploy-and-rehearsal.md](./release-1/demo/deploy-and-rehearsal.md) | CV-DM-03 deploy + rehearsal checklist |
+| [release-1/demo/vl-02-email.md](./release-1/demo/vl-02-email.md) | CV-VL-02 hypothesis-check email draft |
+| [product/product-as-built.md](./product/product-as-built.md) | **What is developed today** — as-built product document (prefer over PRDs) |
+| [product/app-functionality-overview.md](./product/app-functionality-overview.md) | Narrative functional overview (companion; may lag Trust Layer) |
+| [product/backlog-epics-and-stories.md](./product/backlog-epics-and-stories.md) | Product backlog epics and stories (pre–Release 1 families) |
+| [product/backlog-phase1-trust.md](./product/backlog-phase1-trust.md) | Phase 1 Seal and Publish backlog + status |
+| [archive/advizorstack-demo-brief.md](./archive/advizorstack-demo-brief.md) | Superseded by v5 — retained for history (`CV-AS-*`) |
+| [product/complyvault-plugin-prd.md](./product/complyvault-plugin-prd.md) | Full Product Requirements Document — Plugin & Integration Strategy |
+| [product/prd-summary.md](./product/prd-summary.md) | Condensed PRD reference — epics, stories, phases |
 
 ---
 
@@ -26,7 +45,8 @@ Documentation index for the ComplyVault RIA compliance platform.
 
 | Document | Description |
 |----------|-------------|
-| [architecture-diagrams.md](./architecture-diagrams.md) | System architecture, data flow, integration patterns (Mermaid) |
+| [architecture/architecture-diagrams.md](./architecture/architecture-diagrams.md) | System architecture, data flow, integration patterns (Mermaid) |
+| [architecture/architecture-as-built.md](./architecture/architecture-as-built.md) | As-built architecture from the current codebase |
 
 **Diagrams included:**
 - High-level system architecture
@@ -45,7 +65,7 @@ Documentation index for the ComplyVault RIA compliance platform.
 
 | Document | Description |
 |----------|-------------|
-| [user-journeys.md](./user-journeys.md) | User journey maps and flows (Mermaid) |
+| [ux/user-journeys.md](./ux/user-journeys.md) | User journey maps and flows (Mermaid) |
 
 **Journeys included:**
 - CCO first-time setup
@@ -61,12 +81,13 @@ Documentation index for the ComplyVault RIA compliance platform.
 
 ---
 
-## Other
+## Guides & sales
 
 | Document | Description |
 |----------|-------------|
-| [USER_GUIDE.md](./USER_GUIDE.md) | End-user guide |
-| [FAQ.md](./FAQ.md) | Frequently asked questions |
+| [guides/USER_GUIDE.md](./guides/USER_GUIDE.md) | End-user guide |
+| [guides/FAQ.md](./guides/FAQ.md) | Frequently asked questions |
+| [guides/m365-mail-admin-consent-guide.md](./guides/m365-mail-admin-consent-guide.md) | M365 admin consent setup |
 | [founder-sales/](./founder-sales/) | Founder-led sales playbook |
 
 ---
@@ -76,3 +97,4 @@ Documentation index for the ComplyVault RIA compliance platform.
 - **GitHub:** Renders Mermaid in `.md` files automatically
 - **VS Code:** Install "Mermaid" or "Markdown Preview Mermaid Support" extension
 - **Online:** Paste into [mermaid.live](https://mermaid.live) to edit/export
+- **Obsidian:** Enable the core Mermaid support (built-in) or a Mermaid community plugin

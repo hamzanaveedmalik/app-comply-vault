@@ -1,0 +1,40 @@
+{
+  "folders": [
+    {
+      "path": "_scratch",
+      "name": "Scratch (local)"
+    },
+    {
+      "path": "moc",
+      "name": "Maps of content"
+    },
+    {
+      "path": "release-1",
+      "name": "Release 1 — demo"
+    },
+    {
+      "path": "product",
+      "name": "Product & planning"
+    },
+    {
+      "path": "architecture",
+      "name": "Architecture"
+    },
+    {
+      "path": "ux",
+      "name": "UX & workflows"
+    },
+    {
+      "path": "guides",
+      "name": "Guides"
+    },
+    {
+      "path": "founder-sales",
+      "name": "Founder sales"
+    },
+    {
+      "path": "archive",
+      "name": "Archive"
+    }
+  ]
+}

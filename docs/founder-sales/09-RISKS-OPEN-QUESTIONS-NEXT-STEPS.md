@@ -1,3 +1,8 @@
+---
+tags:
+  - founder-sales
+---
+
 # 9) Risks / Open Questions / Next Steps
 
 ---

@@ -1,3 +1,8 @@
+---
+tags:
+  - founder-sales
+---
+
 # 2) ICP Wedge + Founder POV One-Pager
 
 ---

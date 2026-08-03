@@ -1,3 +1,8 @@
+---
+tags:
+  - founder-sales
+---
+
 # 10) Quality Gate — Checklist + Rubric Scoring
 
 ---

@@ -1,3 +1,8 @@
+---
+tags:
+  - founder-sales
+---
+
 # 8) Learning Loop (Tracking + Weekly Iteration)
 
 ---

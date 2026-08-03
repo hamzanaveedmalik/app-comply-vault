@@ -1,6 +1,6 @@
 ---
 name: complyvault-story-implementer
-description: Implements ComplyVault backlog stories (CV-0-xx, CV-A-xx through CV-E-xx) end-to-end from docs/backlog-epics-and-stories.md. Use when the user asks to implement, build, or start a story or epic, e.g. "implement CV-B-03", "build the review queue", "start Phase 2", or references the backlog or PRD.
+description: Implements ComplyVault backlog stories (CV-0-xx, CV-A-xx through CV-E-xx) end-to-end from docs/product/backlog-epics-and-stories.md. Use when the user asks to implement, build, or start a story or epic, e.g. "implement CV-B-03", "build the review queue", "start Phase 2", or references the backlog or PRD.
 ---
 
 # ComplyVault Story Implementer
@@ -9,7 +9,8 @@ Orchestrates implementation of a backlog story. Delegates domain rules to the ot
 
 ## Sources of truth
 
-- Backlog: `docs/backlog-epics-and-stories.md` (story IDs, acceptance criteria, dependency graph, phase table)
+- Release 1 backlog: `docs/release-1/complyvault-backlog-v5-release-1.md` (current demo SoT)
+- Module backlog: `docs/product/backlog-epics-and-stories.md` (CV-A..E story IDs, acceptance criteria, dependency graph, phase table)
 - PRD: `docs/# PRD — ComplyVault Communications & Exa.md` (schema in §9, module specs)
 - Design principle: selectivity at the documentation layer, never the capture layer. AI outputs are triage signals, not findings.
 

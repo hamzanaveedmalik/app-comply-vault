@@ -1,3 +1,8 @@
+---
+tags:
+  - founder-sales
+---
+
 # 3) Targeting Plan + Target List
 
 ---

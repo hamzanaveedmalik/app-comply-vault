@@ -1,0 +1,12 @@
+{
+  "legacyEditor": false,
+  "livePreview": true,
+  "defaultViewMode": "source",
+  "attachmentFolderPath": "./_attachments",
+  "newFileLocation": "folder",
+  "newFileFolderPath": "_scratch",
+  "useMarkdownLinks": false,
+  "newLinkFormat": "shortest",
+  "showFrontmatter": false,
+  "alwaysUpdateLinks": true
+}

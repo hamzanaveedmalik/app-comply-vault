@@ -51,3 +51,12 @@ yarn-error.log*
 /founder-sales
 /docs/founder-sales.tmp/
 .tmp/
+
+# Obsidian (commit shared vault config; ignore local state)
+docs/.obsidian/workspace.json
+docs/.obsidian/workspace-mobile.json
+docs/.obsidian/cache
+docs/.obsidian/plugins/*/data.json
+docs/.trash/
+docs/_scratch/
+docs/_attachments/

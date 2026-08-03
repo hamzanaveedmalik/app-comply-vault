@@ -1,3 +1,8 @@
+---
+tags:
+  - founder-sales
+---
+
 # 6) Decision Enablement Kit (Beat "No Decision")
 
 ---

@@ -1,3 +1,8 @@
+---
+tags:
+  - founder-sales
+---
+
 # 5) Diagnostic Discovery Kit (No Demo First)
 
 ---

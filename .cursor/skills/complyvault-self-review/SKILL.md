@@ -41,6 +41,6 @@ Both must pass. Report failures verbatim — never declare a story done with fai
 ## 5. Story closure
 
 - [ ] Each acceptance criterion in the backlog story is demonstrably met — walk the list explicitly in the summary.
-- [ ] Story status marker updated in `docs/backlog-epics-and-stories.md`.
+- [ ] Story status marker updated in `docs/product/backlog-epics-and-stories.md`.
 - [ ] Anything ⚠️ COMPLIANCE IMPACT restated in the final summary to the user.
 - [ ] Commit message (if asked to commit): `[scope] action: description`.

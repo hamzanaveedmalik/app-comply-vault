@@ -1,3 +1,8 @@
+---
+tags:
+  - founder-sales
+---
+
 # Comply Vault — Founder Sales Sprint Pack
 
 ## 1) Context Snapshot

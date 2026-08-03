@@ -262,9 +262,10 @@ N6 is the hypothesis most likely to determine the outcome and the only one that 
 
 ### CV-DM-02: Run sheet, hypothesis test, fallbacks — 0.2d ✅ done (2026-07-30)
 
-### CV-DM-03: Rehearsal and deployment — 0.5d 🔨 checklist ready (2026-08-03); rehearsals pending (calendar)
+### CV-DM-03: Rehearsal and deployment — 0.5d 🔨 deploy+seed done (2026-08-03); rehearsals pending (calendar)
 
 - Deploy + two-rehearsal checklist: `docs/demo/deploy-and-rehearsal.md`
+- Production flags `true`; redeployed; seeded `cmkyri10q0007l104stmnl00y` + neon embed backfill (21 rows)
 - Two-corpus rule documented in run sheet (live Gmail vs seed Ask corpus)
 - Calendar: complete Rehearsal 1 + Rehearsal 2 and day-before freeze before 10 Aug
 
@@ -276,11 +277,12 @@ N6 is the hypothesis most likely to determine the outcome and the only one that 
 
 Janice Powell or Miles Edwards reviews the candidate-pack language, the scope-confirmation flow, and the coverage-statement wording — specifically whether "answerable" and "partially answerable" survive contact with a former examiner. Starts Day 2.
 
-### CV-VL-02: Hypothesis check — send this week 🔨 draft ready (2026-08-03); send pending
+### CV-VL-02: Hypothesis check — send this week 🔨 mailto opened (2026-08-03); confirm Send in Mail
 
 The one-sentence email or Elle Scott pre-call described in section 1. Highest leverage item in the document.
 
 - Draft: `docs/demo/vl-02-email.md` — copy, subject lines, reorder table after reply.
+- Sender: `node scripts/send-vl02-email.mjs` (mailto default; Resend with `VL02_CONFIRM=yes`).
 
 ---
 

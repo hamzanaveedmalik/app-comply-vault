@@ -2,11 +2,20 @@
 
 **Purpose:** Convert up to three hypotheses into an agenda Nico chose. Highest-leverage item before 10 August.
 
-**Send to:** Nico (or Elle Scott for a pre-call if that is the working channel)  
-**From:** whoever owns the AdvizorStack relationship  
-**Subject options:**
-- Quick preference before our 10 Aug session
-- One question so we use the hour well
+**Send to:** `nico@advizorstack.com` (public LinkedIn contact; override with `VL02_TO` if Elle is the channel)  
+**From:** whoever owns the AdvizorStack relationship (replace `[Name]` before send)  
+**Subject:** Quick preference before our 10 Aug session
+
+## Send
+
+```bash
+# Opens your mail client with a prefilled draft (recommended)
+node scripts/send-vl02-email.mjs --mode=mailto
+
+# Or Resend (requires your name + explicit confirm)
+VL02_FROM_NAME="Your Name" VL02_REPLY_TO="you@complyvault.co" VL02_CONFIRM=yes \
+  node scripts/send-vl02-email.mjs --mode=resend
+```
 
 ## Body (copy)
 
@@ -35,6 +44,7 @@ Update the default order in [run-sheet.md](./run-sheet.md) the morning of the ca
 
 ## Status
 
-- [ ] Draft approved
-- [ ] Sent (date: ________)
+- [x] Draft approved (2026-08-03)
+- [x] Mailto draft opened to `nico@advizorstack.com` (2026-08-03) — **hit Send in Mail after signing your name**
+- [ ] Sent confirmed (date: ________)
 - [ ] Reply / preference noted: ________

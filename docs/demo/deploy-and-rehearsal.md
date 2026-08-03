@@ -4,14 +4,35 @@
 **Surface:** production demo workspace on `app.complyvault.co`  
 **Do not mix corpora:** live Gmail sync (N2) vs seeded Ask corpus (N1). See [run-sheet.md](./run-sheet.md).
 
+## Automate (when credentials are present)
+
+```bash
+# Set flags + redeploy + seed N1 corpus
+export VERCEL_TOKEN=…                 # or: vercel login
+export DATABASE_URL=…                 # demo Neon (current .env twilight password is stale)
+export DEMO_WORKSPACE_ID=…            # A Small Investment, LLC workspace id
+node scripts/demo-dm03-prepare.mjs
+
+# Seed only
+node scripts/demo-dm03-prepare.mjs --seed-only
+```
+
+**Done 2026-08-03:**
+- Vercel flags set to `true` (were empty strings) + production redeploy
+- Seeded workspace `cmkyri10q0007l104stmnl00y` (A Small Investment, LLC): held=3, parked=1
+- Embed backfill via `scripts/demo-embed-backfill-neon.mjs` (21 embedding rows)
+
+**Still human:** sign-in smoke of routes, N2 live Gmail backfill, two rehearsals.
+
 ## A. Deploy (once, then re-verify before each rehearsal)
 
-- [ ] Vercel env: `RELEASE1_DEMO_ENABLED=true`
-- [ ] Vercel env: `NEXT_PUBLIC_RELEASE1_DEMO=true`
-- [ ] Optional for semantic Ask: `ASK_HYBRID_RETRIEVAL=true` (and embedding provider keys already present)
-- [ ] `npx prisma migrate deploy` against the demo Neon DB (use non-pooler `DIRECT_URL`)
-- [ ] Redeploy production; confirm build green
-- [ ] Sign in to the demo workspace; confirm Release 1 nav routes render:
+- [x] Vercel env: `RELEASE1_DEMO_ENABLED=true`
+- [x] Vercel env: `NEXT_PUBLIC_RELEASE1_DEMO=true`
+- [x] Optional for semantic Ask: `ASK_HYBRID_RETRIEVAL=true` (and embedding provider keys already present)
+- [x] Migrations already applied on demo Neon (no pending)
+- [x] Redeploy production; confirm build green
+- [x] Routes exist on `app.complyvault.co` (HTTP 307 → auth as of 2026-08-03)
+- [ ] Sign in to workspace **A Small Investment, LLC** (`cmkyri10q0007l104stmnl00y`); confirm Release 1 nav renders:
   - `/needs-attention`
   - `/fail-closed`
   - `/partner/portfolio`
@@ -26,8 +47,11 @@ Prefer Neon HTTP when Prisma TLS fails under corp MitM:
 
 ```bash
 export DATABASE_URL='…'   # pooler OK for neon HTTP script
+# Demo workspace (prod): cmkyri10q0007l104stmnl00y
 node scripts/seed-demo-neon.mjs <workspaceId> --confirm
-npx tsx scripts/demo-embed-backfill.ts <workspaceId>
+# Prefer Neon HTTP embed when Prisma TLS fails under MitM:
+node scripts/demo-embed-backfill-neon.mjs <workspaceId>
+# Prisma path (when TCP works): npx tsx scripts/demo-embed-backfill.ts <workspaceId>
 ```
 
 Prisma path (when TCP works):
@@ -39,7 +63,7 @@ npx tsx scripts/demo-embed-backfill.ts <workspaceId>
 
 Verify after seed:
 
-- [ ] Summary shows held identities ≥ 3 and parked ≥ 1
+- [x] Summary shows held identities ≥ 3 and parked ≥ 1 (held=3, parked=1, embeddings=21)
 - [ ] `/fail-closed` shows parked Zoom `demo-parked-zoom-recording-001` + stored `INGEST_PARKED` audit event
 - [ ] Rehearsed Ask questions return cited answers
 - [ ] Honest-miss questions decline specifically (SMS / 2023 / private jet)

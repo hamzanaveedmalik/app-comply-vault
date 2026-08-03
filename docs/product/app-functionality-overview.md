@@ -325,8 +325,15 @@ audit-logs, metrics, iapd CRD lookup, and `ask`.
 - Architecture (as-built): `docs/architecture/architecture-as-built.md`
 - Architecture (target/diagrams): `docs/architecture/architecture-diagrams.md`
 - Product scope & epics: `docs/product/prd-summary.md`, `docs/product/complyvault-plugin-prd.md`
-- Three-layer sign-off: `docs/ux/three-layer-signoff.md`
-- Compliance cockpit: `docs/ux/compliance-cockpit.md`
+- Three-layer sign-off: `docs/compliance/three-layer-signoff.md`
+- Compliance cockpit: `docs/compliance/compliance-cockpit.md`
 - Ask ComplyVault: `docs/product/ask-complyvault.md`
 - Onboarding: `docs/ux/onboarding-flow.md`
-- User-facing: `docs/guides/USER_GUIDE.md`, `docs/guides/FAQ.md`, `docs/ux/user-journeys.md`
+- User-facing: `docs/operations/USER_GUIDE.md`, `docs/operations/FAQ.md`, `docs/ux/user-journeys.md`
+
+## Related documentation
+
+- Prefer on conflict: [[product-as-built]]
+- [[architecture-as-built]] · [[architecture-diagrams]]
+- [[compliance-cockpit]] · [[three-layer-signoff]] · [[ask-complyvault]]
+- [[Product-Map|Product Map]]

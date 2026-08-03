@@ -70,3 +70,9 @@ tags:
 4. **Warm path check:** For each top-25, check if you have a mutual connection who could introduce you.
 5. **Segment:** Tag each as "warm intro possible" or "cold outreach."
 6. **Load into tracking:** Use the weekly learning loop tracker (Section 9) to manage status and next actions.
+
+## Workflow
+
+Overview: [[Founder-Sales-Map|Founder Sales Map]]
+Previous: [[02-ICP-WEDGE-AND-FOUNDER-POV]]
+Next: [[04-OUTREACH-KIT]]

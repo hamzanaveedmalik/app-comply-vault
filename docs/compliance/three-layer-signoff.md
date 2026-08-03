@@ -541,3 +541,11 @@ If the AI generates no compliance flags, the meeting still follows the full work
 - RBAC: advisor cannot hit CM or CCO routes (403).
 
 ---
+
+## Related documentation
+
+- [[compliance-cockpit]]
+- [[meeting-detail-page]]
+- [[product-as-built]]
+- [[user-journeys]]
+- [[Compliance-Map|Compliance Map]]

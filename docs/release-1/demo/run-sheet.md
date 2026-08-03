@@ -68,3 +68,10 @@ Propose a free pilot with two or three firms, agree the success criteria, and se
 
 - Deploy + rehearsal checklist: [deploy-and-rehearsal.md](./deploy-and-rehearsal.md) (CV-DM-03)
 - Hypothesis agenda email: [vl-02-email.md](./vl-02-email.md) (CV-VL-02)
+
+## Related documentation
+
+- [[deploy-and-rehearsal]]
+- [[vl-02-email]]
+- [[complyvault-backlog-v5-release-1]]
+- [[Go-to-Market-Map|Go-to-Market Map]]

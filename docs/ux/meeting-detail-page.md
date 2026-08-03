@@ -777,3 +777,12 @@ Quick reference for implementation. All values from ComplyVault design system.
 | Audit trail action   | 13px | 500                     |
 | Audit trail metadata | 12px | 400                     |
 | Audit trail detail   | 12px | 400                     |
+
+## Related documentation
+
+- [[compliance-cockpit]]
+- [[three-layer-signoff]]
+- [[user-journeys]]
+- [[product-as-built]]
+- [[ask-complyvault]]
+- [[Compliance-Map|Compliance Map]]

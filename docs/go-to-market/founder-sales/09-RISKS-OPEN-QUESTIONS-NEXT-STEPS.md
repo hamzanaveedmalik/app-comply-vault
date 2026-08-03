@@ -99,3 +99,9 @@ tags:
 ---
 
 *Sprint Pack produced following the [founder-sales](../../founder-sales/SKILL.md) skill framework. Quality gate and scoring follow in the next section.*
+
+## Workflow
+
+Overview: [[Founder-Sales-Map|Founder Sales Map]]
+Previous: [[08-LEARNING-LOOP]]
+Next: [[10-QUALITY-GATE]]

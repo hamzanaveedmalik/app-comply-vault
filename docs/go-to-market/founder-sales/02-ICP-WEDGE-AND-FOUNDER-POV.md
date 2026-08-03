@@ -90,3 +90,9 @@ Comply Vault doesn't replace the CCO's judgment — it eliminates the manual lab
 1. **Product proof:** Live demo that turns a meeting recording into an exam-ready evidence pack in <10 minutes
 2. **Workflow proof:** Built-in audit trail, version history, and evidence linking — designed for examiner scrutiny
 3. **Risk proof:** Human review/sign-off model + configurable retention rules + access controls — compliance-grade by design, not bolted on
+
+## Workflow
+
+Overview: [[Founder-Sales-Map|Founder Sales Map]]
+Previous: [[01-CONTEXT-SNAPSHOT]]
+Next: [[03-TARGETING-PLAN]]

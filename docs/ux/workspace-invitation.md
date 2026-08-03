@@ -618,3 +618,10 @@ This is a self-contained React component with all screen states, design tokens, 
 3. **Revoke vs soft-delete:** Should revoked invitations be permanently deleted or soft-deleted with a `revokedAt` timestamp? Soft-delete preserves the audit trail. Recommendation: soft-delete.
 
 4. **Re-invite after expiry:** Currently the unique constraint on (email, workspaceId) for pending invitations blocks re-inviting after expiry. The revoke mechanism resolves this for revoked invitations. For expired invitations, should the invite API automatically clean up expired rows, or should the owner explicitly "remove" expired invitations first?
+
+## Related documentation
+
+- Broader workspace system: [[workspace-management-and-invitations]]
+- [[onboarding-flow]]
+- [[user-journeys]]
+- [[Product-Map|Product Map]]

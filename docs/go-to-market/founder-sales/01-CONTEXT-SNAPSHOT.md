@@ -43,3 +43,8 @@ The CCO/ops owner has processed ≥10 real meetings through Comply Vault, export
 - Run 8–12 discovery calls to validate: (a) current documentation workflow, (b) willingness to try AI-assisted tooling, (c) security/upload concerns, (d) pricing sensitivity
 - Test both "free with feedback" and "$299 pilot" positioning to see which attracts serious partners
 - Ask every prospect: "What would you need to see to show this to your examiner?"
+
+## Workflow
+
+Overview: [[Founder-Sales-Map|Founder Sales Map]]
+Next: [[02-ICP-WEDGE-AND-FOUNDER-POV]]

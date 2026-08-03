@@ -215,3 +215,14 @@ Ordered by risk to the demo, not by effort.
 ## 6. Follow-up worth doing before the 10th
 
 Andrew Schuster (ClearView Regulatory Compliance) is a former SEC Exam Manager and Ernest C'DeBaca (Regulatory Insight Advisors) is a former SEC attorney, both already in the pipeline. A redacted request list and a sanitised deficiency letter from either would make the exam-artifact moment unarguable, and asking is a clean reason to reopen both threads this week.
+
+## Demo preparation (historical)
+
+> Prefer [[complyvault-backlog-v5-release-1]] for current build work.
+
+- [[deploy-and-rehearsal]]
+- [[run-sheet]]
+- [[compliance-cockpit]]
+- [[onboarding-flow]]
+- [[workspace-invitation]]
+- [[Archive-Map|Archive Map]]

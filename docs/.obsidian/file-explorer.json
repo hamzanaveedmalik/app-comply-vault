@@ -1,40 +1,13 @@
 {
   "folders": [
-    {
-      "path": "_scratch",
-      "name": "Scratch (local)"
-    },
-    {
-      "path": "moc",
-      "name": "Maps of content"
-    },
-    {
-      "path": "release-1",
-      "name": "Release 1 — demo"
-    },
-    {
-      "path": "product",
-      "name": "Product & planning"
-    },
-    {
-      "path": "architecture",
-      "name": "Architecture"
-    },
-    {
-      "path": "ux",
-      "name": "UX & workflows"
-    },
-    {
-      "path": "guides",
-      "name": "Guides"
-    },
-    {
-      "path": "founder-sales",
-      "name": "Founder sales"
-    },
-    {
-      "path": "archive",
-      "name": "Archive"
-    }
+    { "path": "_scratch", "name": "Scratch (local)" },
+    { "path": "product", "name": "Product" },
+    { "path": "architecture", "name": "Architecture" },
+    { "path": "compliance", "name": "Compliance" },
+    { "path": "go-to-market", "name": "Go-to-Market" },
+    { "path": "operations", "name": "Operations" },
+    { "path": "release-1", "name": "Release 1 delivery" },
+    { "path": "ux", "name": "UX surfaces" },
+    { "path": "archive", "name": "Archive" }
   ]
 }

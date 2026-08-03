@@ -128,3 +128,9 @@ tags:
 | Compliance consultants will adopt if it works for one client | Unvalidated | [Test with 1–2 consultants] |
 | "One exam scramble costs more than a year of Comply Vault" resonates | Unvalidated | [Track reactions] |
 | CCOs make buying decisions quickly (1–2 week cycle) at small firms | Unvalidated | [Track actual cycle times] |
+
+## Workflow
+
+Overview: [[Founder-Sales-Map|Founder Sales Map]]
+Previous: [[07-WHITE-GLOVE-ACTIVATION-PLAN]]
+Next: [[09-RISKS-OPEN-QUESTIONS-NEXT-STEPS]]

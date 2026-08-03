@@ -287,7 +287,7 @@ CI guards (`src/lib/marketing/marketing-honesty.test.ts`) lock live integrations
 | [`backlog-phase1-trust.md`](./backlog-phase1-trust.md) | Phase 1 Seal and Publish stories + status |
 | [`app-functionality-overview.md`](./app-functionality-overview.md) | Narrative functional overview (may lag Trust Layer) |
 | [`architecture-as-built.md`](../architecture/architecture-as-built.md) | As-built architecture notes (if present) |
-| [`USER_GUIDE.md`](../guides/USER_GUIDE.md) | End-user guide |
+| [`USER_GUIDE.md`](../operations/USER_GUIDE.md) | End-user guide |
 | Public `/trust` + `public/security/complyvault-security-overview.txt` | Customer-facing control summary |
 
 ---
@@ -295,3 +295,12 @@ CI guards (`src/lib/marketing/marketing-honesty.test.ts`) lock live integrations
 ## 10. One-paragraph summary (external-safe)
 
 ComplyVault today is a workspace-scoped RIA compliance product that captures meetings (Zoom auto-ingest and manual upload; Teams available in-product), processes them through transcription and structured extraction, surfaces missing-disclosure flags tuned by a firm disclosure profile, and requires advisor → compliance manager → CCO review before a meeting can be finalized into a deterministic audit pack that can be sealed with an append-only ledger and optional SharePoint convenience deposit. Email evidence (M365/Gmail), Ask/search, billing, and an honest public trust page are included. Exam request packs, legal-hold enforcement, SOC 2 certification, and an FCA/UK track are not product claims today.
+
+## Related documentation
+
+- [[app-functionality-overview]]
+- [[architecture-as-built]]
+- [[compliance-cockpit]]
+- [[ask-complyvault]]
+- [[complyvault-backlog-v5-release-1]]
+- [[Product-Map|Product Map]]

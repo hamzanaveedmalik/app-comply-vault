@@ -4,6 +4,8 @@ tags:
   - prd
 ---
 
+> **Archived.** Early communications / exam-evidence PRD. Prefer [[product-as-built]], [[backlog-epics-and-stories]], and [[complyvault-backlog-v5-release-1]]. See [[Archive-Map|Archive Map]].
+
 # PRD — ComplyVault Communications & Exam Evidence MVP
 
 **Version:** 1.0 · July 2026

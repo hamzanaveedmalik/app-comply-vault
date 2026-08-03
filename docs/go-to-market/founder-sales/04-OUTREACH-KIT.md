@@ -139,3 +139,9 @@ In the meantime, would it be useful if I sent a 1-page checklist for "exam-ready
 | Day 14+ | If no response → move to next target; revisit in 6–8 weeks | — |
 
 **Volume target (Week 1–2):** Send outreach to 15–25 prospects. Aim for 8–12 diagnostic conversations.
+
+## Workflow
+
+Overview: [[Founder-Sales-Map|Founder Sales Map]]
+Previous: [[03-TARGETING-PLAN]]
+Next: [[05-DIAGNOSTIC-DISCOVERY-KIT]]

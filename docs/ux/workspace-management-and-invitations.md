@@ -643,9 +643,9 @@ Use this section for structured review sessions.
 |----------|-----------|
 | [user-journeys.md](./user-journeys.md) | Broader CCO/adviser journeys (§7 adviser invitation) |
 | [complyvault-dashboard-design-doc.md](../product/complyvault-dashboard-design-doc.md) | Sidebar + workspace selector visual spec |
-| [three-layer-signoff.md](./three-layer-signoff.md) | Role workflow (Advisor / CM / CCO sign-off layers) |
+| [three-layer-signoff.md](../compliance/three-layer-signoff.md) | Role workflow (Advisor / CM / CCO sign-off layers) |
 | [architecture-as-built.md](../architecture/architecture-as-built.md) | System architecture, API surface |
-| [USER_GUIDE.md](../guides/USER_GUIDE.md) | End-user guide — **partially stale** on invite/auth; prefer this doc for workspace flows |
+| [USER_GUIDE.md](../operations/USER_GUIDE.md) | End-user guide — **partially stale** on invite/auth; prefer this doc for workspace flows |
 
 ---
 
@@ -674,3 +674,10 @@ Use this section for structured review sessions.
 | GET | `/api/workspaces/:id/team` | User | Member |
 | PATCH | `/api/workspaces/:id/settings` | User | OWNER_CCO |
 | DELETE | `/api/workspaces/:id/members/:userId` | User | OWNER_CCO |
+
+## Related documentation
+
+- Invite/accept PRD slice: [[workspace-invitation]]
+- [[onboarding-flow]]
+- [[architecture-as-built]]
+- [[Product-Map|Product Map]]

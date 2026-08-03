@@ -92,3 +92,9 @@ If documentation burden is real and growing — and especially if an exam is com
 | **"I want to wait until our next exam."** | "I understand. One thought: the firms that feel the most pain during exams are the ones that didn't have the documentation *before* the notice arrived. A 30-day pilot now means you'd have 6+ months of exam-ready documentation by the time an exam comes." |
 | **"What about [competitor / existing tool]?"** | "Great question — what are you using today and what's working vs. not? [Listen.] The gap we typically hear about is that existing tools handle communications archiving, not meeting-level supervision documentation with evidence linking. But let me understand your specific setup." |
 | **"I need to run this by [principal / board]."** | "Of course. Would it help if I sent a 1-page summary of the pilot (scope, cost, success criteria, exit clause) that you can forward? And would it be useful to include them in the next call?" |
+
+## Workflow
+
+Overview: [[Founder-Sales-Map|Founder Sales Map]]
+Previous: [[05-DIAGNOSTIC-DISCOVERY-KIT]]
+Next: [[07-WHITE-GLOVE-ACTIVATION-PLAN]]

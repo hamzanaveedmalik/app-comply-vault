@@ -447,3 +447,11 @@ Append-only, never updated, never deleted — same audit guarantees as every oth
 5. Extend `GlobalSearch` to detect Ask mode and render `AnswerCard`. Do **not** remove the existing keyword search flow — both coexist.
 6. Verify §6 compliance guardrails one at a time, with a written test for each.
 7. Ship to staging behind a soft feature flag (`NEXT_PUBLIC_ASK_ENABLED=true` in `.env.staging` only) for the first 48 hours, then enable in production.
+
+## Related documentation
+
+- [[product-as-built]]
+- [[architecture-as-built]]
+- [[complyvault-backlog-v5-release-1]]
+- [[meeting-detail-page]]
+- [[Product-Map|Product Map]]

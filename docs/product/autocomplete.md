@@ -511,7 +511,7 @@ Current code uses `revalidate: 86400` on the fetch call — 24-hour Next.js cach
 
 - **CV-FEAT-001** — Firm disclosure profile setup flow _(prerequisite — complete)_
 - **CV-FEAT-003** — Disclosure category configuration Step 2 _(prerequisite — complete)_
-- **`docs/ux/compliance-cockpit.md`** — Step 1/2 field definitions and never-suppress behaviour _(cross-reference for schema details)_
+- **`docs/compliance/compliance-cockpit.md`** — Step 1/2 field definitions and never-suppress behaviour _(cross-reference for schema details)_
 - **CV-FEAT-008** — ADV Part 2A PDF ingestion _(downstream — blocked on this feature)_
 - **CV-FEAT-009** — Pending parse resolution across disclosure category cards _(downstream — this feature provides the data layer)_
 - **CV-FEAT-010** — Compliance Cockpit posture gauge _(downstream — uses ADV-derived risk profile)_
@@ -530,3 +530,9 @@ Current code uses `revalidate: 86400` on the fetch call — 24-hour Next.js cach
 ---
 
 _ComplyVault Ltd · Confidential · 31 May 2026_
+
+## Related documentation
+
+- Master PRD (disclosure / command centre): [[new-autocomplete-flow]]
+- [[compliance-cockpit]]
+- [[Product-Map|Product Map]]

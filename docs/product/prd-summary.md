@@ -204,3 +204,10 @@ tags:
 - In-meeting live transcription (post-meeting only)
 - Two-way sync (CRM → ComplyVault)
 - On-premise SharePoint
+
+## Related documentation
+
+- Full plugin PRD: [[complyvault-plugin-prd]]
+- As-built (prefer for “what exists”): [[product-as-built]]
+- Archived 2.0 draft: [[new-prd-complyvault-2.0-draft]]
+- [[Product-Map|Product Map]]

@@ -816,3 +816,10 @@ When fallback refs are seeded (target state before demo):
 ---
 
 _ComplyVault Ltd · Confidential · 31 May 2026_
+
+## Related documentation
+
+- CRD implementation detail: [[autocomplete]]
+- [[compliance-cockpit]]
+- [[product-as-built]]
+- [[Product-Map|Product Map]]

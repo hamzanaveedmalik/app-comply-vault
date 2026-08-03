@@ -122,3 +122,9 @@ tags:
 **Verbatim language to reuse in messaging:**
 -
 ```
+
+## Workflow
+
+Overview: [[Founder-Sales-Map|Founder Sales Map]]
+Previous: [[04-OUTREACH-KIT]]
+Next: [[06-DECISION-ENABLEMENT-KIT]]

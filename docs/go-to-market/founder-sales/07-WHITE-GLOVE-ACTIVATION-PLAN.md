@@ -172,3 +172,9 @@ tags:
 | **CCO too busy to upload** | Offer to process recordings on their behalf; reduce ask to 1 recording |
 | **Quality concern** (output not accurate enough) | Schedule 30-min review; iterate on output; adjust extraction/flagging |
 | **Lost interest / deprioritized** | Honest conversation: "Is this still a priority? If not, no hard feelings — but I'd love to understand what changed." |
+
+## Workflow
+
+Overview: [[Founder-Sales-Map|Founder Sales Map]]
+Previous: [[06-DECISION-ENABLEMENT-KIT]]
+Next: [[08-LEARNING-LOOP]]

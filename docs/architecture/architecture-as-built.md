@@ -181,3 +181,10 @@ erDiagram
 
 - Target / future-state sketches: [architecture-diagrams.md](./architecture-diagrams.md)
 - Product scope (not implementation status): [prd-summary.md](../product/prd-summary.md)
+
+## Related documentation
+
+- [[architecture-diagrams]]
+- [[product-as-built]]
+- [[prd-summary]]
+- [[Architecture-Map|Architecture Map]]

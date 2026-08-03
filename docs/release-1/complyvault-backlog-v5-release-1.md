@@ -379,3 +379,10 @@ Median submission-to-decision time, percentage of items with complete source evi
 3. Should one of the three seeded portfolio firms mirror an anonymised real profile, or is fully fictional cleaner given no AdvizorStack data authorisation exists?
 4. Does the held-identity bulk-confirm affordance need design (not build) before the demo, in case Nico asks how first-connect scales to 100+ advisers?
 5. Release 2, for Kent Keister: how would his firms want off-channel indicators framed to advisers, given the supervision-versus-surveillance perception inside a client firm?
+
+## Related documentation
+
+- Demo prep: [[run-sheet]] · [[deploy-and-rehearsal]] · [[vl-02-email]]
+- Product: [[product-as-built]] · [[ask-complyvault]]
+- Archived brief: [[advizorstack-demo-brief]]
+- Map: [[Go-to-Market-Map|Go-to-Market Map]]

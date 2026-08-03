@@ -586,4 +586,4 @@ This section records what is **implemented in the ComplyVault repo** versus §§
 
 ### 12.5 Related APIs (sign-off stack)
 
-Certify, CM review, CCO sign-off, finalize, revert, and CM flag triage are implemented under `src/app/api/meetings/...` and `src/app/api/flags/...`; see `docs/ux/three-layer-signoff.md` for the workflow PRD.
+Certify, CM review, CCO sign-off, finalize, revert, and CM flag triage are implemented under `src/app/api/meetings/...` and `src/app/api/flags/...`; see `docs/compliance/three-layer-signoff.md` for the workflow PRD.

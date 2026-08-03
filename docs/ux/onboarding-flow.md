@@ -250,3 +250,11 @@ cache at the **server** layer (`src/server/iapd/…`), key `adv:{crd}`, and only
 > Reminder: any Prisma change requires `prisma generate` + a migration. Option A needs **no** schema
 > change; if Decision 1 lands on Option B, surface the migration command before editing
 > `schema.prisma`.
+
+## Related documentation
+
+- [[workspace-invitation]]
+- [[workspace-management-and-invitations]]
+- [[user-journeys]]
+- [[product-as-built]]
+- [[Product-Map|Product Map]]

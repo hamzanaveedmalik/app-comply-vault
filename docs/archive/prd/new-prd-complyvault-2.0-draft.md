@@ -1,8 +1,12 @@
 ---
 tags:
-  - product
+  - archive
   - prd
 ---
+
+> **Archived.** ComplyVault 2.0 vision draft — not the Release 1 source of truth.
+> Use [[product-as-built]], [[complyvault-backlog-v5-release-1]], and [[prd-summary]] instead.
+> See [[Archive-Map|Archive Map]].
 
 # Product Requirements Document (PRD)
 

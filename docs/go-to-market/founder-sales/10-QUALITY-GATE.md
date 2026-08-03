@@ -74,3 +74,8 @@ tags:
 ---
 
 *Quality gate passed. This Founder Sales Sprint Pack is ready for execution.*
+
+## Workflow
+
+Overview: [[Founder-Sales-Map|Founder Sales Map]]
+Previous: [[09-RISKS-OPEN-QUESTIONS-NEXT-STEPS]]

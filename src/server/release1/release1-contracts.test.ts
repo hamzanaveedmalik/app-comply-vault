@@ -294,32 +294,42 @@ describe("CV-PV-01s partner snapshots", () => {
 describe("CV-XR candidate pack scope", () => {
   it("interprets a request item without generating", () => {
     const scope = interpretRequestItem(
-      "Produce all email and meeting records for Margaret Ellison regarding fees from 2025-01-01 to 2026-06-30."
+      "Produce all email and meeting records for Margaret Ellison regarding fees from 2025-01-01 to 2026-08-03, excluding SMS and personal messaging channels."
     );
     expect(scope.channels).toContain("EMAIL");
     expect(scope.channels).toContain("MEETING");
     expect(scope.concepts).toContain("fees");
     expect(scope.people.some((p) => /Margaret/i.test(p))).toBe(true);
+    expect(scope.exclusions).toEqual(
+      expect.arrayContaining(["SMS", "personal messaging"])
+    );
   });
 
-  it("builds coverage without exam-ready claims", () => {
+  it("splits request exclusions from unindexed sources", () => {
     const items = buildCoverageStatement({
       scope: {
         people: ["Margaret Ellison"],
         entities: [],
         dateFrom: "2025-01-01",
-        dateTo: "2026-06-30",
+        dateTo: "2026-08-03",
         channels: ["EMAIL", "MEETING"],
         concepts: ["fees"],
-        exclusions: [],
+        exclusions: ["SMS", "personal messaging"],
       },
       meetingCount: 2,
       emailCount: 0,
-      unindexedSources: ["SMS"],
+      unindexedSources: ["SMS", "WhatsApp", "Teams chat"],
     });
     expect(items.some((i) => i.status === "missing")).toBe(true);
-    expect(items.some((i) => i.status === "data_source_unavailable")).toBe(
-      true
+    expect(items.some((i) => i.status === "excluded_by_request")).toBe(true);
+    const excluded = items.find((i) => i.status === "excluded_by_request");
+    expect(excluded?.detail).toMatch(/SMS/);
+    const unavailable = items.find(
+      (i) => i.status === "data_source_unavailable"
+    );
+    expect(unavailable?.unindexedSources ?? []).not.toContain("SMS");
+    expect(unavailable?.unindexedSources ?? []).toEqual(
+      expect.arrayContaining(["WhatsApp", "Teams chat"])
     );
     for (const i of items) {
       expect(assertNoExamReadyClaim(i.detail)).toBe(true);

@@ -20,6 +20,7 @@ export const CoverageAnswerabilitySchema = z.enum([
   "missing",
   "requires_manual_confirmation",
   "data_source_unavailable",
+  "excluded_by_request",
 ]);
 
 export type CoverageAnswerability = z.infer<typeof CoverageAnswerabilitySchema>;
@@ -31,6 +32,7 @@ export type InterpretedScope = {
   dateTo: string | null;
   channels: Array<"EMAIL" | "MEETING">;
   concepts: string[];
+  /** Specific channels/topics excluded by the request text. */
   exclusions: string[];
 };
 
@@ -40,6 +42,8 @@ export type CoverageStatementItem = {
   detail: string;
   missingPeriods?: Array<{ from: string; to: string }>;
   unindexedSources?: string[];
+  /** Request-quoted exclusion text when status is excluded_by_request. */
+  requestQuote?: string;
 };
 
 export type ConfirmedScope = InterpretedScope & {
@@ -47,9 +51,31 @@ export type ConfirmedScope = InterpretedScope & {
   confirmedByUserId: string;
 };
 
+export type CandidateEvidenceRow = {
+  id: string;
+  kind: "EMAIL" | "MEETING";
+  occurredAt: string | null;
+  title: string;
+  subtitle: string;
+  sourceSystem: string;
+  hashPrefix: string | null;
+  matchReason: string;
+};
+
 const MONTH_RANGE =
   /\b((?:january|february|march|april|may|june|july|august|september|october|november|december)\s+20\d{2})\b/gi;
 const ISO_RANGE = /\b(20\d{2}-\d{2}-\d{2})\b/g;
+
+const EXCLUSION_PATTERNS: Array<{ re: RegExp; label: string }> = [
+  { re: /\bsms\b/i, label: "SMS" },
+  { re: /\bwhatsapp\b/i, label: "WhatsApp" },
+  { re: /\btext messages?\b/i, label: "text messages" },
+  { re: /\bpersonal messag/i, label: "personal messaging" },
+  { re: /\boff[- ]channel\b/i, label: "off-channel messaging" },
+  { re: /\bteams chat\b/i, label: "Teams chat" },
+  { re: /\bslack\b/i, label: "Slack" },
+  { re: /\biMessage\b/i, label: "iMessage" },
+];
 
 /**
  * Heuristic interpretation of a single document-request item.
@@ -60,12 +86,14 @@ export function interpretRequestItem(requestText: string): InterpretedScope {
   const lower = text.toLowerCase();
 
   const people: string[] = [];
-  const nameMatches = text.match(
-    /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b/g
-  );
+  const nameMatches = text.match(/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b/g);
   if (nameMatches) {
     for (const n of nameMatches.slice(0, 8)) {
-      if (!/^(January|February|March|April|May|June|July|August|September|October|November|December)\b/.test(n)) {
+      if (
+        !/^(January|February|March|April|May|June|July|August|September|October|November|December)\b/.test(
+          n
+        )
+      ) {
         people.push(n);
       }
     }
@@ -102,11 +130,19 @@ export function interpretRequestItem(requestText: string): InterpretedScope {
   if (concepts.length === 0) concepts.push("general communications");
 
   const exclusions: string[] = [];
-  if (/\bexclud/i.test(lower)) {
-    exclusions.push("Items explicitly excluded in the request text");
+  if (/\bexclud/i.test(lower) || /\bexcept\b/i.test(lower)) {
+    for (const { re, label } of EXCLUSION_PATTERNS) {
+      if (re.test(text)) exclusions.push(label);
+    }
+    if (exclusions.length === 0) {
+      const afterExclude = text.match(
+        /\bexclud(?:e|ing|es)\s+([^.;]+)/i
+      )?.[1];
+      if (afterExclude) {
+        exclusions.push(afterExclude.trim().replace(/\s+/g, " "));
+      }
+    }
   }
-  exclusions.push("Channels not connected to this workspace");
-  exclusions.push("Periods outside confirmed date range");
 
   return {
     people: [...new Set(people)],
@@ -115,10 +151,18 @@ export function interpretRequestItem(requestText: string): InterpretedScope {
     dateTo,
     channels,
     concepts,
-    exclusions,
+    exclusions: [...new Set(exclusions)],
   };
 }
 
+function channelLabel(channel: "EMAIL" | "MEETING"): string {
+  return channel === "EMAIL" ? "email" : "meeting";
+}
+
+/**
+ * Coverage for the confirmed scope.
+ * Request exclusions are reported separately from unindexed / unavailable sources.
+ */
 export function buildCoverageStatement(args: {
   scope: InterpretedScope;
   meetingCount: number;
@@ -127,42 +171,62 @@ export function buildCoverageStatement(args: {
   unindexedSources?: string[];
 }): CoverageStatementItem[] {
   const items: CoverageStatementItem[] = [];
+  const excludedSet = new Set(
+    args.scope.exclusions.map((e) => e.toLowerCase())
+  );
 
   for (const channel of args.scope.channels) {
     const count = channel === "EMAIL" ? args.emailCount : args.meetingCount;
+    const noun = channelLabel(channel);
     if (count === 0) {
       items.push({
-        label: `${channel} candidate records`,
+        label: `${channel === "EMAIL" ? "Email" : "Meeting"} candidate records`,
         status: "missing",
-        detail: `No ${channel.toLowerCase()} records matched the confirmed scope.`,
-        unindexedSources: args.unindexedSources,
+        detail: `No ${noun} records matched the confirmed scope.`,
       });
     } else if ((args.gapPeriods?.length ?? 0) > 0) {
       items.push({
-        label: `${channel} candidate records`,
+        label: `${channel === "EMAIL" ? "Email" : "Meeting"} candidate records`,
         status: "partially_answerable",
-        detail: `Found ${count} candidate ${channel.toLowerCase()} record(s); known gaps remain.`,
+        detail: `Found ${count} candidate ${noun} record${count === 1 ? "" : "s"}; known gaps remain.`,
         missingPeriods: args.gapPeriods?.map((g) => ({
           from: g.from,
           to: g.to,
         })),
-        unindexedSources: args.unindexedSources,
       });
     } else {
       items.push({
-        label: `${channel} candidate records`,
+        label: `${channel === "EMAIL" ? "Email" : "Meeting"} candidate records`,
         status: "answerable",
-        detail: `Found ${count} candidate ${channel.toLowerCase()} record(s) under the confirmed scope.`,
+        detail: `Found ${count} candidate ${noun} record${count === 1 ? "" : "s"} under the confirmed scope.`,
       });
     }
   }
 
-  if ((args.unindexedSources?.length ?? 0) > 0) {
+  if (args.scope.exclusions.length > 0) {
     items.push({
-      label: "Unindexed sources",
+      label: "Excluded by request",
+      status: "excluded_by_request",
+      detail: `Not searched because the request excluded: ${args.scope.exclusions.join(", ")}.`,
+      requestQuote: args.scope.exclusions.join(", "),
+    });
+  }
+
+  const actionableUnindexed = (args.unindexedSources ?? []).filter(
+    (source) =>
+      !excludedSet.has(source.toLowerCase()) &&
+      ![...excludedSet].some(
+        (ex) =>
+          source.toLowerCase().includes(ex) ||
+          ex.includes(source.toLowerCase())
+      )
+  );
+  if (actionableUnindexed.length > 0) {
+    items.push({
+      label: "Not connected to this workspace",
       status: "data_source_unavailable",
-      detail: `Not searched: ${(args.unindexedSources ?? []).join(", ")}.`,
-      unindexedSources: args.unindexedSources,
+      detail: `These sources are not connected, so they were not searched: ${actionableUnindexed.join(", ")}.`,
+      unindexedSources: actionableUnindexed,
     });
   }
 
@@ -170,7 +234,7 @@ export function buildCoverageStatement(args: {
     label: "Manual confirmation",
     status: "requires_manual_confirmation",
     detail:
-      "CCO must review candidate records before any examination use. This pack is labelled candidate, not complete.",
+      "You must review candidate records before any examination use. This pack is labelled candidate, not complete.",
   });
 
   return items;
@@ -179,4 +243,23 @@ export function buildCoverageStatement(args: {
 /** Copy guard: never claim exam readiness. */
 export function assertNoExamReadyClaim(text: string): boolean {
   return !/\bexam[- ]?ready\b/i.test(text);
+}
+
+export function coverageStatusLabel(status: CoverageAnswerability): string {
+  switch (status) {
+    case "answerable":
+      return "Answerable";
+    case "partially_answerable":
+      return "Partially answerable";
+    case "missing":
+      return "Missing";
+    case "requires_manual_confirmation":
+      return "Action required";
+    case "data_source_unavailable":
+      return "Not connected";
+    case "excluded_by_request":
+      return "Excluded by request";
+    default:
+      return status;
+  }
 }

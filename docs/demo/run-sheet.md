@@ -43,7 +43,7 @@ Reorder the middle of the session around the answers. The default sequence below
 
 ## Example document-request item (CV-XR)
 
-> Produce all email and meeting records for Margaret Ellison regarding fees from 2025-01-01 to 2026-06-30, excluding SMS and personal messaging channels.
+> Produce all email and meeting records for Margaret Ellison regarding fees from 2025-01-01 to 2026-08-03, excluding SMS and personal messaging channels.
 
 ## Written fallback lines
 

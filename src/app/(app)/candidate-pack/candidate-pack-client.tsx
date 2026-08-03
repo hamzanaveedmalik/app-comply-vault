@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -11,15 +11,25 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 import { Textarea } from "~/components/ui/textarea";
+import type { CandidatePackDto } from "~/server/candidate-pack/service";
 import type {
-  CandidatePackDto,
-} from "~/server/candidate-pack/service";
-import type { InterpretedScope } from "~/server/candidate-pack/types";
+  CoverageAnswerability,
+  InterpretedScope,
+} from "~/server/candidate-pack/types";
+import { coverageStatusLabel } from "~/server/candidate-pack/types";
 
 type ApiResult<T> = { success: boolean; data?: T; error?: string };
 
-async function request<T>(
+async function requestJson<T>(
   url: string,
   options?: RequestInit,
 ): Promise<T> {
@@ -29,38 +39,129 @@ async function request<T>(
   });
   const payload = (await response.json()) as ApiResult<T>;
   if (!response.ok || !payload.success || !payload.data) {
-    throw new Error(payload.error ?? "Could not complete the candidate-pack step.");
+    throw new Error(
+      payload.error ?? "Could not complete the candidate-pack step.",
+    );
   }
   return payload.data;
 }
 
-function ScopeList({ label, values }: { label: string; values: string[] }): React.JSX.Element {
+function statusChipClass(status: CoverageAnswerability): string {
+  switch (status) {
+    case "answerable":
+      return "border-emerald-300 bg-emerald-50 text-emerald-900";
+    case "partially_answerable":
+      return "border-amber-300 bg-amber-50 text-amber-950";
+    case "missing":
+      return "border-rose-300 bg-rose-50 text-rose-950";
+    case "data_source_unavailable":
+      return "border-amber-400 bg-amber-100 text-amber-950";
+    case "excluded_by_request":
+      return "border-slate-300 bg-slate-100 text-slate-700";
+    case "requires_manual_confirmation":
+      return "border-brand/40 bg-brand/10 text-brand";
+    default:
+      return "";
+  }
+}
+
+function packStatusLabel(status: string): string {
+  switch (status) {
+    case "DRAFT_SCOPE":
+      return "Needs your confirmation";
+    case "SCOPE_CONFIRMED":
+      return "Scope confirmed — ready to generate";
+    case "GENERATED":
+      return "Candidate evidence ready for review";
+    case "APPROVED":
+      return "Approved for export use";
+    default:
+      return status.replaceAll("_", " ");
+  }
+}
+
+function ScopeList({
+  label,
+  values,
+  empty = "None",
+}: {
+  label: string;
+  values: string[];
+  empty?: string;
+}): React.JSX.Element {
   return (
     <div>
-      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
-      <p className="mt-1 text-sm text-foreground">{values.length ? values.join(", ") : "None interpreted"}</p>
+      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        {label}
+      </p>
+      <p className="mt-1 text-sm text-foreground">
+        {values.length ? values.join(", ") : empty}
+      </p>
     </div>
   );
+}
+
+function formatDate(iso: string | null): string {
+  if (!iso) return "—";
+  return new Date(iso).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 }
 
 export function CandidatePackClient(): React.JSX.Element {
   const [requestText, setRequestText] = useState("");
   const [pack, setPack] = useState<CandidatePackDto | null>(null);
   const [scope, setScope] = useState<InterpretedScope | null>(null);
-  const [pending, setPending] = useState<"draft" | "confirm" | "generate" | "approve" | null>(null);
+  const [pending, setPending] = useState<
+    "draft" | "confirm" | "generate" | "approve" | null
+  >(null);
+  const [includedIds, setIncludedIds] = useState<Set<string>>(new Set());
+  const [attestOpen, setAttestOpen] = useState(false);
+  const [ackLabels, setAckLabels] = useState<Set<string>>(new Set());
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [scopeExpanded, setScopeExpanded] = useState(true);
+
+  const coverage = pack?.coverageStatement ?? [];
+
+  const includedCounts = useMemo(() => {
+    const meetings = pack?.candidateRecords.filter(
+      (r) => r.kind === "MEETING" && includedIds.has(r.id),
+    ).length ?? 0;
+    const emails = pack?.candidateRecords.filter(
+      (r) => r.kind === "EMAIL" && includedIds.has(r.id),
+    ).length ?? 0;
+    return { meetings, emails, total: meetings + emails };
+  }, [pack, includedIds]);
+
+  function syncPack(data: CandidatePackDto): void {
+    setPack(data);
+    setScope(data.interpretedScope);
+    if (data.candidateRecords.length > 0) {
+      setIncludedIds(new Set(data.candidateRecords.map((r) => r.id)));
+    }
+    if (data.status !== "DRAFT_SCOPE") {
+      setScopeExpanded(false);
+    }
+  }
 
   async function createDraft(): Promise<void> {
     setPending("draft");
     try {
-      const data = await request<CandidatePackDto>("/api/candidate-pack", {
+      const data = await requestJson<CandidatePackDto>("/api/candidate-pack", {
         method: "POST",
         body: JSON.stringify({ requestText }),
       });
-      setPack(data);
-      setScope(data.interpretedScope);
-      toast.success("Candidate scope interpretation created.");
+      syncPack(data);
+      setScopeExpanded(true);
+      toast.success("Interpreted scope ready — confirm before generating.");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not create candidate scope.");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Could not create candidate scope.",
+      );
     } finally {
       setPending(null);
     }
@@ -70,15 +171,21 @@ export function CandidatePackClient(): React.JSX.Element {
     if (!pack || !scope) return;
     setPending("confirm");
     try {
-      const data = await request<CandidatePackDto>(`/api/candidate-pack/${pack.id}/confirm`, {
-        method: "POST",
-        body: JSON.stringify({ scope }),
-      });
-      setPack(data);
-      setScope(data.interpretedScope);
-      toast.success("Candidate scope confirmed.");
+      const data = await requestJson<CandidatePackDto>(
+        `/api/candidate-pack/${pack.id}/confirm`,
+        {
+          method: "POST",
+          body: JSON.stringify({ scope }),
+        },
+      );
+      syncPack(data);
+      toast.success("Scope confirmed. You can generate candidate evidence.");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not confirm candidate scope.");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Could not confirm candidate scope.",
+      );
     } finally {
       setPending(null);
     }
@@ -88,140 +195,555 @@ export function CandidatePackClient(): React.JSX.Element {
     if (!pack) return;
     setPending("generate");
     try {
-      const data = await request<CandidatePackDto>(`/api/candidate-pack/${pack.id}/generate`, {
-        method: "POST",
-      });
-      setPack(data);
-      toast.success("Candidate pack generated.");
+      const data = await requestJson<CandidatePackDto>(
+        `/api/candidate-pack/${pack.id}/generate`,
+        { method: "POST" },
+      );
+      syncPack(data);
+      toast.success("Candidate evidence retrieved under the confirmed scope.");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not generate candidate pack.");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Could not generate candidate pack.",
+      );
     } finally {
       setPending(null);
     }
+  }
+
+  function openAttestation(): void {
+    setAckLabels(new Set());
+    setAttestOpen(true);
   }
 
   async function approve(): Promise<void> {
     if (!pack) return;
     setPending("approve");
     try {
-      const data = await request<CandidatePackDto>(`/api/candidate-pack/${pack.id}/approve`, {
-        method: "POST",
-      });
-      setPack(data);
-      toast.success("Candidate pack approved.");
+      const data = await requestJson<CandidatePackDto>(
+        `/api/candidate-pack/${pack.id}/approve`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            includedMeetingIds: pack.candidateRecords
+              .filter((r) => r.kind === "MEETING" && includedIds.has(r.id))
+              .map((r) => r.id),
+            includedEmailEvidenceIds: pack.candidateRecords
+              .filter((r) => r.kind === "EMAIL" && includedIds.has(r.id))
+              .map((r) => r.id),
+            acknowledgedCoverageLabels: [...ackLabels],
+          }),
+        },
+      );
+      syncPack(data);
+      setAttestOpen(false);
+      setPreviewOpen(true);
+      toast.success("Candidate pack approved — attestation written to the audit log.");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not approve candidate pack.");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Could not approve candidate pack.",
+      );
     } finally {
       setPending(null);
     }
   }
 
+  function toggleIncluded(id: string): void {
+    setIncludedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function toggleAck(label: string): void {
+    setAckLabels((prev) => {
+      const next = new Set(prev);
+      if (next.has(label)) next.delete(label);
+      else next.add(label);
+      return next;
+    });
+  }
+
+  const allAcked =
+    coverage.length > 0 && coverage.every((c) => ackLabels.has(c.label));
+
   return (
     <div className="space-y-5">
-      <Card>
-        <CardHeader>
-          <CardTitle>1. Request item</CardTitle>
-          <CardDescription>Use one request item at a time.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <Textarea
-            value={requestText}
-            onChange={(event) => setRequestText(event.target.value)}
-            placeholder="Paste a document-request item…"
-            rows={6}
-            disabled={Boolean(pack)}
-          />
-          {!pack ? (
-            <Button onClick={() => void createDraft()} disabled={pending === "draft"}>
-              {pending === "draft" ? "Interpreting…" : "Interpret candidate scope"}
-            </Button>
-          ) : null}
-        </CardContent>
-      </Card>
-
-      {pack && scope ? (
+      {/* Request + scope */}
+      {pack && !scopeExpanded && scope ? (
         <Card>
-          <CardHeader>
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <CardTitle>2. Interpreted candidate scope</CardTitle>
-                <CardDescription>
-                  Confirm or edit this scope. Generation remains unavailable until it is confirmed.
-                </CardDescription>
-              </div>
-              <Badge variant="outline">{pack.status.replaceAll("_", " ")}</Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-2">
-            <ScopeList label="People" values={scope.people} />
-            <ScopeList label="Entities" values={scope.entities} />
-            <ScopeList label="Channels" values={scope.channels} />
-            <ScopeList label="Concepts" values={scope.concepts} />
-            <ScopeList label="Exclusions" values={scope.exclusions} />
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Date range</p>
+          <CardContent className="flex flex-wrap items-start justify-between gap-3 py-4">
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Confirmed scope
+              </p>
               <p className="mt-1 text-sm text-foreground">
-                {scope.dateFrom ?? "Not interpreted"} to {scope.dateTo ?? "Not interpreted"}
+                {scope.people.join(", ") || "No people"} ·{" "}
+                {scope.channels.join(", ")} · {scope.concepts.join(", ")} ·{" "}
+                {scope.dateFrom ?? "—"} to {scope.dateTo ?? "—"}
+                {scope.exclusions.length
+                  ? ` · Excluding ${scope.exclusions.join(", ")}`
+                  : ""}
+              </p>
+              <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                {pack.requestText}
               </p>
             </div>
-            {pack.status === "DRAFT_SCOPE" ? (
-              <div className="md:col-span-2">
-                <Button onClick={() => void confirmScope()} disabled={pending === "confirm"}>
-                  {pending === "confirm" ? "Confirming…" : "Confirm candidate scope"}
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="outline">{packStatusLabel(pack.status)}</Badge>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setScopeExpanded(true)}
+              >
+                Edit / view
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle>1. Request item</CardTitle>
+              <CardDescription>Use one request item at a time.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Textarea
+                value={requestText}
+                onChange={(event) => setRequestText(event.target.value)}
+                placeholder="Paste a document-request item…"
+                rows={5}
+                disabled={Boolean(pack)}
+                className="text-foreground placeholder:text-muted-foreground/70"
+              />
+              {!pack ? (
+                <Button
+                  onClick={() => void createDraft()}
+                  disabled={pending === "draft" || requestText.trim().length < 10}
+                >
+                  {pending === "draft"
+                    ? "Interpreting…"
+                    : "Interpret candidate scope"}
                 </Button>
-              </div>
-            ) : null}
+              ) : null}
+            </CardContent>
+          </Card>
+
+          {pack && scope ? (
+            <Card className="border-brand/30">
+              <CardHeader>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <CardTitle>2. Interpreted candidate scope</CardTitle>
+                    <CardDescription>
+                      Confirm we read the request correctly. Nothing generates
+                      until you confirm.
+                    </CardDescription>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className={
+                      pack.status === "DRAFT_SCOPE"
+                        ? "border-brand/40 bg-brand/10 text-brand"
+                        : undefined
+                    }
+                  >
+                    {packStatusLabel(pack.status)}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="grid gap-4 md:grid-cols-2">
+                <ScopeList label="People" values={scope.people} />
+                <ScopeList
+                  label="Entities"
+                  values={scope.entities}
+                  empty="None from this request"
+                />
+                <ScopeList label="Channels" values={scope.channels} />
+                <ScopeList label="Concepts" values={scope.concepts} />
+                <ScopeList
+                  label="Exclusions (from request)"
+                  values={scope.exclusions}
+                  empty="None stated in the request"
+                />
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Date range
+                  </p>
+                  <p className="mt-1 text-sm text-foreground">
+                    {scope.dateFrom ?? "Not interpreted"} to{" "}
+                    {scope.dateTo ?? "Not interpreted"}
+                  </p>
+                </div>
+                {pack.status === "DRAFT_SCOPE" ? (
+                  <div className="md:col-span-2 flex flex-wrap gap-2 border-t pt-4">
+                    <Button
+                      className="bg-[#0D2818] hover:bg-[#0D2818]/90"
+                      onClick={() => void confirmScope()}
+                      disabled={pending === "confirm"}
+                    >
+                      {pending === "confirm"
+                        ? "Confirming…"
+                        : "Confirm candidate scope"}
+                    </Button>
+                    <p className="self-center text-xs text-muted-foreground">
+                      This stores your confirmation in the audit log before any
+                      retrieval.
+                    </p>
+                  </div>
+                ) : null}
+              </CardContent>
+            </Card>
+          ) : null}
+        </>
+      )}
+
+      {/* Generate gate */}
+      {pack?.status === "SCOPE_CONFIRMED" ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>3. Generate candidate evidence</CardTitle>
+            <CardDescription>
+              Retrieval uses only the confirmed scope.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              onClick={() => void generate()}
+              disabled={pending === "generate"}
+            >
+              {pending === "generate"
+                ? "Generating…"
+                : "Generate candidate pack"}
+            </Button>
           </CardContent>
         </Card>
       ) : null}
 
-      {pack?.status === "SCOPE_CONFIRMED" || pack?.status === "GENERATED" || pack?.status === "APPROVED" ? (
+      {/* Evidence table */}
+      {pack &&
+      (pack.status === "GENERATED" || pack.status === "APPROVED") &&
+      pack.candidateRecords ? (
         <Card>
           <CardHeader>
-            <CardTitle>3. Candidate evidence</CardTitle>
-            <CardDescription>Retrieval uses only the confirmed candidate scope.</CardDescription>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <CardTitle>3. Candidate evidence</CardTitle>
+                <CardDescription>
+                  {includedCounts.meetings} meeting
+                  {includedCounts.meetings === 1 ? "" : "s"},{" "}
+                  {includedCounts.emails} email
+                  {includedCounts.emails === 1 ? "" : "s"} selected for the
+                  pack. Review each row before approval.
+                </CardDescription>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPreviewOpen(true)}
+              >
+                Preview pack
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
-            {pack.status === "SCOPE_CONFIRMED" ? (
-              <Button onClick={() => void generate()} disabled={pending === "generate"}>
-                {pending === "generate" ? "Generating…" : "Generate candidate pack"}
-              </Button>
-            ) : (
+            {pack.candidateRecords.length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                {pack.meetingIds.length} meeting record(s) and {pack.emailEvidenceIds.length} email evidence item(s) are included.
+                No candidate records matched the confirmed scope.
               </p>
+            ) : (
+              <div className="overflow-x-auto rounded-lg border">
+                <table className="w-full min-w-[640px] text-left text-sm">
+                  <thead className="border-b bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+                    <tr>
+                      <th className="px-3 py-2 font-medium">Include</th>
+                      <th className="px-3 py-2 font-medium">Date</th>
+                      <th className="px-3 py-2 font-medium">Record</th>
+                      <th className="px-3 py-2 font-medium">Source</th>
+                      <th className="px-3 py-2 font-medium">Hash</th>
+                      <th className="px-3 py-2 font-medium">Why matched</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pack.candidateRecords.map((row) => (
+                      <tr key={row.id} className="border-b last:border-0">
+                        <td className="px-3 py-2 align-top">
+                          <input
+                            type="checkbox"
+                            className="mt-1 h-4 w-4"
+                            checked={includedIds.has(row.id)}
+                            disabled={pack.status === "APPROVED"}
+                            onChange={() => toggleIncluded(row.id)}
+                            aria-label={`Include ${row.title}`}
+                          />
+                        </td>
+                        <td className="px-3 py-2 align-top whitespace-nowrap text-muted-foreground">
+                          {formatDate(row.occurredAt)}
+                        </td>
+                        <td className="px-3 py-2 align-top">
+                          <p className="font-medium text-foreground">
+                            {row.title}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {row.kind === "MEETING" ? "Meeting" : "Email"} ·{" "}
+                            {row.subtitle}
+                          </p>
+                        </td>
+                        <td className="px-3 py-2 align-top text-muted-foreground">
+                          {row.sourceSystem}
+                        </td>
+                        <td className="px-3 py-2 align-top font-mono text-xs text-muted-foreground">
+                          {row.hashPrefix ? `${row.hashPrefix}…` : "—"}
+                        </td>
+                        <td className="px-3 py-2 align-top text-muted-foreground">
+                          {row.matchReason}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </CardContent>
         </Card>
       ) : null}
 
+      {/* Coverage */}
       {pack?.coverageStatement ? (
         <Card>
           <CardHeader>
-            <CardTitle>4. Coverage statement</CardTitle>
-            <CardDescription>Known gaps and unavailable sources remain visible.</CardDescription>
+            <CardTitle>4. Coverage and gaps</CardTitle>
+            <CardDescription>
+              Request exclusions are separate from sources that are not
+              connected.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {pack.coverageStatement.map((item) => (
-              <div key={item.label} className="rounded-lg border p-3">
+              <div
+                key={item.label}
+                className={`rounded-lg border p-3 ${
+                  item.status === "excluded_by_request"
+                    ? "border-slate-200 bg-slate-50"
+                    : item.status === "data_source_unavailable"
+                      ? "border-amber-200 bg-amber-50/60"
+                      : ""
+                }`}
+              >
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="text-sm font-medium">{item.label}</p>
-                  <Badge variant="outline">{item.status.replaceAll("_", " ")}</Badge>
+                  <Badge
+                    variant="outline"
+                    className={statusChipClass(item.status)}
+                  >
+                    {coverageStatusLabel(item.status)}
+                  </Badge>
                 </div>
-                <p className="mt-1 text-sm text-muted-foreground">{item.detail}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {item.detail}
+                </p>
+                {item.requestQuote ? (
+                  <p className="mt-1 text-xs italic text-muted-foreground">
+                    From request: “{item.requestQuote}”
+                  </p>
+                ) : null}
               </div>
             ))}
+
             {pack.status === "GENERATED" ? (
-              <Button onClick={() => void approve()} disabled={pending === "approve"}>
-                {pending === "approve" ? "Approving…" : "Approve candidate pack"}
-              </Button>
+              <div className="flex flex-wrap gap-2 border-t pt-4">
+                <Button
+                  className="bg-[#0D2818] hover:bg-[#0D2818]/90"
+                  onClick={openAttestation}
+                  disabled={includedCounts.total === 0}
+                >
+                  Approve candidate pack…
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setPreviewOpen(true)}
+                >
+                  Preview pack
+                </Button>
+              </div>
             ) : null}
+
             {pack.status === "APPROVED" ? (
-              <p className="text-sm font-medium text-brand">Candidate pack approved for export use.</p>
+              <div className="rounded-lg border border-brand/30 bg-brand/5 p-3 text-sm">
+                <p className="font-medium text-brand">
+                  Approved for export use
+                </p>
+                <p className="mt-1 text-muted-foreground">
+                  Approved{" "}
+                  {pack.approvedAt
+                    ? new Date(pack.approvedAt).toLocaleString()
+                    : ""}
+                  {pack.approvedByUserId
+                    ? ` · approver ${pack.approvedByUserId.slice(0, 8)}…`
+                    : ""}
+                  {pack.confirmedAt
+                    ? ` · scope confirmed ${new Date(pack.confirmedAt).toLocaleString()}`
+                    : ""}
+                  {" · "}
+                  {includedCounts.total} record
+                  {includedCounts.total === 1 ? "" : "s"} · gaps acknowledged
+                  in the audit log.
+                </p>
+              </div>
             ) : null}
           </CardContent>
         </Card>
       ) : null}
+
+      {/* Attestation dialog */}
+      <Dialog open={attestOpen} onOpenChange={setAttestOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Attest and approve</DialogTitle>
+            <DialogDescription>
+              Approval records who approved, when, against which confirmed
+              scope, how many records, and which gaps you acknowledged.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 text-sm">
+            <p>
+              <span className="font-medium">{includedCounts.total}</span>{" "}
+              candidate record
+              {includedCounts.total === 1 ? "" : "s"} selected (
+              {includedCounts.meetings} meeting
+              {includedCounts.meetings === 1 ? "" : "s"},{" "}
+              {includedCounts.emails} email
+              {includedCounts.emails === 1 ? "" : "s"}).
+            </p>
+            <p className="text-muted-foreground">
+              Acknowledge each coverage item:
+            </p>
+            <ul className="space-y-2">
+              {coverage.map((item) => (
+                <li key={item.label} className="flex items-start gap-2">
+                  <input
+                    type="checkbox"
+                    className="mt-1 h-4 w-4"
+                    checked={ackLabels.has(item.label)}
+                    onChange={() => toggleAck(item.label)}
+                    id={`ack-${item.label}`}
+                  />
+                  <label htmlFor={`ack-${item.label}`} className="cursor-pointer">
+                    <span className="font-medium">{item.label}</span>
+                    <span className="block text-muted-foreground">
+                      {item.detail}
+                    </span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAttestOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              className="bg-[#0D2818] hover:bg-[#0D2818]/90"
+              disabled={!allAcked || pending === "approve"}
+              onClick={() => void approve()}
+            >
+              {pending === "approve"
+                ? "Writing attestation…"
+                : "Confirm approval"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Preview panel */}
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Candidate pack preview</DialogTitle>
+            <DialogDescription>
+              Static preview of what an examiner would receive. Labelled
+              candidate — not a complete population claim.
+            </DialogDescription>
+          </DialogHeader>
+          {pack ? (
+            <div className="space-y-4 text-sm">
+              <section className="rounded-lg border p-3">
+                <p className="text-xs font-medium uppercase text-muted-foreground">
+                  Request
+                </p>
+                <p className="mt-1 whitespace-pre-wrap">{pack.requestText}</p>
+              </section>
+              {scope ? (
+                <section className="rounded-lg border p-3">
+                  <p className="text-xs font-medium uppercase text-muted-foreground">
+                    Confirmed scope
+                  </p>
+                  <p className="mt-1">
+                    People: {scope.people.join(", ") || "—"}
+                    <br />
+                    Channels: {scope.channels.join(", ")}
+                    <br />
+                    Concepts: {scope.concepts.join(", ")}
+                    <br />
+                    Dates: {scope.dateFrom ?? "—"} → {scope.dateTo ?? "—"}
+                    <br />
+                    Exclusions:{" "}
+                    {scope.exclusions.length
+                      ? scope.exclusions.join(", ")
+                      : "None"}
+                  </p>
+                </section>
+              ) : null}
+              <section className="rounded-lg border p-3">
+                <p className="text-xs font-medium uppercase text-muted-foreground">
+                  Included records ({includedCounts.total})
+                </p>
+                <ul className="mt-2 space-y-1">
+                  {pack.candidateRecords
+                    .filter((r) => includedIds.has(r.id))
+                    .map((r) => (
+                      <li key={r.id}>
+                        {formatDate(r.occurredAt)} · {r.kind} · {r.title} ·{" "}
+                        {r.hashPrefix ? `${r.hashPrefix}…` : "no hash"}
+                      </li>
+                    ))}
+                </ul>
+              </section>
+              {coverage.length ? (
+                <section className="rounded-lg border p-3">
+                  <p className="text-xs font-medium uppercase text-muted-foreground">
+                    Coverage
+                  </p>
+                  <ul className="mt-2 space-y-2">
+                    {coverage.map((c) => (
+                      <li key={c.label}>
+                        <span className="font-medium">{c.label}</span> —{" "}
+                        {coverageStatusLabel(c.status)}. {c.detail}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
+              {pack.status === "APPROVED" ? (
+                <p className="text-xs text-muted-foreground">
+                  Attestation stored as CANDIDATE_PACK_APPROVED on the audit
+                  chain
+                  {pack.approvedAt
+                    ? ` at ${new Date(pack.approvedAt).toLocaleString()}`
+                    : ""}
+                  .
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

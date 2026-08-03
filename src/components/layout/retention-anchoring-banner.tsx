@@ -48,25 +48,19 @@ export function RetentionAnchoringBanner({
   };
 
   return (
-    <div className="border-b border-sky-300 bg-sky-50 px-4 py-3 text-sm text-sky-950">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-start justify-between gap-3">
-        <div className="space-y-1">
-          <p className="font-medium">Retention is now anchored to your fiscal year end</p>
-          <p>
-            Records are retained for {retentionYears} years from the end of the fiscal year
-            in which they were sealed (currently {fiscalYearEndLabel}), matching how Rule
-            204-2 measures the period. Your previous floor was preserved — retention was
-            never shortened. To lengthen the period or change the fiscal year end, update{" "}
-            <Link
-              href="/settings/workspace"
-              className="font-medium underline underline-offset-2"
-            >
-              workspace settings
-            </Link>
-            .
-          </p>
-          {error && <p className="text-destructive">{error}</p>}
-        </div>
+    <div className="border-b border-sky-300 bg-sky-50 px-4 py-2 text-sm text-sky-950">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2">
+        <p>
+          <span className="font-medium">Retention:</span> {retentionYears} years from fiscal
+          year end ({fiscalYearEndLabel}).{" "}
+          <Link
+            href="/settings/workspace"
+            className="font-medium underline underline-offset-2"
+          >
+            Workspace settings
+          </Link>
+          {error ? <span className="ml-2 text-destructive">{error}</span> : null}
+        </p>
         <Button
           variant="outline"
           size="sm"

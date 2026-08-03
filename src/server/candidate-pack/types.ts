@@ -169,11 +169,20 @@ export function buildCoverageStatement(args: {
   emailCount: number;
   gapPeriods?: Array<{ from: string; to: string; reason: string }>;
   unindexedSources?: string[];
+  searchPopulation?: SearchPopulation;
 }): CoverageStatementItem[] {
   const items: CoverageStatementItem[] = [];
   const excludedSet = new Set(
     args.scope.exclusions.map((e) => e.toLowerCase())
   );
+
+  if (args.searchPopulation) {
+    items.push({
+      label: "Search population",
+      status: "answerable",
+      detail: searchPopulationSummary(args.searchPopulation),
+    });
+  }
 
   for (const channel of args.scope.channels) {
     const count = channel === "EMAIL" ? args.emailCount : args.meetingCount;
@@ -182,7 +191,7 @@ export function buildCoverageStatement(args: {
       items.push({
         label: `${channel === "EMAIL" ? "Email" : "Meeting"} candidate records`,
         status: "missing",
-        detail: `No ${noun} records matched the confirmed scope.`,
+        detail: `No matches in the ${noun} sources searched under the confirmed scope.`,
       });
     } else if ((args.gapPeriods?.length ?? 0) > 0) {
       items.push({
@@ -252,7 +261,7 @@ export function coverageStatusLabel(status: CoverageAnswerability): string {
     case "partially_answerable":
       return "Partially answerable";
     case "missing":
-      return "Missing";
+      return "No matches";
     case "requires_manual_confirmation":
       return "Action required";
     case "data_source_unavailable":
@@ -262,4 +271,30 @@ export function coverageStatusLabel(status: CoverageAnswerability): string {
     default:
       return status;
   }
+}
+
+export type SearchPopulation = {
+  emailsScanned: number;
+  meetingsScanned: number;
+  emailsMatched: number;
+  meetingsMatched: number;
+  sourcesConnected: Array<"EMAIL" | "MEETING">;
+};
+
+export function searchPopulationSummary(pop: SearchPopulation): string {
+  const parts: string[] = [];
+  if (pop.sourcesConnected.includes("EMAIL")) {
+    parts.push(
+      `${pop.emailsScanned} email${pop.emailsScanned === 1 ? "" : "s"}`
+    );
+  }
+  if (pop.sourcesConnected.includes("MEETING")) {
+    parts.push(
+      `${pop.meetingsScanned} meeting${pop.meetingsScanned === 1 ? "" : "s"}`
+    );
+  }
+  const sources = pop.sourcesConnected
+    .map((s) => (s === "EMAIL" ? "email" : "meeting capture"))
+    .join(" and ");
+  return `Searched ${parts.join(" and ")} across ${pop.sourcesConnected.length} connected source${pop.sourcesConnected.length === 1 ? "" : "s"} (${sources}).`;
 }

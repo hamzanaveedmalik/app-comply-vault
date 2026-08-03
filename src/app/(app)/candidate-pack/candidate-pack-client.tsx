@@ -295,7 +295,12 @@ export function CandidatePackClient(): React.JSX.Element {
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline">{packStatusLabel(pack.status)}</Badge>
+              <Badge
+                variant="outline"
+                className="border-transparent bg-muted font-normal text-muted-foreground"
+              >
+                {packStatusLabel(pack.status)}
+              </Badge>
               <Button
                 variant="outline"
                 size="sm"
@@ -310,7 +315,7 @@ export function CandidatePackClient(): React.JSX.Element {
         <>
           <Card>
             <CardHeader>
-              <CardTitle>1. Request item</CardTitle>
+              <CardTitle>Request item</CardTitle>
               <CardDescription>Use one request item at a time.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -340,7 +345,7 @@ export function CandidatePackClient(): React.JSX.Element {
               <CardHeader>
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <CardTitle>2. Interpreted candidate scope</CardTitle>
+                    <CardTitle>Interpreted candidate scope</CardTitle>
                     <CardDescription>
                       Confirm we read the request correctly. Nothing generates
                       until you confirm.
@@ -351,7 +356,7 @@ export function CandidatePackClient(): React.JSX.Element {
                     className={
                       pack.status === "DRAFT_SCOPE"
                         ? "border-brand/40 bg-brand/10 text-brand"
-                        : undefined
+                        : "border-transparent bg-muted text-muted-foreground"
                     }
                   >
                     {packStatusLabel(pack.status)}
@@ -408,7 +413,7 @@ export function CandidatePackClient(): React.JSX.Element {
       {pack?.status === "SCOPE_CONFIRMED" ? (
         <Card>
           <CardHeader>
-            <CardTitle>3. Generate candidate evidence</CardTitle>
+            <CardTitle>Generate candidate evidence</CardTitle>
             <CardDescription>
               Retrieval uses only the confirmed scope.
             </CardDescription>
@@ -430,32 +435,23 @@ export function CandidatePackClient(): React.JSX.Element {
       {pack &&
       (pack.status === "GENERATED" || pack.status === "APPROVED") &&
       pack.candidateRecords ? (
-        <Card>
+        <Card className="border-brand/20 shadow-sm">
           <CardHeader>
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <CardTitle>3. Candidate evidence</CardTitle>
-                <CardDescription>
-                  {includedCounts.meetings} meeting
-                  {includedCounts.meetings === 1 ? "" : "s"},{" "}
-                  {includedCounts.emails} email
-                  {includedCounts.emails === 1 ? "" : "s"} selected for the
-                  pack. Review each row before approval.
-                </CardDescription>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPreviewOpen(true)}
-              >
-                Preview pack
-              </Button>
+            <div>
+              <CardTitle>Candidate evidence</CardTitle>
+              <CardDescription>
+                {includedCounts.meetings} meeting
+                {includedCounts.meetings === 1 ? "" : "s"},{" "}
+                {includedCounts.emails} email
+                {includedCounts.emails === 1 ? "" : "s"} selected for the pack.
+                Review each row before approval.
+              </CardDescription>
             </div>
           </CardHeader>
           <CardContent>
             {pack.candidateRecords.length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                No candidate records matched the confirmed scope.
+                No matches in the sources searched under the confirmed scope.
               </p>
             ) : (
               <div className="overflow-x-auto rounded-lg border">
@@ -518,59 +514,100 @@ export function CandidatePackClient(): React.JSX.Element {
       {pack?.coverageStatement ? (
         <Card>
           <CardHeader>
-            <CardTitle>4. Coverage and gaps</CardTitle>
+            <CardTitle>Coverage and gaps</CardTitle>
             <CardDescription>
-              Request exclusions are separate from sources that are not
-              connected.
+              What was searched, what matched, and what was deliberately not
+              searched.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {pack.coverageStatement.map((item) => (
-              <div
-                key={item.label}
-                className={`rounded-lg border p-3 ${
-                  item.status === "excluded_by_request"
-                    ? "border-slate-200 bg-slate-50"
-                    : item.status === "data_source_unavailable"
-                      ? "border-amber-200 bg-amber-50/60"
-                      : ""
-                }`}
-              >
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-sm font-medium">{item.label}</p>
-                  <Badge
-                    variant="outline"
-                    className={statusChipClass(item.status)}
+          <CardContent className="space-y-5">
+            {(() => {
+              const searched = pack.coverageStatement.filter(
+                (i) =>
+                  i.label === "Search population" ||
+                  i.status === "answerable" ||
+                  i.status === "partially_answerable" ||
+                  i.status === "missing" ||
+                  i.status === "requires_manual_confirmation",
+              );
+              const notSearched = pack.coverageStatement.filter(
+                (i) =>
+                  i.status === "excluded_by_request" ||
+                  i.status === "data_source_unavailable",
+              );
+              const renderItems = (
+                items: typeof pack.coverageStatement,
+              ) =>
+                items.map((item) => (
+                  <div
+                    key={item.label}
+                    className={`rounded-lg border p-3 ${
+                      item.status === "excluded_by_request"
+                        ? "border-slate-200 bg-slate-50"
+                        : item.status === "data_source_unavailable"
+                          ? "border-amber-200 bg-amber-50/60"
+                          : ""
+                    }`}
                   >
-                    {coverageStatusLabel(item.status)}
-                  </Badge>
-                </div>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {item.detail}
-                </p>
-                {item.requestQuote ? (
-                  <p className="mt-1 text-xs italic text-muted-foreground">
-                    From request: “{item.requestQuote}”
-                  </p>
-                ) : null}
-              </div>
-            ))}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-sm font-medium">{item.label}</p>
+                      {item.label !== "Search population" ? (
+                        <Badge
+                          variant="outline"
+                          className={statusChipClass(item.status)}
+                        >
+                          {coverageStatusLabel(item.status)}
+                        </Badge>
+                      ) : null}
+                    </div>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {item.detail}
+                    </p>
+                    {item.requestQuote ? (
+                      <p className="mt-1 text-xs italic text-muted-foreground">
+                        From request: “{item.requestQuote}”
+                      </p>
+                    ) : null}
+                  </div>
+                ));
+              return (
+                <>
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Searched
+                    </p>
+                    {renderItems(searched)}
+                  </div>
+                  {notSearched.length > 0 ? (
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Not searched, and why
+                      </p>
+                      {renderItems(notSearched)}
+                    </div>
+                  ) : null}
+                </>
+              );
+            })()}
 
             {pack.status === "GENERATED" ? (
-              <div className="flex flex-wrap gap-2 border-t pt-4">
+              <div className="flex flex-wrap items-center gap-3 border-t pt-4">
                 <Button
                   className="bg-[#0D2818] hover:bg-[#0D2818]/90"
                   onClick={openAttestation}
                   disabled={includedCounts.total === 0}
                 >
-                  Approve candidate pack…
+                  Approve candidate pack
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setPreviewOpen(true)}
-                >
+                <Button variant="outline" onClick={() => setPreviewOpen(true)}>
                   Preview pack
                 </Button>
+                {includedCounts.total === 0 ? (
+                  <p className="text-xs text-muted-foreground">
+                    Nothing to approve yet — generate matches under a confirmed
+                    scope first.
+                  </p>
+                ) : null}
               </div>
             ) : null}
 
@@ -595,6 +632,14 @@ export function CandidatePackClient(): React.JSX.Element {
                   {includedCounts.total === 1 ? "" : "s"} · gaps acknowledged
                   in the audit log.
                 </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-3"
+                  onClick={() => setPreviewOpen(true)}
+                >
+                  Preview pack
+                </Button>
               </div>
             ) : null}
           </CardContent>

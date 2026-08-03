@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
 
 /**
- * CV-TR-04a — one-time notice that retention is now anchored to fiscal year end.
+ * CV-TR-04a — compact one-time notice that retention is anchored to fiscal year end.
  */
 export function RetentionAnchoringBanner({
   workspaceId,
@@ -48,27 +48,26 @@ export function RetentionAnchoringBanner({
   };
 
   return (
-    <div className="border-b border-sky-300 bg-sky-50 px-4 py-2 text-sm text-sky-950">
+    <div className="border-b border-border/60 bg-muted/40 px-4 py-1.5 text-xs text-muted-foreground">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2">
         <p>
-          <span className="font-medium">Retention:</span> {retentionYears} years from fiscal
-          year end ({fiscalYearEndLabel}).{" "}
+          Retention {retentionYears}y from FYE ({fiscalYearEndLabel}) ·{" "}
           <Link
             href="/settings/workspace"
-            className="font-medium underline underline-offset-2"
+            className="font-medium text-foreground underline-offset-2 hover:underline"
           >
-            Workspace settings
+            Settings
           </Link>
           {error ? <span className="ml-2 text-destructive">{error}</span> : null}
         </p>
         <Button
-          variant="outline"
+          variant="ghost"
           size="sm"
-          className="shrink-0 border-sky-400 bg-white"
+          className="h-7 px-2 text-xs"
           disabled={dismissing}
           onClick={() => void handleDismiss()}
         >
-          {dismissing ? "Dismissing..." : "Got it"}
+          {dismissing ? "…" : "Dismiss"}
         </Button>
       </div>
     </div>

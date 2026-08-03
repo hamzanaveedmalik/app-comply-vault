@@ -47,7 +47,7 @@ export const PARTNER_FIRM_SNAPSHOTS: PartnerFirmSnapshot[] = [
   },
   {
     firmId: "snap-firm-demo",
-    displayName: "A Small Investment, LLC",
+    displayName: "Summit Ridge Advisors, LLC",
     coverageCompleteness: 71,
     overdueItems: 6,
     oldestItemDays: 18,

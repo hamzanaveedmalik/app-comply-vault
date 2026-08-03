@@ -27,7 +27,7 @@ Reorder the middle of the session around the answers. The default sequence below
    Line: “This source or period is outside the indexed coverage. I can show what was searched and what is missing, but I will not infer an answer from nearby evidence.”
 4. **Fail-closed ingestion (N4).** `/fail-closed` — parked Zoom ref `demo-parked-zoom-recording-001`, reason, retention rule, stored `INGEST_PARKED` audit event, recovery via media posture.
 5. **Candidate pack (N3).** Paste one document-request item (example below). Show interpreted scope, make the CCO confirmation explicit, generate candidate evidence, review coverage gaps, then approve.
-6. **Portfolio snapshot (N5).** `/partner/portfolio` — three firms, named exposure factors, drill only into **A Small Investment, LLC**. Say: “Production partner access ships with the pilot; Release 1 has no cross-workspace read path.”
+6. **Portfolio snapshot (N5).** `/partner/portfolio` — three firms, named exposure factors, drill only into **Summit Ridge Advisors, LLC**. Say: “Production partner access ships with the pilot; Release 1 has no cross-workspace read path.”
 7. **Commercial proposition (N6).** `/partner/complement` then `/partner/economics`. Ask which shape is worth testing in a pilot.
 
 ## Seeded Ask tiers (CV-DM-01)
@@ -43,7 +43,9 @@ Reorder the middle of the session around the answers. The default sequence below
 
 ## Example document-request item (CV-XR)
 
-> Produce all email and meeting records for Margaret Ellison regarding fees from 2025-01-01 to 2026-08-03, excluding SMS and personal messaging channels.
+> Produce all email and meeting records for Margaret Ellison regarding fees from 2025-01-01 to 2025-06-30, excluding SMS and personal messaging channels.
+
+**Expect:** ~14 fee emails + 3 meetings (May 2025 left empty on purpose). Coverage shows search population, matches, May gap, excluded-by-request SMS/personal messaging, and WhatsApp/Teams not connected.
 
 ## Written fallback lines
 

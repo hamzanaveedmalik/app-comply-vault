@@ -19,9 +19,9 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED ??= "0";
 const sql = neon(DATABASE_URL);
 
 const DEMO_FIRM = {
-  workspaceName: "A Small Investment, LLC",
+  workspaceName: "Summit Ridge Advisors, LLC",
   crdNumber: "332816",
-  ccoName: "André J. Small",
+  ccoName: "Jordan Hale",
   aumUsd: 8_400_000,
 };
 
@@ -176,6 +176,14 @@ if (fp[0]) {
     values (${cuid()}, ${WORKSPACE_ID}, 'ACTIVE', ${DEMO_FIRM.crdNumber}, ${DEMO_FIRM.ccoName},
       ${DEMO_FIRM.aumUsd}, ${now}::timestamptz, ${now}::timestamptz, ${now}::timestamptz)`;
 }
+
+await sql`update "User" u
+  set name = ${DEMO_FIRM.ccoName}
+  from "UserWorkspace" uw
+  where uw."userId" = u.id
+    and uw."workspaceId" = ${WORKSPACE_ID}
+    and uw.role = 'OWNER_CCO'
+    and uw."removedAt" is null`;
 
 const created = [];
 for (const [i, c] of CLIENTS.entries()) {
@@ -439,6 +447,190 @@ if (perf) {
       ${daysAgo(7)}::timestamptz, ${now}::timestamptz)`;
 }
 
+// ── CV-XR: Margaret Ellison fee corpus (H1 2025) for candidate-pack demo ──
+// Exact request window: 2025-01-01 → 2025-06-30. Deliberate gap: no May emails
+// so coverage can still show a known mailbox gap while returning real matches.
+const margaret = created.find((c) => c.name === "Margaret Ellison");
+if (margaret) {
+  const XR_FEE_EMAILS = [
+    {
+      day: "2025-01-08",
+      subject: "Q1 fee schedule questions",
+      body: "Hi team — can you walk me through the advisory fee line again? The 1.25% fee still feels high versus peers.",
+    },
+    {
+      day: "2025-01-15",
+      subject: "Re: Q1 fee schedule questions",
+      body: "Thanks for sending the Form CRS excerpt. Still want a written confirmation of how wrap fees interact with trading costs.",
+    },
+    {
+      day: "2025-01-22",
+      subject: "Invoice review — advisory fee",
+      body: "The January invoice advisory fee looks higher than December. Please confirm the fee schedule before I remit.",
+    },
+    {
+      day: "2025-02-03",
+      subject: "Household fee billing clarification",
+      body: "For the household, are fees assessed on each account or aggregated AUM? I need that in writing for our CPA.",
+    },
+    {
+      day: "2025-02-12",
+      subject: "Fee brochure follow-up",
+      body: "Please resend the updated fee brochure. I want to compare the advisory fee tiers before our March call.",
+    },
+    {
+      day: "2025-02-27",
+      subject: "Performance vs fees discussion",
+      body: "I am not asking for a performance promise — only whether the fee remains appropriate given portfolio drift.",
+    },
+    {
+      day: "2025-03-05",
+      subject: "March fee disclosure receipt",
+      body: "Confirming I received the March fee disclosure. Comfortable proceeding if the 1.25% advisory fee stands.",
+    },
+    {
+      day: "2025-03-18",
+      subject: "Trust account fee allocation",
+      body: "How are advisory fees allocated across the trust and taxable accounts? Need the fee methodology noted.",
+    },
+    {
+      day: "2025-04-02",
+      subject: "Q2 fee schedule revisit",
+      body: "Following up on fees again — can we revisit the advisory fee before the April review meeting?",
+    },
+    {
+      day: "2025-04-14",
+      subject: "Written fee confirmation request",
+      body: "Please confirm in writing the advisory fee, any wrap-fee components, and when breakpoints apply.",
+    },
+    {
+      day: "2025-04-28",
+      subject: "Breakpoint and fee tier question",
+      body: "If household AUM crosses the next breakpoint, when does the lower advisory fee take effect?",
+    },
+    {
+      day: "2025-06-04",
+      subject: "June invoice — fee line check",
+      body: "The June invoice fee line looks correct after the tier update. Thanks for clarifying the advisory fee.",
+    },
+    {
+      day: "2025-06-16",
+      subject: "Mid-year fee summary request",
+      body: "Could you send a mid-year summary of fees paid YTD, split by advisory fee vs transaction costs?",
+    },
+    {
+      day: "2025-06-25",
+      subject: "Fee conversation for exam file",
+      body: "Please keep this fee correspondence with my file. I want a clean record of how we discussed advisory fees in H1.",
+    },
+  ];
+
+  for (const [idx, mail] of XR_FEE_EMAILS.entries()) {
+    const occurredAt = `${mail.day}T15:00:00.000Z`;
+    const hash = sha256(`${mail.subject}\n${mail.body}\n${margaret.email}\n${idx}`);
+    const threadId = cuid();
+    const evidenceId = cuid();
+    const communicationId = cuid();
+    const searchable = emailSearchable(
+      mail.subject,
+      `${mail.body} Margaret Ellison fees advisory fee`
+    );
+    await sql`insert into "CommunicationThread"
+      (id, "workspaceId", channel, "externalThreadId", subject, participants, "createdAt", "updatedAt")
+      values (${threadId}, ${WORKSPACE_ID}, 'EMAIL_GMAIL', ${`demo-xr-fee-${idx}`}, ${mail.subject},
+        ${JSON.stringify([{ email: margaret.email, role: "client", name: "Margaret Ellison" }])}::jsonb,
+        ${now}::timestamptz, ${now}::timestamptz)`;
+    await sql`insert into "EvidenceItem"
+      (id, "workspaceId", "clientId", "sourceType", title, "occurredAt", "contentSha256",
+       "searchableText", "classificationStatus", "createdAt", "updatedAt")
+      values (${evidenceId}, ${WORKSPACE_ID}, ${margaret.clientId}, 'EMAIL', ${mail.subject},
+        ${occurredAt}::timestamptz, ${hash}, ${searchable}, 'COMPLETE',
+        ${now}::timestamptz, ${now}::timestamptz)`;
+    await sql`insert into "Communication"
+      (id, "threadId", "evidenceItemId", direction, "sentAt", "fromAddress", "toAddresses",
+       "ccAddresses", "bodyText", "internetMessageId", "createdAt", "updatedAt")
+      values (${communicationId}, ${threadId}, ${evidenceId}, 'INBOUND', ${occurredAt}::timestamptz,
+        ${margaret.email}, ${["jordan.hale@summitridge.example"]}::text[], '{}'::text[], ${mail.body},
+        ${`<demo-xr-fee-${idx}@example.com>`}, ${now}::timestamptz, ${now}::timestamptz)`;
+    await sql`insert into "ClientActivity"
+      (id, "workspaceId", "clientId", type, "occurredAt", title, direction, counterparties,
+       "evidenceItemId", "threadId", "contentSha256", "createdAt", "updatedAt")
+      values (${cuid()}, ${WORKSPACE_ID}, ${margaret.clientId}, 'EMAIL_RECEIVED', ${occurredAt}::timestamptz,
+        ${mail.subject}, 'INBOUND', ${[margaret.email]}::text[], ${evidenceId}, ${threadId}, ${hash},
+        ${now}::timestamptz, ${now}::timestamptz)`;
+  }
+
+  const XR_MEETINGS = [
+    {
+      day: "2025-02-18",
+      type: "Fee Review",
+      topic: "advisory fee schedule and wrap-fee clarification with Margaret Ellison",
+    },
+    {
+      day: "2025-04-10",
+      type: "Quarterly Review",
+      topic: "April fee schedule revisit and suitability confirmation with Margaret Ellison",
+    },
+    {
+      day: "2025-06-20",
+      type: "Mid-year Planning",
+      topic: "mid-year fees paid YTD and breakpoint discussion with Margaret Ellison",
+    },
+  ];
+  for (const m of XR_MEETINGS) {
+    const meetingId = cuid();
+    const meetingDate = `${m.day}T16:00:00.000Z`;
+    const searchableText = [
+      "Margaret Ellison",
+      m.type,
+      m.topic,
+      "fees",
+      "advisory fee",
+    ]
+      .join(" ")
+      .toLowerCase();
+    const transcript = JSON.stringify({
+      segments: [
+        {
+          startTime: 20,
+          endTime: 55,
+          speaker: "Advisor",
+          text: `Today with Margaret Ellison we covered ${m.topic}.`,
+        },
+        {
+          startTime: 56,
+          endTime: 90,
+          speaker: "Client",
+          text: "Please keep a written record of the fee discussion for my file.",
+        },
+      ],
+    });
+    const extraction = JSON.stringify({
+      topics: ["fees", m.topic],
+      recommendations: [],
+      disclosures: [{ text: "Advisory fee schedule reviewed", startTime: 56 }],
+      decisions: [],
+      followUps: [{ text: "Email fee summary", startTime: 90 }],
+    });
+    const transcriptSha = sha256(transcript);
+    await sql`insert into "Meeting"
+      (id, "workspaceId", "clientName", "clientId", "clientMatchConfidence", "participantEmails",
+       "meetingType", "meetingDate", status, "draftReadyAt", "finalizedAt", "timeToFinalize",
+       "finalizeReason", "searchableText", transcript, extraction, "transcriptSha256",
+       "readyForCCO", "createdAt", "updatedAt")
+      values (${meetingId}, ${WORKSPACE_ID}, 'Margaret Ellison', ${margaret.clientId}, 'EMAIL',
+        ${[margaret.email]}::text[], ${m.type}, ${meetingDate}::timestamptz, 'FINALIZED',
+        ${meetingDate}::timestamptz, ${meetingDate}::timestamptz, 3600, 'COMPLETE_REVIEW',
+        ${searchableText}, ${transcript}::jsonb, ${extraction}::jsonb, ${transcriptSha},
+        false, ${now}::timestamptz, ${now}::timestamptz)`;
+  }
+
+  // Deliberate coverage gap inside the request window (May 2025 — no fee emails seeded)
+  console.log(
+    "XR corpus: 14 Margaret Ellison fee emails + 3 meetings in H1 2025 (May left empty on purpose)."
+  );
+}
+
 // ── CV-DM-01: held identities ──
 const HELD = [
   {
@@ -556,6 +748,12 @@ const gapPeriods = [
     from: "2024-01-01",
     to: "2024-03-31",
     reason: "Mailbox not connected for Q1 2024",
+  },
+  {
+    sourceType: "EMAIL",
+    from: "2025-05-01",
+    to: "2025-05-31",
+    reason: "No fee correspondence captured for May 2025 — deliberate demo gap inside request window",
   },
   {
     sourceType: "MEETING",

@@ -28,9 +28,9 @@ neonConfig.webSocketConstructor = ws;
 neonConfig.pipelineConnect = false;
 
 const DEMO_FIRM = {
-  workspaceName: "A Small Investment, LLC",
+  workspaceName: "Summit Ridge Advisors, LLC",
   crdNumber: "332816",
-  ccoName: "André J. Small",
+  ccoName: "Jordan Hale",
   aumUsd: 8_400_000,
 } as const;
 

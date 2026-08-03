@@ -31,6 +31,7 @@ import {
 import {
   assertNoExamReadyClaim,
   buildCoverageStatement,
+  coverageStatusLabel,
   interpretRequestItem,
 } from "~/server/candidate-pack/types";
 
@@ -311,7 +312,7 @@ describe("CV-XR candidate pack scope", () => {
         people: ["Margaret Ellison"],
         entities: [],
         dateFrom: "2025-01-01",
-        dateTo: "2026-08-03",
+        dateTo: "2025-06-30",
         channels: ["EMAIL", "MEETING"],
         concepts: ["fees"],
         exclusions: ["SMS", "personal messaging"],
@@ -319,8 +320,17 @@ describe("CV-XR candidate pack scope", () => {
       meetingCount: 2,
       emailCount: 0,
       unindexedSources: ["SMS", "WhatsApp", "Teams chat"],
+      searchPopulation: {
+        emailsScanned: 40,
+        meetingsScanned: 12,
+        emailsMatched: 0,
+        meetingsMatched: 2,
+        sourcesConnected: ["EMAIL", "MEETING"],
+      },
     });
+    expect(items.some((i) => i.label === "Search population")).toBe(true);
     expect(items.some((i) => i.status === "missing")).toBe(true);
+    expect(coverageStatusLabel("missing")).toBe("No matches");
     expect(items.some((i) => i.status === "excluded_by_request")).toBe(true);
     const excluded = items.find((i) => i.status === "excluded_by_request");
     expect(excluded?.detail).toMatch(/SMS/);
@@ -333,6 +343,7 @@ describe("CV-XR candidate pack scope", () => {
     );
     for (const i of items) {
       expect(assertNoExamReadyClaim(i.detail)).toBe(true);
+      expect(i.detail.toLowerCase()).not.toMatch(/\bmissing\b/);
     }
   });
 

@@ -9,11 +9,15 @@ import {
   assertNoExamReadyClaim,
   buildCoverageStatement,
   interpretRequestItem,
+  searchPopulationSummary,
   type CandidateEvidenceRow,
   type ConfirmedScope,
   type CoverageStatementItem,
   type InterpretedScope,
+  type SearchPopulation,
 } from "./types";
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 export type CandidatePackDto = {
   id: string;
@@ -27,6 +31,7 @@ export type CandidatePackDto = {
   meetingIds: string[];
   emailEvidenceIds: string[];
   candidateRecords: CandidateEvidenceRow[];
+  searchPopulation: SearchPopulation | null;
   auditChainRootId: string | null;
   exportManifestSha: string | null;
   createdAt: string;
@@ -60,7 +65,8 @@ function toDto(
     approvedAt: Date | null;
     approvedByUserId: string | null;
   },
-  candidateRecords: CandidateEvidenceRow[] = []
+  candidateRecords: CandidateEvidenceRow[] = [],
+  searchPopulation: SearchPopulation | null = null
 ): CandidatePackDto {
   return {
     id: row.id,
@@ -75,6 +81,7 @@ function toDto(
     meetingIds: row.meetingIds,
     emailEvidenceIds: row.emailEvidenceIds,
     candidateRecords,
+    searchPopulation,
     auditChainRootId: row.auditChainRootId,
     exportManifestSha: row.exportManifestSha,
     createdAt: row.createdAt.toISOString(),
@@ -340,14 +347,20 @@ export async function generateCandidatePack(args: {
 
   let meetingIds: string[] = [];
   let emailEvidenceIds: string[] = [];
+  let meetingsScanned = 0;
+  let emailsScanned = 0;
 
   if (scope.channels.includes("MEETING")) {
+    const meetingWhere = {
+      workspaceId: args.workspaceId,
+      status: { in: ["DRAFT_READY", "FINALIZED"] as ("DRAFT_READY" | "FINALIZED")[] },
+      NOT: { searchableText: "prior engagement archived demo reseed" },
+      ...(dateFilter ? { meetingDate: dateFilter } : {}),
+    };
+    meetingsScanned = await db.meeting.count({ where: meetingWhere });
     const meetings = await db.meeting.findMany({
       where: {
-        workspaceId: args.workspaceId,
-        status: { in: ["DRAFT_READY", "FINALIZED"] },
-        NOT: { searchableText: "prior engagement archived demo reseed" },
-        ...(dateFilter ? { meetingDate: dateFilter } : {}),
+        ...meetingWhere,
         ...(scope.people.length > 0
           ? {
               OR: scope.people.flatMap((p) => [
@@ -370,12 +383,16 @@ export async function generateCandidatePack(args: {
   }
 
   if (scope.channels.includes("EMAIL")) {
+    const emailWhere = {
+      workspaceId: args.workspaceId,
+      sourceType: "EMAIL" as const,
+      deletedAt: null,
+      ...(dateFilter ? { occurredAt: dateFilter } : {}),
+    };
+    emailsScanned = await db.evidenceItem.count({ where: emailWhere });
     const emails = await db.evidenceItem.findMany({
       where: {
-        workspaceId: args.workspaceId,
-        sourceType: "EMAIL",
-        deletedAt: null,
-        ...(dateFilter ? { occurredAt: dateFilter } : {}),
+        ...emailWhere,
         ...(scope.people.length > 0 || scope.concepts.length > 0
           ? {
               OR: [
@@ -404,6 +421,14 @@ export async function generateCandidatePack(args: {
     });
     emailEvidenceIds = emails.map((e) => e.id);
   }
+
+  const searchPopulation: SearchPopulation = {
+    emailsScanned,
+    meetingsScanned,
+    emailsMatched: emailEvidenceIds.length,
+    meetingsMatched: meetingIds.length,
+    sourcesConnected: scope.channels,
+  };
 
   const chainRoot = await db.auditEvent.findFirst({
     where: { workspaceId: args.workspaceId },
@@ -447,6 +472,7 @@ export async function generateCandidatePack(args: {
     unindexedSources: unindexedSources.length
       ? unindexedSources
       : ["SMS", "WhatsApp", "Teams chat"],
+    searchPopulation,
   });
 
   for (const item of coverageStatement) {
@@ -457,7 +483,8 @@ export async function generateCandidatePack(args: {
 
   const retrievalBasis = [
     "Candidate retrieval under confirmed scope only.",
-    `Meetings: ${meetingIds.length}. Email evidence items: ${emailEvidenceIds.length}.`,
+    searchPopulationSummary(searchPopulation),
+    `Matched meetings: ${meetingIds.length}. Matched email evidence items: ${emailEvidenceIds.length}.`,
     "Pack labelled candidate — CCO approval required before export use.",
   ].join(" ");
 
@@ -498,10 +525,8 @@ export async function generateCandidatePack(args: {
     emailEvidenceIds,
   });
 
-  return toDto(row, candidateRecords);
+  return toDto(row, candidateRecords, searchPopulation);
 }
-
-const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 export type ApproveCandidatePackInput = {
   workspaceId: string;

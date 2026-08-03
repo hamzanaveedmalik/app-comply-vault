@@ -238,7 +238,7 @@ export type RiskFlag = {
 
 /** Live IAPD firm (not a customer). Used only for the AdvizorStack walkthrough. */
 export const DEMO_FIRM = {
-  name: "A Small Investment, LLC",
+  name: "Summit Ridge Advisors, LLC",
   location: "Humble, TX",
   crd: "332816",
   aum: "$8.4M AUM",

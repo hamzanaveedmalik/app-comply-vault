@@ -25,5 +25,10 @@
   "unique-note-creator": false,
   "publish": false,
   "footnotes": false,
-  "properties": true
+  "properties": true,
+  "slash-command": false,
+  "markdown-importer": false,
+  "random-note": false,
+  "bases": true,
+  "webviewer": false
 }

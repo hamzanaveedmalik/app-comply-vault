@@ -198,6 +198,11 @@ export type EvidenceEmbedding = $Result.DefaultSelection<Prisma.$EvidenceEmbeddi
  */
 export type CommunicationThread = $Result.DefaultSelection<Prisma.$CommunicationThreadPayload>
 /**
+ * Model SupervisorySamplingConfig
+ * 
+ */
+export type SupervisorySamplingConfig = $Result.DefaultSelection<Prisma.$SupervisorySamplingConfigPayload>
+/**
  * Model Communication
  * 
  */
@@ -232,7 +237,31 @@ export type Lead = $Result.DefaultSelection<Prisma.$LeadPayload>
  * Enums
  */
 export namespace $Enums {
-  export const CandidatePackStatus: {
+  export const SupervisoryOutcome: {
+  CLEARED: 'CLEARED',
+  ROUTINE_SAMPLE: 'ROUTINE_SAMPLE',
+  ESCALATED: 'ESCALATED',
+  HELD: 'HELD',
+  PARKED: 'PARKED'
+};
+
+export type SupervisoryOutcome = (typeof SupervisoryOutcome)[keyof typeof SupervisoryOutcome]
+
+
+export const SupervisoryHoldReason: {
+  ACTIVE_POLICY_UNAVAILABLE: 'ACTIVE_POLICY_UNAVAILABLE',
+  ORIGINAL_SOURCE_UNAVAILABLE: 'ORIGINAL_SOURCE_UNAVAILABLE',
+  ADVISER_UNRESOLVED: 'ADVISER_UNRESOLVED',
+  REQUIRED_CLIENT_CONTEXT_UNRESOLVED: 'REQUIRED_CLIENT_CONTEXT_UNRESOLVED',
+  PROCESSING_FAILED: 'PROCESSING_FAILED',
+  CONFIDENCE_BELOW_THRESHOLD: 'CONFIDENCE_BELOW_THRESHOLD',
+  MATERIAL_CONTEXT_CONTRADICTORY: 'MATERIAL_CONTEXT_CONTRADICTORY'
+};
+
+export type SupervisoryHoldReason = (typeof SupervisoryHoldReason)[keyof typeof SupervisoryHoldReason]
+
+
+export const CandidatePackStatus: {
   DRAFT_SCOPE: 'DRAFT_SCOPE',
   SCOPE_CONFIRMED: 'SCOPE_CONFIRMED',
   GENERATED: 'GENERATED',
@@ -366,7 +395,9 @@ export const AuditAction: {
   RECORD_SUPERSEDED: 'RECORD_SUPERSEDED',
   CANDIDATE_PACK_SCOPE_CONFIRMED: 'CANDIDATE_PACK_SCOPE_CONFIRMED',
   CANDIDATE_PACK_GENERATED: 'CANDIDATE_PACK_GENERATED',
-  CANDIDATE_PACK_APPROVED: 'CANDIDATE_PACK_APPROVED'
+  CANDIDATE_PACK_APPROVED: 'CANDIDATE_PACK_APPROVED',
+  SUPERVISORY_OUTCOME_ASSIGNED: 'SUPERVISORY_OUTCOME_ASSIGNED',
+  SUPERVISORY_SAMPLE_SELECTED: 'SUPERVISORY_SAMPLE_SELECTED'
 };
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction]
@@ -702,6 +733,14 @@ export const ClientActivityType: {
 export type ClientActivityType = (typeof ClientActivityType)[keyof typeof ClientActivityType]
 
 }
+
+export type SupervisoryOutcome = $Enums.SupervisoryOutcome
+
+export const SupervisoryOutcome: typeof $Enums.SupervisoryOutcome
+
+export type SupervisoryHoldReason = $Enums.SupervisoryHoldReason
+
+export const SupervisoryHoldReason: typeof $Enums.SupervisoryHoldReason
 
 export type CandidatePackStatus = $Enums.CandidatePackStatus
 
@@ -1350,6 +1389,16 @@ export class PrismaClient<
   get communicationThread(): Prisma.CommunicationThreadDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.supervisorySamplingConfig`: Exposes CRUD operations for the **SupervisorySamplingConfig** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SupervisorySamplingConfigs
+    * const supervisorySamplingConfigs = await prisma.supervisorySamplingConfig.findMany()
+    * ```
+    */
+  get supervisorySamplingConfig(): Prisma.SupervisorySamplingConfigDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.communication`: Exposes CRUD operations for the **Communication** model.
     * Example usage:
     * ```ts
@@ -1885,6 +1934,7 @@ export namespace Prisma {
     EvidenceTag: 'EvidenceTag',
     EvidenceEmbedding: 'EvidenceEmbedding',
     CommunicationThread: 'CommunicationThread',
+    SupervisorySamplingConfig: 'SupervisorySamplingConfig',
     Communication: 'Communication',
     Attachment: 'Attachment',
     MailboxConnection: 'MailboxConnection',
@@ -1909,7 +1959,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "workspace" | "candidateResponsePack" | "indexCoverageManifest" | "parkedIngest" | "userWorkspace" | "meeting" | "version" | "recordSeal" | "flag" | "resolutionRecord" | "evidenceClassification" | "actionItem" | "evidenceLink" | "verification" | "auditEvent" | "account" | "session" | "user" | "verificationToken" | "invitation" | "integrationCredential" | "integrationConfig" | "integrationSyncLog" | "firmProfile" | "disclosureCategory" | "suppressionLogEntry" | "firmProfileVersion" | "client" | "clientHousehold" | "clientHouseholdMember" | "clientActivity" | "emailAlias" | "evidenceItem" | "evidenceTag" | "evidenceEmbedding" | "communicationThread" | "communication" | "attachment" | "mailboxConnection" | "ingestJob" | "emailTriageItem" | "lead"
+      modelProps: "workspace" | "candidateResponsePack" | "indexCoverageManifest" | "parkedIngest" | "userWorkspace" | "meeting" | "version" | "recordSeal" | "flag" | "resolutionRecord" | "evidenceClassification" | "actionItem" | "evidenceLink" | "verification" | "auditEvent" | "account" | "session" | "user" | "verificationToken" | "invitation" | "integrationCredential" | "integrationConfig" | "integrationSyncLog" | "firmProfile" | "disclosureCategory" | "suppressionLogEntry" | "firmProfileVersion" | "client" | "clientHousehold" | "clientHouseholdMember" | "clientActivity" | "emailAlias" | "evidenceItem" | "evidenceTag" | "evidenceEmbedding" | "communicationThread" | "supervisorySamplingConfig" | "communication" | "attachment" | "mailboxConnection" | "ingestJob" | "emailTriageItem" | "lead"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -4561,6 +4611,80 @@ export namespace Prisma {
           }
         }
       }
+      SupervisorySamplingConfig: {
+        payload: Prisma.$SupervisorySamplingConfigPayload<ExtArgs>
+        fields: Prisma.SupervisorySamplingConfigFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SupervisorySamplingConfigFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupervisorySamplingConfigPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SupervisorySamplingConfigFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupervisorySamplingConfigPayload>
+          }
+          findFirst: {
+            args: Prisma.SupervisorySamplingConfigFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupervisorySamplingConfigPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SupervisorySamplingConfigFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupervisorySamplingConfigPayload>
+          }
+          findMany: {
+            args: Prisma.SupervisorySamplingConfigFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupervisorySamplingConfigPayload>[]
+          }
+          create: {
+            args: Prisma.SupervisorySamplingConfigCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupervisorySamplingConfigPayload>
+          }
+          createMany: {
+            args: Prisma.SupervisorySamplingConfigCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SupervisorySamplingConfigCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupervisorySamplingConfigPayload>[]
+          }
+          delete: {
+            args: Prisma.SupervisorySamplingConfigDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupervisorySamplingConfigPayload>
+          }
+          update: {
+            args: Prisma.SupervisorySamplingConfigUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupervisorySamplingConfigPayload>
+          }
+          deleteMany: {
+            args: Prisma.SupervisorySamplingConfigDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SupervisorySamplingConfigUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SupervisorySamplingConfigUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupervisorySamplingConfigPayload>[]
+          }
+          upsert: {
+            args: Prisma.SupervisorySamplingConfigUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupervisorySamplingConfigPayload>
+          }
+          aggregate: {
+            args: Prisma.SupervisorySamplingConfigAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSupervisorySamplingConfig>
+          }
+          groupBy: {
+            args: Prisma.SupervisorySamplingConfigGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SupervisorySamplingConfigGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SupervisorySamplingConfigCountArgs<ExtArgs>
+            result: $Utils.Optional<SupervisorySamplingConfigCountAggregateOutputType> | number
+          }
+        }
+      }
       Communication: {
         payload: Prisma.$CommunicationPayload<ExtArgs>
         fields: Prisma.CommunicationFieldRefs
@@ -5137,6 +5261,7 @@ export namespace Prisma {
     evidenceTag?: EvidenceTagOmit
     evidenceEmbedding?: EvidenceEmbeddingOmit
     communicationThread?: CommunicationThreadOmit
+    supervisorySamplingConfig?: SupervisorySamplingConfigOmit
     communication?: CommunicationOmit
     attachment?: AttachmentOmit
     mailboxConnection?: MailboxConnectionOmit
@@ -6425,6 +6550,7 @@ export namespace Prisma {
     recordSeals?: boolean | Workspace$recordSealsArgs<ExtArgs>
     candidateResponsePacks?: boolean | Workspace$candidateResponsePacksArgs<ExtArgs>
     indexCoverageManifests?: boolean | Workspace$indexCoverageManifestsArgs<ExtArgs>
+    supervisorySamplingConfig?: boolean | Workspace$supervisorySamplingConfigArgs<ExtArgs>
     _count?: boolean | WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["workspace"]>
 
@@ -6538,6 +6664,7 @@ export namespace Prisma {
     recordSeals?: boolean | Workspace$recordSealsArgs<ExtArgs>
     candidateResponsePacks?: boolean | Workspace$candidateResponsePacksArgs<ExtArgs>
     indexCoverageManifests?: boolean | Workspace$indexCoverageManifestsArgs<ExtArgs>
+    supervisorySamplingConfig?: boolean | Workspace$supervisorySamplingConfigArgs<ExtArgs>
     _count?: boolean | WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type WorkspaceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -6570,6 +6697,7 @@ export namespace Prisma {
       recordSeals: Prisma.$RecordSealPayload<ExtArgs>[]
       candidateResponsePacks: Prisma.$CandidateResponsePackPayload<ExtArgs>[]
       indexCoverageManifests: Prisma.$IndexCoverageManifestPayload<ExtArgs>[]
+      supervisorySamplingConfig: Prisma.$SupervisorySamplingConfigPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7030,6 +7158,7 @@ export namespace Prisma {
     recordSeals<T extends Workspace$recordSealsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$recordSealsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecordSealPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     candidateResponsePacks<T extends Workspace$candidateResponsePacksArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$candidateResponsePacksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CandidateResponsePackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     indexCoverageManifests<T extends Workspace$indexCoverageManifestsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$indexCoverageManifestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IndexCoverageManifestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    supervisorySamplingConfig<T extends Workspace$supervisorySamplingConfigArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$supervisorySamplingConfigArgs<ExtArgs>>): Prisma__SupervisorySamplingConfigClient<$Result.GetResult<Prisma.$SupervisorySamplingConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8040,6 +8169,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: IndexCoverageManifestScalarFieldEnum | IndexCoverageManifestScalarFieldEnum[]
+  }
+
+  /**
+   * Workspace.supervisorySamplingConfig
+   */
+  export type Workspace$supervisorySamplingConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupervisorySamplingConfig
+     */
+    select?: SupervisorySamplingConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupervisorySamplingConfig
+     */
+    omit?: SupervisorySamplingConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupervisorySamplingConfigInclude<ExtArgs> | null
+    where?: SupervisorySamplingConfigWhereInput
   }
 
   /**
@@ -12686,12 +12834,14 @@ export namespace Prisma {
   export type MeetingAvgAggregateOutputType = {
     sourceFileSize: number | null
     finalizedPolicyVersion: number | null
+    outcomeConfidence: number | null
     timeToFinalize: number | null
   }
 
   export type MeetingSumAggregateOutputType = {
     sourceFileSize: number | null
     finalizedPolicyVersion: number | null
+    outcomeConfidence: number | null
     timeToFinalize: number | null
   }
 
@@ -12720,6 +12870,13 @@ export namespace Prisma {
     finalizedPolicyVersion: number | null
     samplingBucket: string | null
     samplingRuleId: string | null
+    supervisoryOutcome: $Enums.SupervisoryOutcome | null
+    outcomeReason: string | null
+    outcomeConfidence: number | null
+    processedAt: Date | null
+    primaryControlId: string | null
+    heldReason: $Enums.SupervisoryHoldReason | null
+    parkedReason: string | null
     draftReadyAt: Date | null
     timeToFinalize: number | null
     readyForCCO: boolean | null
@@ -12765,6 +12922,13 @@ export namespace Prisma {
     finalizedPolicyVersion: number | null
     samplingBucket: string | null
     samplingRuleId: string | null
+    supervisoryOutcome: $Enums.SupervisoryOutcome | null
+    outcomeReason: string | null
+    outcomeConfidence: number | null
+    processedAt: Date | null
+    primaryControlId: string | null
+    heldReason: $Enums.SupervisoryHoldReason | null
+    parkedReason: string | null
     draftReadyAt: Date | null
     timeToFinalize: number | null
     readyForCCO: boolean | null
@@ -12813,6 +12977,13 @@ export namespace Prisma {
     finalizedPolicyVersion: number
     samplingBucket: number
     samplingRuleId: number
+    supervisoryOutcome: number
+    outcomeReason: number
+    outcomeConfidence: number
+    processedAt: number
+    primaryControlId: number
+    heldReason: number
+    parkedReason: number
     draftReadyAt: number
     timeToFinalize: number
     readyForCCO: number
@@ -12839,12 +13010,14 @@ export namespace Prisma {
   export type MeetingAvgAggregateInputType = {
     sourceFileSize?: true
     finalizedPolicyVersion?: true
+    outcomeConfidence?: true
     timeToFinalize?: true
   }
 
   export type MeetingSumAggregateInputType = {
     sourceFileSize?: true
     finalizedPolicyVersion?: true
+    outcomeConfidence?: true
     timeToFinalize?: true
   }
 
@@ -12873,6 +13046,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: true
     samplingBucket?: true
     samplingRuleId?: true
+    supervisoryOutcome?: true
+    outcomeReason?: true
+    outcomeConfidence?: true
+    processedAt?: true
+    primaryControlId?: true
+    heldReason?: true
+    parkedReason?: true
     draftReadyAt?: true
     timeToFinalize?: true
     readyForCCO?: true
@@ -12918,6 +13098,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: true
     samplingBucket?: true
     samplingRuleId?: true
+    supervisoryOutcome?: true
+    outcomeReason?: true
+    outcomeConfidence?: true
+    processedAt?: true
+    primaryControlId?: true
+    heldReason?: true
+    parkedReason?: true
     draftReadyAt?: true
     timeToFinalize?: true
     readyForCCO?: true
@@ -12966,6 +13153,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: true
     samplingBucket?: true
     samplingRuleId?: true
+    supervisoryOutcome?: true
+    outcomeReason?: true
+    outcomeConfidence?: true
+    processedAt?: true
+    primaryControlId?: true
+    heldReason?: true
+    parkedReason?: true
     draftReadyAt?: true
     timeToFinalize?: true
     readyForCCO?: true
@@ -13102,6 +13296,13 @@ export namespace Prisma {
     finalizedPolicyVersion: number | null
     samplingBucket: string | null
     samplingRuleId: string | null
+    supervisoryOutcome: $Enums.SupervisoryOutcome | null
+    outcomeReason: string | null
+    outcomeConfidence: number | null
+    processedAt: Date | null
+    primaryControlId: string | null
+    heldReason: $Enums.SupervisoryHoldReason | null
+    parkedReason: string | null
     draftReadyAt: Date | null
     timeToFinalize: number | null
     readyForCCO: boolean
@@ -13170,6 +13371,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: boolean
     samplingBucket?: boolean
     samplingRuleId?: boolean
+    supervisoryOutcome?: boolean
+    outcomeReason?: boolean
+    outcomeConfidence?: boolean
+    processedAt?: boolean
+    primaryControlId?: boolean
+    heldReason?: boolean
+    parkedReason?: boolean
     draftReadyAt?: boolean
     timeToFinalize?: boolean
     readyForCCO?: boolean
@@ -13235,6 +13443,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: boolean
     samplingBucket?: boolean
     samplingRuleId?: boolean
+    supervisoryOutcome?: boolean
+    outcomeReason?: boolean
+    outcomeConfidence?: boolean
+    processedAt?: boolean
+    primaryControlId?: boolean
+    heldReason?: boolean
+    parkedReason?: boolean
     draftReadyAt?: boolean
     timeToFinalize?: boolean
     readyForCCO?: boolean
@@ -13291,6 +13506,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: boolean
     samplingBucket?: boolean
     samplingRuleId?: boolean
+    supervisoryOutcome?: boolean
+    outcomeReason?: boolean
+    outcomeConfidence?: boolean
+    processedAt?: boolean
+    primaryControlId?: boolean
+    heldReason?: boolean
+    parkedReason?: boolean
     draftReadyAt?: boolean
     timeToFinalize?: boolean
     readyForCCO?: boolean
@@ -13347,6 +13569,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: boolean
     samplingBucket?: boolean
     samplingRuleId?: boolean
+    supervisoryOutcome?: boolean
+    outcomeReason?: boolean
+    outcomeConfidence?: boolean
+    processedAt?: boolean
+    primaryControlId?: boolean
+    heldReason?: boolean
+    parkedReason?: boolean
     draftReadyAt?: boolean
     timeToFinalize?: boolean
     readyForCCO?: boolean
@@ -13368,7 +13597,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientName" | "clientId" | "clientMatchConfidence" | "participantEmails" | "meetingType" | "meetingDate" | "status" | "fileUrl" | "transcriptSha256" | "mediaDiscardedAt" | "sourceFileSha256" | "sourceFileName" | "sourceFileSize" | "sourceFileMime" | "sourceUploadedAt" | "transcript" | "extraction" | "searchableText" | "finalizedBy" | "finalizedAt" | "finalizeReason" | "finalizeNote" | "finalizedPolicyVersion" | "samplingBucket" | "samplingRuleId" | "draftReadyAt" | "timeToFinalize" | "readyForCCO" | "sharepointItemWebUrl" | "sharepointDepositedAt" | "zohoCrmContactId" | "zohoCrmNotePostedAt" | "advisorCertifiedAt" | "advisorCertifiedByUserId" | "cmReviewedAt" | "cmReviewedByUserId" | "ccoSignedOffAt" | "ccoSignedOffByUserId" | "cmReviewSummary" | "supersedesId" | "supersededById" | "supersedeReason" | "createdAt" | "updatedAt", ExtArgs["result"]["meeting"]>
+  export type MeetingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "clientName" | "clientId" | "clientMatchConfidence" | "participantEmails" | "meetingType" | "meetingDate" | "status" | "fileUrl" | "transcriptSha256" | "mediaDiscardedAt" | "sourceFileSha256" | "sourceFileName" | "sourceFileSize" | "sourceFileMime" | "sourceUploadedAt" | "transcript" | "extraction" | "searchableText" | "finalizedBy" | "finalizedAt" | "finalizeReason" | "finalizeNote" | "finalizedPolicyVersion" | "samplingBucket" | "samplingRuleId" | "supervisoryOutcome" | "outcomeReason" | "outcomeConfidence" | "processedAt" | "primaryControlId" | "heldReason" | "parkedReason" | "draftReadyAt" | "timeToFinalize" | "readyForCCO" | "sharepointItemWebUrl" | "sharepointDepositedAt" | "zohoCrmContactId" | "zohoCrmNotePostedAt" | "advisorCertifiedAt" | "advisorCertifiedByUserId" | "cmReviewedAt" | "cmReviewedByUserId" | "ccoSignedOffAt" | "ccoSignedOffByUserId" | "cmReviewSummary" | "supersedesId" | "supersededById" | "supersedeReason" | "createdAt" | "updatedAt", ExtArgs["result"]["meeting"]>
   export type MeetingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     client?: boolean | Meeting$clientArgs<ExtArgs>
@@ -13468,6 +13697,13 @@ export namespace Prisma {
       finalizedPolicyVersion: number | null
       samplingBucket: string | null
       samplingRuleId: string | null
+      supervisoryOutcome: $Enums.SupervisoryOutcome | null
+      outcomeReason: string | null
+      outcomeConfidence: number | null
+      processedAt: Date | null
+      primaryControlId: string | null
+      heldReason: $Enums.SupervisoryHoldReason | null
+      parkedReason: string | null
       draftReadyAt: Date | null
       timeToFinalize: number | null
       readyForCCO: boolean
@@ -13970,6 +14206,13 @@ export namespace Prisma {
     readonly finalizedPolicyVersion: FieldRef<"Meeting", 'Int'>
     readonly samplingBucket: FieldRef<"Meeting", 'String'>
     readonly samplingRuleId: FieldRef<"Meeting", 'String'>
+    readonly supervisoryOutcome: FieldRef<"Meeting", 'SupervisoryOutcome'>
+    readonly outcomeReason: FieldRef<"Meeting", 'String'>
+    readonly outcomeConfidence: FieldRef<"Meeting", 'Float'>
+    readonly processedAt: FieldRef<"Meeting", 'DateTime'>
+    readonly primaryControlId: FieldRef<"Meeting", 'String'>
+    readonly heldReason: FieldRef<"Meeting", 'SupervisoryHoldReason'>
+    readonly parkedReason: FieldRef<"Meeting", 'String'>
     readonly draftReadyAt: FieldRef<"Meeting", 'DateTime'>
     readonly timeToFinalize: FieldRef<"Meeting", 'Int'>
     readonly readyForCCO: FieldRef<"Meeting", 'Boolean'>
@@ -48398,8 +48641,18 @@ export namespace Prisma {
 
   export type AggregateCommunicationThread = {
     _count: CommunicationThreadCountAggregateOutputType | null
+    _avg: CommunicationThreadAvgAggregateOutputType | null
+    _sum: CommunicationThreadSumAggregateOutputType | null
     _min: CommunicationThreadMinAggregateOutputType | null
     _max: CommunicationThreadMaxAggregateOutputType | null
+  }
+
+  export type CommunicationThreadAvgAggregateOutputType = {
+    outcomeConfidence: number | null
+  }
+
+  export type CommunicationThreadSumAggregateOutputType = {
+    outcomeConfidence: number | null
   }
 
   export type CommunicationThreadMinAggregateOutputType = {
@@ -48408,6 +48661,13 @@ export namespace Prisma {
     channel: $Enums.CommunicationChannel | null
     externalThreadId: string | null
     subject: string | null
+    supervisoryOutcome: $Enums.SupervisoryOutcome | null
+    outcomeReason: string | null
+    outcomeConfidence: number | null
+    processedAt: Date | null
+    primaryControlId: string | null
+    heldReason: $Enums.SupervisoryHoldReason | null
+    parkedReason: string | null
     createdAt: Date | null
     updatedAt: Date | null
     deletedAt: Date | null
@@ -48419,6 +48679,13 @@ export namespace Prisma {
     channel: $Enums.CommunicationChannel | null
     externalThreadId: string | null
     subject: string | null
+    supervisoryOutcome: $Enums.SupervisoryOutcome | null
+    outcomeReason: string | null
+    outcomeConfidence: number | null
+    processedAt: Date | null
+    primaryControlId: string | null
+    heldReason: $Enums.SupervisoryHoldReason | null
+    parkedReason: string | null
     createdAt: Date | null
     updatedAt: Date | null
     deletedAt: Date | null
@@ -48431,6 +48698,13 @@ export namespace Prisma {
     externalThreadId: number
     subject: number
     participants: number
+    supervisoryOutcome: number
+    outcomeReason: number
+    outcomeConfidence: number
+    processedAt: number
+    primaryControlId: number
+    heldReason: number
+    parkedReason: number
     createdAt: number
     updatedAt: number
     deletedAt: number
@@ -48438,12 +48712,27 @@ export namespace Prisma {
   }
 
 
+  export type CommunicationThreadAvgAggregateInputType = {
+    outcomeConfidence?: true
+  }
+
+  export type CommunicationThreadSumAggregateInputType = {
+    outcomeConfidence?: true
+  }
+
   export type CommunicationThreadMinAggregateInputType = {
     id?: true
     workspaceId?: true
     channel?: true
     externalThreadId?: true
     subject?: true
+    supervisoryOutcome?: true
+    outcomeReason?: true
+    outcomeConfidence?: true
+    processedAt?: true
+    primaryControlId?: true
+    heldReason?: true
+    parkedReason?: true
     createdAt?: true
     updatedAt?: true
     deletedAt?: true
@@ -48455,6 +48744,13 @@ export namespace Prisma {
     channel?: true
     externalThreadId?: true
     subject?: true
+    supervisoryOutcome?: true
+    outcomeReason?: true
+    outcomeConfidence?: true
+    processedAt?: true
+    primaryControlId?: true
+    heldReason?: true
+    parkedReason?: true
     createdAt?: true
     updatedAt?: true
     deletedAt?: true
@@ -48467,6 +48763,13 @@ export namespace Prisma {
     externalThreadId?: true
     subject?: true
     participants?: true
+    supervisoryOutcome?: true
+    outcomeReason?: true
+    outcomeConfidence?: true
+    processedAt?: true
+    primaryControlId?: true
+    heldReason?: true
+    parkedReason?: true
     createdAt?: true
     updatedAt?: true
     deletedAt?: true
@@ -48511,6 +48814,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: CommunicationThreadAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CommunicationThreadSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: CommunicationThreadMinAggregateInputType
@@ -48541,6 +48856,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: CommunicationThreadCountAggregateInputType | true
+    _avg?: CommunicationThreadAvgAggregateInputType
+    _sum?: CommunicationThreadSumAggregateInputType
     _min?: CommunicationThreadMinAggregateInputType
     _max?: CommunicationThreadMaxAggregateInputType
   }
@@ -48552,10 +48869,19 @@ export namespace Prisma {
     externalThreadId: string | null
     subject: string | null
     participants: JsonValue
+    supervisoryOutcome: $Enums.SupervisoryOutcome | null
+    outcomeReason: string | null
+    outcomeConfidence: number | null
+    processedAt: Date | null
+    primaryControlId: string | null
+    heldReason: $Enums.SupervisoryHoldReason | null
+    parkedReason: string | null
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
     _count: CommunicationThreadCountAggregateOutputType | null
+    _avg: CommunicationThreadAvgAggregateOutputType | null
+    _sum: CommunicationThreadSumAggregateOutputType | null
     _min: CommunicationThreadMinAggregateOutputType | null
     _max: CommunicationThreadMaxAggregateOutputType | null
   }
@@ -48581,6 +48907,13 @@ export namespace Prisma {
     externalThreadId?: boolean
     subject?: boolean
     participants?: boolean
+    supervisoryOutcome?: boolean
+    outcomeReason?: boolean
+    outcomeConfidence?: boolean
+    processedAt?: boolean
+    primaryControlId?: boolean
+    heldReason?: boolean
+    parkedReason?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
@@ -48596,6 +48929,13 @@ export namespace Prisma {
     externalThreadId?: boolean
     subject?: boolean
     participants?: boolean
+    supervisoryOutcome?: boolean
+    outcomeReason?: boolean
+    outcomeConfidence?: boolean
+    processedAt?: boolean
+    primaryControlId?: boolean
+    heldReason?: boolean
+    parkedReason?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
@@ -48609,6 +48949,13 @@ export namespace Prisma {
     externalThreadId?: boolean
     subject?: boolean
     participants?: boolean
+    supervisoryOutcome?: boolean
+    outcomeReason?: boolean
+    outcomeConfidence?: boolean
+    processedAt?: boolean
+    primaryControlId?: boolean
+    heldReason?: boolean
+    parkedReason?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
@@ -48622,12 +48969,19 @@ export namespace Prisma {
     externalThreadId?: boolean
     subject?: boolean
     participants?: boolean
+    supervisoryOutcome?: boolean
+    outcomeReason?: boolean
+    outcomeConfidence?: boolean
+    processedAt?: boolean
+    primaryControlId?: boolean
+    heldReason?: boolean
+    parkedReason?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
   }
 
-  export type CommunicationThreadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "channel" | "externalThreadId" | "subject" | "participants" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["communicationThread"]>
+  export type CommunicationThreadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "channel" | "externalThreadId" | "subject" | "participants" | "supervisoryOutcome" | "outcomeReason" | "outcomeConfidence" | "processedAt" | "primaryControlId" | "heldReason" | "parkedReason" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["communicationThread"]>
   export type CommunicationThreadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     messages?: boolean | CommunicationThread$messagesArgs<ExtArgs>
@@ -48653,6 +49007,13 @@ export namespace Prisma {
       externalThreadId: string | null
       subject: string | null
       participants: Prisma.JsonValue
+      supervisoryOutcome: $Enums.SupervisoryOutcome | null
+      outcomeReason: string | null
+      outcomeConfidence: number | null
+      processedAt: Date | null
+      primaryControlId: string | null
+      heldReason: $Enums.SupervisoryHoldReason | null
+      parkedReason: string | null
       createdAt: Date
       updatedAt: Date
       deletedAt: Date | null
@@ -49087,6 +49448,13 @@ export namespace Prisma {
     readonly externalThreadId: FieldRef<"CommunicationThread", 'String'>
     readonly subject: FieldRef<"CommunicationThread", 'String'>
     readonly participants: FieldRef<"CommunicationThread", 'Json'>
+    readonly supervisoryOutcome: FieldRef<"CommunicationThread", 'SupervisoryOutcome'>
+    readonly outcomeReason: FieldRef<"CommunicationThread", 'String'>
+    readonly outcomeConfidence: FieldRef<"CommunicationThread", 'Float'>
+    readonly processedAt: FieldRef<"CommunicationThread", 'DateTime'>
+    readonly primaryControlId: FieldRef<"CommunicationThread", 'String'>
+    readonly heldReason: FieldRef<"CommunicationThread", 'SupervisoryHoldReason'>
+    readonly parkedReason: FieldRef<"CommunicationThread", 'String'>
     readonly createdAt: FieldRef<"CommunicationThread", 'DateTime'>
     readonly updatedAt: FieldRef<"CommunicationThread", 'DateTime'>
     readonly deletedAt: FieldRef<"CommunicationThread", 'DateTime'>
@@ -49525,6 +49893,1223 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: CommunicationThreadInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SupervisorySamplingConfig
+   */
+
+  export type AggregateSupervisorySamplingConfig = {
+    _count: SupervisorySamplingConfigCountAggregateOutputType | null
+    _avg: SupervisorySamplingConfigAvgAggregateOutputType | null
+    _sum: SupervisorySamplingConfigSumAggregateOutputType | null
+    _min: SupervisorySamplingConfigMinAggregateOutputType | null
+    _max: SupervisorySamplingConfigMaxAggregateOutputType | null
+  }
+
+  export type SupervisorySamplingConfigAvgAggregateOutputType = {
+    randomPercentage: number | null
+    adviserRiskOpenFlagFloor: number | null
+    newAdviserWindowDays: number | null
+    reviewStalenessDays: number | null
+  }
+
+  export type SupervisorySamplingConfigSumAggregateOutputType = {
+    randomPercentage: number | null
+    adviserRiskOpenFlagFloor: number | null
+    newAdviserWindowDays: number | null
+    reviewStalenessDays: number | null
+  }
+
+  export type SupervisorySamplingConfigMinAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    randomPercentage: number | null
+    adviserRiskEnabled: boolean | null
+    adviserRiskOpenFlagFloor: number | null
+    newAdviserEnabled: boolean | null
+    newAdviserWindowDays: number | null
+    timeSinceLastReviewEnabled: boolean | null
+    reviewStalenessDays: number | null
+    manualSelectionEnabled: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type SupervisorySamplingConfigMaxAggregateOutputType = {
+    id: string | null
+    workspaceId: string | null
+    randomPercentage: number | null
+    adviserRiskEnabled: boolean | null
+    adviserRiskOpenFlagFloor: number | null
+    newAdviserEnabled: boolean | null
+    newAdviserWindowDays: number | null
+    timeSinceLastReviewEnabled: boolean | null
+    reviewStalenessDays: number | null
+    manualSelectionEnabled: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type SupervisorySamplingConfigCountAggregateOutputType = {
+    id: number
+    workspaceId: number
+    randomPercentage: number
+    adviserRiskEnabled: number
+    adviserRiskOpenFlagFloor: number
+    newAdviserEnabled: number
+    newAdviserWindowDays: number
+    timeSinceLastReviewEnabled: number
+    reviewStalenessDays: number
+    manualSelectionEnabled: number
+    controlSamplingPolicy: number
+    createdAt: number
+    updatedAt: number
+    deletedAt: number
+    _all: number
+  }
+
+
+  export type SupervisorySamplingConfigAvgAggregateInputType = {
+    randomPercentage?: true
+    adviserRiskOpenFlagFloor?: true
+    newAdviserWindowDays?: true
+    reviewStalenessDays?: true
+  }
+
+  export type SupervisorySamplingConfigSumAggregateInputType = {
+    randomPercentage?: true
+    adviserRiskOpenFlagFloor?: true
+    newAdviserWindowDays?: true
+    reviewStalenessDays?: true
+  }
+
+  export type SupervisorySamplingConfigMinAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    randomPercentage?: true
+    adviserRiskEnabled?: true
+    adviserRiskOpenFlagFloor?: true
+    newAdviserEnabled?: true
+    newAdviserWindowDays?: true
+    timeSinceLastReviewEnabled?: true
+    reviewStalenessDays?: true
+    manualSelectionEnabled?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type SupervisorySamplingConfigMaxAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    randomPercentage?: true
+    adviserRiskEnabled?: true
+    adviserRiskOpenFlagFloor?: true
+    newAdviserEnabled?: true
+    newAdviserWindowDays?: true
+    timeSinceLastReviewEnabled?: true
+    reviewStalenessDays?: true
+    manualSelectionEnabled?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type SupervisorySamplingConfigCountAggregateInputType = {
+    id?: true
+    workspaceId?: true
+    randomPercentage?: true
+    adviserRiskEnabled?: true
+    adviserRiskOpenFlagFloor?: true
+    newAdviserEnabled?: true
+    newAdviserWindowDays?: true
+    timeSinceLastReviewEnabled?: true
+    reviewStalenessDays?: true
+    manualSelectionEnabled?: true
+    controlSamplingPolicy?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+    _all?: true
+  }
+
+  export type SupervisorySamplingConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SupervisorySamplingConfig to aggregate.
+     */
+    where?: SupervisorySamplingConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupervisorySamplingConfigs to fetch.
+     */
+    orderBy?: SupervisorySamplingConfigOrderByWithRelationInput | SupervisorySamplingConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SupervisorySamplingConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupervisorySamplingConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupervisorySamplingConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SupervisorySamplingConfigs
+    **/
+    _count?: true | SupervisorySamplingConfigCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SupervisorySamplingConfigAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SupervisorySamplingConfigSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SupervisorySamplingConfigMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SupervisorySamplingConfigMaxAggregateInputType
+  }
+
+  export type GetSupervisorySamplingConfigAggregateType<T extends SupervisorySamplingConfigAggregateArgs> = {
+        [P in keyof T & keyof AggregateSupervisorySamplingConfig]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSupervisorySamplingConfig[P]>
+      : GetScalarType<T[P], AggregateSupervisorySamplingConfig[P]>
+  }
+
+
+
+
+  export type SupervisorySamplingConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SupervisorySamplingConfigWhereInput
+    orderBy?: SupervisorySamplingConfigOrderByWithAggregationInput | SupervisorySamplingConfigOrderByWithAggregationInput[]
+    by: SupervisorySamplingConfigScalarFieldEnum[] | SupervisorySamplingConfigScalarFieldEnum
+    having?: SupervisorySamplingConfigScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SupervisorySamplingConfigCountAggregateInputType | true
+    _avg?: SupervisorySamplingConfigAvgAggregateInputType
+    _sum?: SupervisorySamplingConfigSumAggregateInputType
+    _min?: SupervisorySamplingConfigMinAggregateInputType
+    _max?: SupervisorySamplingConfigMaxAggregateInputType
+  }
+
+  export type SupervisorySamplingConfigGroupByOutputType = {
+    id: string
+    workspaceId: string
+    randomPercentage: number
+    adviserRiskEnabled: boolean
+    adviserRiskOpenFlagFloor: number
+    newAdviserEnabled: boolean
+    newAdviserWindowDays: number
+    timeSinceLastReviewEnabled: boolean
+    reviewStalenessDays: number
+    manualSelectionEnabled: boolean
+    controlSamplingPolicy: JsonValue | null
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date | null
+    _count: SupervisorySamplingConfigCountAggregateOutputType | null
+    _avg: SupervisorySamplingConfigAvgAggregateOutputType | null
+    _sum: SupervisorySamplingConfigSumAggregateOutputType | null
+    _min: SupervisorySamplingConfigMinAggregateOutputType | null
+    _max: SupervisorySamplingConfigMaxAggregateOutputType | null
+  }
+
+  type GetSupervisorySamplingConfigGroupByPayload<T extends SupervisorySamplingConfigGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SupervisorySamplingConfigGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SupervisorySamplingConfigGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SupervisorySamplingConfigGroupByOutputType[P]>
+            : GetScalarType<T[P], SupervisorySamplingConfigGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SupervisorySamplingConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    randomPercentage?: boolean
+    adviserRiskEnabled?: boolean
+    adviserRiskOpenFlagFloor?: boolean
+    newAdviserEnabled?: boolean
+    newAdviserWindowDays?: boolean
+    timeSinceLastReviewEnabled?: boolean
+    reviewStalenessDays?: boolean
+    manualSelectionEnabled?: boolean
+    controlSamplingPolicy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["supervisorySamplingConfig"]>
+
+  export type SupervisorySamplingConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    randomPercentage?: boolean
+    adviserRiskEnabled?: boolean
+    adviserRiskOpenFlagFloor?: boolean
+    newAdviserEnabled?: boolean
+    newAdviserWindowDays?: boolean
+    timeSinceLastReviewEnabled?: boolean
+    reviewStalenessDays?: boolean
+    manualSelectionEnabled?: boolean
+    controlSamplingPolicy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["supervisorySamplingConfig"]>
+
+  export type SupervisorySamplingConfigSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceId?: boolean
+    randomPercentage?: boolean
+    adviserRiskEnabled?: boolean
+    adviserRiskOpenFlagFloor?: boolean
+    newAdviserEnabled?: boolean
+    newAdviserWindowDays?: boolean
+    timeSinceLastReviewEnabled?: boolean
+    reviewStalenessDays?: boolean
+    manualSelectionEnabled?: boolean
+    controlSamplingPolicy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["supervisorySamplingConfig"]>
+
+  export type SupervisorySamplingConfigSelectScalar = {
+    id?: boolean
+    workspaceId?: boolean
+    randomPercentage?: boolean
+    adviserRiskEnabled?: boolean
+    adviserRiskOpenFlagFloor?: boolean
+    newAdviserEnabled?: boolean
+    newAdviserWindowDays?: boolean
+    timeSinceLastReviewEnabled?: boolean
+    reviewStalenessDays?: boolean
+    manualSelectionEnabled?: boolean
+    controlSamplingPolicy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }
+
+  export type SupervisorySamplingConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "randomPercentage" | "adviserRiskEnabled" | "adviserRiskOpenFlagFloor" | "newAdviserEnabled" | "newAdviserWindowDays" | "timeSinceLastReviewEnabled" | "reviewStalenessDays" | "manualSelectionEnabled" | "controlSamplingPolicy" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["supervisorySamplingConfig"]>
+  export type SupervisorySamplingConfigInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+  export type SupervisorySamplingConfigIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+  export type SupervisorySamplingConfigIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
+  }
+
+  export type $SupervisorySamplingConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SupervisorySamplingConfig"
+    objects: {
+      workspace: Prisma.$WorkspacePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workspaceId: string
+      randomPercentage: number
+      adviserRiskEnabled: boolean
+      adviserRiskOpenFlagFloor: number
+      newAdviserEnabled: boolean
+      newAdviserWindowDays: number
+      timeSinceLastReviewEnabled: boolean
+      reviewStalenessDays: number
+      manualSelectionEnabled: boolean
+      controlSamplingPolicy: Prisma.JsonValue | null
+      createdAt: Date
+      updatedAt: Date
+      deletedAt: Date | null
+    }, ExtArgs["result"]["supervisorySamplingConfig"]>
+    composites: {}
+  }
+
+  type SupervisorySamplingConfigGetPayload<S extends boolean | null | undefined | SupervisorySamplingConfigDefaultArgs> = $Result.GetResult<Prisma.$SupervisorySamplingConfigPayload, S>
+
+  type SupervisorySamplingConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SupervisorySamplingConfigFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SupervisorySamplingConfigCountAggregateInputType | true
+    }
+
+  export interface SupervisorySamplingConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SupervisorySamplingConfig'], meta: { name: 'SupervisorySamplingConfig' } }
+    /**
+     * Find zero or one SupervisorySamplingConfig that matches the filter.
+     * @param {SupervisorySamplingConfigFindUniqueArgs} args - Arguments to find a SupervisorySamplingConfig
+     * @example
+     * // Get one SupervisorySamplingConfig
+     * const supervisorySamplingConfig = await prisma.supervisorySamplingConfig.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SupervisorySamplingConfigFindUniqueArgs>(args: SelectSubset<T, SupervisorySamplingConfigFindUniqueArgs<ExtArgs>>): Prisma__SupervisorySamplingConfigClient<$Result.GetResult<Prisma.$SupervisorySamplingConfigPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SupervisorySamplingConfig that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SupervisorySamplingConfigFindUniqueOrThrowArgs} args - Arguments to find a SupervisorySamplingConfig
+     * @example
+     * // Get one SupervisorySamplingConfig
+     * const supervisorySamplingConfig = await prisma.supervisorySamplingConfig.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SupervisorySamplingConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, SupervisorySamplingConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SupervisorySamplingConfigClient<$Result.GetResult<Prisma.$SupervisorySamplingConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SupervisorySamplingConfig that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupervisorySamplingConfigFindFirstArgs} args - Arguments to find a SupervisorySamplingConfig
+     * @example
+     * // Get one SupervisorySamplingConfig
+     * const supervisorySamplingConfig = await prisma.supervisorySamplingConfig.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SupervisorySamplingConfigFindFirstArgs>(args?: SelectSubset<T, SupervisorySamplingConfigFindFirstArgs<ExtArgs>>): Prisma__SupervisorySamplingConfigClient<$Result.GetResult<Prisma.$SupervisorySamplingConfigPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SupervisorySamplingConfig that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupervisorySamplingConfigFindFirstOrThrowArgs} args - Arguments to find a SupervisorySamplingConfig
+     * @example
+     * // Get one SupervisorySamplingConfig
+     * const supervisorySamplingConfig = await prisma.supervisorySamplingConfig.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SupervisorySamplingConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, SupervisorySamplingConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__SupervisorySamplingConfigClient<$Result.GetResult<Prisma.$SupervisorySamplingConfigPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SupervisorySamplingConfigs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupervisorySamplingConfigFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SupervisorySamplingConfigs
+     * const supervisorySamplingConfigs = await prisma.supervisorySamplingConfig.findMany()
+     * 
+     * // Get first 10 SupervisorySamplingConfigs
+     * const supervisorySamplingConfigs = await prisma.supervisorySamplingConfig.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const supervisorySamplingConfigWithIdOnly = await prisma.supervisorySamplingConfig.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SupervisorySamplingConfigFindManyArgs>(args?: SelectSubset<T, SupervisorySamplingConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupervisorySamplingConfigPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SupervisorySamplingConfig.
+     * @param {SupervisorySamplingConfigCreateArgs} args - Arguments to create a SupervisorySamplingConfig.
+     * @example
+     * // Create one SupervisorySamplingConfig
+     * const SupervisorySamplingConfig = await prisma.supervisorySamplingConfig.create({
+     *   data: {
+     *     // ... data to create a SupervisorySamplingConfig
+     *   }
+     * })
+     * 
+     */
+    create<T extends SupervisorySamplingConfigCreateArgs>(args: SelectSubset<T, SupervisorySamplingConfigCreateArgs<ExtArgs>>): Prisma__SupervisorySamplingConfigClient<$Result.GetResult<Prisma.$SupervisorySamplingConfigPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SupervisorySamplingConfigs.
+     * @param {SupervisorySamplingConfigCreateManyArgs} args - Arguments to create many SupervisorySamplingConfigs.
+     * @example
+     * // Create many SupervisorySamplingConfigs
+     * const supervisorySamplingConfig = await prisma.supervisorySamplingConfig.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SupervisorySamplingConfigCreateManyArgs>(args?: SelectSubset<T, SupervisorySamplingConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SupervisorySamplingConfigs and returns the data saved in the database.
+     * @param {SupervisorySamplingConfigCreateManyAndReturnArgs} args - Arguments to create many SupervisorySamplingConfigs.
+     * @example
+     * // Create many SupervisorySamplingConfigs
+     * const supervisorySamplingConfig = await prisma.supervisorySamplingConfig.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SupervisorySamplingConfigs and only return the `id`
+     * const supervisorySamplingConfigWithIdOnly = await prisma.supervisorySamplingConfig.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SupervisorySamplingConfigCreateManyAndReturnArgs>(args?: SelectSubset<T, SupervisorySamplingConfigCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupervisorySamplingConfigPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SupervisorySamplingConfig.
+     * @param {SupervisorySamplingConfigDeleteArgs} args - Arguments to delete one SupervisorySamplingConfig.
+     * @example
+     * // Delete one SupervisorySamplingConfig
+     * const SupervisorySamplingConfig = await prisma.supervisorySamplingConfig.delete({
+     *   where: {
+     *     // ... filter to delete one SupervisorySamplingConfig
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SupervisorySamplingConfigDeleteArgs>(args: SelectSubset<T, SupervisorySamplingConfigDeleteArgs<ExtArgs>>): Prisma__SupervisorySamplingConfigClient<$Result.GetResult<Prisma.$SupervisorySamplingConfigPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SupervisorySamplingConfig.
+     * @param {SupervisorySamplingConfigUpdateArgs} args - Arguments to update one SupervisorySamplingConfig.
+     * @example
+     * // Update one SupervisorySamplingConfig
+     * const supervisorySamplingConfig = await prisma.supervisorySamplingConfig.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SupervisorySamplingConfigUpdateArgs>(args: SelectSubset<T, SupervisorySamplingConfigUpdateArgs<ExtArgs>>): Prisma__SupervisorySamplingConfigClient<$Result.GetResult<Prisma.$SupervisorySamplingConfigPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SupervisorySamplingConfigs.
+     * @param {SupervisorySamplingConfigDeleteManyArgs} args - Arguments to filter SupervisorySamplingConfigs to delete.
+     * @example
+     * // Delete a few SupervisorySamplingConfigs
+     * const { count } = await prisma.supervisorySamplingConfig.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SupervisorySamplingConfigDeleteManyArgs>(args?: SelectSubset<T, SupervisorySamplingConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SupervisorySamplingConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupervisorySamplingConfigUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SupervisorySamplingConfigs
+     * const supervisorySamplingConfig = await prisma.supervisorySamplingConfig.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SupervisorySamplingConfigUpdateManyArgs>(args: SelectSubset<T, SupervisorySamplingConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SupervisorySamplingConfigs and returns the data updated in the database.
+     * @param {SupervisorySamplingConfigUpdateManyAndReturnArgs} args - Arguments to update many SupervisorySamplingConfigs.
+     * @example
+     * // Update many SupervisorySamplingConfigs
+     * const supervisorySamplingConfig = await prisma.supervisorySamplingConfig.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SupervisorySamplingConfigs and only return the `id`
+     * const supervisorySamplingConfigWithIdOnly = await prisma.supervisorySamplingConfig.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SupervisorySamplingConfigUpdateManyAndReturnArgs>(args: SelectSubset<T, SupervisorySamplingConfigUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupervisorySamplingConfigPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SupervisorySamplingConfig.
+     * @param {SupervisorySamplingConfigUpsertArgs} args - Arguments to update or create a SupervisorySamplingConfig.
+     * @example
+     * // Update or create a SupervisorySamplingConfig
+     * const supervisorySamplingConfig = await prisma.supervisorySamplingConfig.upsert({
+     *   create: {
+     *     // ... data to create a SupervisorySamplingConfig
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SupervisorySamplingConfig we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SupervisorySamplingConfigUpsertArgs>(args: SelectSubset<T, SupervisorySamplingConfigUpsertArgs<ExtArgs>>): Prisma__SupervisorySamplingConfigClient<$Result.GetResult<Prisma.$SupervisorySamplingConfigPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SupervisorySamplingConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupervisorySamplingConfigCountArgs} args - Arguments to filter SupervisorySamplingConfigs to count.
+     * @example
+     * // Count the number of SupervisorySamplingConfigs
+     * const count = await prisma.supervisorySamplingConfig.count({
+     *   where: {
+     *     // ... the filter for the SupervisorySamplingConfigs we want to count
+     *   }
+     * })
+    **/
+    count<T extends SupervisorySamplingConfigCountArgs>(
+      args?: Subset<T, SupervisorySamplingConfigCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SupervisorySamplingConfigCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SupervisorySamplingConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupervisorySamplingConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SupervisorySamplingConfigAggregateArgs>(args: Subset<T, SupervisorySamplingConfigAggregateArgs>): Prisma.PrismaPromise<GetSupervisorySamplingConfigAggregateType<T>>
+
+    /**
+     * Group by SupervisorySamplingConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupervisorySamplingConfigGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SupervisorySamplingConfigGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SupervisorySamplingConfigGroupByArgs['orderBy'] }
+        : { orderBy?: SupervisorySamplingConfigGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SupervisorySamplingConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSupervisorySamplingConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SupervisorySamplingConfig model
+   */
+  readonly fields: SupervisorySamplingConfigFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SupervisorySamplingConfig.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SupervisorySamplingConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SupervisorySamplingConfig model
+   */
+  interface SupervisorySamplingConfigFieldRefs {
+    readonly id: FieldRef<"SupervisorySamplingConfig", 'String'>
+    readonly workspaceId: FieldRef<"SupervisorySamplingConfig", 'String'>
+    readonly randomPercentage: FieldRef<"SupervisorySamplingConfig", 'Int'>
+    readonly adviserRiskEnabled: FieldRef<"SupervisorySamplingConfig", 'Boolean'>
+    readonly adviserRiskOpenFlagFloor: FieldRef<"SupervisorySamplingConfig", 'Int'>
+    readonly newAdviserEnabled: FieldRef<"SupervisorySamplingConfig", 'Boolean'>
+    readonly newAdviserWindowDays: FieldRef<"SupervisorySamplingConfig", 'Int'>
+    readonly timeSinceLastReviewEnabled: FieldRef<"SupervisorySamplingConfig", 'Boolean'>
+    readonly reviewStalenessDays: FieldRef<"SupervisorySamplingConfig", 'Int'>
+    readonly manualSelectionEnabled: FieldRef<"SupervisorySamplingConfig", 'Boolean'>
+    readonly controlSamplingPolicy: FieldRef<"SupervisorySamplingConfig", 'Json'>
+    readonly createdAt: FieldRef<"SupervisorySamplingConfig", 'DateTime'>
+    readonly updatedAt: FieldRef<"SupervisorySamplingConfig", 'DateTime'>
+    readonly deletedAt: FieldRef<"SupervisorySamplingConfig", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SupervisorySamplingConfig findUnique
+   */
+  export type SupervisorySamplingConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupervisorySamplingConfig
+     */
+    select?: SupervisorySamplingConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupervisorySamplingConfig
+     */
+    omit?: SupervisorySamplingConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupervisorySamplingConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which SupervisorySamplingConfig to fetch.
+     */
+    where: SupervisorySamplingConfigWhereUniqueInput
+  }
+
+  /**
+   * SupervisorySamplingConfig findUniqueOrThrow
+   */
+  export type SupervisorySamplingConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupervisorySamplingConfig
+     */
+    select?: SupervisorySamplingConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupervisorySamplingConfig
+     */
+    omit?: SupervisorySamplingConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupervisorySamplingConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which SupervisorySamplingConfig to fetch.
+     */
+    where: SupervisorySamplingConfigWhereUniqueInput
+  }
+
+  /**
+   * SupervisorySamplingConfig findFirst
+   */
+  export type SupervisorySamplingConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupervisorySamplingConfig
+     */
+    select?: SupervisorySamplingConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupervisorySamplingConfig
+     */
+    omit?: SupervisorySamplingConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupervisorySamplingConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which SupervisorySamplingConfig to fetch.
+     */
+    where?: SupervisorySamplingConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupervisorySamplingConfigs to fetch.
+     */
+    orderBy?: SupervisorySamplingConfigOrderByWithRelationInput | SupervisorySamplingConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SupervisorySamplingConfigs.
+     */
+    cursor?: SupervisorySamplingConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupervisorySamplingConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupervisorySamplingConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupervisorySamplingConfigs.
+     */
+    distinct?: SupervisorySamplingConfigScalarFieldEnum | SupervisorySamplingConfigScalarFieldEnum[]
+  }
+
+  /**
+   * SupervisorySamplingConfig findFirstOrThrow
+   */
+  export type SupervisorySamplingConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupervisorySamplingConfig
+     */
+    select?: SupervisorySamplingConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupervisorySamplingConfig
+     */
+    omit?: SupervisorySamplingConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupervisorySamplingConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which SupervisorySamplingConfig to fetch.
+     */
+    where?: SupervisorySamplingConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupervisorySamplingConfigs to fetch.
+     */
+    orderBy?: SupervisorySamplingConfigOrderByWithRelationInput | SupervisorySamplingConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SupervisorySamplingConfigs.
+     */
+    cursor?: SupervisorySamplingConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupervisorySamplingConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupervisorySamplingConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupervisorySamplingConfigs.
+     */
+    distinct?: SupervisorySamplingConfigScalarFieldEnum | SupervisorySamplingConfigScalarFieldEnum[]
+  }
+
+  /**
+   * SupervisorySamplingConfig findMany
+   */
+  export type SupervisorySamplingConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupervisorySamplingConfig
+     */
+    select?: SupervisorySamplingConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupervisorySamplingConfig
+     */
+    omit?: SupervisorySamplingConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupervisorySamplingConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which SupervisorySamplingConfigs to fetch.
+     */
+    where?: SupervisorySamplingConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupervisorySamplingConfigs to fetch.
+     */
+    orderBy?: SupervisorySamplingConfigOrderByWithRelationInput | SupervisorySamplingConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SupervisorySamplingConfigs.
+     */
+    cursor?: SupervisorySamplingConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupervisorySamplingConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupervisorySamplingConfigs.
+     */
+    skip?: number
+    distinct?: SupervisorySamplingConfigScalarFieldEnum | SupervisorySamplingConfigScalarFieldEnum[]
+  }
+
+  /**
+   * SupervisorySamplingConfig create
+   */
+  export type SupervisorySamplingConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupervisorySamplingConfig
+     */
+    select?: SupervisorySamplingConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupervisorySamplingConfig
+     */
+    omit?: SupervisorySamplingConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupervisorySamplingConfigInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SupervisorySamplingConfig.
+     */
+    data: XOR<SupervisorySamplingConfigCreateInput, SupervisorySamplingConfigUncheckedCreateInput>
+  }
+
+  /**
+   * SupervisorySamplingConfig createMany
+   */
+  export type SupervisorySamplingConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SupervisorySamplingConfigs.
+     */
+    data: SupervisorySamplingConfigCreateManyInput | SupervisorySamplingConfigCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SupervisorySamplingConfig createManyAndReturn
+   */
+  export type SupervisorySamplingConfigCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupervisorySamplingConfig
+     */
+    select?: SupervisorySamplingConfigSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupervisorySamplingConfig
+     */
+    omit?: SupervisorySamplingConfigOmit<ExtArgs> | null
+    /**
+     * The data used to create many SupervisorySamplingConfigs.
+     */
+    data: SupervisorySamplingConfigCreateManyInput | SupervisorySamplingConfigCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupervisorySamplingConfigIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SupervisorySamplingConfig update
+   */
+  export type SupervisorySamplingConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupervisorySamplingConfig
+     */
+    select?: SupervisorySamplingConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupervisorySamplingConfig
+     */
+    omit?: SupervisorySamplingConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupervisorySamplingConfigInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SupervisorySamplingConfig.
+     */
+    data: XOR<SupervisorySamplingConfigUpdateInput, SupervisorySamplingConfigUncheckedUpdateInput>
+    /**
+     * Choose, which SupervisorySamplingConfig to update.
+     */
+    where: SupervisorySamplingConfigWhereUniqueInput
+  }
+
+  /**
+   * SupervisorySamplingConfig updateMany
+   */
+  export type SupervisorySamplingConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SupervisorySamplingConfigs.
+     */
+    data: XOR<SupervisorySamplingConfigUpdateManyMutationInput, SupervisorySamplingConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which SupervisorySamplingConfigs to update
+     */
+    where?: SupervisorySamplingConfigWhereInput
+    /**
+     * Limit how many SupervisorySamplingConfigs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SupervisorySamplingConfig updateManyAndReturn
+   */
+  export type SupervisorySamplingConfigUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupervisorySamplingConfig
+     */
+    select?: SupervisorySamplingConfigSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupervisorySamplingConfig
+     */
+    omit?: SupervisorySamplingConfigOmit<ExtArgs> | null
+    /**
+     * The data used to update SupervisorySamplingConfigs.
+     */
+    data: XOR<SupervisorySamplingConfigUpdateManyMutationInput, SupervisorySamplingConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which SupervisorySamplingConfigs to update
+     */
+    where?: SupervisorySamplingConfigWhereInput
+    /**
+     * Limit how many SupervisorySamplingConfigs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupervisorySamplingConfigIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SupervisorySamplingConfig upsert
+   */
+  export type SupervisorySamplingConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupervisorySamplingConfig
+     */
+    select?: SupervisorySamplingConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupervisorySamplingConfig
+     */
+    omit?: SupervisorySamplingConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupervisorySamplingConfigInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SupervisorySamplingConfig to update in case it exists.
+     */
+    where: SupervisorySamplingConfigWhereUniqueInput
+    /**
+     * In case the SupervisorySamplingConfig found by the `where` argument doesn't exist, create a new SupervisorySamplingConfig with this data.
+     */
+    create: XOR<SupervisorySamplingConfigCreateInput, SupervisorySamplingConfigUncheckedCreateInput>
+    /**
+     * In case the SupervisorySamplingConfig was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SupervisorySamplingConfigUpdateInput, SupervisorySamplingConfigUncheckedUpdateInput>
+  }
+
+  /**
+   * SupervisorySamplingConfig delete
+   */
+  export type SupervisorySamplingConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupervisorySamplingConfig
+     */
+    select?: SupervisorySamplingConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupervisorySamplingConfig
+     */
+    omit?: SupervisorySamplingConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupervisorySamplingConfigInclude<ExtArgs> | null
+    /**
+     * Filter which SupervisorySamplingConfig to delete.
+     */
+    where: SupervisorySamplingConfigWhereUniqueInput
+  }
+
+  /**
+   * SupervisorySamplingConfig deleteMany
+   */
+  export type SupervisorySamplingConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SupervisorySamplingConfigs to delete
+     */
+    where?: SupervisorySamplingConfigWhereInput
+    /**
+     * Limit how many SupervisorySamplingConfigs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SupervisorySamplingConfig without action
+   */
+  export type SupervisorySamplingConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupervisorySamplingConfig
+     */
+    select?: SupervisorySamplingConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupervisorySamplingConfig
+     */
+    omit?: SupervisorySamplingConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupervisorySamplingConfigInclude<ExtArgs> | null
   }
 
 
@@ -56619,6 +58204,13 @@ export namespace Prisma {
     finalizedPolicyVersion: 'finalizedPolicyVersion',
     samplingBucket: 'samplingBucket',
     samplingRuleId: 'samplingRuleId',
+    supervisoryOutcome: 'supervisoryOutcome',
+    outcomeReason: 'outcomeReason',
+    outcomeConfidence: 'outcomeConfidence',
+    processedAt: 'processedAt',
+    primaryControlId: 'primaryControlId',
+    heldReason: 'heldReason',
+    parkedReason: 'parkedReason',
     draftReadyAt: 'draftReadyAt',
     timeToFinalize: 'timeToFinalize',
     readyForCCO: 'readyForCCO',
@@ -57119,12 +58711,39 @@ export namespace Prisma {
     externalThreadId: 'externalThreadId',
     subject: 'subject',
     participants: 'participants',
+    supervisoryOutcome: 'supervisoryOutcome',
+    outcomeReason: 'outcomeReason',
+    outcomeConfidence: 'outcomeConfidence',
+    processedAt: 'processedAt',
+    primaryControlId: 'primaryControlId',
+    heldReason: 'heldReason',
+    parkedReason: 'parkedReason',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     deletedAt: 'deletedAt'
   };
 
   export type CommunicationThreadScalarFieldEnum = (typeof CommunicationThreadScalarFieldEnum)[keyof typeof CommunicationThreadScalarFieldEnum]
+
+
+  export const SupervisorySamplingConfigScalarFieldEnum: {
+    id: 'id',
+    workspaceId: 'workspaceId',
+    randomPercentage: 'randomPercentage',
+    adviserRiskEnabled: 'adviserRiskEnabled',
+    adviserRiskOpenFlagFloor: 'adviserRiskOpenFlagFloor',
+    newAdviserEnabled: 'newAdviserEnabled',
+    newAdviserWindowDays: 'newAdviserWindowDays',
+    timeSinceLastReviewEnabled: 'timeSinceLastReviewEnabled',
+    reviewStalenessDays: 'reviewStalenessDays',
+    manualSelectionEnabled: 'manualSelectionEnabled',
+    controlSamplingPolicy: 'controlSamplingPolicy',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    deletedAt: 'deletedAt'
+  };
+
+  export type SupervisorySamplingConfigScalarFieldEnum = (typeof SupervisorySamplingConfigScalarFieldEnum)[keyof typeof SupervisorySamplingConfigScalarFieldEnum]
 
 
   export const CommunicationScalarFieldEnum: {
@@ -57486,6 +59105,48 @@ export namespace Prisma {
    * Reference to a field of type 'FinalizeReason[]'
    */
   export type ListEnumFinalizeReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FinalizeReason[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'SupervisoryOutcome'
+   */
+  export type EnumSupervisoryOutcomeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupervisoryOutcome'>
+    
+
+
+  /**
+   * Reference to a field of type 'SupervisoryOutcome[]'
+   */
+  export type ListEnumSupervisoryOutcomeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupervisoryOutcome[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'SupervisoryHoldReason'
+   */
+  export type EnumSupervisoryHoldReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupervisoryHoldReason'>
+    
+
+
+  /**
+   * Reference to a field of type 'SupervisoryHoldReason[]'
+   */
+  export type ListEnumSupervisoryHoldReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupervisoryHoldReason[]'>
     
 
 
@@ -57949,20 +59610,6 @@ export namespace Prisma {
    */
   export type ListEnumEmailTriageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmailTriageStatus[]'>
     
-
-
-  /**
-   * Reference to a field of type 'Float'
-   */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float[]'
-   */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
-    
   /**
    * Deep Input Types
    */
@@ -58021,6 +59668,7 @@ export namespace Prisma {
     recordSeals?: RecordSealListRelationFilter
     candidateResponsePacks?: CandidateResponsePackListRelationFilter
     indexCoverageManifests?: IndexCoverageManifestListRelationFilter
+    supervisorySamplingConfig?: XOR<SupervisorySamplingConfigNullableScalarRelationFilter, SupervisorySamplingConfigWhereInput> | null
   }
 
   export type WorkspaceOrderByWithRelationInput = {
@@ -58073,6 +59721,7 @@ export namespace Prisma {
     recordSeals?: RecordSealOrderByRelationAggregateInput
     candidateResponsePacks?: CandidateResponsePackOrderByRelationAggregateInput
     indexCoverageManifests?: IndexCoverageManifestOrderByRelationAggregateInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigOrderByWithRelationInput
   }
 
   export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
@@ -58128,6 +59777,7 @@ export namespace Prisma {
     recordSeals?: RecordSealListRelationFilter
     candidateResponsePacks?: CandidateResponsePackListRelationFilter
     indexCoverageManifests?: IndexCoverageManifestListRelationFilter
+    supervisorySamplingConfig?: XOR<SupervisorySamplingConfigNullableScalarRelationFilter, SupervisorySamplingConfigWhereInput> | null
   }, "id">
 
   export type WorkspaceOrderByWithAggregationInput = {
@@ -58593,6 +60243,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: IntNullableFilter<"Meeting"> | number | null
     samplingBucket?: StringNullableFilter<"Meeting"> | string | null
     samplingRuleId?: StringNullableFilter<"Meeting"> | string | null
+    supervisoryOutcome?: EnumSupervisoryOutcomeNullableFilter<"Meeting"> | $Enums.SupervisoryOutcome | null
+    outcomeReason?: StringNullableFilter<"Meeting"> | string | null
+    outcomeConfidence?: FloatNullableFilter<"Meeting"> | number | null
+    processedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    primaryControlId?: StringNullableFilter<"Meeting"> | string | null
+    heldReason?: EnumSupervisoryHoldReasonNullableFilter<"Meeting"> | $Enums.SupervisoryHoldReason | null
+    parkedReason?: StringNullableFilter<"Meeting"> | string | null
     draftReadyAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     timeToFinalize?: IntNullableFilter<"Meeting"> | number | null
     readyForCCO?: BoolFilter<"Meeting"> | boolean
@@ -58657,6 +60314,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: SortOrderInput | SortOrder
     samplingBucket?: SortOrderInput | SortOrder
     samplingRuleId?: SortOrderInput | SortOrder
+    supervisoryOutcome?: SortOrderInput | SortOrder
+    outcomeReason?: SortOrderInput | SortOrder
+    outcomeConfidence?: SortOrderInput | SortOrder
+    processedAt?: SortOrderInput | SortOrder
+    primaryControlId?: SortOrderInput | SortOrder
+    heldReason?: SortOrderInput | SortOrder
+    parkedReason?: SortOrderInput | SortOrder
     draftReadyAt?: SortOrderInput | SortOrder
     timeToFinalize?: SortOrderInput | SortOrder
     readyForCCO?: SortOrder
@@ -58725,6 +60389,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: IntNullableFilter<"Meeting"> | number | null
     samplingBucket?: StringNullableFilter<"Meeting"> | string | null
     samplingRuleId?: StringNullableFilter<"Meeting"> | string | null
+    supervisoryOutcome?: EnumSupervisoryOutcomeNullableFilter<"Meeting"> | $Enums.SupervisoryOutcome | null
+    outcomeReason?: StringNullableFilter<"Meeting"> | string | null
+    outcomeConfidence?: FloatNullableFilter<"Meeting"> | number | null
+    processedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    primaryControlId?: StringNullableFilter<"Meeting"> | string | null
+    heldReason?: EnumSupervisoryHoldReasonNullableFilter<"Meeting"> | $Enums.SupervisoryHoldReason | null
+    parkedReason?: StringNullableFilter<"Meeting"> | string | null
     draftReadyAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     timeToFinalize?: IntNullableFilter<"Meeting"> | number | null
     readyForCCO?: BoolFilter<"Meeting"> | boolean
@@ -58788,6 +60459,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: SortOrderInput | SortOrder
     samplingBucket?: SortOrderInput | SortOrder
     samplingRuleId?: SortOrderInput | SortOrder
+    supervisoryOutcome?: SortOrderInput | SortOrder
+    outcomeReason?: SortOrderInput | SortOrder
+    outcomeConfidence?: SortOrderInput | SortOrder
+    processedAt?: SortOrderInput | SortOrder
+    primaryControlId?: SortOrderInput | SortOrder
+    heldReason?: SortOrderInput | SortOrder
+    parkedReason?: SortOrderInput | SortOrder
     draftReadyAt?: SortOrderInput | SortOrder
     timeToFinalize?: SortOrderInput | SortOrder
     readyForCCO?: SortOrder
@@ -58845,6 +60523,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: IntNullableWithAggregatesFilter<"Meeting"> | number | null
     samplingBucket?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
     samplingRuleId?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
+    supervisoryOutcome?: EnumSupervisoryOutcomeNullableWithAggregatesFilter<"Meeting"> | $Enums.SupervisoryOutcome | null
+    outcomeReason?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
+    outcomeConfidence?: FloatNullableWithAggregatesFilter<"Meeting"> | number | null
+    processedAt?: DateTimeNullableWithAggregatesFilter<"Meeting"> | Date | string | null
+    primaryControlId?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
+    heldReason?: EnumSupervisoryHoldReasonNullableWithAggregatesFilter<"Meeting"> | $Enums.SupervisoryHoldReason | null
+    parkedReason?: StringNullableWithAggregatesFilter<"Meeting"> | string | null
     draftReadyAt?: DateTimeNullableWithAggregatesFilter<"Meeting"> | Date | string | null
     timeToFinalize?: IntNullableWithAggregatesFilter<"Meeting"> | number | null
     readyForCCO?: BoolWithAggregatesFilter<"Meeting"> | boolean
@@ -61366,6 +63051,13 @@ export namespace Prisma {
     externalThreadId?: StringNullableFilter<"CommunicationThread"> | string | null
     subject?: StringNullableFilter<"CommunicationThread"> | string | null
     participants?: JsonFilter<"CommunicationThread">
+    supervisoryOutcome?: EnumSupervisoryOutcomeNullableFilter<"CommunicationThread"> | $Enums.SupervisoryOutcome | null
+    outcomeReason?: StringNullableFilter<"CommunicationThread"> | string | null
+    outcomeConfidence?: FloatNullableFilter<"CommunicationThread"> | number | null
+    processedAt?: DateTimeNullableFilter<"CommunicationThread"> | Date | string | null
+    primaryControlId?: StringNullableFilter<"CommunicationThread"> | string | null
+    heldReason?: EnumSupervisoryHoldReasonNullableFilter<"CommunicationThread"> | $Enums.SupervisoryHoldReason | null
+    parkedReason?: StringNullableFilter<"CommunicationThread"> | string | null
     createdAt?: DateTimeFilter<"CommunicationThread"> | Date | string
     updatedAt?: DateTimeFilter<"CommunicationThread"> | Date | string
     deletedAt?: DateTimeNullableFilter<"CommunicationThread"> | Date | string | null
@@ -61380,6 +63072,13 @@ export namespace Prisma {
     externalThreadId?: SortOrderInput | SortOrder
     subject?: SortOrderInput | SortOrder
     participants?: SortOrder
+    supervisoryOutcome?: SortOrderInput | SortOrder
+    outcomeReason?: SortOrderInput | SortOrder
+    outcomeConfidence?: SortOrderInput | SortOrder
+    processedAt?: SortOrderInput | SortOrder
+    primaryControlId?: SortOrderInput | SortOrder
+    heldReason?: SortOrderInput | SortOrder
+    parkedReason?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrderInput | SortOrder
@@ -61397,6 +63096,13 @@ export namespace Prisma {
     externalThreadId?: StringNullableFilter<"CommunicationThread"> | string | null
     subject?: StringNullableFilter<"CommunicationThread"> | string | null
     participants?: JsonFilter<"CommunicationThread">
+    supervisoryOutcome?: EnumSupervisoryOutcomeNullableFilter<"CommunicationThread"> | $Enums.SupervisoryOutcome | null
+    outcomeReason?: StringNullableFilter<"CommunicationThread"> | string | null
+    outcomeConfidence?: FloatNullableFilter<"CommunicationThread"> | number | null
+    processedAt?: DateTimeNullableFilter<"CommunicationThread"> | Date | string | null
+    primaryControlId?: StringNullableFilter<"CommunicationThread"> | string | null
+    heldReason?: EnumSupervisoryHoldReasonNullableFilter<"CommunicationThread"> | $Enums.SupervisoryHoldReason | null
+    parkedReason?: StringNullableFilter<"CommunicationThread"> | string | null
     createdAt?: DateTimeFilter<"CommunicationThread"> | Date | string
     updatedAt?: DateTimeFilter<"CommunicationThread"> | Date | string
     deletedAt?: DateTimeNullableFilter<"CommunicationThread"> | Date | string | null
@@ -61411,12 +63117,21 @@ export namespace Prisma {
     externalThreadId?: SortOrderInput | SortOrder
     subject?: SortOrderInput | SortOrder
     participants?: SortOrder
+    supervisoryOutcome?: SortOrderInput | SortOrder
+    outcomeReason?: SortOrderInput | SortOrder
+    outcomeConfidence?: SortOrderInput | SortOrder
+    processedAt?: SortOrderInput | SortOrder
+    primaryControlId?: SortOrderInput | SortOrder
+    heldReason?: SortOrderInput | SortOrder
+    parkedReason?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrderInput | SortOrder
     _count?: CommunicationThreadCountOrderByAggregateInput
+    _avg?: CommunicationThreadAvgOrderByAggregateInput
     _max?: CommunicationThreadMaxOrderByAggregateInput
     _min?: CommunicationThreadMinOrderByAggregateInput
+    _sum?: CommunicationThreadSumOrderByAggregateInput
   }
 
   export type CommunicationThreadScalarWhereWithAggregatesInput = {
@@ -61429,9 +63144,118 @@ export namespace Prisma {
     externalThreadId?: StringNullableWithAggregatesFilter<"CommunicationThread"> | string | null
     subject?: StringNullableWithAggregatesFilter<"CommunicationThread"> | string | null
     participants?: JsonWithAggregatesFilter<"CommunicationThread">
+    supervisoryOutcome?: EnumSupervisoryOutcomeNullableWithAggregatesFilter<"CommunicationThread"> | $Enums.SupervisoryOutcome | null
+    outcomeReason?: StringNullableWithAggregatesFilter<"CommunicationThread"> | string | null
+    outcomeConfidence?: FloatNullableWithAggregatesFilter<"CommunicationThread"> | number | null
+    processedAt?: DateTimeNullableWithAggregatesFilter<"CommunicationThread"> | Date | string | null
+    primaryControlId?: StringNullableWithAggregatesFilter<"CommunicationThread"> | string | null
+    heldReason?: EnumSupervisoryHoldReasonNullableWithAggregatesFilter<"CommunicationThread"> | $Enums.SupervisoryHoldReason | null
+    parkedReason?: StringNullableWithAggregatesFilter<"CommunicationThread"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"CommunicationThread"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"CommunicationThread"> | Date | string
     deletedAt?: DateTimeNullableWithAggregatesFilter<"CommunicationThread"> | Date | string | null
+  }
+
+  export type SupervisorySamplingConfigWhereInput = {
+    AND?: SupervisorySamplingConfigWhereInput | SupervisorySamplingConfigWhereInput[]
+    OR?: SupervisorySamplingConfigWhereInput[]
+    NOT?: SupervisorySamplingConfigWhereInput | SupervisorySamplingConfigWhereInput[]
+    id?: StringFilter<"SupervisorySamplingConfig"> | string
+    workspaceId?: StringFilter<"SupervisorySamplingConfig"> | string
+    randomPercentage?: IntFilter<"SupervisorySamplingConfig"> | number
+    adviserRiskEnabled?: BoolFilter<"SupervisorySamplingConfig"> | boolean
+    adviserRiskOpenFlagFloor?: IntFilter<"SupervisorySamplingConfig"> | number
+    newAdviserEnabled?: BoolFilter<"SupervisorySamplingConfig"> | boolean
+    newAdviserWindowDays?: IntFilter<"SupervisorySamplingConfig"> | number
+    timeSinceLastReviewEnabled?: BoolFilter<"SupervisorySamplingConfig"> | boolean
+    reviewStalenessDays?: IntFilter<"SupervisorySamplingConfig"> | number
+    manualSelectionEnabled?: BoolFilter<"SupervisorySamplingConfig"> | boolean
+    controlSamplingPolicy?: JsonNullableFilter<"SupervisorySamplingConfig">
+    createdAt?: DateTimeFilter<"SupervisorySamplingConfig"> | Date | string
+    updatedAt?: DateTimeFilter<"SupervisorySamplingConfig"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"SupervisorySamplingConfig"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+  }
+
+  export type SupervisorySamplingConfigOrderByWithRelationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    randomPercentage?: SortOrder
+    adviserRiskEnabled?: SortOrder
+    adviserRiskOpenFlagFloor?: SortOrder
+    newAdviserEnabled?: SortOrder
+    newAdviserWindowDays?: SortOrder
+    timeSinceLastReviewEnabled?: SortOrder
+    reviewStalenessDays?: SortOrder
+    manualSelectionEnabled?: SortOrder
+    controlSamplingPolicy?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    workspace?: WorkspaceOrderByWithRelationInput
+  }
+
+  export type SupervisorySamplingConfigWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    workspaceId?: string
+    AND?: SupervisorySamplingConfigWhereInput | SupervisorySamplingConfigWhereInput[]
+    OR?: SupervisorySamplingConfigWhereInput[]
+    NOT?: SupervisorySamplingConfigWhereInput | SupervisorySamplingConfigWhereInput[]
+    randomPercentage?: IntFilter<"SupervisorySamplingConfig"> | number
+    adviserRiskEnabled?: BoolFilter<"SupervisorySamplingConfig"> | boolean
+    adviserRiskOpenFlagFloor?: IntFilter<"SupervisorySamplingConfig"> | number
+    newAdviserEnabled?: BoolFilter<"SupervisorySamplingConfig"> | boolean
+    newAdviserWindowDays?: IntFilter<"SupervisorySamplingConfig"> | number
+    timeSinceLastReviewEnabled?: BoolFilter<"SupervisorySamplingConfig"> | boolean
+    reviewStalenessDays?: IntFilter<"SupervisorySamplingConfig"> | number
+    manualSelectionEnabled?: BoolFilter<"SupervisorySamplingConfig"> | boolean
+    controlSamplingPolicy?: JsonNullableFilter<"SupervisorySamplingConfig">
+    createdAt?: DateTimeFilter<"SupervisorySamplingConfig"> | Date | string
+    updatedAt?: DateTimeFilter<"SupervisorySamplingConfig"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"SupervisorySamplingConfig"> | Date | string | null
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
+  }, "id" | "workspaceId">
+
+  export type SupervisorySamplingConfigOrderByWithAggregationInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    randomPercentage?: SortOrder
+    adviserRiskEnabled?: SortOrder
+    adviserRiskOpenFlagFloor?: SortOrder
+    newAdviserEnabled?: SortOrder
+    newAdviserWindowDays?: SortOrder
+    timeSinceLastReviewEnabled?: SortOrder
+    reviewStalenessDays?: SortOrder
+    manualSelectionEnabled?: SortOrder
+    controlSamplingPolicy?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    _count?: SupervisorySamplingConfigCountOrderByAggregateInput
+    _avg?: SupervisorySamplingConfigAvgOrderByAggregateInput
+    _max?: SupervisorySamplingConfigMaxOrderByAggregateInput
+    _min?: SupervisorySamplingConfigMinOrderByAggregateInput
+    _sum?: SupervisorySamplingConfigSumOrderByAggregateInput
+  }
+
+  export type SupervisorySamplingConfigScalarWhereWithAggregatesInput = {
+    AND?: SupervisorySamplingConfigScalarWhereWithAggregatesInput | SupervisorySamplingConfigScalarWhereWithAggregatesInput[]
+    OR?: SupervisorySamplingConfigScalarWhereWithAggregatesInput[]
+    NOT?: SupervisorySamplingConfigScalarWhereWithAggregatesInput | SupervisorySamplingConfigScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SupervisorySamplingConfig"> | string
+    workspaceId?: StringWithAggregatesFilter<"SupervisorySamplingConfig"> | string
+    randomPercentage?: IntWithAggregatesFilter<"SupervisorySamplingConfig"> | number
+    adviserRiskEnabled?: BoolWithAggregatesFilter<"SupervisorySamplingConfig"> | boolean
+    adviserRiskOpenFlagFloor?: IntWithAggregatesFilter<"SupervisorySamplingConfig"> | number
+    newAdviserEnabled?: BoolWithAggregatesFilter<"SupervisorySamplingConfig"> | boolean
+    newAdviserWindowDays?: IntWithAggregatesFilter<"SupervisorySamplingConfig"> | number
+    timeSinceLastReviewEnabled?: BoolWithAggregatesFilter<"SupervisorySamplingConfig"> | boolean
+    reviewStalenessDays?: IntWithAggregatesFilter<"SupervisorySamplingConfig"> | number
+    manualSelectionEnabled?: BoolWithAggregatesFilter<"SupervisorySamplingConfig"> | boolean
+    controlSamplingPolicy?: JsonNullableWithAggregatesFilter<"SupervisorySamplingConfig">
+    createdAt?: DateTimeWithAggregatesFilter<"SupervisorySamplingConfig"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"SupervisorySamplingConfig"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"SupervisorySamplingConfig"> | Date | string | null
   }
 
   export type CommunicationWhereInput = {
@@ -62030,6 +63854,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateInput = {
@@ -62082,6 +63907,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUpdateInput = {
@@ -62134,6 +63960,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateInput = {
@@ -62186,6 +64013,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateManyInput = {
@@ -62712,6 +64540,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -62771,6 +64606,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -62826,6 +64668,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -62885,6 +64734,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -62942,6 +64798,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -62989,6 +64852,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -63033,6 +64903,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -65758,6 +67635,13 @@ export namespace Prisma {
     externalThreadId?: string | null
     subject?: string | null
     participants: JsonNullValueInput | InputJsonValue
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -65772,6 +67656,13 @@ export namespace Prisma {
     externalThreadId?: string | null
     subject?: string | null
     participants: JsonNullValueInput | InputJsonValue
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -65784,6 +67675,13 @@ export namespace Prisma {
     externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
     subject?: NullableStringFieldUpdateOperationsInput | string | null
     participants?: JsonNullValueInput | InputJsonValue
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -65798,6 +67696,13 @@ export namespace Prisma {
     externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
     subject?: NullableStringFieldUpdateOperationsInput | string | null
     participants?: JsonNullValueInput | InputJsonValue
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -65811,6 +67716,13 @@ export namespace Prisma {
     externalThreadId?: string | null
     subject?: string | null
     participants: JsonNullValueInput | InputJsonValue
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -65822,6 +67734,13 @@ export namespace Prisma {
     externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
     subject?: NullableStringFieldUpdateOperationsInput | string | null
     participants?: JsonNullValueInput | InputJsonValue
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -65834,6 +67753,131 @@ export namespace Prisma {
     externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
     subject?: NullableStringFieldUpdateOperationsInput | string | null
     participants?: JsonNullValueInput | InputJsonValue
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type SupervisorySamplingConfigCreateInput = {
+    id?: string
+    randomPercentage?: number
+    adviserRiskEnabled?: boolean
+    adviserRiskOpenFlagFloor?: number
+    newAdviserEnabled?: boolean
+    newAdviserWindowDays?: number
+    timeSinceLastReviewEnabled?: boolean
+    reviewStalenessDays?: number
+    manualSelectionEnabled?: boolean
+    controlSamplingPolicy?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    workspace: WorkspaceCreateNestedOneWithoutSupervisorySamplingConfigInput
+  }
+
+  export type SupervisorySamplingConfigUncheckedCreateInput = {
+    id?: string
+    workspaceId: string
+    randomPercentage?: number
+    adviserRiskEnabled?: boolean
+    adviserRiskOpenFlagFloor?: number
+    newAdviserEnabled?: boolean
+    newAdviserWindowDays?: number
+    timeSinceLastReviewEnabled?: boolean
+    reviewStalenessDays?: number
+    manualSelectionEnabled?: boolean
+    controlSamplingPolicy?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type SupervisorySamplingConfigUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    randomPercentage?: IntFieldUpdateOperationsInput | number
+    adviserRiskEnabled?: BoolFieldUpdateOperationsInput | boolean
+    adviserRiskOpenFlagFloor?: IntFieldUpdateOperationsInput | number
+    newAdviserEnabled?: BoolFieldUpdateOperationsInput | boolean
+    newAdviserWindowDays?: IntFieldUpdateOperationsInput | number
+    timeSinceLastReviewEnabled?: BoolFieldUpdateOperationsInput | boolean
+    reviewStalenessDays?: IntFieldUpdateOperationsInput | number
+    manualSelectionEnabled?: BoolFieldUpdateOperationsInput | boolean
+    controlSamplingPolicy?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    workspace?: WorkspaceUpdateOneRequiredWithoutSupervisorySamplingConfigNestedInput
+  }
+
+  export type SupervisorySamplingConfigUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    randomPercentage?: IntFieldUpdateOperationsInput | number
+    adviserRiskEnabled?: BoolFieldUpdateOperationsInput | boolean
+    adviserRiskOpenFlagFloor?: IntFieldUpdateOperationsInput | number
+    newAdviserEnabled?: BoolFieldUpdateOperationsInput | boolean
+    newAdviserWindowDays?: IntFieldUpdateOperationsInput | number
+    timeSinceLastReviewEnabled?: BoolFieldUpdateOperationsInput | boolean
+    reviewStalenessDays?: IntFieldUpdateOperationsInput | number
+    manualSelectionEnabled?: BoolFieldUpdateOperationsInput | boolean
+    controlSamplingPolicy?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type SupervisorySamplingConfigCreateManyInput = {
+    id?: string
+    workspaceId: string
+    randomPercentage?: number
+    adviserRiskEnabled?: boolean
+    adviserRiskOpenFlagFloor?: number
+    newAdviserEnabled?: boolean
+    newAdviserWindowDays?: number
+    timeSinceLastReviewEnabled?: boolean
+    reviewStalenessDays?: number
+    manualSelectionEnabled?: boolean
+    controlSamplingPolicy?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type SupervisorySamplingConfigUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    randomPercentage?: IntFieldUpdateOperationsInput | number
+    adviserRiskEnabled?: BoolFieldUpdateOperationsInput | boolean
+    adviserRiskOpenFlagFloor?: IntFieldUpdateOperationsInput | number
+    newAdviserEnabled?: BoolFieldUpdateOperationsInput | boolean
+    newAdviserWindowDays?: IntFieldUpdateOperationsInput | number
+    timeSinceLastReviewEnabled?: BoolFieldUpdateOperationsInput | boolean
+    reviewStalenessDays?: IntFieldUpdateOperationsInput | number
+    manualSelectionEnabled?: BoolFieldUpdateOperationsInput | boolean
+    controlSamplingPolicy?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type SupervisorySamplingConfigUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    randomPercentage?: IntFieldUpdateOperationsInput | number
+    adviserRiskEnabled?: BoolFieldUpdateOperationsInput | boolean
+    adviserRiskOpenFlagFloor?: IntFieldUpdateOperationsInput | number
+    newAdviserEnabled?: BoolFieldUpdateOperationsInput | boolean
+    newAdviserWindowDays?: IntFieldUpdateOperationsInput | number
+    timeSinceLastReviewEnabled?: BoolFieldUpdateOperationsInput | boolean
+    reviewStalenessDays?: IntFieldUpdateOperationsInput | number
+    manualSelectionEnabled?: BoolFieldUpdateOperationsInput | boolean
+    controlSamplingPolicy?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -66699,6 +68743,11 @@ export namespace Prisma {
     none?: IndexCoverageManifestWhereInput
   }
 
+  export type SupervisorySamplingConfigNullableScalarRelationFilter = {
+    is?: SupervisorySamplingConfigWhereInput | null
+    isNot?: SupervisorySamplingConfigWhereInput | null
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -67395,6 +69444,31 @@ export namespace Prisma {
     not?: NestedEnumFinalizeReasonNullableFilter<$PrismaModel> | $Enums.FinalizeReason | null
   }
 
+  export type EnumSupervisoryOutcomeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.SupervisoryOutcome | EnumSupervisoryOutcomeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SupervisoryOutcome[] | ListEnumSupervisoryOutcomeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SupervisoryOutcome[] | ListEnumSupervisoryOutcomeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSupervisoryOutcomeNullableFilter<$PrismaModel> | $Enums.SupervisoryOutcome | null
+  }
+
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type EnumSupervisoryHoldReasonNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.SupervisoryHoldReason | EnumSupervisoryHoldReasonFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SupervisoryHoldReason[] | ListEnumSupervisoryHoldReasonFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SupervisoryHoldReason[] | ListEnumSupervisoryHoldReasonFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSupervisoryHoldReasonNullableFilter<$PrismaModel> | $Enums.SupervisoryHoldReason | null
+  }
+
   export type ClientNullableScalarRelationFilter = {
     is?: ClientWhereInput | null
     isNot?: ClientWhereInput | null
@@ -67453,6 +69527,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: SortOrder
     samplingBucket?: SortOrder
     samplingRuleId?: SortOrder
+    supervisoryOutcome?: SortOrder
+    outcomeReason?: SortOrder
+    outcomeConfidence?: SortOrder
+    processedAt?: SortOrder
+    primaryControlId?: SortOrder
+    heldReason?: SortOrder
+    parkedReason?: SortOrder
     draftReadyAt?: SortOrder
     timeToFinalize?: SortOrder
     readyForCCO?: SortOrder
@@ -67477,6 +69558,7 @@ export namespace Prisma {
   export type MeetingAvgOrderByAggregateInput = {
     sourceFileSize?: SortOrder
     finalizedPolicyVersion?: SortOrder
+    outcomeConfidence?: SortOrder
     timeToFinalize?: SortOrder
   }
 
@@ -67505,6 +69587,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: SortOrder
     samplingBucket?: SortOrder
     samplingRuleId?: SortOrder
+    supervisoryOutcome?: SortOrder
+    outcomeReason?: SortOrder
+    outcomeConfidence?: SortOrder
+    processedAt?: SortOrder
+    primaryControlId?: SortOrder
+    heldReason?: SortOrder
+    parkedReason?: SortOrder
     draftReadyAt?: SortOrder
     timeToFinalize?: SortOrder
     readyForCCO?: SortOrder
@@ -67550,6 +69639,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: SortOrder
     samplingBucket?: SortOrder
     samplingRuleId?: SortOrder
+    supervisoryOutcome?: SortOrder
+    outcomeReason?: SortOrder
+    outcomeConfidence?: SortOrder
+    processedAt?: SortOrder
+    primaryControlId?: SortOrder
+    heldReason?: SortOrder
+    parkedReason?: SortOrder
     draftReadyAt?: SortOrder
     timeToFinalize?: SortOrder
     readyForCCO?: SortOrder
@@ -67573,6 +69669,7 @@ export namespace Prisma {
   export type MeetingSumOrderByAggregateInput = {
     sourceFileSize?: SortOrder
     finalizedPolicyVersion?: SortOrder
+    outcomeConfidence?: SortOrder
     timeToFinalize?: SortOrder
   }
 
@@ -67620,6 +69717,42 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumFinalizeReasonNullableFilter<$PrismaModel>
     _max?: NestedEnumFinalizeReasonNullableFilter<$PrismaModel>
+  }
+
+  export type EnumSupervisoryOutcomeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SupervisoryOutcome | EnumSupervisoryOutcomeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SupervisoryOutcome[] | ListEnumSupervisoryOutcomeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SupervisoryOutcome[] | ListEnumSupervisoryOutcomeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSupervisoryOutcomeNullableWithAggregatesFilter<$PrismaModel> | $Enums.SupervisoryOutcome | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumSupervisoryOutcomeNullableFilter<$PrismaModel>
+    _max?: NestedEnumSupervisoryOutcomeNullableFilter<$PrismaModel>
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type EnumSupervisoryHoldReasonNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SupervisoryHoldReason | EnumSupervisoryHoldReasonFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SupervisoryHoldReason[] | ListEnumSupervisoryHoldReasonFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SupervisoryHoldReason[] | ListEnumSupervisoryHoldReasonFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSupervisoryHoldReasonNullableWithAggregatesFilter<$PrismaModel> | $Enums.SupervisoryHoldReason | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumSupervisoryHoldReasonNullableFilter<$PrismaModel>
+    _max?: NestedEnumSupervisoryHoldReasonNullableFilter<$PrismaModel>
   }
 
   export type MeetingScalarRelationFilter = {
@@ -69533,9 +71666,20 @@ export namespace Prisma {
     externalThreadId?: SortOrder
     subject?: SortOrder
     participants?: SortOrder
+    supervisoryOutcome?: SortOrder
+    outcomeReason?: SortOrder
+    outcomeConfidence?: SortOrder
+    processedAt?: SortOrder
+    primaryControlId?: SortOrder
+    heldReason?: SortOrder
+    parkedReason?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
+  }
+
+  export type CommunicationThreadAvgOrderByAggregateInput = {
+    outcomeConfidence?: SortOrder
   }
 
   export type CommunicationThreadMaxOrderByAggregateInput = {
@@ -69544,6 +71688,13 @@ export namespace Prisma {
     channel?: SortOrder
     externalThreadId?: SortOrder
     subject?: SortOrder
+    supervisoryOutcome?: SortOrder
+    outcomeReason?: SortOrder
+    outcomeConfidence?: SortOrder
+    processedAt?: SortOrder
+    primaryControlId?: SortOrder
+    heldReason?: SortOrder
+    parkedReason?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
@@ -69555,9 +71706,20 @@ export namespace Prisma {
     channel?: SortOrder
     externalThreadId?: SortOrder
     subject?: SortOrder
+    supervisoryOutcome?: SortOrder
+    outcomeReason?: SortOrder
+    outcomeConfidence?: SortOrder
+    processedAt?: SortOrder
+    primaryControlId?: SortOrder
+    heldReason?: SortOrder
+    parkedReason?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
+  }
+
+  export type CommunicationThreadSumOrderByAggregateInput = {
+    outcomeConfidence?: SortOrder
   }
 
   export type EnumCommunicationChannelWithAggregatesFilter<$PrismaModel = never> = {
@@ -69568,6 +71730,69 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumCommunicationChannelFilter<$PrismaModel>
     _max?: NestedEnumCommunicationChannelFilter<$PrismaModel>
+  }
+
+  export type SupervisorySamplingConfigCountOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    randomPercentage?: SortOrder
+    adviserRiskEnabled?: SortOrder
+    adviserRiskOpenFlagFloor?: SortOrder
+    newAdviserEnabled?: SortOrder
+    newAdviserWindowDays?: SortOrder
+    timeSinceLastReviewEnabled?: SortOrder
+    reviewStalenessDays?: SortOrder
+    manualSelectionEnabled?: SortOrder
+    controlSamplingPolicy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type SupervisorySamplingConfigAvgOrderByAggregateInput = {
+    randomPercentage?: SortOrder
+    adviserRiskOpenFlagFloor?: SortOrder
+    newAdviserWindowDays?: SortOrder
+    reviewStalenessDays?: SortOrder
+  }
+
+  export type SupervisorySamplingConfigMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    randomPercentage?: SortOrder
+    adviserRiskEnabled?: SortOrder
+    adviserRiskOpenFlagFloor?: SortOrder
+    newAdviserEnabled?: SortOrder
+    newAdviserWindowDays?: SortOrder
+    timeSinceLastReviewEnabled?: SortOrder
+    reviewStalenessDays?: SortOrder
+    manualSelectionEnabled?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type SupervisorySamplingConfigMinOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceId?: SortOrder
+    randomPercentage?: SortOrder
+    adviserRiskEnabled?: SortOrder
+    adviserRiskOpenFlagFloor?: SortOrder
+    newAdviserEnabled?: SortOrder
+    newAdviserWindowDays?: SortOrder
+    timeSinceLastReviewEnabled?: SortOrder
+    reviewStalenessDays?: SortOrder
+    manualSelectionEnabled?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type SupervisorySamplingConfigSumOrderByAggregateInput = {
+    randomPercentage?: SortOrder
+    adviserRiskOpenFlagFloor?: SortOrder
+    newAdviserWindowDays?: SortOrder
+    reviewStalenessDays?: SortOrder
   }
 
   export type EnumCommunicationDirectionFilter<$PrismaModel = never> = {
@@ -70152,6 +72377,12 @@ export namespace Prisma {
     connect?: IndexCoverageManifestWhereUniqueInput | IndexCoverageManifestWhereUniqueInput[]
   }
 
+  export type SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput = {
+    create?: XOR<SupervisorySamplingConfigCreateWithoutWorkspaceInput, SupervisorySamplingConfigUncheckedCreateWithoutWorkspaceInput>
+    connectOrCreate?: SupervisorySamplingConfigCreateOrConnectWithoutWorkspaceInput
+    connect?: SupervisorySamplingConfigWhereUniqueInput
+  }
+
   export type UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput = {
     create?: XOR<UserWorkspaceCreateWithoutWorkspaceInput, UserWorkspaceUncheckedCreateWithoutWorkspaceInput> | UserWorkspaceCreateWithoutWorkspaceInput[] | UserWorkspaceUncheckedCreateWithoutWorkspaceInput[]
     connectOrCreate?: UserWorkspaceCreateOrConnectWithoutWorkspaceInput | UserWorkspaceCreateOrConnectWithoutWorkspaceInput[]
@@ -70314,6 +72545,12 @@ export namespace Prisma {
     connectOrCreate?: IndexCoverageManifestCreateOrConnectWithoutWorkspaceInput | IndexCoverageManifestCreateOrConnectWithoutWorkspaceInput[]
     createMany?: IndexCoverageManifestCreateManyWorkspaceInputEnvelope
     connect?: IndexCoverageManifestWhereUniqueInput | IndexCoverageManifestWhereUniqueInput[]
+  }
+
+  export type SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput = {
+    create?: XOR<SupervisorySamplingConfigCreateWithoutWorkspaceInput, SupervisorySamplingConfigUncheckedCreateWithoutWorkspaceInput>
+    connectOrCreate?: SupervisorySamplingConfigCreateOrConnectWithoutWorkspaceInput
+    connect?: SupervisorySamplingConfigWhereUniqueInput
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -70688,6 +72925,16 @@ export namespace Prisma {
     deleteMany?: IndexCoverageManifestScalarWhereInput | IndexCoverageManifestScalarWhereInput[]
   }
 
+  export type SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput = {
+    create?: XOR<SupervisorySamplingConfigCreateWithoutWorkspaceInput, SupervisorySamplingConfigUncheckedCreateWithoutWorkspaceInput>
+    connectOrCreate?: SupervisorySamplingConfigCreateOrConnectWithoutWorkspaceInput
+    upsert?: SupervisorySamplingConfigUpsertWithoutWorkspaceInput
+    disconnect?: SupervisorySamplingConfigWhereInput | boolean
+    delete?: SupervisorySamplingConfigWhereInput | boolean
+    connect?: SupervisorySamplingConfigWhereUniqueInput
+    update?: XOR<XOR<SupervisorySamplingConfigUpdateToOneWithWhereWithoutWorkspaceInput, SupervisorySamplingConfigUpdateWithoutWorkspaceInput>, SupervisorySamplingConfigUncheckedUpdateWithoutWorkspaceInput>
+  }
+
   export type UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput = {
     create?: XOR<UserWorkspaceCreateWithoutWorkspaceInput, UserWorkspaceUncheckedCreateWithoutWorkspaceInput> | UserWorkspaceCreateWithoutWorkspaceInput[] | UserWorkspaceUncheckedCreateWithoutWorkspaceInput[]
     connectOrCreate?: UserWorkspaceCreateOrConnectWithoutWorkspaceInput | UserWorkspaceCreateOrConnectWithoutWorkspaceInput[]
@@ -71016,6 +73263,16 @@ export namespace Prisma {
     deleteMany?: IndexCoverageManifestScalarWhereInput | IndexCoverageManifestScalarWhereInput[]
   }
 
+  export type SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput = {
+    create?: XOR<SupervisorySamplingConfigCreateWithoutWorkspaceInput, SupervisorySamplingConfigUncheckedCreateWithoutWorkspaceInput>
+    connectOrCreate?: SupervisorySamplingConfigCreateOrConnectWithoutWorkspaceInput
+    upsert?: SupervisorySamplingConfigUpsertWithoutWorkspaceInput
+    disconnect?: SupervisorySamplingConfigWhereInput | boolean
+    delete?: SupervisorySamplingConfigWhereInput | boolean
+    connect?: SupervisorySamplingConfigWhereUniqueInput
+    update?: XOR<XOR<SupervisorySamplingConfigUpdateToOneWithWhereWithoutWorkspaceInput, SupervisorySamplingConfigUpdateWithoutWorkspaceInput>, SupervisorySamplingConfigUncheckedUpdateWithoutWorkspaceInput>
+  }
+
   export type CandidateResponsePackCreatemeetingIdsInput = {
     set: string[]
   }
@@ -71311,6 +73568,22 @@ export namespace Prisma {
 
   export type NullableEnumFinalizeReasonFieldUpdateOperationsInput = {
     set?: $Enums.FinalizeReason | null
+  }
+
+  export type NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput = {
+    set?: $Enums.SupervisoryOutcome | null
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput = {
+    set?: $Enums.SupervisoryHoldReason | null
   }
 
   export type WorkspaceUpdateOneRequiredWithoutMeetingsNestedInput = {
@@ -73511,6 +75784,20 @@ export namespace Prisma {
     deleteMany?: CommunicationScalarWhereInput | CommunicationScalarWhereInput[]
   }
 
+  export type WorkspaceCreateNestedOneWithoutSupervisorySamplingConfigInput = {
+    create?: XOR<WorkspaceCreateWithoutSupervisorySamplingConfigInput, WorkspaceUncheckedCreateWithoutSupervisorySamplingConfigInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutSupervisorySamplingConfigInput
+    connect?: WorkspaceWhereUniqueInput
+  }
+
+  export type WorkspaceUpdateOneRequiredWithoutSupervisorySamplingConfigNestedInput = {
+    create?: XOR<WorkspaceCreateWithoutSupervisorySamplingConfigInput, WorkspaceUncheckedCreateWithoutSupervisorySamplingConfigInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutSupervisorySamplingConfigInput
+    upsert?: WorkspaceUpsertWithoutSupervisorySamplingConfigInput
+    connect?: WorkspaceWhereUniqueInput
+    update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutSupervisorySamplingConfigInput, WorkspaceUpdateWithoutSupervisorySamplingConfigInput>, WorkspaceUncheckedUpdateWithoutSupervisorySamplingConfigInput>
+  }
+
   export type CommunicationCreatetoAddressesInput = {
     set: string[]
   }
@@ -74152,6 +76439,31 @@ export namespace Prisma {
     not?: NestedEnumFinalizeReasonNullableFilter<$PrismaModel> | $Enums.FinalizeReason | null
   }
 
+  export type NestedEnumSupervisoryOutcomeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.SupervisoryOutcome | EnumSupervisoryOutcomeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SupervisoryOutcome[] | ListEnumSupervisoryOutcomeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SupervisoryOutcome[] | ListEnumSupervisoryOutcomeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSupervisoryOutcomeNullableFilter<$PrismaModel> | $Enums.SupervisoryOutcome | null
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumSupervisoryHoldReasonNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.SupervisoryHoldReason | EnumSupervisoryHoldReasonFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SupervisoryHoldReason[] | ListEnumSupervisoryHoldReasonFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SupervisoryHoldReason[] | ListEnumSupervisoryHoldReasonFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSupervisoryHoldReasonNullableFilter<$PrismaModel> | $Enums.SupervisoryHoldReason | null
+  }
+
   export type NestedEnumMeetingClientMatchConfidenceNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.MeetingClientMatchConfidence | EnumMeetingClientMatchConfidenceFieldRefInput<$PrismaModel> | null
     in?: $Enums.MeetingClientMatchConfidence[] | ListEnumMeetingClientMatchConfidenceFieldRefInput<$PrismaModel> | null
@@ -74188,17 +76500,6 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
   export type NestedEnumFinalizeReasonNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.FinalizeReason | EnumFinalizeReasonFieldRefInput<$PrismaModel> | null
     in?: $Enums.FinalizeReason[] | ListEnumFinalizeReasonFieldRefInput<$PrismaModel> | null
@@ -74207,6 +76508,42 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumFinalizeReasonNullableFilter<$PrismaModel>
     _max?: NestedEnumFinalizeReasonNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSupervisoryOutcomeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SupervisoryOutcome | EnumSupervisoryOutcomeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SupervisoryOutcome[] | ListEnumSupervisoryOutcomeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SupervisoryOutcome[] | ListEnumSupervisoryOutcomeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSupervisoryOutcomeNullableWithAggregatesFilter<$PrismaModel> | $Enums.SupervisoryOutcome | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumSupervisoryOutcomeNullableFilter<$PrismaModel>
+    _max?: NestedEnumSupervisoryOutcomeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSupervisoryHoldReasonNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SupervisoryHoldReason | EnumSupervisoryHoldReasonFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SupervisoryHoldReason[] | ListEnumSupervisoryHoldReasonFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SupervisoryHoldReason[] | ListEnumSupervisoryHoldReasonFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSupervisoryHoldReasonNullableWithAggregatesFilter<$PrismaModel> | $Enums.SupervisoryHoldReason | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumSupervisoryHoldReasonNullableFilter<$PrismaModel>
+    _max?: NestedEnumSupervisoryHoldReasonNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumFlagSourceTypeFilter<$PrismaModel = never> = {
@@ -74883,6 +77220,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -74940,6 +77284,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -75492,6 +77843,13 @@ export namespace Prisma {
     externalThreadId?: string | null
     subject?: string | null
     participants: JsonNullValueInput | InputJsonValue
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -75504,6 +77862,13 @@ export namespace Prisma {
     externalThreadId?: string | null
     subject?: string | null
     participants: JsonNullValueInput | InputJsonValue
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -75826,6 +78191,43 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type SupervisorySamplingConfigCreateWithoutWorkspaceInput = {
+    id?: string
+    randomPercentage?: number
+    adviserRiskEnabled?: boolean
+    adviserRiskOpenFlagFloor?: number
+    newAdviserEnabled?: boolean
+    newAdviserWindowDays?: number
+    timeSinceLastReviewEnabled?: boolean
+    reviewStalenessDays?: number
+    manualSelectionEnabled?: boolean
+    controlSamplingPolicy?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type SupervisorySamplingConfigUncheckedCreateWithoutWorkspaceInput = {
+    id?: string
+    randomPercentage?: number
+    adviserRiskEnabled?: boolean
+    adviserRiskOpenFlagFloor?: number
+    newAdviserEnabled?: boolean
+    newAdviserWindowDays?: number
+    timeSinceLastReviewEnabled?: boolean
+    reviewStalenessDays?: number
+    manualSelectionEnabled?: boolean
+    controlSamplingPolicy?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type SupervisorySamplingConfigCreateOrConnectWithoutWorkspaceInput = {
+    where: SupervisorySamplingConfigWhereUniqueInput
+    create: XOR<SupervisorySamplingConfigCreateWithoutWorkspaceInput, SupervisorySamplingConfigUncheckedCreateWithoutWorkspaceInput>
+  }
+
   export type UserWorkspaceUpsertWithWhereUniqueWithoutWorkspaceInput = {
     where: UserWorkspaceWhereUniqueInput
     update: XOR<UserWorkspaceUpdateWithoutWorkspaceInput, UserWorkspaceUncheckedUpdateWithoutWorkspaceInput>
@@ -75901,6 +78303,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: IntNullableFilter<"Meeting"> | number | null
     samplingBucket?: StringNullableFilter<"Meeting"> | string | null
     samplingRuleId?: StringNullableFilter<"Meeting"> | string | null
+    supervisoryOutcome?: EnumSupervisoryOutcomeNullableFilter<"Meeting"> | $Enums.SupervisoryOutcome | null
+    outcomeReason?: StringNullableFilter<"Meeting"> | string | null
+    outcomeConfidence?: FloatNullableFilter<"Meeting"> | number | null
+    processedAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
+    primaryControlId?: StringNullableFilter<"Meeting"> | string | null
+    heldReason?: EnumSupervisoryHoldReasonNullableFilter<"Meeting"> | $Enums.SupervisoryHoldReason | null
+    parkedReason?: StringNullableFilter<"Meeting"> | string | null
     draftReadyAt?: DateTimeNullableFilter<"Meeting"> | Date | string | null
     timeToFinalize?: IntNullableFilter<"Meeting"> | number | null
     readyForCCO?: BoolFilter<"Meeting"> | boolean
@@ -76382,6 +78791,13 @@ export namespace Prisma {
     externalThreadId?: StringNullableFilter<"CommunicationThread"> | string | null
     subject?: StringNullableFilter<"CommunicationThread"> | string | null
     participants?: JsonFilter<"CommunicationThread">
+    supervisoryOutcome?: EnumSupervisoryOutcomeNullableFilter<"CommunicationThread"> | $Enums.SupervisoryOutcome | null
+    outcomeReason?: StringNullableFilter<"CommunicationThread"> | string | null
+    outcomeConfidence?: FloatNullableFilter<"CommunicationThread"> | number | null
+    processedAt?: DateTimeNullableFilter<"CommunicationThread"> | Date | string | null
+    primaryControlId?: StringNullableFilter<"CommunicationThread"> | string | null
+    heldReason?: EnumSupervisoryHoldReasonNullableFilter<"CommunicationThread"> | $Enums.SupervisoryHoldReason | null
+    parkedReason?: StringNullableFilter<"CommunicationThread"> | string | null
     createdAt?: DateTimeFilter<"CommunicationThread"> | Date | string
     updatedAt?: DateTimeFilter<"CommunicationThread"> | Date | string
     deletedAt?: DateTimeNullableFilter<"CommunicationThread"> | Date | string | null
@@ -76687,6 +79103,49 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"IndexCoverageManifest"> | Date | string | null
   }
 
+  export type SupervisorySamplingConfigUpsertWithoutWorkspaceInput = {
+    update: XOR<SupervisorySamplingConfigUpdateWithoutWorkspaceInput, SupervisorySamplingConfigUncheckedUpdateWithoutWorkspaceInput>
+    create: XOR<SupervisorySamplingConfigCreateWithoutWorkspaceInput, SupervisorySamplingConfigUncheckedCreateWithoutWorkspaceInput>
+    where?: SupervisorySamplingConfigWhereInput
+  }
+
+  export type SupervisorySamplingConfigUpdateToOneWithWhereWithoutWorkspaceInput = {
+    where?: SupervisorySamplingConfigWhereInput
+    data: XOR<SupervisorySamplingConfigUpdateWithoutWorkspaceInput, SupervisorySamplingConfigUncheckedUpdateWithoutWorkspaceInput>
+  }
+
+  export type SupervisorySamplingConfigUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    randomPercentage?: IntFieldUpdateOperationsInput | number
+    adviserRiskEnabled?: BoolFieldUpdateOperationsInput | boolean
+    adviserRiskOpenFlagFloor?: IntFieldUpdateOperationsInput | number
+    newAdviserEnabled?: BoolFieldUpdateOperationsInput | boolean
+    newAdviserWindowDays?: IntFieldUpdateOperationsInput | number
+    timeSinceLastReviewEnabled?: BoolFieldUpdateOperationsInput | boolean
+    reviewStalenessDays?: IntFieldUpdateOperationsInput | number
+    manualSelectionEnabled?: BoolFieldUpdateOperationsInput | boolean
+    controlSamplingPolicy?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type SupervisorySamplingConfigUncheckedUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    randomPercentage?: IntFieldUpdateOperationsInput | number
+    adviserRiskEnabled?: BoolFieldUpdateOperationsInput | boolean
+    adviserRiskOpenFlagFloor?: IntFieldUpdateOperationsInput | number
+    newAdviserEnabled?: BoolFieldUpdateOperationsInput | boolean
+    newAdviserWindowDays?: IntFieldUpdateOperationsInput | number
+    timeSinceLastReviewEnabled?: BoolFieldUpdateOperationsInput | boolean
+    reviewStalenessDays?: IntFieldUpdateOperationsInput | number
+    manualSelectionEnabled?: BoolFieldUpdateOperationsInput | boolean
+    controlSamplingPolicy?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type WorkspaceCreateWithoutCandidateResponsePacksInput = {
     id?: string
     name: string
@@ -76736,6 +79195,7 @@ export namespace Prisma {
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutCandidateResponsePacksInput = {
@@ -76787,6 +79247,7 @@ export namespace Prisma {
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutCandidateResponsePacksInput = {
@@ -76854,6 +79315,7 @@ export namespace Prisma {
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutCandidateResponsePacksInput = {
@@ -76905,6 +79367,7 @@ export namespace Prisma {
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateWithoutIndexCoverageManifestsInput = {
@@ -76956,6 +79419,7 @@ export namespace Prisma {
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutIndexCoverageManifestsInput = {
@@ -77007,6 +79471,7 @@ export namespace Prisma {
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutIndexCoverageManifestsInput = {
@@ -77074,6 +79539,7 @@ export namespace Prisma {
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutIndexCoverageManifestsInput = {
@@ -77125,6 +79591,7 @@ export namespace Prisma {
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateWithoutParkedIngestsInput = {
@@ -77176,6 +79643,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutParkedIngestsInput = {
@@ -77227,6 +79695,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutParkedIngestsInput = {
@@ -77294,6 +79763,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutParkedIngestsInput = {
@@ -77345,6 +79815,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type UserCreateWithoutWorkspacesInput = {
@@ -77435,6 +79906,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutUsersInput = {
@@ -77486,6 +79958,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutUsersInput = {
@@ -77637,6 +80110,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutUsersInput = {
@@ -77688,6 +80162,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type UserUpsertWithoutRemovedWorkspaceMembershipsInput = {
@@ -77784,6 +80259,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutMeetingsInput = {
@@ -77835,6 +80311,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutMeetingsInput = {
@@ -78266,6 +80743,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -78324,6 +80808,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -78383,6 +80874,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -78441,6 +80939,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -78505,6 +81010,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -78563,6 +81075,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -78622,6 +81141,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -78680,6 +81206,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -78773,6 +81306,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutMeetingsInput = {
@@ -78824,6 +81358,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type ClientUpsertWithoutMeetingsInput = {
@@ -79166,6 +81701,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -79224,6 +81766,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -79305,6 +81854,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -79363,6 +81919,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -79428,6 +81991,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -79486,6 +82056,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -79540,6 +82117,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -79598,6 +82182,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -79668,6 +82259,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -79726,6 +82324,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -79803,6 +82408,7 @@ export namespace Prisma {
     parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutRecordSealsInput = {
@@ -79854,6 +82460,7 @@ export namespace Prisma {
     parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutRecordSealsInput = {
@@ -79887,6 +82494,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -79945,6 +82559,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -80038,6 +82659,7 @@ export namespace Prisma {
     parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutRecordSealsInput = {
@@ -80089,6 +82711,7 @@ export namespace Prisma {
     parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type MeetingUpsertWithoutRecordSealsInput = {
@@ -80128,6 +82751,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -80186,6 +82816,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -80240,6 +82877,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -80298,6 +82942,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -80425,6 +83076,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutFlagsInput = {
@@ -80476,6 +83128,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutFlagsInput = {
@@ -80604,6 +83257,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -80662,6 +83322,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -80801,6 +83468,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutFlagsInput = {
@@ -80852,6 +83520,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type ResolutionRecordUpsertWithoutFlagInput = {
@@ -81035,6 +83704,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -81093,6 +83769,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -81175,6 +83858,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutResolutionRecordsInput = {
@@ -81226,6 +83910,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutResolutionRecordsInput = {
@@ -81431,6 +84116,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -81489,6 +84181,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -81577,6 +84276,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutResolutionRecordsInput = {
@@ -81628,6 +84328,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type ActionItemUpsertWithWhereUniqueWithoutResolutionInput = {
@@ -81771,6 +84472,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEvidenceClassificationsInput = {
@@ -81822,6 +84524,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEvidenceClassificationsInput = {
@@ -81889,6 +84592,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEvidenceClassificationsInput = {
@@ -81940,6 +84644,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type ResolutionRecordCreateWithoutTasksInput = {
@@ -82399,6 +85104,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutAuditEventsInput = {
@@ -82450,6 +85156,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutAuditEventsInput = {
@@ -82483,6 +85190,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -82541,6 +85255,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -82634,6 +85355,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutAuditEventsInput = {
@@ -82685,6 +85407,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type MeetingUpsertWithoutAuditEventsInput = {
@@ -82724,6 +85447,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -82782,6 +85512,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -83118,6 +85855,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -83176,6 +85920,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -83240,6 +85991,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -83298,6 +86056,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -83362,6 +86127,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -83420,6 +86192,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -83826,6 +86605,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutInvitationsInput = {
@@ -83877,6 +86657,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutInvitationsInput = {
@@ -83983,6 +86764,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutInvitationsInput = {
@@ -84034,6 +86816,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type UserUpsertWithoutInvitationsSentInput = {
@@ -84130,6 +86913,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutIntegrationCredentialsInput = {
@@ -84181,6 +86965,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutIntegrationCredentialsInput = {
@@ -84248,6 +87033,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutIntegrationCredentialsInput = {
@@ -84299,6 +87085,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateWithoutIntegrationConfigsInput = {
@@ -84350,6 +87137,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutIntegrationConfigsInput = {
@@ -84401,6 +87189,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutIntegrationConfigsInput = {
@@ -84502,6 +87291,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutIntegrationConfigsInput = {
@@ -84553,6 +87343,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type IntegrationSyncLogUpsertWithWhereUniqueWithoutIntegrationConfigInput = {
@@ -84626,6 +87417,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -84684,6 +87482,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -84789,6 +87594,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -84847,6 +87659,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -84924,6 +87743,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutFirmProfileInput = {
@@ -84975,6 +87795,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutFirmProfileInput = {
@@ -85140,6 +87961,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutFirmProfileInput = {
@@ -85191,6 +88013,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type DisclosureCategoryUpsertWithWhereUniqueWithoutFirmProfileInput = {
@@ -85636,6 +88459,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutClientsInput = {
@@ -85687,6 +88511,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutClientsInput = {
@@ -85876,6 +88701,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -85933,6 +88765,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -86032,6 +88871,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutClientsInput = {
@@ -86083,6 +88923,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type EmailAliasUpsertWithWhereUniqueWithoutClientInput = {
@@ -86227,6 +89068,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutClientHouseholdsInput = {
@@ -86278,6 +89120,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutClientHouseholdsInput = {
@@ -86373,6 +89216,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutClientHouseholdsInput = {
@@ -86424,6 +89268,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type ClientHouseholdMemberUpsertWithWhereUniqueWithoutHouseholdInput = {
@@ -86623,6 +89468,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutClientActivitiesInput = {
@@ -86674,6 +89520,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutClientActivitiesInput = {
@@ -86778,6 +89625,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutClientActivitiesInput = {
@@ -86829,6 +89677,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type ClientUpsertWithoutActivitiesInput = {
@@ -86923,6 +89772,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEmailAliasesInput = {
@@ -86974,6 +89824,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEmailAliasesInput = {
@@ -87117,6 +89968,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEmailAliasesInput = {
@@ -87168,6 +90020,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type UserUpsertWithoutEmailAliasesInput = {
@@ -87307,6 +90160,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEvidenceItemsInput = {
@@ -87358,6 +90212,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEvidenceItemsInput = {
@@ -87537,6 +90392,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEvidenceItemsInput = {
@@ -87588,6 +90444,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type ClientUpsertWithoutEvidenceItemsInput = {
@@ -87863,6 +90720,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEvidenceEmbeddingsInput = {
@@ -87914,6 +90772,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEvidenceEmbeddingsInput = {
@@ -87981,6 +90840,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEvidenceEmbeddingsInput = {
@@ -88032,6 +90892,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateWithoutCommunicationThreadsInput = {
@@ -88083,6 +90944,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutCommunicationThreadsInput = {
@@ -88134,6 +90996,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutCommunicationThreadsInput = {
@@ -88251,6 +91114,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutCommunicationThreadsInput = {
@@ -88302,6 +91166,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type CommunicationUpsertWithWhereUniqueWithoutThreadInput = {
@@ -88342,12 +91207,243 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"Communication"> | Date | string | null
   }
 
+  export type WorkspaceCreateWithoutSupervisorySamplingConfigInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    fiscalYearEndMonth?: number
+    fiscalTimezone?: string
+    mediaPosture?: $Enums.MediaPosture | null
+    postureSetById?: string | null
+    postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientCreateNestedManyWithoutWorkspaceInput
+    clientHouseholds?: ClientHouseholdCreateNestedManyWithoutWorkspaceInput
+    clientActivities?: ClientActivityCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobCreateNestedManyWithoutWorkspaceInput
+    evidenceClassifications?: EvidenceClassificationCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingCreateNestedManyWithoutWorkspaceInput
+    parkedIngests?: ParkedIngestCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceUncheckedCreateWithoutSupervisorySamplingConfigInput = {
+    id?: string
+    name: string
+    retentionYears?: number
+    fiscalYearEndMonth?: number
+    fiscalTimezone?: string
+    mediaPosture?: $Enums.MediaPosture | null
+    postureSetById?: string | null
+    postureSetAt?: Date | string | null
+    retentionAnchoringNoticePending?: boolean
+    legalHold?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    billingStatus?: $Enums.BillingStatus
+    planTier?: $Enums.PlanTier
+    billingCurrency?: $Enums.BillingCurrency
+    pilotStartDate?: Date | string | null
+    trialStartedAt?: Date | string | null
+    trialEndsAt?: Date | string | null
+    subscriptionStartDate?: Date | string | null
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    currentPeriodStart?: Date | string | null
+    currentPeriodEnd?: Date | string | null
+    onboardingType?: string | null
+    onboardingPaidAt?: Date | string | null
+    users?: UserWorkspaceUncheckedCreateNestedManyWithoutWorkspaceInput
+    meetings?: MeetingUncheckedCreateNestedManyWithoutWorkspaceInput
+    auditEvents?: AuditEventUncheckedCreateNestedManyWithoutWorkspaceInput
+    invitations?: InvitationUncheckedCreateNestedManyWithoutWorkspaceInput
+    flags?: FlagUncheckedCreateNestedManyWithoutWorkspaceInput
+    resolutionRecords?: ResolutionRecordUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationCredentials?: IntegrationCredentialUncheckedCreateNestedManyWithoutWorkspaceInput
+    integrationConfigs?: IntegrationConfigUncheckedCreateNestedManyWithoutWorkspaceInput
+    firmProfile?: FirmProfileUncheckedCreateNestedOneWithoutWorkspaceInput
+    evidenceItems?: EvidenceItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    clients?: ClientUncheckedCreateNestedManyWithoutWorkspaceInput
+    clientHouseholds?: ClientHouseholdUncheckedCreateNestedManyWithoutWorkspaceInput
+    clientActivities?: ClientActivityUncheckedCreateNestedManyWithoutWorkspaceInput
+    mailboxConnections?: MailboxConnectionUncheckedCreateNestedManyWithoutWorkspaceInput
+    communicationThreads?: CommunicationThreadUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutWorkspaceInput
+    emailTriageItems?: EmailTriageItemUncheckedCreateNestedManyWithoutWorkspaceInput
+    ingestJobs?: IngestJobUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceClassifications?: EvidenceClassificationUncheckedCreateNestedManyWithoutWorkspaceInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedCreateNestedManyWithoutWorkspaceInput
+    parkedIngests?: ParkedIngestUncheckedCreateNestedManyWithoutWorkspaceInput
+    recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceCreateOrConnectWithoutSupervisorySamplingConfigInput = {
+    where: WorkspaceWhereUniqueInput
+    create: XOR<WorkspaceCreateWithoutSupervisorySamplingConfigInput, WorkspaceUncheckedCreateWithoutSupervisorySamplingConfigInput>
+  }
+
+  export type WorkspaceUpsertWithoutSupervisorySamplingConfigInput = {
+    update: XOR<WorkspaceUpdateWithoutSupervisorySamplingConfigInput, WorkspaceUncheckedUpdateWithoutSupervisorySamplingConfigInput>
+    create: XOR<WorkspaceCreateWithoutSupervisorySamplingConfigInput, WorkspaceUncheckedCreateWithoutSupervisorySamplingConfigInput>
+    where?: WorkspaceWhereInput
+  }
+
+  export type WorkspaceUpdateToOneWithWhereWithoutSupervisorySamplingConfigInput = {
+    where?: WorkspaceWhereInput
+    data: XOR<WorkspaceUpdateWithoutSupervisorySamplingConfigInput, WorkspaceUncheckedUpdateWithoutSupervisorySamplingConfigInput>
+  }
+
+  export type WorkspaceUpdateWithoutSupervisorySamplingConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    fiscalYearEndMonth?: IntFieldUpdateOperationsInput | number
+    fiscalTimezone?: StringFieldUpdateOperationsInput | string
+    mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
+    postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
+    postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUpdateManyWithoutWorkspaceNestedInput
+    clientHouseholds?: ClientHouseholdUpdateManyWithoutWorkspaceNestedInput
+    clientActivities?: ClientActivityUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUpdateManyWithoutWorkspaceNestedInput
+    evidenceClassifications?: EvidenceClassificationUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUpdateManyWithoutWorkspaceNestedInput
+    parkedIngests?: ParkedIngestUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type WorkspaceUncheckedUpdateWithoutSupervisorySamplingConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    retentionYears?: IntFieldUpdateOperationsInput | number
+    fiscalYearEndMonth?: IntFieldUpdateOperationsInput | number
+    fiscalTimezone?: StringFieldUpdateOperationsInput | string
+    mediaPosture?: NullableEnumMediaPostureFieldUpdateOperationsInput | $Enums.MediaPosture | null
+    postureSetById?: NullableStringFieldUpdateOperationsInput | string | null
+    postureSetAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    retentionAnchoringNoticePending?: BoolFieldUpdateOperationsInput | boolean
+    legalHold?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    billingStatus?: EnumBillingStatusFieldUpdateOperationsInput | $Enums.BillingStatus
+    planTier?: EnumPlanTierFieldUpdateOperationsInput | $Enums.PlanTier
+    billingCurrency?: EnumBillingCurrencyFieldUpdateOperationsInput | $Enums.BillingCurrency
+    pilotStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEndsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subscriptionStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stripeCustomerId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPeriodStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    onboardingType?: NullableStringFieldUpdateOperationsInput | string | null
+    onboardingPaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    users?: UserWorkspaceUncheckedUpdateManyWithoutWorkspaceNestedInput
+    meetings?: MeetingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    auditEvents?: AuditEventUncheckedUpdateManyWithoutWorkspaceNestedInput
+    invitations?: InvitationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    flags?: FlagUncheckedUpdateManyWithoutWorkspaceNestedInput
+    resolutionRecords?: ResolutionRecordUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationCredentials?: IntegrationCredentialUncheckedUpdateManyWithoutWorkspaceNestedInput
+    integrationConfigs?: IntegrationConfigUncheckedUpdateManyWithoutWorkspaceNestedInput
+    firmProfile?: FirmProfileUncheckedUpdateOneWithoutWorkspaceNestedInput
+    evidenceItems?: EvidenceItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clients?: ClientUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clientHouseholds?: ClientHouseholdUncheckedUpdateManyWithoutWorkspaceNestedInput
+    clientActivities?: ClientActivityUncheckedUpdateManyWithoutWorkspaceNestedInput
+    mailboxConnections?: MailboxConnectionUncheckedUpdateManyWithoutWorkspaceNestedInput
+    communicationThreads?: CommunicationThreadUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutWorkspaceNestedInput
+    emailTriageItems?: EmailTriageItemUncheckedUpdateManyWithoutWorkspaceNestedInput
+    ingestJobs?: IngestJobUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceClassifications?: EvidenceClassificationUncheckedUpdateManyWithoutWorkspaceNestedInput
+    evidenceEmbeddings?: EvidenceEmbeddingUncheckedUpdateManyWithoutWorkspaceNestedInput
+    parkedIngests?: ParkedIngestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
+    candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
+    indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+  }
+
   export type CommunicationThreadCreateWithoutMessagesInput = {
     id?: string
     channel: $Enums.CommunicationChannel
     externalThreadId?: string | null
     subject?: string | null
     participants: JsonNullValueInput | InputJsonValue
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -88361,6 +91457,13 @@ export namespace Prisma {
     externalThreadId?: string | null
     subject?: string | null
     participants: JsonNullValueInput | InputJsonValue
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -88533,6 +91636,13 @@ export namespace Prisma {
     externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
     subject?: NullableStringFieldUpdateOperationsInput | string | null
     participants?: JsonNullValueInput | InputJsonValue
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -88546,6 +91656,13 @@ export namespace Prisma {
     externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
     subject?: NullableStringFieldUpdateOperationsInput | string | null
     participants?: JsonNullValueInput | InputJsonValue
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -88797,6 +91914,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutMailboxConnectionsInput = {
@@ -88848,6 +91966,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutMailboxConnectionsInput = {
@@ -88951,6 +92070,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutMailboxConnectionsInput = {
@@ -89002,6 +92122,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type IngestJobUpsertWithWhereUniqueWithoutConnectionInput = {
@@ -89069,6 +92190,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutIngestJobsInput = {
@@ -89120,6 +92242,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutIngestJobsInput = {
@@ -89228,6 +92351,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutIngestJobsInput = {
@@ -89279,6 +92403,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type MailboxConnectionUpsertWithoutIngestJobsInput = {
@@ -89377,6 +92502,7 @@ export namespace Prisma {
     recordSeals?: RecordSealCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutEmailTriageItemsInput = {
@@ -89428,6 +92554,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedCreateNestedManyWithoutWorkspaceInput
     candidateResponsePacks?: CandidateResponsePackUncheckedCreateNestedManyWithoutWorkspaceInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedCreateNestedManyWithoutWorkspaceInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedCreateNestedOneWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutEmailTriageItemsInput = {
@@ -89495,6 +92622,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutEmailTriageItemsInput = {
@@ -89546,6 +92674,7 @@ export namespace Prisma {
     recordSeals?: RecordSealUncheckedUpdateManyWithoutWorkspaceNestedInput
     candidateResponsePacks?: CandidateResponsePackUncheckedUpdateManyWithoutWorkspaceNestedInput
     indexCoverageManifests?: IndexCoverageManifestUncheckedUpdateManyWithoutWorkspaceNestedInput
+    supervisorySamplingConfig?: SupervisorySamplingConfigUncheckedUpdateOneWithoutWorkspaceNestedInput
   }
 
   export type UserWorkspaceCreateManyWorkspaceInput = {
@@ -89583,6 +92712,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -89771,6 +92907,13 @@ export namespace Prisma {
     externalThreadId?: string | null
     subject?: string | null
     participants: JsonNullValueInput | InputJsonValue
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -89939,6 +93082,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -89996,6 +93146,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -90052,6 +93209,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -90590,6 +93754,13 @@ export namespace Prisma {
     externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
     subject?: NullableStringFieldUpdateOperationsInput | string | null
     participants?: JsonNullValueInput | InputJsonValue
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -90602,6 +93773,13 @@ export namespace Prisma {
     externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
     subject?: NullableStringFieldUpdateOperationsInput | string | null
     participants?: JsonNullValueInput | InputJsonValue
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -90614,6 +93792,13 @@ export namespace Prisma {
     externalThreadId?: NullableStringFieldUpdateOperationsInput | string | null
     subject?: NullableStringFieldUpdateOperationsInput | string | null
     participants?: JsonNullValueInput | InputJsonValue
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -91113,6 +94298,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -91431,6 +94623,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -91489,6 +94688,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -91545,6 +94751,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -91804,6 +95017,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -91852,6 +95072,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -91900,6 +95127,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -92106,6 +95340,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -92164,6 +95405,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -92220,6 +95468,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -92266,6 +95521,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -92324,6 +95586,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -92380,6 +95649,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -92426,6 +95702,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -92484,6 +95767,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -92540,6 +95830,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -92976,6 +96273,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: number | null
     samplingBucket?: string | null
     samplingRuleId?: string | null
+    supervisoryOutcome?: $Enums.SupervisoryOutcome | null
+    outcomeReason?: string | null
+    outcomeConfidence?: number | null
+    processedAt?: Date | string | null
+    primaryControlId?: string | null
+    heldReason?: $Enums.SupervisoryHoldReason | null
+    parkedReason?: string | null
     draftReadyAt?: Date | string | null
     timeToFinalize?: number | null
     readyForCCO?: boolean
@@ -93195,6 +96499,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -93252,6 +96563,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean
@@ -93308,6 +96626,13 @@ export namespace Prisma {
     finalizedPolicyVersion?: NullableIntFieldUpdateOperationsInput | number | null
     samplingBucket?: NullableStringFieldUpdateOperationsInput | string | null
     samplingRuleId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisoryOutcome?: NullableEnumSupervisoryOutcomeFieldUpdateOperationsInput | $Enums.SupervisoryOutcome | null
+    outcomeReason?: NullableStringFieldUpdateOperationsInput | string | null
+    outcomeConfidence?: NullableFloatFieldUpdateOperationsInput | number | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    primaryControlId?: NullableStringFieldUpdateOperationsInput | string | null
+    heldReason?: NullableEnumSupervisoryHoldReasonFieldUpdateOperationsInput | $Enums.SupervisoryHoldReason | null
+    parkedReason?: NullableStringFieldUpdateOperationsInput | string | null
     draftReadyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     timeToFinalize?: NullableIntFieldUpdateOperationsInput | number | null
     readyForCCO?: BoolFieldUpdateOperationsInput | boolean

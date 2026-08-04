@@ -2,6 +2,7 @@ import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { redirect } from "next/navigation";
 import { buildDashboardSummary } from "~/server/dashboard/build-dashboard-summary";
+import { getSupervisionSummary } from "~/server/supervision/service";
 import { DashboardView } from "~/components/dashboard/dashboard-view";
 import { WelcomeBanner } from "./components/welcome-banner";
 import type { WorkspaceRoleKey } from "~/lib/role-config";
@@ -32,8 +33,9 @@ export default async function DashboardPage({
   const rawRange = (await searchParams).range;
   const range: DashboardRange = isDashboardRange(rawRange) ? rawRange : "90d";
 
-  const [summary, membership, workspace, inviteAccepted] = await Promise.all([
+  const [summary, supervisionSummary, membership, workspace, inviteAccepted] = await Promise.all([
     buildDashboardSummary(db, workspaceId, range),
+    getSupervisionSummary(db, workspaceId),
     db.userWorkspace.findFirst({
       where: {
         userId: session.user.id,
@@ -70,7 +72,11 @@ export default async function DashboardPage({
           role={membership.role as WorkspaceRoleKey}
         />
       ) : null}
-      <DashboardView summary={summary} workspaceName={workspace?.name ?? "Your workspace"} />
+      <DashboardView
+        summary={summary}
+        supervisionSummary={supervisionSummary}
+        workspaceName={workspace?.name ?? "Your workspace"}
+      />
     </div>
   );
 }

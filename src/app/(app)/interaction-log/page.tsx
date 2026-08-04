@@ -4,6 +4,7 @@ import { topicToString } from "~/lib/topics";
 import { redirect } from "next/navigation";
 import InteractionLogClient from "./interaction-log-client";
 import { redirectPathForMissingWorkspace } from "~/server/workspace/no-workspace-redirect";
+import type { Prisma, SupervisoryOutcome } from "../../../../generated/prisma";
 
 // Force dynamic rendering since we use searchParams
 export const dynamic = "force-dynamic";
@@ -32,15 +33,27 @@ export default async function InteractionLogPage({
   const keywords = typeof params.keywords === "string" ? params.keywords : undefined;
   const hasRecommendations = typeof params.recommendations === "string" ? params.recommendations : undefined;
   const isFinalized = typeof params.finalized === "string" ? params.finalized : undefined;
+  const outcome = typeof params.outcome === "string" ? params.outcome : undefined;
   const sortBy = typeof params.sortBy === "string" ? params.sortBy : "date";
   const sortOrder = typeof params.sortOrder === "string" ? params.sortOrder : "desc";
 
   const workspaceId = session.user.workspaceId;
 
-  // Build where clause
-  const where: any = {
+  const where: Prisma.MeetingWhereInput = {
     workspaceId,
   };
+
+  const validOutcomes: SupervisoryOutcome[] = [
+    "CLEARED",
+    "ROUTINE_SAMPLE",
+    "ESCALATED",
+    "HELD",
+    "PARKED",
+  ];
+  if (outcome && validOutcomes.includes(outcome as SupervisoryOutcome)) {
+    // CAST: validated against SupervisoryOutcome enum above
+    where.supervisoryOutcome = outcome as SupervisoryOutcome;
+  }
 
   if (clientName) {
     where.clientName = {
@@ -73,17 +86,12 @@ export default async function InteractionLogPage({
     where.status = { not: "FINALIZED" };
   }
 
-  // Build orderBy
-  const orderBy: any = {};
-  if (sortBy === "client") {
-    orderBy.clientName = sortOrder;
-  } else if (sortBy === "date") {
-    orderBy.meetingDate = sortOrder;
-  } else if (sortBy === "type") {
-    orderBy.meetingType = sortOrder;
-  } else {
-    orderBy.meetingDate = "desc";
-  }
+  const orderBy: Prisma.MeetingOrderByWithRelationInput =
+    sortBy === "client"
+      ? { clientName: sortOrder === "asc" ? "asc" : "desc" }
+      : sortBy === "type"
+        ? { meetingType: sortOrder === "asc" ? "asc" : "desc" }
+        : { meetingDate: sortOrder === "asc" ? "asc" : "desc" };
 
   // Fetch meetings
   let meetings = await db.meeting.findMany({
@@ -97,6 +105,8 @@ export default async function InteractionLogPage({
       extraction: true,
       supersededById: true,
       supersedesId: true,
+      supervisoryOutcome: true,
+      outcomeReason: true,
     },
     orderBy,
   });
@@ -155,7 +165,7 @@ export default async function InteractionLogPage({
     const keywordsList = (extraction?.topics || []).map(topicToString);
 
     // Check if has recommendations
-    const hasRecommendations = (extraction?.recommendations?.length ?? 0) > 0;
+    const hasRecs = (extraction?.recommendations?.length ?? 0) > 0;
 
     return {
       id: meeting.id,
@@ -163,10 +173,12 @@ export default async function InteractionLogPage({
       date: meeting.meetingDate.toISOString(),
       type: meeting.meetingType,
       keywords: keywordsList.join(", "),
-      hasRecommendations,
+      hasRecommendations: hasRecs,
       isFinalized: meeting.status === "FINALIZED",
       supersededById: meeting.supersededById,
       supersedesId: meeting.supersedesId,
+      supervisoryOutcome: meeting.supervisoryOutcome,
+      outcomeReason: meeting.outcomeReason,
     };
   });
 
@@ -189,6 +201,7 @@ export default async function InteractionLogPage({
           keywords: keywords || "",
           recommendations: hasRecommendations || "",
           finalized: isFinalized || "",
+          outcome: outcome || "",
           sortBy,
           sortOrder,
         }}
@@ -196,4 +209,3 @@ export default async function InteractionLogPage({
     </div>
   );
 }
-

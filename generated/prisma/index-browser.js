@@ -237,6 +237,13 @@ exports.Prisma.MeetingScalarFieldEnum = {
   finalizedPolicyVersion: 'finalizedPolicyVersion',
   samplingBucket: 'samplingBucket',
   samplingRuleId: 'samplingRuleId',
+  supervisoryOutcome: 'supervisoryOutcome',
+  outcomeReason: 'outcomeReason',
+  outcomeConfidence: 'outcomeConfidence',
+  processedAt: 'processedAt',
+  primaryControlId: 'primaryControlId',
+  heldReason: 'heldReason',
+  parkedReason: 'parkedReason',
   draftReadyAt: 'draftReadyAt',
   timeToFinalize: 'timeToFinalize',
   readyForCCO: 'readyForCCO',
@@ -647,6 +654,30 @@ exports.Prisma.CommunicationThreadScalarFieldEnum = {
   externalThreadId: 'externalThreadId',
   subject: 'subject',
   participants: 'participants',
+  supervisoryOutcome: 'supervisoryOutcome',
+  outcomeReason: 'outcomeReason',
+  outcomeConfidence: 'outcomeConfidence',
+  processedAt: 'processedAt',
+  primaryControlId: 'primaryControlId',
+  heldReason: 'heldReason',
+  parkedReason: 'parkedReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.SupervisorySamplingConfigScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  randomPercentage: 'randomPercentage',
+  adviserRiskEnabled: 'adviserRiskEnabled',
+  adviserRiskOpenFlagFloor: 'adviserRiskOpenFlagFloor',
+  newAdviserEnabled: 'newAdviserEnabled',
+  newAdviserWindowDays: 'newAdviserWindowDays',
+  timeSinceLastReviewEnabled: 'timeSinceLastReviewEnabled',
+  reviewStalenessDays: 'reviewStalenessDays',
+  manualSelectionEnabled: 'manualSelectionEnabled',
+  controlSamplingPolicy: 'controlSamplingPolicy',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
@@ -836,6 +867,24 @@ exports.FinalizeReason = exports.$Enums.FinalizeReason = {
   OTHER: 'OTHER'
 };
 
+exports.SupervisoryOutcome = exports.$Enums.SupervisoryOutcome = {
+  CLEARED: 'CLEARED',
+  ROUTINE_SAMPLE: 'ROUTINE_SAMPLE',
+  ESCALATED: 'ESCALATED',
+  HELD: 'HELD',
+  PARKED: 'PARKED'
+};
+
+exports.SupervisoryHoldReason = exports.$Enums.SupervisoryHoldReason = {
+  ACTIVE_POLICY_UNAVAILABLE: 'ACTIVE_POLICY_UNAVAILABLE',
+  ORIGINAL_SOURCE_UNAVAILABLE: 'ORIGINAL_SOURCE_UNAVAILABLE',
+  ADVISER_UNRESOLVED: 'ADVISER_UNRESOLVED',
+  REQUIRED_CLIENT_CONTEXT_UNRESOLVED: 'REQUIRED_CLIENT_CONTEXT_UNRESOLVED',
+  PROCESSING_FAILED: 'PROCESSING_FAILED',
+  CONFIDENCE_BELOW_THRESHOLD: 'CONFIDENCE_BELOW_THRESHOLD',
+  MATERIAL_CONTEXT_CONTRADICTORY: 'MATERIAL_CONTEXT_CONTRADICTORY'
+};
+
 exports.FlagSourceType = exports.$Enums.FlagSourceType = {
   MEETING: 'MEETING',
   EMAIL: 'EMAIL'
@@ -960,7 +1009,9 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   RECORD_SUPERSEDED: 'RECORD_SUPERSEDED',
   CANDIDATE_PACK_SCOPE_CONFIRMED: 'CANDIDATE_PACK_SCOPE_CONFIRMED',
   CANDIDATE_PACK_GENERATED: 'CANDIDATE_PACK_GENERATED',
-  CANDIDATE_PACK_APPROVED: 'CANDIDATE_PACK_APPROVED'
+  CANDIDATE_PACK_APPROVED: 'CANDIDATE_PACK_APPROVED',
+  SUPERVISORY_OUTCOME_ASSIGNED: 'SUPERVISORY_OUTCOME_ASSIGNED',
+  SUPERVISORY_SAMPLE_SELECTED: 'SUPERVISORY_SAMPLE_SELECTED'
 };
 
 exports.IntegrationProvider = exports.$Enums.IntegrationProvider = {
@@ -1150,6 +1201,7 @@ exports.Prisma.ModelName = {
   EvidenceTag: 'EvidenceTag',
   EvidenceEmbedding: 'EvidenceEmbedding',
   CommunicationThread: 'CommunicationThread',
+  SupervisorySamplingConfig: 'SupervisorySamplingConfig',
   Communication: 'Communication',
   Attachment: 'Attachment',
   MailboxConnection: 'MailboxConnection',

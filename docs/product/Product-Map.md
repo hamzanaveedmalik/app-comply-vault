@@ -26,6 +26,7 @@ Hub for product behaviour, direction, and delivery backlogs. Linked from [[00-Co
 
 ## Delivery backlogs
 
+- [[supervision-intelligence-r1-1-backlog]] — **R1.1** Supervision Intelligence backlog
 - [[complyvault-backlog-v5-release-1]] — **Release 1** build-ready backlog
 - [[backlog-epics-and-stories]] — CV-A..E module backlog
 - [[backlog-phase1-trust]] — Seal and Publish

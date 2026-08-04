@@ -12,6 +12,7 @@ import { generateSearchableText } from "~/server/search/index";
 import { createErrorResponse, AppError, ErrorMessages } from "~/server/errors";
 import type { Transcript } from "~/server/transcription/types";
 import { isAskHybridRetrievalEnabled } from "~/lib/feature-flags";
+import { syncMeetingSupervisoryOutcome } from "~/server/supervision/service";
 
 const processMeetingSchema = z.object({
   meetingId: z.string(),
@@ -272,6 +273,8 @@ async function handler(request: Request) {
         },
       });
 
+      await syncMeetingSupervisoryOutcome(db, meetingId);
+
       // Step 11: Send email notification (async, don't block on failure)
       try {
         // Get the user who uploaded the meeting (from audit events)
@@ -376,6 +379,8 @@ async function handler(request: Request) {
           },
         },
       });
+
+      await syncMeetingSupervisoryOutcome(db, meetingId);
 
       // Return error but don't throw (QStash will retry)
       return Response.json(

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { DASHBOARD_RANGES, type DashboardSummary } from "~/lib/dashboard-types";
+import type { SupervisionSummary } from "~/lib/types";
 import { ComplianceHealthCard } from "~/components/dashboard/compliance-health-card";
 import { FlagActivityCard } from "~/components/dashboard/flag-activity-card";
 import { FlagAgingCard } from "~/components/dashboard/flag-aging-card";
@@ -10,9 +11,11 @@ import { AuditReadinessCard } from "~/components/dashboard/audit-readiness-card"
 import { ClientsHealthTable } from "~/components/dashboard/clients-health-table";
 import { AdvisorsTable } from "~/components/dashboard/advisors-table";
 import { DashboardMeetingTable } from "~/components/dashboard/dashboard-meeting-table";
+import { SelectivityCard } from "~/components/dashboard/selectivity-card";
 
 type DashboardViewProps = {
   summary: DashboardSummary;
+  supervisionSummary: SupervisionSummary;
   workspaceName: string;
 };
 
@@ -25,7 +28,11 @@ function weekOfLabel(): string {
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(monday);
 }
 
-export function DashboardView({ summary, workspaceName }: DashboardViewProps): React.JSX.Element {
+export function DashboardView({
+  summary,
+  supervisionSummary,
+  workspaceName,
+}: DashboardViewProps): React.JSX.Element {
   return (
     <div className="mx-auto w-full max-w-[1240px] space-y-3.5 pb-10">
       <div className="mb-1 flex flex-wrap items-end justify-between gap-3">
@@ -69,6 +76,8 @@ export function DashboardView({ summary, workspaceName }: DashboardViewProps): R
           </Link>
         </div>
       </div>
+
+      <SelectivityCard summary={supervisionSummary} />
 
       <div className="grid gap-3.5 lg:grid-cols-2 xl:grid-cols-[5fr_4fr_3fr]">
         <ComplianceHealthCard

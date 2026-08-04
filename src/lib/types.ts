@@ -15,3 +15,52 @@ export type TeamMember = {
   status: "online" | "away" | "offline";
   avatarColor: string;
 };
+
+export type SupervisoryOutcome =
+  | "CLEARED"
+  | "ROUTINE_SAMPLE"
+  | "ESCALATED"
+  | "HELD"
+  | "PARKED";
+
+export type SupervisionCounts = {
+  totalProcessed: number;
+  clearedOrDeprioritised: number;
+  routineSamples: number;
+  priorityFindings: number;
+  heldInteractions: number;
+  openRemediation: number;
+};
+
+export type SupervisionSummary = {
+  counts: SupervisionCounts;
+  selectivityStatement: string;
+};
+
+export type SupervisoryInteractionDto = {
+  id: string;
+  channel: "MEETING" | "EMAIL";
+  title: string;
+  occurredAt: string | null;
+  processedAt: string | null;
+  supervisoryOutcome: SupervisoryOutcome;
+  outcomeReason: string | null;
+  outcomeConfidence: number | null;
+  primaryControlId: string | null;
+  heldReason: string | null;
+  parkedReason: string | null;
+  href: string;
+};
+
+export type SupervisorySamplingConfigDto = {
+  workspaceId: string;
+  randomPercentage: number;
+  adviserRiskEnabled: boolean;
+  adviserRiskOpenFlagFloor: number;
+  newAdviserEnabled: boolean;
+  newAdviserWindowDays: number;
+  timeSinceLastReviewEnabled: boolean;
+  reviewStalenessDays: number;
+  manualSelectionEnabled: boolean;
+  controlSamplingPolicy: Record<string, number>;
+};

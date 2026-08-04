@@ -53,32 +53,51 @@ model Workspace {
   onboardingPaidAt      DateTime?
 
   // Relations
-  users                   UserWorkspace[]
-  meetings                Meeting[]
-  auditEvents             AuditEvent[]
-  invitations             Invitation[]
-  flags                   Flag[]
-  resolutionRecords       ResolutionRecord[]
-  integrationCredentials  IntegrationCredential[]
-  integrationConfigs      IntegrationConfig[]
-  firmProfile             FirmProfile?
-  evidenceItems           EvidenceItem[]
-  clients                 Client[]
-  clientHouseholds        ClientHousehold[]
-  clientActivities        ClientActivity[]
-  mailboxConnections      MailboxConnection[]
-  communicationThreads    CommunicationThread[]
-  emailAliases            EmailAlias[]
-  emailTriageItems        EmailTriageItem[]
-  ingestJobs              IngestJob[]
-  evidenceClassifications EvidenceClassification[]
-  evidenceEmbeddings      EvidenceEmbedding[]
-  parkedIngests           ParkedIngest[]
-  recordSeals             RecordSeal[]
-  candidateResponsePacks  CandidateResponsePack[]
-  indexCoverageManifests  IndexCoverageManifest[]
+  users                     UserWorkspace[]
+  meetings                  Meeting[]
+  auditEvents               AuditEvent[]
+  invitations               Invitation[]
+  flags                     Flag[]
+  resolutionRecords         ResolutionRecord[]
+  integrationCredentials    IntegrationCredential[]
+  integrationConfigs        IntegrationConfig[]
+  firmProfile               FirmProfile?
+  evidenceItems             EvidenceItem[]
+  clients                   Client[]
+  clientHouseholds          ClientHousehold[]
+  clientActivities          ClientActivity[]
+  mailboxConnections        MailboxConnection[]
+  communicationThreads      CommunicationThread[]
+  emailAliases              EmailAlias[]
+  emailTriageItems          EmailTriageItem[]
+  ingestJobs                IngestJob[]
+  evidenceClassifications   EvidenceClassification[]
+  evidenceEmbeddings        EvidenceEmbedding[]
+  parkedIngests             ParkedIngest[]
+  recordSeals               RecordSeal[]
+  candidateResponsePacks    CandidateResponsePack[]
+  indexCoverageManifests    IndexCoverageManifest[]
+  supervisorySamplingConfig SupervisorySamplingConfig?
 
   @@index([createdAt])
+}
+
+enum SupervisoryOutcome {
+  CLEARED
+  ROUTINE_SAMPLE
+  ESCALATED
+  HELD
+  PARKED
+}
+
+enum SupervisoryHoldReason {
+  ACTIVE_POLICY_UNAVAILABLE
+  ORIGINAL_SOURCE_UNAVAILABLE
+  ADVISER_UNRESOLVED
+  REQUIRED_CLIENT_CONTEXT_UNRESOLVED
+  PROCESSING_FAILED
+  CONFIDENCE_BELOW_THRESHOLD
+  MATERIAL_CONTEXT_CONTRADICTORY
 }
 
 /// CV-XR-01a — candidate examination-response pack (never labelled "responsive").
@@ -275,6 +294,13 @@ model Meeting {
   finalizedPolicyVersion   Int?
   samplingBucket           String?
   samplingRuleId           String?
+  supervisoryOutcome       SupervisoryOutcome?
+  outcomeReason            String?                       @db.Text
+  outcomeConfidence        Float?
+  processedAt              DateTime?
+  primaryControlId         String?
+  heldReason               SupervisoryHoldReason?
+  parkedReason             String?                       @db.Text
   draftReadyAt             DateTime? // timestamp when status changed to DRAFT_READY (for KPI tracking)
   timeToFinalize           Int? // Time-to-Finalize in seconds (draftReadyAt → finalizedAt) for KPI tracking
   readyForCCO              Boolean                       @default(false) // flag indicating meeting is ready for CCO review
@@ -327,6 +353,7 @@ model Meeting {
   @@index([workspaceId, clientId])
   @@index([workspaceId, clientMatchConfidence])
   @@index([workspaceId, meetingDate])
+  @@index([workspaceId, supervisoryOutcome])
   @@index([supersedesId])
 }
 
@@ -397,6 +424,8 @@ enum AuditAction {
   CANDIDATE_PACK_SCOPE_CONFIRMED
   CANDIDATE_PACK_GENERATED
   CANDIDATE_PACK_APPROVED
+  SUPERVISORY_OUTCOME_ASSIGNED
+  SUPERVISORY_SAMPLE_SELECTED
 }
 
 /// CV-TR-01/02 — append-only ledger entry for immutable audit-pack bytes.
@@ -1242,21 +1271,50 @@ model EvidenceEmbedding {
 }
 
 model CommunicationThread {
-  id               String               @id @default(cuid())
-  workspaceId      String
-  channel          CommunicationChannel
-  externalThreadId String?
-  subject          String?
-  participants     Json
-  createdAt        DateTime             @default(now())
-  updatedAt        DateTime             @updatedAt
-  deletedAt        DateTime?
+  id                 String                 @id @default(cuid())
+  workspaceId        String
+  channel            CommunicationChannel
+  externalThreadId   String?
+  subject            String?
+  participants       Json
+  supervisoryOutcome SupervisoryOutcome?
+  outcomeReason      String?                @db.Text
+  outcomeConfidence  Float?
+  processedAt        DateTime?
+  primaryControlId   String?
+  heldReason         SupervisoryHoldReason?
+  parkedReason       String?                @db.Text
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+  deletedAt          DateTime?
 
   workspace Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   messages  Communication[]
 
   @@index([workspaceId, externalThreadId])
+  @@index([workspaceId, supervisoryOutcome])
   @@index([workspaceId, updatedAt])
+}
+
+model SupervisorySamplingConfig {
+  id                         String    @id @default(cuid())
+  workspaceId                String    @unique
+  randomPercentage           Int       @default(3)
+  adviserRiskEnabled         Boolean   @default(true)
+  adviserRiskOpenFlagFloor   Int       @default(2)
+  newAdviserEnabled          Boolean   @default(true)
+  newAdviserWindowDays       Int       @default(30)
+  timeSinceLastReviewEnabled Boolean   @default(true)
+  reviewStalenessDays        Int       @default(30)
+  manualSelectionEnabled     Boolean   @default(true)
+  controlSamplingPolicy      Json?
+  createdAt                  DateTime  @default(now())
+  updatedAt                  DateTime  @updatedAt
+  deletedAt                  DateTime?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
 }
 
 model Communication {

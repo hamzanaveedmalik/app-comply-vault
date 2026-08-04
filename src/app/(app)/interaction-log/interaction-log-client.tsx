@@ -36,6 +36,8 @@ interface InteractionLogMeeting {
   isFinalized: boolean;
   supersededById: string | null;
   supersedesId: string | null;
+  supervisoryOutcome: string | null;
+  outcomeReason: string | null;
 }
 
 interface InteractionLogClientProps {
@@ -48,6 +50,7 @@ interface InteractionLogClientProps {
     keywords: string;
     recommendations: string;
     finalized: string;
+    outcome: string;
     sortBy: string;
     sortOrder: string;
   };
@@ -88,10 +91,28 @@ export default function InteractionLogClient({
       keywords: "",
       recommendations: "",
       finalized: "",
+      outcome: "",
       sortBy: "date",
       sortOrder: "desc",
     });
     router.push("/interaction-log");
+  };
+
+  const outcomeLabel = (outcome: string | null): string => {
+    switch (outcome) {
+      case "CLEARED":
+        return "Cleared";
+      case "ROUTINE_SAMPLE":
+        return "Sampled";
+      case "ESCALATED":
+        return "Escalated";
+      case "HELD":
+        return "Held";
+      case "PARKED":
+        return "Parked";
+      default:
+        return "Unassigned";
+    }
   };
 
   const getSortIcon = (column: string) => {
@@ -195,6 +216,27 @@ export default function InteractionLogClient({
                 </SelectContent>
               </Select>
             </div>
+            <div className="flex min-w-0 flex-col gap-2">
+              <Label htmlFor="outcome">Supervisory outcome</Label>
+              <Select
+                value={filters.outcome || "all"}
+                onValueChange={(value) =>
+                  handleFilterChange("outcome", value === "all" ? "" : value)
+                }
+              >
+                <SelectTrigger id="outcome" className="w-full">
+                  <SelectValue placeholder="All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="CLEARED">Cleared</SelectItem>
+                  <SelectItem value="ROUTINE_SAMPLE">Routine sample</SelectItem>
+                  <SelectItem value="ESCALATED">Escalated</SelectItem>
+                  <SelectItem value="HELD">Held</SelectItem>
+                  <SelectItem value="PARKED">Parked</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <div>
             <Button variant="outline" onClick={clearFilters}>
@@ -250,6 +292,7 @@ export default function InteractionLogClient({
                       </button>
                     </TableHead>
                     <TableHead>Keywords</TableHead>
+                    <TableHead>Outcome</TableHead>
                     <TableHead>Recommendations</TableHead>
                     <TableHead>Finalized</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
@@ -275,6 +318,20 @@ export default function InteractionLogClient({
                         <div className="max-w-xs truncate text-sm text-muted-foreground">
                           {meeting.keywords || "—"}
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            meeting.supervisoryOutcome === "ESCALATED"
+                              ? "destructive"
+                              : meeting.supervisoryOutcome === "HELD"
+                                ? "secondary"
+                                : "outline"
+                          }
+                          title={meeting.outcomeReason ?? undefined}
+                        >
+                          {outcomeLabel(meeting.supervisoryOutcome)}
+                        </Badge>
                       </TableCell>
                       <TableCell>
                         <Badge variant={meeting.hasRecommendations ? "default" : "secondary"}>

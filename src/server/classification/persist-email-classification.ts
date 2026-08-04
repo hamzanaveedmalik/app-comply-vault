@@ -14,6 +14,7 @@ import {
 } from "./email-taxonomy";
 import { markClassificationComplete, markClassificationFailed } from "./status";
 import type { FlagSeverity, FlagType } from "../../../generated/prisma";
+import { syncThreadSupervisoryOutcome } from "~/server/supervision/service";
 
 export type ClassifyEvidenceResult =
   | { status: "skipped"; reason: string }
@@ -64,6 +65,7 @@ export async function classifyEmailEvidence(args: {
       workspaceId: args.workspaceId,
       evidenceItemId: item.id,
     });
+    await syncThreadSupervisoryOutcome(db, comm.threadId);
     return { status: "duplicate", classificationId: existingByHash.id };
   }
 
@@ -83,6 +85,7 @@ export async function classifyEmailEvidence(args: {
       workspaceId: args.workspaceId,
       evidenceItemId: item.id,
     });
+    await syncThreadSupervisoryOutcome(db, comm.threadId);
     return { status: "duplicate", classificationId: existingByPrompt.id };
   }
 
@@ -109,6 +112,7 @@ export async function classifyEmailEvidence(args: {
       workspaceId: args.workspaceId,
       evidenceItemId: item.id,
     });
+    await syncThreadSupervisoryOutcome(db, comm.threadId);
     return { status: "clean", classificationId: row.id };
   }
 
@@ -182,6 +186,7 @@ export async function classifyEmailEvidence(args: {
       workspaceId: args.workspaceId,
       evidenceItemId: item.id,
     });
+    await syncThreadSupervisoryOutcome(db, comm.threadId);
 
     if (result === "CLEAN") {
       return { status: "clean", classificationId: classification.row.id };
@@ -205,6 +210,17 @@ export async function recordClassificationFailure(args: {
   evidenceItemId: string;
 }): Promise<void> {
   await markClassificationFailed(args);
+  const item = await db.evidenceItem.findFirst({
+    where: {
+      id: args.evidenceItemId,
+      workspaceId: args.workspaceId,
+      deletedAt: null,
+    },
+    include: { communication: { select: { threadId: true } } },
+  });
+  if (item?.communication?.threadId) {
+    await syncThreadSupervisoryOutcome(db, item.communication.threadId);
+  }
 }
 
 /** Test helper — force a signal type through persistence without LLM. */

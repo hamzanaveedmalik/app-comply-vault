@@ -1,0 +1,12 @@
+export default function SupervisionLoading(): React.JSX.Element {
+  return (
+    <div className="min-h-0 bg-surface-page px-6 py-6" aria-busy="true" aria-label="Loading supervision">
+      <div className="mx-auto flex max-w-6xl animate-pulse flex-col gap-6">
+        <div className="h-8 w-72 rounded bg-[#e8ebe8]" />
+        <div className="h-4 w-full max-w-xl rounded bg-[#eef0ee]" />
+        <div className="h-40 rounded-[12px] border border-[#e6e8e6] bg-white" />
+        <div className="h-56 rounded-[12px] border border-[#e6e8e6] bg-white" />
+      </div>
+    </div>
+  );
+}

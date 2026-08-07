@@ -111,6 +111,7 @@ function AppSidebarPanel({
     badge?: number;
   }[] = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
+    { href: "/supervision", label: "Supervision", icon: Shield },
     { href: "/interaction-log", label: "Interaction Log", icon: FileText },
     {
       href: "/review",

@@ -37,6 +37,37 @@ export type SupervisionSummary = {
   selectivityStatement: string;
 };
 
+export type FirmSupervisionRow = {
+  firmId: string;
+  firmName: string;
+  processedInteractions: number;
+  priorityFindings: number;
+  openRemediation: number;
+  oldestUnresolvedFindingAt: string | null;
+  topControlConcern: string | null;
+  trend: "increasing" | "stable" | "decreasing" | "insufficient_data";
+  coverageStatus: "covered" | "partial" | "gap";
+  href: string;
+};
+
+export type SupervisionPatternDto = {
+  id: string;
+  title: string;
+  summary: string;
+  controlArea: string;
+  firmsAffected: number;
+  openFindings: number;
+  href: string;
+};
+
+export type PortfolioSupervisionSummary = {
+  synthetic: boolean;
+  counts: SupervisionCounts;
+  selectivityStatement: string;
+  firms: FirmSupervisionRow[];
+  patterns: SupervisionPatternDto[];
+};
+
 export type SupervisoryInteractionDto = {
   id: string;
   channel: "MEETING" | "EMAIL";

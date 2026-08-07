@@ -155,7 +155,7 @@ Support sampling based on:
 
 ## Epic 2 - AdvizorStack Command Centre
 
-### CV-SI-004 · Build the Supervision Command Centre - P0 - L
+### CV-SI-004 · Build the Supervision Command Centre - P0 - L ✅ done (2026-08-04)
 
 **Depends on:** `CV-SI-002`
 
@@ -976,7 +976,7 @@ As a firm or partner administrator, I want supervision data protected by tenant 
 - Permission failures create security audit events.
 - No record existence is revealed in unauthorised error responses.
 
-### CV-SI-029 · Add synthetic AdvizorStack production tenant - P0 - M
+### CV-SI-029 · Add synthetic AdvizorStack production tenant - P0 - M ✅ done (2026-08-04)
 
 **Depends on:** core data model stories
 

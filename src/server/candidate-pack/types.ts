@@ -254,12 +254,17 @@ export function assertNoExamReadyClaim(text: string): boolean {
   return !/\bexam[- ]?ready\b/i.test(text);
 }
 
+/**
+ * User-facing labels for coverage statuses.
+ * CV-VL-01: never use bare "answerable" / "partially answerable" — those read
+ * as exam-response completeness claims. Enum values stay stable for storage.
+ */
 export function coverageStatusLabel(status: CoverageAnswerability): string {
   switch (status) {
     case "answerable":
-      return "Answerable";
+      return "Matches under scope";
     case "partially_answerable":
-      return "Partially answerable";
+      return "Partial matches — gaps remain";
     case "missing":
       return "No matches";
     case "requires_manual_confirmation":

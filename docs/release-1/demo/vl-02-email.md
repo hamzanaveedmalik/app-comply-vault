@@ -51,6 +51,6 @@ Update the default order in [run-sheet.md](./run-sheet.md) the morning of the ca
 ## Status
 
 - [x] Draft approved (2026-08-03)
-- [x] Mailto draft opened to `nico@advizorstack.com` (2026-08-03) — **hit Send in Mail after signing your name**
-- [ ] Sent confirmed (date: ________)
+- [x] Mailto draft opened to `nico@advizorstack.com` (2026-08-03)
+- [x] Sent confirmed (2026-08-08 via Resend id `9a77a388-f72d-485c-b479-3cea75173f87`)
 - [ ] Reply / preference noted: ________

@@ -28,7 +28,9 @@ node scripts/demo-dm03-prepare.mjs --seed-only
 - Seeded workspace `cmkyri10q0007l104stmnl00y` (A Small Investment, LLC): held=3, parked=1
 - Embed backfill via `scripts/demo-embed-backfill-neon.mjs` (21 embedding rows)
 
-**Still human:** sign-in smoke of routes, N2 live Gmail backfill, two rehearsals.
+**Still human:** signed-in UI smoke, N2 live Gmail backfill, two timed rehearsals, day-before freeze.
+
+**Automate route existence:** `node scripts/demo-dm03-rehearsal-smoke.mjs` (writes `dm03-rehearsal-scorecard.md`).
 
 ## A. Deploy (once, then re-verify before each rehearsal)
 
@@ -37,7 +39,7 @@ node scripts/demo-dm03-prepare.mjs --seed-only
 - [x] Optional for semantic Ask: `ASK_HYBRID_RETRIEVAL=true` (and embedding provider keys already present)
 - [x] Migrations already applied on demo Neon (no pending)
 - [x] Redeploy production; confirm build green
-- [x] Routes exist on `app.complyvault.co` (HTTP 307 → auth as of 2026-08-03)
+- [x] Routes exist on `app.complyvault.co` (HTTP 307 → auth as of 2026-08-08 smoke)
 - [ ] Sign in to workspace **A Small Investment, LLC** (`cmkyri10q0007l104stmnl00y`); confirm Release 1 nav renders:
   - `/needs-attention`
   - `/fail-closed`

@@ -353,4 +353,23 @@ describe("CV-XR candidate pack scope", () => {
       true
     );
   });
+
+  it("CV-VL-01: coverage labels avoid answerable completeness claims", () => {
+    expect(coverageStatusLabel("answerable")).toBe("Matches under scope");
+    expect(coverageStatusLabel("partially_answerable")).toBe(
+      "Partial matches — gaps remain"
+    );
+    for (const status of [
+      "answerable",
+      "partially_answerable",
+      "missing",
+      "requires_manual_confirmation",
+      "data_source_unavailable",
+      "excluded_by_request",
+    ] as const) {
+      const label = coverageStatusLabel(status);
+      expect(label.toLowerCase()).not.toMatch(/\banswerable\b/);
+      expect(assertNoExamReadyClaim(label)).toBe(true);
+    }
+  });
 });

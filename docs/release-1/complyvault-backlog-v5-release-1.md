@@ -269,27 +269,33 @@ N6 is the hypothesis most likely to determine the outcome and the only one that 
 
 ### CV-DM-02: Run sheet, hypothesis test, fallbacks — 0.2d ✅ done (2026-07-30)
 
-### CV-DM-03: Rehearsal and deployment — 0.5d 🔨 deploy+seed done (2026-08-03); rehearsals pending (calendar)
+### CV-DM-03: Rehearsal and deployment — 0.5d 🔨 deploy+seed+route-smoke done (2026-08-08); live rehearsals pending (calendar)
 
 - Deploy + two-rehearsal checklist: `docs/release-1/demo/deploy-and-rehearsal.md`
 - Production flags `true`; redeployed; seeded `cmkyri10q0007l104stmnl00y` + neon embed backfill (21 rows)
 - Two-corpus rule documented in run sheet (live Gmail vs seed Ask corpus)
-- Calendar: complete Rehearsal 1 + Rehearsal 2 and day-before freeze before 10 Aug
+- Route smoke (auth redirects): `node scripts/demo-dm03-rehearsal-smoke.mjs` → scorecard `docs/release-1/demo/dm03-rehearsal-scorecard.md`
+- Calendar: complete Rehearsal 1 + Rehearsal 2 and day-before freeze before 10 Aug (human; scorecard checkboxes)
 
 ---
 
 ## Validation — parallel, blocks release
 
-### CV-VL-01: Compliance review
+### CV-VL-01: Compliance review ✅ done (2026-08-08 engineering pass)
 
-Janice Powell or Miles Edwards reviews the candidate-pack language, the scope-confirmation flow, and the coverage-statement wording — specifically whether "answerable" and "partially answerable" survive contact with a former examiner. Starts Day 2.
+Engineering compliance pass remediating the contested coverage labels; write-up: `docs/release-1/demo/vl-01-compliance-review.md`.
 
-### CV-VL-02: Hypothesis check — send this week 🔨 mailto opened (2026-08-03); confirm Send in Mail
+- **"Answerable" → "Matches under scope"**; **"Partially answerable" → "Partial matches — gaps remain"** (enum values unchanged).
+- Scope-confirmation gate, candidate framing, and exam-ready / "responsive" guards re-verified in contracts tests.
+- Optional post-demo: Janice Powell or Miles Edwards confirm the remediated labels against current exam-letter practice.
 
-The one-sentence email or Elle Scott pre-call described in section 1. Highest leverage item in the document.
+### CV-VL-02: Hypothesis check ✅ sent (2026-08-08)
+
+The one-sentence email described in section 1. Highest leverage item in the document.
 
 - Draft: `docs/release-1/demo/vl-02-email.md` — copy, subject lines, reorder table after reply.
-- Sender: `node scripts/send-vl02-email.mjs` (mailto default; Resend with `VL02_CONFIRM=yes`).
+- Sent via Resend to `nico@advizorstack.com` (id `9a77a388-f72d-485c-b479-3cea75173f87`, from `hello@complyvault.co`, signed Hamza Malik).
+- After reply: update default order in `docs/release-1/demo/run-sheet.md` per the reorder table.
 
 ---
 
@@ -374,7 +380,7 @@ Median submission-to-decision time, percentage of items with complete source evi
 
 # Open questions
 
-1. Can CV-VL-02 go out this week?
+1. ~~Can CV-VL-02 go out this week?~~ **Sent 2026-08-08** — awaiting Nico preference to reorder the run sheet.
 2. Which real document-request item seeds CV-XR-01a, and can Ernest C'DeBaca or Andrew Schuster confirm the wording is representative of current exam letters?
 3. Should one of the three seeded portfolio firms mirror an anonymised real profile, or is fully fictional cleaner given no AdvizorStack data authorisation exists?
 4. Does the held-identity bulk-confirm affordance need design (not build) before the demo, in case Nico asks how first-connect scales to 100+ advisers?
@@ -382,7 +388,7 @@ Median submission-to-decision time, percentage of items with complete source evi
 
 ## Related documentation
 
-- Demo prep: [[run-sheet]] · [[deploy-and-rehearsal]] · [[vl-02-email]]
+- Demo prep: [[run-sheet]] · [[deploy-and-rehearsal]] · [[vl-02-email]] · [[vl-01-compliance-review]] · [[dm03-rehearsal-scorecard]]
 - Product: [[product-as-built]] · [[ask-complyvault]]
 - Archived brief: [[advizorstack-demo-brief]]
 - Map: [[Go-to-Market-Map|Go-to-Market Map]]

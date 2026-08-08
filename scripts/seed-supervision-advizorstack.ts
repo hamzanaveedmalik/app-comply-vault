@@ -18,8 +18,11 @@ import {
   ADVIZORSTACK_PRIMARY_FINDING,
   ADVIZORSTACK_ROLLOVER_FLAGS,
   expectedMeetingIdsForFirm,
+  householdForMeeting,
+  meetingTypeForIndex,
   padMeetingIndex,
   type AdvizorStackFirmDef,
+  type AdvizorStackMeetingType,
 } from "../src/server/supervision/advizorstack-tenant";
 
 config();
@@ -139,6 +142,104 @@ async function clearFirmSeedArtifacts(
   await sql`DELETE FROM "Meeting" WHERE "workspaceId" = ${firm.workspaceId} AND id = ANY(${meetingIds})`;
 }
 
+function topicForType(meetingType: AdvizorStackMeetingType): string {
+  switch (meetingType) {
+    case "Annual Review":
+      return "annual planning and fee schedule";
+    case "Portfolio Review":
+      return "allocation drift and rebalance";
+    case "Quarterly Check-in":
+      return "quarterly performance and cash needs";
+    case "Onboarding":
+      return "IPS onboarding and risk questionnaire";
+  }
+}
+
+function buildSeedTranscript(args: {
+  clientName: string;
+  meetingType: AdvizorStackMeetingType;
+  adviserName: string;
+  outcome: "CLEARED" | "ROUTINE_SAMPLE" | "ESCALATED";
+  reason: string;
+}): { transcript: string; extraction: string; searchableText: string } {
+  const topic = topicForType(args.meetingType);
+  const advisorLine =
+    args.outcome === "ESCALATED"
+      ? `I want to walk through ${topic} with ${args.clientName}. ${args.reason}.`
+      : `Today we covered ${topic} with ${args.clientName} and confirmed the written disclosures.`;
+  const clientLine =
+    args.outcome === "ESCALATED"
+      ? "I still have questions before we proceed."
+      : "That sounds good. Please send the follow-up in writing.";
+  const segments = [
+    {
+      startTime: 12,
+      endTime: 48,
+      speaker: args.adviserName,
+      text: advisorLine,
+    },
+    {
+      startTime: 49,
+      endTime: 78,
+      speaker: args.clientName,
+      text: clientLine,
+    },
+  ];
+  const disclosure = {
+    text: "Advisory fee schedule reviewed",
+    startTime: 12,
+    endTime: 48,
+    snippet: advisorLine,
+    confidence: 0.9,
+  };
+  const followUp = {
+    text: "Email fee brochure",
+    startTime: 49,
+    endTime: 78,
+    snippet: clientLine,
+    confidence: 0.88,
+  };
+  const extraction = {
+    topics: [topic],
+    advisorName: args.adviserName,
+    recommendations: [],
+    disclosures: [disclosure],
+    decisions: [],
+    followUps: [followUp],
+    evidenceMap: [
+      {
+        field: "disclosure",
+        claim: disclosure.text,
+        startTime: disclosure.startTime,
+        endTime: disclosure.endTime,
+        snippet: disclosure.snippet,
+        confidence: disclosure.confidence,
+        edited: false,
+      },
+      {
+        field: "followUp",
+        claim: followUp.text,
+        startTime: followUp.startTime,
+        endTime: followUp.endTime,
+        snippet: followUp.snippet,
+        confidence: followUp.confidence,
+        edited: false,
+      },
+    ],
+    extractedAt: new Date().toISOString(),
+    provider: "seed",
+    processingTime: 0,
+  };
+  return {
+    transcript: JSON.stringify({ segments, duration: 78 }),
+    extraction: JSON.stringify(extraction),
+    searchableText: `${args.clientName} ${args.meetingType} ${topic} ${advisorLine} ${clientLine}`
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase(),
+  };
+}
+
 async function seedFirmMeetings(
   sql: Sql,
   firm: AdvizorStackFirmDef,
@@ -148,69 +249,90 @@ async function seedFirmMeetings(
 ): Promise<void> {
   const specs: Array<{
     id: string;
+    index: number;
     outcome: "CLEARED" | "ROUTINE_SAMPLE" | "ESCALATED";
     reason: string;
     control: string | null;
     adviserId: string | null;
     dayOffset: number;
+    clientName: string;
+    meetingType: AdvizorStackMeetingType;
   }> = [];
 
   for (let i = 1; i <= firm.cleared; i += 1) {
     specs.push({
       id: `${firm.meetingPrefix}${padMeetingIndex(i)}`,
+      index: i,
       outcome: "CLEARED",
       reason: "No actionable supervisory concern identified",
       control: null,
       dayOffset: 28 - (i % 27),
       adviserId: i % 2 === 0 ? adviserA : adviserB,
+      clientName: householdForMeeting(firm, i - 1),
+      meetingType: meetingTypeForIndex(i - 1),
     });
   }
   for (let i = 1; i <= firm.sampled; i += 1) {
     const index = firm.cleared + i;
     specs.push({
       id: `${firm.meetingPrefix}${padMeetingIndex(index)}`,
+      index,
       outcome: "ROUTINE_SAMPLE",
       reason: i === 1 ? "Manual selection" : "Random 3% sample",
       control: null,
       dayOffset: 18 - i,
       adviserId: adviserA,
+      clientName: householdForMeeting(firm, index - 1),
+      meetingType: meetingTypeForIndex(index - 1),
     });
   }
   specs.push({
     id: firm.priority.meetingId,
+    index: firm.cleared + firm.sampled,
     outcome: "ESCALATED",
     reason: firm.priority.reason,
     control: firm.priority.control,
     dayOffset: 12,
     adviserId: firm.priority.control === "MISSING_DISCLOSURE" ? adviserA : adviserB,
+    clientName: firm.clientName,
+    meetingType: "Annual Review",
   });
 
   for (const spec of specs) {
     const meetingDate = daysAgo(now, Math.max(1, spec.dayOffset));
-    const transcript = JSON.stringify({ segments: [], duration: 0, synthetic: true });
-    const extraction = JSON.stringify({
-      topics: ["fees"],
-      recommendations: [],
-      disclosures: [],
-      decisions: [],
-      followUps: [],
-      evidenceMap: {},
-      synthetic: true,
+    const adviserName =
+      spec.adviserId === adviserA
+        ? ADVIZORSTACK_ADVISERS[0].name
+        : ADVIZORSTACK_ADVISERS[1].name;
+    const { transcript, extraction, searchableText } = buildSeedTranscript({
+      clientName: spec.clientName,
+      meetingType: spec.meetingType,
+      adviserName,
+      outcome: spec.outcome,
+      reason: spec.reason,
     });
+    const status = spec.outcome === "CLEARED" ? "FINALIZED" : "DRAFT_READY";
+    const finalizedAt = spec.outcome === "CLEARED" ? meetingDate : null;
+    const timeToFinalize = spec.outcome === "CLEARED" ? 86_400 : null;
     await sql`
       INSERT INTO "Meeting" (
         id, "workspaceId", "clientName", "meetingType", "meetingDate", status,
-        "draftReadyAt", "processedAt", "supervisoryOutcome", "outcomeReason",
+        "draftReadyAt", "finalizedAt", "timeToFinalize", "finalizeReason",
+        "searchableText", "processedAt", "supervisoryOutcome", "outcomeReason",
         "outcomeConfidence", "primaryControlId", "advisorCertifiedByUserId", "advisorCertifiedAt",
         transcript, extraction, "createdAt", "updatedAt"
       ) VALUES (
         ${spec.id},
         ${firm.workspaceId},
-        ${firm.clientName},
-        ${"Annual Review"},
+        ${spec.clientName},
+        ${spec.meetingType},
         ${meetingDate},
-        ${"DRAFT_READY"},
+        ${status}::"MeetingStatus",
         ${meetingDate},
+        ${finalizedAt},
+        ${timeToFinalize},
+        ${spec.outcome === "CLEARED" ? "COMPLETE_REVIEW" : null}::"FinalizeReason",
+        ${searchableText},
         ${meetingDate},
         ${spec.outcome}::"SupervisoryOutcome",
         ${spec.reason},

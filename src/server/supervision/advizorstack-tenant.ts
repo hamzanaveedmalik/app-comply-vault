@@ -12,6 +12,15 @@ export const ADVIZORSTACK_PRIMARY_FINDING = {
   href: "/findings/si-as-flag-rollover-001",
 } as const;
 
+export const ADVIZORSTACK_MEETING_TYPES = [
+  "Annual Review",
+  "Portfolio Review",
+  "Quarterly Check-in",
+  "Onboarding",
+] as const;
+
+export type AdvizorStackMeetingType = (typeof ADVIZORSTACK_MEETING_TYPES)[number];
+
 export type AdvizorStackFirmDef = {
   workspaceId: string;
   firmProfileId: string;
@@ -19,7 +28,9 @@ export type AdvizorStackFirmDef = {
   crdNumber: string;
   ccoName: string;
   meetingPrefix: string;
+  /** Primary household used on the priority escalation. */
   clientName: string;
+  households: readonly string[];
   cleared: number;
   sampled: number;
   /** Exactly one priority escalation per firm in the seeded demo. */
@@ -40,6 +51,14 @@ export const ADVIZORSTACK_FIRMS: readonly AdvizorStackFirmDef[] = [
     ccoName: "Elena Vasquez",
     meetingPrefix: "si-as-sec-mtg-",
     clientName: "Helen Navarro",
+    households: [
+      "Helen Navarro",
+      "Robert Chen",
+      "Margaret Ellison",
+      "Priya Natarajan",
+      "James Whitfield",
+      "Elena Vargas",
+    ],
     cleared: 50,
     sampled: 2,
     priority: {
@@ -57,6 +76,14 @@ export const ADVIZORSTACK_FIRMS: readonly AdvizorStackFirmDef[] = [
     ccoName: "Marcus Hale",
     meetingPrefix: "si-as-drw-mtg-",
     clientName: "David Okonkwo",
+    households: [
+      "David Okonkwo",
+      "Sofia Alvarez",
+      "Michael Brennan",
+      "Aisha Rahman",
+      "Thomas Keller",
+      "Lila Patel",
+    ],
     cleared: 45,
     sampled: 2,
     priority: {
@@ -74,6 +101,14 @@ export const ADVIZORSTACK_FIRMS: readonly AdvizorStackFirmDef[] = [
     ccoName: "Priya Shah",
     meetingPrefix: "si-as-ns-mtg-",
     clientName: "Claire Brennan",
+    households: [
+      "Claire Brennan",
+      "Noah Ishikawa",
+      "Grace Holloway",
+      "Omar Haddad",
+      "Rachel Kim",
+      "Benjamin Ortiz",
+    ],
     cleared: 44,
     sampled: 1,
     priority: {
@@ -211,4 +246,17 @@ export function expectedPortfolioMeetingTotal(): number {
     (sum, firm) => sum + firm.cleared + firm.sampled + 1,
     0,
   );
+}
+
+export function householdForMeeting(
+  firm: AdvizorStackFirmDef,
+  index: number,
+): string {
+  const households = firm.households;
+  if (households.length === 0) return firm.clientName;
+  return households[index % households.length] ?? firm.clientName;
+}
+
+export function meetingTypeForIndex(index: number): AdvizorStackMeetingType {
+  return ADVIZORSTACK_MEETING_TYPES[index % ADVIZORSTACK_MEETING_TYPES.length]!;
 }

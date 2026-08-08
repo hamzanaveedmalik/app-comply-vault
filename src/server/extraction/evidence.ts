@@ -87,21 +87,30 @@ export function createEvidenceMap(
 }
 
 /**
+ * Coerce stored extraction.evidenceMap into an array.
+ * Seeded / legacy rows may persist `{}` instead of `[]`.
+ */
+export function asEvidenceMapItems(value: unknown): EvidenceMapItem[] {
+  return Array.isArray(value) ? value : [];
+}
+
+/**
  * Validate evidence coverage
  * Returns true if ≥ 90% of key claims have valid timestamp evidence (FR31)
  */
-export function validateEvidenceCoverage(evidenceMap: EvidenceMapItem[]): {
+export function validateEvidenceCoverage(evidenceMap: unknown): {
   valid: boolean;
   coverage: number;
   totalClaims: number;
   validClaims: number;
 } {
-  const totalClaims = evidenceMap.length;
+  const items = asEvidenceMapItems(evidenceMap);
+  const totalClaims = items.length;
   if (totalClaims === 0) {
     return { valid: true, coverage: 1.0, totalClaims: 0, validClaims: 0 };
   }
 
-  const validClaims = evidenceMap.filter((item) => {
+  const validClaims = items.filter((item) => {
     // Valid if startTime and endTime are positive numbers and snippet is non-empty
     return (
       typeof item.startTime === "number" &&

@@ -2,10 +2,13 @@ import { describe, expect, it } from "vitest";
 import {
   ADVIZORSTACK_EXPECTED_COUNTS,
   ADVIZORSTACK_FIRMS,
+  ADVIZORSTACK_MEETING_TYPES,
   ADVIZORSTACK_ROLLOVER_FLAGS,
   expectedMeetingIdsForFirm,
   expectedPortfolioMeetingTotal,
+  householdForMeeting,
   isAdvizorStackFirmWorkspaceId,
+  meetingTypeForIndex,
 } from "./advizorstack-tenant";
 import { portfolioTestHelpers } from "./portfolio";
 
@@ -30,6 +33,26 @@ describe("CV-SI-029 AdvizorStack tenant registry", () => {
     expect(ADVIZORSTACK_FIRMS).toHaveLength(
       ADVIZORSTACK_EXPECTED_COUNTS.priorityFindings,
     );
+  });
+
+  it("rotates households and meeting types across a firm", () => {
+    const desertRidge = ADVIZORSTACK_FIRMS[1]!;
+    const households = new Set(
+      Array.from({ length: desertRidge.cleared }, (_, i) =>
+        householdForMeeting(desertRidge, i),
+      ),
+    );
+    const types = new Set(
+      Array.from({ length: desertRidge.cleared }, (_, i) =>
+        meetingTypeForIndex(i),
+      ),
+    );
+    expect(households.size).toBeGreaterThan(1);
+    expect(types.size).toBe(ADVIZORSTACK_MEETING_TYPES.length);
+    expect(householdForMeeting(desertRidge, 0)).toBe("David Okonkwo");
+    expect(householdForMeeting(desertRidge, 1)).not.toBe("David Okonkwo");
+    expect(meetingTypeForIndex(0)).toBe("Annual Review");
+    expect(meetingTypeForIndex(1)).toBe("Portfolio Review");
   });
 
   it("uses stable meeting ids per firm", () => {

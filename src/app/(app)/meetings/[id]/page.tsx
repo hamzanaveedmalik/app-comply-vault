@@ -14,7 +14,10 @@ import { MeetingStatusPoller } from "./meeting-status-poller";
 import RetryButton from "./retry-button";
 import { IntegrationSyncPanel } from "./integration-sync-panel";
 import { ZohoCrmContactField } from "./zoho-crm-contact-field";
-import { validateEvidenceCoverage } from "~/server/extraction/evidence";
+import {
+  asEvidenceMapItems,
+  validateEvidenceCoverage,
+} from "~/server/extraction/evidence";
 import TranscriptEditor from "./transcript-editor";
 import { isAdvisorActor, isComplianceActor, flagIsCmTriaged } from "~/lib/meeting-workflow";
 import { MeetingHeaderCard } from "~/components/meetings/meeting-header-card";
@@ -170,12 +173,10 @@ export default async function MeetingDetailPage({
   const openFlags = flags.filter((flag) => isFlagOpen(flag.status));
   const openCriticalFlags = openFlags.filter((flag) => flag.severity === "CRITICAL");
   const openWarningFlags = openFlags.filter((flag) => flag.severity === "WARN");
-  const evidenceStats = extraction?.evidenceMap
-    ? validateEvidenceCoverage(extraction.evidenceMap)
-    : null;
-  const editedClaimsCount = extraction?.evidenceMap
-    ? extraction.evidenceMap.filter((item) => item.edited).length
-    : 0;
+  const evidenceMap = asEvidenceMapItems(extraction?.evidenceMap);
+  const evidenceStats =
+    extraction == null ? null : validateEvidenceCoverage(evidenceMap);
+  const editedClaimsCount = evidenceMap.filter((item) => item.edited).length;
 
   // Parse transcript if available
   const transcript = meeting.transcript as

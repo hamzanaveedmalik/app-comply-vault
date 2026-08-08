@@ -159,7 +159,7 @@ async function seedFirmMeetings(
       outcome: "CLEARED",
       reason: "No actionable supervisory concern identified",
       control: null,
-      dayOffset: 90 - i,
+      dayOffset: 28 - (i % 27),
       adviserId: i % 2 === 0 ? adviserA : adviserB,
     });
   }
@@ -170,7 +170,7 @@ async function seedFirmMeetings(
       outcome: "ROUTINE_SAMPLE",
       reason: i === 1 ? "Manual selection" : "Random 3% sample",
       control: null,
-      dayOffset: 40 - i,
+      dayOffset: 18 - i,
       adviserId: adviserA,
     });
   }
@@ -233,7 +233,9 @@ async function seedFirmMeetings(
     await sql`
       INSERT INTO "Flag" (
         id, "workspaceId", "meetingId", "sourceType", "sourceId", type, severity, status,
-        "createdByType", "cmDisposition", "escalationReason", evidence, "createdAt", "updatedAt"
+        "createdByType", "cmDisposition", "escalationReason", evidence,
+        "escalatedAt", materiality, "policyMappingCode", "reviewDueAt",
+        "createdAt", "updatedAt"
       ) VALUES (
         ${firm.priority.flagId},
         ${firm.workspaceId},
@@ -247,6 +249,10 @@ async function seedFirmMeetings(
         ${"ESCALATED"},
         ${firm.priority.reason},
         ${evidence}::jsonb,
+        ${now},
+        ${"HIGH"}::"FindingMateriality",
+        ${firm.priority.control === "PERFORMANCE_CLAIM" ? "PERF-LANG-v1" : "FEE-DISC-v1"},
+        ${daysAgo(now, -7)},
         ${now},
         ${now}
       )
@@ -267,7 +273,9 @@ async function seedRolloverFindings(sql: Sql, now: Date): Promise<void> {
       INSERT INTO "Flag" (
         id, "workspaceId", "meetingId", "sourceType", "sourceId", type, severity, status,
         "createdByType", "cmDisposition", "escalationReason", evidence,
-        "resolvedAt", "resolutionType", "resolutionNote", "createdAt", "updatedAt"
+        "resolvedAt", "resolutionType", "resolutionNote",
+        "escalatedAt", materiality, "policyMappingCode", "reviewDueAt",
+        "createdAt", "updatedAt"
       ) VALUES (
         ${row.id},
         ${row.workspaceId},
@@ -284,6 +292,10 @@ async function seedRolloverFindings(sql: Sql, now: Date): Promise<void> {
         ${resolvedAt},
         ${row.status === "CLOSED" ? "DISMISSED_WITH_REASON" : null}::"FlagResolutionType",
         ${row.status === "CLOSED" ? "Synthetic closed rollover documentation finding" : null},
+        ${now},
+        ${"HIGH"}::"FindingMateriality",
+        ${"ROLLOVER-DOC-v1"},
+        ${row.status === "CLOSED" ? null : daysAgo(now, -14)},
         ${now},
         ${now}
       )

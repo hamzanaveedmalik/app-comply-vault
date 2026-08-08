@@ -1,13 +1,10 @@
 import { z } from "zod";
 import { requireAppAccess } from "~/server/auth/guards";
 import { db } from "~/server/db";
+import { parseSupervisionFilters } from "~/server/supervision/filters";
 import { getPortfolioSupervisionSummary } from "~/server/supervision/portfolio";
 
-const querySchema = z.object({
-  firmId: z.string().min(1).optional(),
-  dateFrom: z.string().datetime().optional(),
-  dateTo: z.string().datetime().optional(),
-});
+const querySchema = z.record(z.string(), z.string().optional());
 
 export async function GET(request: Request): Promise<Response> {
   const access = await requireAppAccess();
@@ -21,11 +18,8 @@ export async function GET(request: Request): Promise<Response> {
     return Response.json({ success: false, error: "Invalid query" }, { status: 400 });
   }
 
-  const data = await getPortfolioSupervisionSummary(db, access.session.user.id, {
-    firmId: parsed.data.firmId,
-    dateFrom: parsed.data.dateFrom ? new Date(parsed.data.dateFrom) : undefined,
-    dateTo: parsed.data.dateTo ? new Date(parsed.data.dateTo) : undefined,
-  });
+  const filters = parseSupervisionFilters(parsed.data);
+  const data = await getPortfolioSupervisionSummary(db, access.session.user.id, filters);
 
   return Response.json({ success: true, data });
 }

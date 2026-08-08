@@ -1,19 +1,10 @@
 import { z } from "zod";
 import { requireAppAccess } from "~/server/auth/guards";
 import { db } from "~/server/db";
+import { parseSupervisionFilters, toSummaryQuery } from "~/server/supervision/filters";
 import { getSupervisionSummary } from "~/server/supervision/service";
 
-const querySchema = z.object({
-  dateFrom: z.string().datetime().optional(),
-  dateTo: z.string().datetime().optional(),
-  firmId: z.string().min(1).optional(),
-  adviserId: z.string().min(1).optional(),
-  channel: z.enum(["MEETING", "EMAIL"]).optional(),
-  control: z.string().min(1).optional(),
-  outcome: z
-    .enum(["CLEARED", "ROUTINE_SAMPLE", "ESCALATED", "HELD", "PARKED"])
-    .optional(),
-});
+const querySchema = z.record(z.string(), z.string().optional());
 
 export async function GET(request: Request): Promise<Response> {
   const access = await requireAppAccess();
@@ -27,14 +18,17 @@ export async function GET(request: Request): Promise<Response> {
     return Response.json({ success: false, error: "Invalid query" }, { status: 400 });
   }
 
+  const query = toSummaryQuery(parseSupervisionFilters(parsed.data));
   const data = await getSupervisionSummary(db, access.workspaceId, {
-    dateFrom: parsed.data.dateFrom ? new Date(parsed.data.dateFrom) : undefined,
-    dateTo: parsed.data.dateTo ? new Date(parsed.data.dateTo) : undefined,
-    firmId: parsed.data.firmId,
-    adviserId: parsed.data.adviserId,
-    channel: parsed.data.channel,
-    control: parsed.data.control,
-    outcome: parsed.data.outcome,
+    dateFrom: query.dateFrom,
+    dateTo: query.dateTo,
+    firmId: query.firmId,
+    adviserId: query.adviserId,
+    channel: query.channel,
+    control: query.control,
+    outcome: query.outcome,
+    severity: query.severity,
+    findingStatus: query.findingStatus,
   });
 
   return Response.json({ success: true, data });

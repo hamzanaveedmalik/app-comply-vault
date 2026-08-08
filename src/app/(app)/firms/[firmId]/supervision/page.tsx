@@ -5,14 +5,21 @@ import Link from "next/link";
 import { getSupervisionSummary } from "~/server/supervision/service";
 import { listAuthorisedFirmWorkspaceIds } from "~/server/supervision/portfolio";
 import { ADVIZORSTACK_FIRMS } from "~/server/supervision/advizorstack-tenant";
+import {
+  parseSupervisionFilters,
+  supervisionHref,
+  toSummaryQuery,
+} from "~/server/supervision/filters";
 import { redirectPathForMissingWorkspace } from "~/server/workspace/no-workspace-redirect";
 
 export const dynamic = "force-dynamic";
 
 export default async function FirmSupervisionPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ firmId: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }): Promise<React.ReactElement> {
   const session = await auth();
   if (!session?.user?.id) {
@@ -23,6 +30,7 @@ export default async function FirmSupervisionPage({
   }
 
   const { firmId } = await params;
+  const filters = parseSupervisionFilters(await searchParams);
   const authorised = await listAuthorisedFirmWorkspaceIds(db, session.user.id, firmId);
   if (authorised.length === 0) {
     notFound();
@@ -33,12 +41,25 @@ export default async function FirmSupervisionPage({
     where: { id: firmId },
     select: { name: true },
   });
-  const summary = await getSupervisionSummary(db, firmId, { firmId });
+  const query = toSummaryQuery({ ...filters, firmId });
+  const summary = await getSupervisionSummary(db, firmId, {
+    dateFrom: query.dateFrom,
+    dateTo: query.dateTo,
+    firmId,
+    adviserId: query.adviserId,
+    channel: query.channel,
+    control: query.control,
+    outcome: query.outcome,
+    severity: query.severity,
+    findingStatus: query.findingStatus,
+  });
+  const backHref = supervisionHref("/supervision", { ...filters, firmId: undefined });
+  const inboxHref = supervisionHref("/priority-inbox", { ...filters, firmId });
 
   return (
     <div className="min-h-0 bg-surface-page px-6 py-6">
       <div className="mx-auto flex max-w-3xl flex-col gap-4">
-        <Link href="/supervision" className="text-[12.5px] font-medium text-[#177a4c] hover:underline">
+        <Link href={backHref} className="text-[12.5px] font-medium text-[#177a4c] hover:underline">
           ← Command Centre
         </Link>
         <h1 className="text-[22px] font-semibold text-[#141f19]">
@@ -80,7 +101,7 @@ export default async function FirmSupervisionPage({
           </div>
         </dl>
         <Link
-          href="/priority-inbox"
+          href={inboxHref}
           className="text-[13px] font-medium text-[#177a4c] hover:underline"
         >
           Open CCO Priority Inbox

@@ -1,6 +1,8 @@
 import { createHash } from "crypto";
 import type {
+  FlagSeverity,
   FlagStatus,
+  FlagType,
   PrismaClient,
   SupervisoryHoldReason,
   SupervisoryOutcome,
@@ -93,8 +95,10 @@ export type SupervisionSummaryFilters = {
   firmId?: string;
   adviserId?: string;
   channel?: "MEETING" | "EMAIL";
-  control?: string;
+  control?: FlagType;
   outcome?: SupervisoryOutcome;
+  severity?: FlagSeverity;
+  findingStatus?: FlagStatus;
 };
 
 type OutcomeRow = {
@@ -887,6 +891,14 @@ export async function getSupervisionSummary(
         }
       : undefined;
 
+  const flagMatch =
+    filters.severity || filters.findingStatus
+      ? {
+          ...(filters.severity ? { severity: filters.severity } : {}),
+          ...(filters.findingStatus ? { status: filters.findingStatus } : {}),
+        }
+      : undefined;
+
   const meetingWhere = {
     workspaceId,
     processedAt: { not: null },
@@ -894,6 +906,7 @@ export async function getSupervisionSummary(
     ...(filters.adviserId ? { advisorCertifiedByUserId: filters.adviserId } : {}),
     ...(filters.control ? { primaryControlId: filters.control } : {}),
     ...(filters.outcome ? { supervisoryOutcome: filters.outcome } : {}),
+    ...(flagMatch ? { flags: { some: flagMatch } } : {}),
   };
 
   const threadWhere = {
@@ -903,6 +916,16 @@ export async function getSupervisionSummary(
     ...(dateFilter ? { updatedAt: dateFilter } : {}),
     ...(filters.control ? { primaryControlId: filters.control } : {}),
     ...(filters.outcome ? { supervisoryOutcome: filters.outcome } : {}),
+    ...(flagMatch
+      ? {
+          messages: {
+            some: {
+              deletedAt: null,
+              flags: { some: flagMatch },
+            },
+          },
+        }
+      : {}),
   };
 
   const [meetings, threads, openRemediation] = await Promise.all([
@@ -926,7 +949,7 @@ export async function getSupervisionSummary(
             },
           },
         }),
-    filters.channel === "MEETING"
+    filters.channel === "MEETING" || filters.adviserId
       ? Promise.resolve<
           Array<{
             id: string;
@@ -958,6 +981,20 @@ export async function getSupervisionSummary(
           workspaceId,
           flag: {
             workspaceId,
+            ...(filters.control ? { type: filters.control } : {}),
+            ...(filters.severity ? { severity: filters.severity } : {}),
+            ...(filters.findingStatus ? { status: filters.findingStatus } : {}),
+            ...(filters.channel ? { sourceType: filters.channel } : {}),
+            ...(dateFilter || filters.adviserId
+              ? {
+                  meeting: {
+                    ...(dateFilter ? { meetingDate: dateFilter } : {}),
+                    ...(filters.adviserId
+                      ? { advisorCertifiedByUserId: filters.adviserId }
+                      : {}),
+                  },
+                }
+              : {}),
           },
         },
       },
@@ -1015,6 +1052,16 @@ export async function listSupervisoryInteractions(
             ...(dateFilter ? { meetingDate: dateFilter } : {}),
             ...(filters.adviserId ? { advisorCertifiedByUserId: filters.adviserId } : {}),
             ...(filters.control ? { primaryControlId: filters.control } : {}),
+            ...(filters.severity || filters.findingStatus
+              ? {
+                  flags: {
+                    some: {
+                      ...(filters.severity ? { severity: filters.severity } : {}),
+                      ...(filters.findingStatus ? { status: filters.findingStatus } : {}),
+                    },
+                  },
+                }
+              : {}),
           },
           select: {
             id: true,
@@ -1031,7 +1078,7 @@ export async function listSupervisoryInteractions(
           orderBy: { meetingDate: "desc" },
           take: 200,
         }),
-    filters.channel === "MEETING"
+    filters.channel === "MEETING" || filters.adviserId
       ? Promise.resolve([])
       : db.communicationThread.findMany({
           where: {
@@ -1041,6 +1088,23 @@ export async function listSupervisoryInteractions(
             supervisoryOutcome: filters.outcome ?? { not: null },
             ...(dateFilter ? { updatedAt: dateFilter } : {}),
             ...(filters.control ? { primaryControlId: filters.control } : {}),
+            ...(filters.severity || filters.findingStatus
+              ? {
+                  messages: {
+                    some: {
+                      deletedAt: null,
+                      flags: {
+                        some: {
+                          ...(filters.severity ? { severity: filters.severity } : {}),
+                          ...(filters.findingStatus
+                            ? { status: filters.findingStatus }
+                            : {}),
+                        },
+                      },
+                    },
+                  },
+                }
+              : {}),
           },
           select: {
             id: true,

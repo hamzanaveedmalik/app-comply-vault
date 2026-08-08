@@ -112,6 +112,7 @@ function AppSidebarPanel({
   }[] = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
     { href: "/supervision", label: "Supervision", icon: Shield },
+    { href: "/priority-inbox", label: "Priority Inbox", icon: CheckSquare },
     { href: "/interaction-log", label: "Interaction Log", icon: FileText },
     {
       href: "/review",

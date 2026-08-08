@@ -206,7 +206,7 @@ Emerging patterns:
 - Metrics update when the date or firm filter changes.
 - The page is responsive and keyboard accessible.
 
-### CV-SI-005 · Add global supervision filters - P0 - S
+### CV-SI-005 · Add global supervision filters - P0 - S ✅ done (2026-08-08)
 
 **Depends on:** `CV-SI-004`
 
@@ -235,7 +235,7 @@ As a compliance executive, I want to filter the Command Centre so that I can inv
 
 ## Epic 3 - CCO Priority Inbox
 
-### CV-SI-006 · Build the CCO Priority Inbox - P0 - L
+### CV-SI-006 · Build the CCO Priority Inbox - P0 - L ✅ done (2026-08-08)
 
 **Depends on:** `CV-SI-001`, `CV-SI-002`
 

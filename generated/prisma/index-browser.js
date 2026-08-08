@@ -312,6 +312,11 @@ exports.Prisma.FlagScalarFieldEnum = {
   cmTriageNote: 'cmTriageNote',
   cmTriagedAt: 'cmTriagedAt',
   cmTriagedByUserId: 'cmTriagedByUserId',
+  escalatedAt: 'escalatedAt',
+  assignedToUserId: 'assignedToUserId',
+  reviewDueAt: 'reviewDueAt',
+  materiality: 'materiality',
+  policyMappingCode: 'policyMappingCode',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -939,6 +944,12 @@ exports.CmFlagDisposition = exports.$Enums.CmFlagDisposition = {
   ESCALATED: 'ESCALATED'
 };
 
+exports.FindingMateriality = exports.$Enums.FindingMateriality = {
+  HIGH: 'HIGH',
+  MEDIUM: 'MEDIUM',
+  LOW: 'LOW'
+};
+
 exports.EvidenceClassificationResult = exports.$Enums.EvidenceClassificationResult = {
   CLEAN: 'CLEAN',
   FLAGGED: 'FLAGGED'
@@ -1011,7 +1022,8 @@ exports.AuditAction = exports.$Enums.AuditAction = {
   CANDIDATE_PACK_GENERATED: 'CANDIDATE_PACK_GENERATED',
   CANDIDATE_PACK_APPROVED: 'CANDIDATE_PACK_APPROVED',
   SUPERVISORY_OUTCOME_ASSIGNED: 'SUPERVISORY_OUTCOME_ASSIGNED',
-  SUPERVISORY_SAMPLE_SELECTED: 'SUPERVISORY_SAMPLE_SELECTED'
+  SUPERVISORY_SAMPLE_SELECTED: 'SUPERVISORY_SAMPLE_SELECTED',
+  FINDING_VIEWED: 'FINDING_VIEWED'
 };
 
 exports.IntegrationProvider = exports.$Enums.IntegrationProvider = {

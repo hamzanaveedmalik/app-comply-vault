@@ -397,7 +397,8 @@ export const AuditAction: {
   CANDIDATE_PACK_GENERATED: 'CANDIDATE_PACK_GENERATED',
   CANDIDATE_PACK_APPROVED: 'CANDIDATE_PACK_APPROVED',
   SUPERVISORY_OUTCOME_ASSIGNED: 'SUPERVISORY_OUTCOME_ASSIGNED',
-  SUPERVISORY_SAMPLE_SELECTED: 'SUPERVISORY_SAMPLE_SELECTED'
+  SUPERVISORY_SAMPLE_SELECTED: 'SUPERVISORY_SAMPLE_SELECTED',
+  FINDING_VIEWED: 'FINDING_VIEWED'
 };
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction]
@@ -462,6 +463,15 @@ export const FlagSeverity: {
 };
 
 export type FlagSeverity = (typeof FlagSeverity)[keyof typeof FlagSeverity]
+
+
+export const FindingMateriality: {
+  HIGH: 'HIGH',
+  MEDIUM: 'MEDIUM',
+  LOW: 'LOW'
+};
+
+export type FindingMateriality = (typeof FindingMateriality)[keyof typeof FindingMateriality]
 
 
 export const FlagStatus: {
@@ -805,6 +815,10 @@ export const EvidenceClassificationStatus: typeof $Enums.EvidenceClassificationS
 export type FlagSeverity = $Enums.FlagSeverity
 
 export const FlagSeverity: typeof $Enums.FlagSeverity
+
+export type FindingMateriality = $Enums.FindingMateriality
+
+export const FindingMateriality: typeof $Enums.FindingMateriality
 
 export type FlagStatus = $Enums.FlagStatus
 
@@ -5750,6 +5764,7 @@ export namespace Prisma {
     meetingsCmReviewed: number
     meetingsCcoSignedOff: number
     flagsCmTriaged: number
+    flagsAssigned: number
     invitationsSent: number
     emailAliases: number
   }
@@ -5763,6 +5778,7 @@ export namespace Prisma {
     meetingsCmReviewed?: boolean | UserCountOutputTypeCountMeetingsCmReviewedArgs
     meetingsCcoSignedOff?: boolean | UserCountOutputTypeCountMeetingsCcoSignedOffArgs
     flagsCmTriaged?: boolean | UserCountOutputTypeCountFlagsCmTriagedArgs
+    flagsAssigned?: boolean | UserCountOutputTypeCountFlagsAssignedArgs
     invitationsSent?: boolean | UserCountOutputTypeCountInvitationsSentArgs
     emailAliases?: boolean | UserCountOutputTypeCountEmailAliasesArgs
   }
@@ -5831,6 +5847,13 @@ export namespace Prisma {
    * UserCountOutputType without action
    */
   export type UserCountOutputTypeCountFlagsCmTriagedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FlagWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountFlagsAssignedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: FlagWhereInput
   }
 
@@ -17241,6 +17264,11 @@ export namespace Prisma {
     cmTriageNote: string | null
     cmTriagedAt: Date | null
     cmTriagedByUserId: string | null
+    escalatedAt: Date | null
+    assignedToUserId: string | null
+    reviewDueAt: Date | null
+    materiality: $Enums.FindingMateriality | null
+    policyMappingCode: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -17267,6 +17295,11 @@ export namespace Prisma {
     cmTriageNote: string | null
     cmTriagedAt: Date | null
     cmTriagedByUserId: string | null
+    escalatedAt: Date | null
+    assignedToUserId: string | null
+    reviewDueAt: Date | null
+    materiality: $Enums.FindingMateriality | null
+    policyMappingCode: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -17294,6 +17327,11 @@ export namespace Prisma {
     cmTriageNote: number
     cmTriagedAt: number
     cmTriagedByUserId: number
+    escalatedAt: number
+    assignedToUserId: number
+    reviewDueAt: number
+    materiality: number
+    policyMappingCode: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -17322,6 +17360,11 @@ export namespace Prisma {
     cmTriageNote?: true
     cmTriagedAt?: true
     cmTriagedByUserId?: true
+    escalatedAt?: true
+    assignedToUserId?: true
+    reviewDueAt?: true
+    materiality?: true
+    policyMappingCode?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -17348,6 +17391,11 @@ export namespace Prisma {
     cmTriageNote?: true
     cmTriagedAt?: true
     cmTriagedByUserId?: true
+    escalatedAt?: true
+    assignedToUserId?: true
+    reviewDueAt?: true
+    materiality?: true
+    policyMappingCode?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -17375,6 +17423,11 @@ export namespace Prisma {
     cmTriageNote?: true
     cmTriagedAt?: true
     cmTriagedByUserId?: true
+    escalatedAt?: true
+    assignedToUserId?: true
+    reviewDueAt?: true
+    materiality?: true
+    policyMappingCode?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -17475,6 +17528,11 @@ export namespace Prisma {
     cmTriageNote: string | null
     cmTriagedAt: Date | null
     cmTriagedByUserId: string | null
+    escalatedAt: Date | null
+    assignedToUserId: string | null
+    reviewDueAt: Date | null
+    materiality: $Enums.FindingMateriality | null
+    policyMappingCode: string | null
     createdAt: Date
     updatedAt: Date
     _count: FlagCountAggregateOutputType | null
@@ -17519,6 +17577,11 @@ export namespace Prisma {
     cmTriageNote?: boolean
     cmTriagedAt?: boolean
     cmTriagedByUserId?: boolean
+    escalatedAt?: boolean
+    assignedToUserId?: boolean
+    reviewDueAt?: boolean
+    materiality?: boolean
+    policyMappingCode?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     meeting?: boolean | Flag$meetingArgs<ExtArgs>
@@ -17526,6 +17589,7 @@ export namespace Prisma {
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     resolutionRecord?: boolean | Flag$resolutionRecordArgs<ExtArgs>
     cmTriagedByUser?: boolean | Flag$cmTriagedByUserArgs<ExtArgs>
+    assignedToUser?: boolean | Flag$assignedToUserArgs<ExtArgs>
   }, ExtArgs["result"]["flag"]>
 
   export type FlagSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -17551,12 +17615,18 @@ export namespace Prisma {
     cmTriageNote?: boolean
     cmTriagedAt?: boolean
     cmTriagedByUserId?: boolean
+    escalatedAt?: boolean
+    assignedToUserId?: boolean
+    reviewDueAt?: boolean
+    materiality?: boolean
+    policyMappingCode?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     meeting?: boolean | Flag$meetingArgs<ExtArgs>
     communication?: boolean | Flag$communicationArgs<ExtArgs>
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     cmTriagedByUser?: boolean | Flag$cmTriagedByUserArgs<ExtArgs>
+    assignedToUser?: boolean | Flag$assignedToUserArgs<ExtArgs>
   }, ExtArgs["result"]["flag"]>
 
   export type FlagSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -17582,12 +17652,18 @@ export namespace Prisma {
     cmTriageNote?: boolean
     cmTriagedAt?: boolean
     cmTriagedByUserId?: boolean
+    escalatedAt?: boolean
+    assignedToUserId?: boolean
+    reviewDueAt?: boolean
+    materiality?: boolean
+    policyMappingCode?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     meeting?: boolean | Flag$meetingArgs<ExtArgs>
     communication?: boolean | Flag$communicationArgs<ExtArgs>
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     cmTriagedByUser?: boolean | Flag$cmTriagedByUserArgs<ExtArgs>
+    assignedToUser?: boolean | Flag$assignedToUserArgs<ExtArgs>
   }, ExtArgs["result"]["flag"]>
 
   export type FlagSelectScalar = {
@@ -17613,29 +17689,37 @@ export namespace Prisma {
     cmTriageNote?: boolean
     cmTriagedAt?: boolean
     cmTriagedByUserId?: boolean
+    escalatedAt?: boolean
+    assignedToUserId?: boolean
+    reviewDueAt?: boolean
+    materiality?: boolean
+    policyMappingCode?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type FlagOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "meetingId" | "sourceType" | "sourceId" | "communicationId" | "dedupeKey" | "type" | "severity" | "status" | "evidence" | "createdByType" | "createdByUserId" | "resolvedByUserId" | "resolvedAt" | "resolutionType" | "resolutionNote" | "cmDisposition" | "escalationReason" | "cmTriageNote" | "cmTriagedAt" | "cmTriagedByUserId" | "createdAt" | "updatedAt", ExtArgs["result"]["flag"]>
+  export type FlagOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceId" | "meetingId" | "sourceType" | "sourceId" | "communicationId" | "dedupeKey" | "type" | "severity" | "status" | "evidence" | "createdByType" | "createdByUserId" | "resolvedByUserId" | "resolvedAt" | "resolutionType" | "resolutionNote" | "cmDisposition" | "escalationReason" | "cmTriageNote" | "cmTriagedAt" | "cmTriagedByUserId" | "escalatedAt" | "assignedToUserId" | "reviewDueAt" | "materiality" | "policyMappingCode" | "createdAt" | "updatedAt", ExtArgs["result"]["flag"]>
   export type FlagInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     meeting?: boolean | Flag$meetingArgs<ExtArgs>
     communication?: boolean | Flag$communicationArgs<ExtArgs>
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     resolutionRecord?: boolean | Flag$resolutionRecordArgs<ExtArgs>
     cmTriagedByUser?: boolean | Flag$cmTriagedByUserArgs<ExtArgs>
+    assignedToUser?: boolean | Flag$assignedToUserArgs<ExtArgs>
   }
   export type FlagIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     meeting?: boolean | Flag$meetingArgs<ExtArgs>
     communication?: boolean | Flag$communicationArgs<ExtArgs>
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     cmTriagedByUser?: boolean | Flag$cmTriagedByUserArgs<ExtArgs>
+    assignedToUser?: boolean | Flag$assignedToUserArgs<ExtArgs>
   }
   export type FlagIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     meeting?: boolean | Flag$meetingArgs<ExtArgs>
     communication?: boolean | Flag$communicationArgs<ExtArgs>
     workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     cmTriagedByUser?: boolean | Flag$cmTriagedByUserArgs<ExtArgs>
+    assignedToUser?: boolean | Flag$assignedToUserArgs<ExtArgs>
   }
 
   export type $FlagPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -17646,6 +17730,7 @@ export namespace Prisma {
       workspace: Prisma.$WorkspacePayload<ExtArgs>
       resolutionRecord: Prisma.$ResolutionRecordPayload<ExtArgs> | null
       cmTriagedByUser: Prisma.$UserPayload<ExtArgs> | null
+      assignedToUser: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -17685,6 +17770,14 @@ export namespace Prisma {
       cmTriageNote: string | null
       cmTriagedAt: Date | null
       cmTriagedByUserId: string | null
+      /**
+       * CV-SI-006 — when set, this flag is (or was) a priority-inbox finding.
+       */
+      escalatedAt: Date | null
+      assignedToUserId: string | null
+      reviewDueAt: Date | null
+      materiality: $Enums.FindingMateriality | null
+      policyMappingCode: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["flag"]>
@@ -18086,6 +18179,7 @@ export namespace Prisma {
     workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     resolutionRecord<T extends Flag$resolutionRecordArgs<ExtArgs> = {}>(args?: Subset<T, Flag$resolutionRecordArgs<ExtArgs>>): Prisma__ResolutionRecordClient<$Result.GetResult<Prisma.$ResolutionRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     cmTriagedByUser<T extends Flag$cmTriagedByUserArgs<ExtArgs> = {}>(args?: Subset<T, Flag$cmTriagedByUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    assignedToUser<T extends Flag$assignedToUserArgs<ExtArgs> = {}>(args?: Subset<T, Flag$assignedToUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -18137,6 +18231,11 @@ export namespace Prisma {
     readonly cmTriageNote: FieldRef<"Flag", 'String'>
     readonly cmTriagedAt: FieldRef<"Flag", 'DateTime'>
     readonly cmTriagedByUserId: FieldRef<"Flag", 'String'>
+    readonly escalatedAt: FieldRef<"Flag", 'DateTime'>
+    readonly assignedToUserId: FieldRef<"Flag", 'String'>
+    readonly reviewDueAt: FieldRef<"Flag", 'DateTime'>
+    readonly materiality: FieldRef<"Flag", 'FindingMateriality'>
+    readonly policyMappingCode: FieldRef<"Flag", 'String'>
     readonly createdAt: FieldRef<"Flag", 'DateTime'>
     readonly updatedAt: FieldRef<"Flag", 'DateTime'>
   }
@@ -18595,6 +18694,25 @@ export namespace Prisma {
    * Flag.cmTriagedByUser
    */
   export type Flag$cmTriagedByUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Flag.assignedToUser
+   */
+  export type Flag$assignedToUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the User
      */
@@ -28049,6 +28167,7 @@ export namespace Prisma {
     meetingsCmReviewed?: boolean | User$meetingsCmReviewedArgs<ExtArgs>
     meetingsCcoSignedOff?: boolean | User$meetingsCcoSignedOffArgs<ExtArgs>
     flagsCmTriaged?: boolean | User$flagsCmTriagedArgs<ExtArgs>
+    flagsAssigned?: boolean | User$flagsAssignedArgs<ExtArgs>
     invitationsSent?: boolean | User$invitationsSentArgs<ExtArgs>
     emailAliases?: boolean | User$emailAliasesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -28088,6 +28207,7 @@ export namespace Prisma {
     meetingsCmReviewed?: boolean | User$meetingsCmReviewedArgs<ExtArgs>
     meetingsCcoSignedOff?: boolean | User$meetingsCcoSignedOffArgs<ExtArgs>
     flagsCmTriaged?: boolean | User$flagsCmTriagedArgs<ExtArgs>
+    flagsAssigned?: boolean | User$flagsAssignedArgs<ExtArgs>
     invitationsSent?: boolean | User$invitationsSentArgs<ExtArgs>
     emailAliases?: boolean | User$emailAliasesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -28106,6 +28226,7 @@ export namespace Prisma {
       meetingsCmReviewed: Prisma.$MeetingPayload<ExtArgs>[]
       meetingsCcoSignedOff: Prisma.$MeetingPayload<ExtArgs>[]
       flagsCmTriaged: Prisma.$FlagPayload<ExtArgs>[]
+      flagsAssigned: Prisma.$FlagPayload<ExtArgs>[]
       invitationsSent: Prisma.$InvitationPayload<ExtArgs>[]
       emailAliases: Prisma.$EmailAliasPayload<ExtArgs>[]
     }
@@ -28517,6 +28638,7 @@ export namespace Prisma {
     meetingsCmReviewed<T extends User$meetingsCmReviewedArgs<ExtArgs> = {}>(args?: Subset<T, User$meetingsCmReviewedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MeetingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     meetingsCcoSignedOff<T extends User$meetingsCcoSignedOffArgs<ExtArgs> = {}>(args?: Subset<T, User$meetingsCcoSignedOffArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MeetingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     flagsCmTriaged<T extends User$flagsCmTriagedArgs<ExtArgs> = {}>(args?: Subset<T, User$flagsCmTriagedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FlagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    flagsAssigned<T extends User$flagsAssignedArgs<ExtArgs> = {}>(args?: Subset<T, User$flagsAssignedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FlagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     invitationsSent<T extends User$invitationsSentArgs<ExtArgs> = {}>(args?: Subset<T, User$invitationsSentArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     emailAliases<T extends User$emailAliasesArgs<ExtArgs> = {}>(args?: Subset<T, User$emailAliasesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailAliasPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -29112,6 +29234,30 @@ export namespace Prisma {
    * User.flagsCmTriaged
    */
   export type User$flagsCmTriagedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Flag
+     */
+    select?: FlagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Flag
+     */
+    omit?: FlagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FlagInclude<ExtArgs> | null
+    where?: FlagWhereInput
+    orderBy?: FlagOrderByWithRelationInput | FlagOrderByWithRelationInput[]
+    cursor?: FlagWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FlagScalarFieldEnum | FlagScalarFieldEnum[]
+  }
+
+  /**
+   * User.flagsAssigned
+   */
+  export type User$flagsAssignedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Flag
      */
@@ -58288,6 +58434,11 @@ export namespace Prisma {
     cmTriageNote: 'cmTriageNote',
     cmTriagedAt: 'cmTriagedAt',
     cmTriagedByUserId: 'cmTriagedByUserId',
+    escalatedAt: 'escalatedAt',
+    assignedToUserId: 'assignedToUserId',
+    reviewDueAt: 'reviewDueAt',
+    materiality: 'materiality',
+    policyMappingCode: 'policyMappingCode',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -59245,6 +59396,20 @@ export namespace Prisma {
    * Reference to a field of type 'CmFlagDisposition[]'
    */
   export type ListEnumCmFlagDispositionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CmFlagDisposition[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'FindingMateriality'
+   */
+  export type EnumFindingMaterialityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FindingMateriality'>
+    
+
+
+  /**
+   * Reference to a field of type 'FindingMateriality[]'
+   */
+  export type ListEnumFindingMaterialityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FindingMateriality[]'>
     
 
 
@@ -60733,6 +60898,11 @@ export namespace Prisma {
     cmTriageNote?: StringNullableFilter<"Flag"> | string | null
     cmTriagedAt?: DateTimeNullableFilter<"Flag"> | Date | string | null
     cmTriagedByUserId?: StringNullableFilter<"Flag"> | string | null
+    escalatedAt?: DateTimeNullableFilter<"Flag"> | Date | string | null
+    assignedToUserId?: StringNullableFilter<"Flag"> | string | null
+    reviewDueAt?: DateTimeNullableFilter<"Flag"> | Date | string | null
+    materiality?: EnumFindingMaterialityNullableFilter<"Flag"> | $Enums.FindingMateriality | null
+    policyMappingCode?: StringNullableFilter<"Flag"> | string | null
     createdAt?: DateTimeFilter<"Flag"> | Date | string
     updatedAt?: DateTimeFilter<"Flag"> | Date | string
     meeting?: XOR<MeetingNullableScalarRelationFilter, MeetingWhereInput> | null
@@ -60740,6 +60910,7 @@ export namespace Prisma {
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
     resolutionRecord?: XOR<ResolutionRecordNullableScalarRelationFilter, ResolutionRecordWhereInput> | null
     cmTriagedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    assignedToUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type FlagOrderByWithRelationInput = {
@@ -60765,6 +60936,11 @@ export namespace Prisma {
     cmTriageNote?: SortOrderInput | SortOrder
     cmTriagedAt?: SortOrderInput | SortOrder
     cmTriagedByUserId?: SortOrderInput | SortOrder
+    escalatedAt?: SortOrderInput | SortOrder
+    assignedToUserId?: SortOrderInput | SortOrder
+    reviewDueAt?: SortOrderInput | SortOrder
+    materiality?: SortOrderInput | SortOrder
+    policyMappingCode?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     meeting?: MeetingOrderByWithRelationInput
@@ -60772,6 +60948,7 @@ export namespace Prisma {
     workspace?: WorkspaceOrderByWithRelationInput
     resolutionRecord?: ResolutionRecordOrderByWithRelationInput
     cmTriagedByUser?: UserOrderByWithRelationInput
+    assignedToUser?: UserOrderByWithRelationInput
   }
 
   export type FlagWhereUniqueInput = Prisma.AtLeast<{
@@ -60801,6 +60978,11 @@ export namespace Prisma {
     cmTriageNote?: StringNullableFilter<"Flag"> | string | null
     cmTriagedAt?: DateTimeNullableFilter<"Flag"> | Date | string | null
     cmTriagedByUserId?: StringNullableFilter<"Flag"> | string | null
+    escalatedAt?: DateTimeNullableFilter<"Flag"> | Date | string | null
+    assignedToUserId?: StringNullableFilter<"Flag"> | string | null
+    reviewDueAt?: DateTimeNullableFilter<"Flag"> | Date | string | null
+    materiality?: EnumFindingMaterialityNullableFilter<"Flag"> | $Enums.FindingMateriality | null
+    policyMappingCode?: StringNullableFilter<"Flag"> | string | null
     createdAt?: DateTimeFilter<"Flag"> | Date | string
     updatedAt?: DateTimeFilter<"Flag"> | Date | string
     meeting?: XOR<MeetingNullableScalarRelationFilter, MeetingWhereInput> | null
@@ -60808,6 +60990,7 @@ export namespace Prisma {
     workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
     resolutionRecord?: XOR<ResolutionRecordNullableScalarRelationFilter, ResolutionRecordWhereInput> | null
     cmTriagedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    assignedToUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id" | "workspaceId_dedupeKey">
 
   export type FlagOrderByWithAggregationInput = {
@@ -60833,6 +61016,11 @@ export namespace Prisma {
     cmTriageNote?: SortOrderInput | SortOrder
     cmTriagedAt?: SortOrderInput | SortOrder
     cmTriagedByUserId?: SortOrderInput | SortOrder
+    escalatedAt?: SortOrderInput | SortOrder
+    assignedToUserId?: SortOrderInput | SortOrder
+    reviewDueAt?: SortOrderInput | SortOrder
+    materiality?: SortOrderInput | SortOrder
+    policyMappingCode?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: FlagCountOrderByAggregateInput
@@ -60866,6 +61054,11 @@ export namespace Prisma {
     cmTriageNote?: StringNullableWithAggregatesFilter<"Flag"> | string | null
     cmTriagedAt?: DateTimeNullableWithAggregatesFilter<"Flag"> | Date | string | null
     cmTriagedByUserId?: StringNullableWithAggregatesFilter<"Flag"> | string | null
+    escalatedAt?: DateTimeNullableWithAggregatesFilter<"Flag"> | Date | string | null
+    assignedToUserId?: StringNullableWithAggregatesFilter<"Flag"> | string | null
+    reviewDueAt?: DateTimeNullableWithAggregatesFilter<"Flag"> | Date | string | null
+    materiality?: EnumFindingMaterialityNullableWithAggregatesFilter<"Flag"> | $Enums.FindingMateriality | null
+    policyMappingCode?: StringNullableWithAggregatesFilter<"Flag"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Flag"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Flag"> | Date | string
   }
@@ -61557,6 +61750,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingListRelationFilter
     meetingsCcoSignedOff?: MeetingListRelationFilter
     flagsCmTriaged?: FlagListRelationFilter
+    flagsAssigned?: FlagListRelationFilter
     invitationsSent?: InvitationListRelationFilter
     emailAliases?: EmailAliasListRelationFilter
   }
@@ -61575,6 +61769,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingOrderByRelationAggregateInput
     meetingsCcoSignedOff?: MeetingOrderByRelationAggregateInput
     flagsCmTriaged?: FlagOrderByRelationAggregateInput
+    flagsAssigned?: FlagOrderByRelationAggregateInput
     invitationsSent?: InvitationOrderByRelationAggregateInput
     emailAliases?: EmailAliasOrderByRelationAggregateInput
   }
@@ -61596,6 +61791,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingListRelationFilter
     meetingsCcoSignedOff?: MeetingListRelationFilter
     flagsCmTriaged?: FlagListRelationFilter
+    flagsAssigned?: FlagListRelationFilter
     invitationsSent?: InvitationListRelationFilter
     emailAliases?: EmailAliasListRelationFilter
   }, "id" | "email">
@@ -65115,6 +65311,10 @@ export namespace Prisma {
     escalationReason?: string | null
     cmTriageNote?: string | null
     cmTriagedAt?: Date | string | null
+    escalatedAt?: Date | string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     meeting?: MeetingCreateNestedOneWithoutFlagsInput
@@ -65122,6 +65322,7 @@ export namespace Prisma {
     workspace: WorkspaceCreateNestedOneWithoutFlagsInput
     resolutionRecord?: ResolutionRecordCreateNestedOneWithoutFlagInput
     cmTriagedByUser?: UserCreateNestedOneWithoutFlagsCmTriagedInput
+    assignedToUser?: UserCreateNestedOneWithoutFlagsAssignedInput
   }
 
   export type FlagUncheckedCreateInput = {
@@ -65147,6 +65348,11 @@ export namespace Prisma {
     cmTriageNote?: string | null
     cmTriagedAt?: Date | string | null
     cmTriagedByUserId?: string | null
+    escalatedAt?: Date | string | null
+    assignedToUserId?: string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     resolutionRecord?: ResolutionRecordUncheckedCreateNestedOneWithoutFlagInput
@@ -65171,6 +65377,10 @@ export namespace Prisma {
     escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meeting?: MeetingUpdateOneWithoutFlagsNestedInput
@@ -65178,6 +65388,7 @@ export namespace Prisma {
     workspace?: WorkspaceUpdateOneRequiredWithoutFlagsNestedInput
     resolutionRecord?: ResolutionRecordUpdateOneWithoutFlagNestedInput
     cmTriagedByUser?: UserUpdateOneWithoutFlagsCmTriagedNestedInput
+    assignedToUser?: UserUpdateOneWithoutFlagsAssignedNestedInput
   }
 
   export type FlagUncheckedUpdateInput = {
@@ -65203,6 +65414,11 @@ export namespace Prisma {
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedToUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resolutionRecord?: ResolutionRecordUncheckedUpdateOneWithoutFlagNestedInput
@@ -65231,6 +65447,11 @@ export namespace Prisma {
     cmTriageNote?: string | null
     cmTriagedAt?: Date | string | null
     cmTriagedByUserId?: string | null
+    escalatedAt?: Date | string | null
+    assignedToUserId?: string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -65254,6 +65475,10 @@ export namespace Prisma {
     escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -65281,6 +65506,11 @@ export namespace Prisma {
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedToUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -66031,6 +66261,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
@@ -66049,6 +66280,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagUncheckedCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
@@ -66067,6 +66299,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
@@ -66085,6 +66318,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUncheckedUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -69894,6 +70128,13 @@ export namespace Prisma {
     not?: NestedEnumCmFlagDispositionFilter<$PrismaModel> | $Enums.CmFlagDisposition
   }
 
+  export type EnumFindingMaterialityNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.FindingMateriality | EnumFindingMaterialityFieldRefInput<$PrismaModel> | null
+    in?: $Enums.FindingMateriality[] | ListEnumFindingMaterialityFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.FindingMateriality[] | ListEnumFindingMaterialityFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumFindingMaterialityNullableFilter<$PrismaModel> | $Enums.FindingMateriality | null
+  }
+
   export type CommunicationNullableScalarRelationFilter = {
     is?: CommunicationWhereInput | null
     isNot?: CommunicationWhereInput | null
@@ -69932,6 +70173,11 @@ export namespace Prisma {
     cmTriageNote?: SortOrder
     cmTriagedAt?: SortOrder
     cmTriagedByUserId?: SortOrder
+    escalatedAt?: SortOrder
+    assignedToUserId?: SortOrder
+    reviewDueAt?: SortOrder
+    materiality?: SortOrder
+    policyMappingCode?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -69958,6 +70204,11 @@ export namespace Prisma {
     cmTriageNote?: SortOrder
     cmTriagedAt?: SortOrder
     cmTriagedByUserId?: SortOrder
+    escalatedAt?: SortOrder
+    assignedToUserId?: SortOrder
+    reviewDueAt?: SortOrder
+    materiality?: SortOrder
+    policyMappingCode?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -69984,6 +70235,11 @@ export namespace Prisma {
     cmTriageNote?: SortOrder
     cmTriagedAt?: SortOrder
     cmTriagedByUserId?: SortOrder
+    escalatedAt?: SortOrder
+    assignedToUserId?: SortOrder
+    reviewDueAt?: SortOrder
+    materiality?: SortOrder
+    policyMappingCode?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -70056,6 +70312,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumCmFlagDispositionFilter<$PrismaModel>
     _max?: NestedEnumCmFlagDispositionFilter<$PrismaModel>
+  }
+
+  export type EnumFindingMaterialityNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FindingMateriality | EnumFindingMaterialityFieldRefInput<$PrismaModel> | null
+    in?: $Enums.FindingMateriality[] | ListEnumFindingMaterialityFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.FindingMateriality[] | ListEnumFindingMaterialityFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumFindingMaterialityNullableWithAggregatesFilter<$PrismaModel> | $Enums.FindingMateriality | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumFindingMaterialityNullableFilter<$PrismaModel>
+    _max?: NestedEnumFindingMaterialityNullableFilter<$PrismaModel>
   }
 
   export type EnumFlagResolutionTypeFilter<$PrismaModel = never> = {
@@ -73942,6 +74208,12 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type UserCreateNestedOneWithoutFlagsAssignedInput = {
+    create?: XOR<UserCreateWithoutFlagsAssignedInput, UserUncheckedCreateWithoutFlagsAssignedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFlagsAssignedInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type ResolutionRecordUncheckedCreateNestedOneWithoutFlagInput = {
     create?: XOR<ResolutionRecordCreateWithoutFlagInput, ResolutionRecordUncheckedCreateWithoutFlagInput>
     connectOrCreate?: ResolutionRecordCreateOrConnectWithoutFlagInput
@@ -73974,6 +74246,10 @@ export namespace Prisma {
 
   export type EnumCmFlagDispositionFieldUpdateOperationsInput = {
     set?: $Enums.CmFlagDisposition
+  }
+
+  export type NullableEnumFindingMaterialityFieldUpdateOperationsInput = {
+    set?: $Enums.FindingMateriality | null
   }
 
   export type MeetingUpdateOneWithoutFlagsNestedInput = {
@@ -74022,6 +74298,16 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFlagsCmTriagedInput, UserUpdateWithoutFlagsCmTriagedInput>, UserUncheckedUpdateWithoutFlagsCmTriagedInput>
+  }
+
+  export type UserUpdateOneWithoutFlagsAssignedNestedInput = {
+    create?: XOR<UserCreateWithoutFlagsAssignedInput, UserUncheckedCreateWithoutFlagsAssignedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFlagsAssignedInput
+    upsert?: UserUpsertWithoutFlagsAssignedInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFlagsAssignedInput, UserUpdateWithoutFlagsAssignedInput>, UserUncheckedUpdateWithoutFlagsAssignedInput>
   }
 
   export type ResolutionRecordUncheckedUpdateOneWithoutFlagNestedInput = {
@@ -74456,6 +74742,13 @@ export namespace Prisma {
     connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
   }
 
+  export type FlagCreateNestedManyWithoutAssignedToUserInput = {
+    create?: XOR<FlagCreateWithoutAssignedToUserInput, FlagUncheckedCreateWithoutAssignedToUserInput> | FlagCreateWithoutAssignedToUserInput[] | FlagUncheckedCreateWithoutAssignedToUserInput[]
+    connectOrCreate?: FlagCreateOrConnectWithoutAssignedToUserInput | FlagCreateOrConnectWithoutAssignedToUserInput[]
+    createMany?: FlagCreateManyAssignedToUserInputEnvelope
+    connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+  }
+
   export type InvitationCreateNestedManyWithoutInvitedByInput = {
     create?: XOR<InvitationCreateWithoutInvitedByInput, InvitationUncheckedCreateWithoutInvitedByInput> | InvitationCreateWithoutInvitedByInput[] | InvitationUncheckedCreateWithoutInvitedByInput[]
     connectOrCreate?: InvitationCreateOrConnectWithoutInvitedByInput | InvitationCreateOrConnectWithoutInvitedByInput[]
@@ -74523,6 +74816,13 @@ export namespace Prisma {
     create?: XOR<FlagCreateWithoutCmTriagedByUserInput, FlagUncheckedCreateWithoutCmTriagedByUserInput> | FlagCreateWithoutCmTriagedByUserInput[] | FlagUncheckedCreateWithoutCmTriagedByUserInput[]
     connectOrCreate?: FlagCreateOrConnectWithoutCmTriagedByUserInput | FlagCreateOrConnectWithoutCmTriagedByUserInput[]
     createMany?: FlagCreateManyCmTriagedByUserInputEnvelope
+    connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+  }
+
+  export type FlagUncheckedCreateNestedManyWithoutAssignedToUserInput = {
+    create?: XOR<FlagCreateWithoutAssignedToUserInput, FlagUncheckedCreateWithoutAssignedToUserInput> | FlagCreateWithoutAssignedToUserInput[] | FlagUncheckedCreateWithoutAssignedToUserInput[]
+    connectOrCreate?: FlagCreateOrConnectWithoutAssignedToUserInput | FlagCreateOrConnectWithoutAssignedToUserInput[]
+    createMany?: FlagCreateManyAssignedToUserInputEnvelope
     connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
   }
 
@@ -74649,6 +74949,20 @@ export namespace Prisma {
     connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
     update?: FlagUpdateWithWhereUniqueWithoutCmTriagedByUserInput | FlagUpdateWithWhereUniqueWithoutCmTriagedByUserInput[]
     updateMany?: FlagUpdateManyWithWhereWithoutCmTriagedByUserInput | FlagUpdateManyWithWhereWithoutCmTriagedByUserInput[]
+    deleteMany?: FlagScalarWhereInput | FlagScalarWhereInput[]
+  }
+
+  export type FlagUpdateManyWithoutAssignedToUserNestedInput = {
+    create?: XOR<FlagCreateWithoutAssignedToUserInput, FlagUncheckedCreateWithoutAssignedToUserInput> | FlagCreateWithoutAssignedToUserInput[] | FlagUncheckedCreateWithoutAssignedToUserInput[]
+    connectOrCreate?: FlagCreateOrConnectWithoutAssignedToUserInput | FlagCreateOrConnectWithoutAssignedToUserInput[]
+    upsert?: FlagUpsertWithWhereUniqueWithoutAssignedToUserInput | FlagUpsertWithWhereUniqueWithoutAssignedToUserInput[]
+    createMany?: FlagCreateManyAssignedToUserInputEnvelope
+    set?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+    disconnect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+    delete?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+    connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+    update?: FlagUpdateWithWhereUniqueWithoutAssignedToUserInput | FlagUpdateWithWhereUniqueWithoutAssignedToUserInput[]
+    updateMany?: FlagUpdateManyWithWhereWithoutAssignedToUserInput | FlagUpdateManyWithWhereWithoutAssignedToUserInput[]
     deleteMany?: FlagScalarWhereInput | FlagScalarWhereInput[]
   }
 
@@ -74789,6 +75103,20 @@ export namespace Prisma {
     connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
     update?: FlagUpdateWithWhereUniqueWithoutCmTriagedByUserInput | FlagUpdateWithWhereUniqueWithoutCmTriagedByUserInput[]
     updateMany?: FlagUpdateManyWithWhereWithoutCmTriagedByUserInput | FlagUpdateManyWithWhereWithoutCmTriagedByUserInput[]
+    deleteMany?: FlagScalarWhereInput | FlagScalarWhereInput[]
+  }
+
+  export type FlagUncheckedUpdateManyWithoutAssignedToUserNestedInput = {
+    create?: XOR<FlagCreateWithoutAssignedToUserInput, FlagUncheckedCreateWithoutAssignedToUserInput> | FlagCreateWithoutAssignedToUserInput[] | FlagUncheckedCreateWithoutAssignedToUserInput[]
+    connectOrCreate?: FlagCreateOrConnectWithoutAssignedToUserInput | FlagCreateOrConnectWithoutAssignedToUserInput[]
+    upsert?: FlagUpsertWithWhereUniqueWithoutAssignedToUserInput | FlagUpsertWithWhereUniqueWithoutAssignedToUserInput[]
+    createMany?: FlagCreateManyAssignedToUserInputEnvelope
+    set?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+    disconnect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+    delete?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+    connect?: FlagWhereUniqueInput | FlagWhereUniqueInput[]
+    update?: FlagUpdateWithWhereUniqueWithoutAssignedToUserInput | FlagUpdateWithWhereUniqueWithoutAssignedToUserInput[]
+    updateMany?: FlagUpdateManyWithWhereWithoutAssignedToUserInput | FlagUpdateManyWithWhereWithoutAssignedToUserInput[]
     deleteMany?: FlagScalarWhereInput | FlagScalarWhereInput[]
   }
 
@@ -76595,6 +76923,13 @@ export namespace Prisma {
     not?: NestedEnumCmFlagDispositionFilter<$PrismaModel> | $Enums.CmFlagDisposition
   }
 
+  export type NestedEnumFindingMaterialityNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.FindingMateriality | EnumFindingMaterialityFieldRefInput<$PrismaModel> | null
+    in?: $Enums.FindingMateriality[] | ListEnumFindingMaterialityFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.FindingMateriality[] | ListEnumFindingMaterialityFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumFindingMaterialityNullableFilter<$PrismaModel> | $Enums.FindingMateriality | null
+  }
+
   export type NestedEnumFlagSourceTypeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.FlagSourceType | EnumFlagSourceTypeFieldRefInput<$PrismaModel>
     in?: $Enums.FlagSourceType[] | ListEnumFlagSourceTypeFieldRefInput<$PrismaModel>
@@ -76663,6 +76998,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumCmFlagDispositionFilter<$PrismaModel>
     _max?: NestedEnumCmFlagDispositionFilter<$PrismaModel>
+  }
+
+  export type NestedEnumFindingMaterialityNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FindingMateriality | EnumFindingMaterialityFieldRefInput<$PrismaModel> | null
+    in?: $Enums.FindingMateriality[] | ListEnumFindingMaterialityFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.FindingMateriality[] | ListEnumFindingMaterialityFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumFindingMaterialityNullableWithAggregatesFilter<$PrismaModel> | $Enums.FindingMateriality | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumFindingMaterialityNullableFilter<$PrismaModel>
+    _max?: NestedEnumFindingMaterialityNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumFlagResolutionTypeFilter<$PrismaModel = never> = {
@@ -77415,12 +77760,17 @@ export namespace Prisma {
     escalationReason?: string | null
     cmTriageNote?: string | null
     cmTriagedAt?: Date | string | null
+    escalatedAt?: Date | string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     meeting?: MeetingCreateNestedOneWithoutFlagsInput
     communication?: CommunicationCreateNestedOneWithoutFlagsInput
     resolutionRecord?: ResolutionRecordCreateNestedOneWithoutFlagInput
     cmTriagedByUser?: UserCreateNestedOneWithoutFlagsCmTriagedInput
+    assignedToUser?: UserCreateNestedOneWithoutFlagsAssignedInput
   }
 
   export type FlagUncheckedCreateWithoutWorkspaceInput = {
@@ -77445,6 +77795,11 @@ export namespace Prisma {
     cmTriageNote?: string | null
     cmTriagedAt?: Date | string | null
     cmTriagedByUserId?: string | null
+    escalatedAt?: Date | string | null
+    assignedToUserId?: string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     resolutionRecord?: ResolutionRecordUncheckedCreateNestedOneWithoutFlagInput
@@ -78436,6 +78791,11 @@ export namespace Prisma {
     cmTriageNote?: StringNullableFilter<"Flag"> | string | null
     cmTriagedAt?: DateTimeNullableFilter<"Flag"> | Date | string | null
     cmTriagedByUserId?: StringNullableFilter<"Flag"> | string | null
+    escalatedAt?: DateTimeNullableFilter<"Flag"> | Date | string | null
+    assignedToUserId?: StringNullableFilter<"Flag"> | string | null
+    reviewDueAt?: DateTimeNullableFilter<"Flag"> | Date | string | null
+    materiality?: EnumFindingMaterialityNullableFilter<"Flag"> | $Enums.FindingMateriality | null
+    policyMappingCode?: StringNullableFilter<"Flag"> | string | null
     createdAt?: DateTimeFilter<"Flag"> | Date | string
     updatedAt?: DateTimeFilter<"Flag"> | Date | string
   }
@@ -79831,6 +80191,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
@@ -79848,6 +80209,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagUncheckedCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
@@ -79979,6 +80341,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
@@ -79996,6 +80359,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagUncheckedCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
@@ -80029,6 +80393,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
@@ -80046,6 +80411,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUncheckedUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -80189,6 +80555,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
@@ -80206,6 +80573,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUncheckedUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -80435,12 +80803,17 @@ export namespace Prisma {
     escalationReason?: string | null
     cmTriageNote?: string | null
     cmTriagedAt?: Date | string | null
+    escalatedAt?: Date | string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     communication?: CommunicationCreateNestedOneWithoutFlagsInput
     workspace: WorkspaceCreateNestedOneWithoutFlagsInput
     resolutionRecord?: ResolutionRecordCreateNestedOneWithoutFlagInput
     cmTriagedByUser?: UserCreateNestedOneWithoutFlagsCmTriagedInput
+    assignedToUser?: UserCreateNestedOneWithoutFlagsAssignedInput
   }
 
   export type FlagUncheckedCreateWithoutMeetingInput = {
@@ -80465,6 +80838,11 @@ export namespace Prisma {
     cmTriageNote?: string | null
     cmTriagedAt?: Date | string | null
     cmTriagedByUserId?: string | null
+    escalatedAt?: Date | string | null
+    assignedToUserId?: string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     resolutionRecord?: ResolutionRecordUncheckedCreateNestedOneWithoutFlagInput
@@ -80613,6 +80991,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
@@ -80630,6 +81009,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagUncheckedCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
@@ -80652,6 +81032,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingCreateNestedManyWithoutAdvisorCertifiedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
@@ -80669,6 +81050,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUncheckedCreateNestedManyWithoutAdvisorCertifiedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagUncheckedCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
@@ -80691,6 +81073,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingCreateNestedManyWithoutAdvisorCertifiedByUserInput
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
@@ -80708,6 +81091,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUncheckedCreateNestedManyWithoutAdvisorCertifiedByUserInput
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagUncheckedCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
@@ -81553,6 +81937,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
@@ -81570,6 +81955,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUncheckedUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -81598,6 +81984,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUpdateManyWithoutAdvisorCertifiedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
@@ -81615,6 +82002,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUncheckedUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -81643,6 +82031,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUpdateManyWithoutAdvisorCertifiedByUserNestedInput
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
@@ -81660,6 +82049,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserNestedInput
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUncheckedUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -83194,6 +83584,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingCreateNestedManyWithoutAdvisorCertifiedByUserInput
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsAssigned?: FlagCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
@@ -83211,6 +83602,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUncheckedCreateNestedManyWithoutAdvisorCertifiedByUserInput
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsAssigned?: FlagUncheckedCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
@@ -83218,6 +83610,47 @@ export namespace Prisma {
   export type UserCreateOrConnectWithoutFlagsCmTriagedInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutFlagsCmTriagedInput, UserUncheckedCreateWithoutFlagsCmTriagedInput>
+  }
+
+  export type UserCreateWithoutFlagsAssignedInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    workspaces?: UserWorkspaceCreateNestedManyWithoutUserInput
+    removedWorkspaceMemberships?: UserWorkspaceCreateNestedManyWithoutRemovedByInput
+    meetingsAdvisorCertified?: MeetingCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutFlagsAssignedInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    workspaces?: UserWorkspaceUncheckedCreateNestedManyWithoutUserInput
+    removedWorkspaceMemberships?: UserWorkspaceUncheckedCreateNestedManyWithoutRemovedByInput
+    meetingsAdvisorCertified?: MeetingUncheckedCreateNestedManyWithoutAdvisorCertifiedByUserInput
+    meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
+    meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
+    flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
+    emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutFlagsAssignedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutFlagsAssignedInput, UserUncheckedCreateWithoutFlagsAssignedInput>
   }
 
   export type MeetingUpsertWithoutFlagsInput = {
@@ -83598,6 +84031,7 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUpdateManyWithoutAdvisorCertifiedByUserNestedInput
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsAssigned?: FlagUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
@@ -83615,6 +84049,54 @@ export namespace Prisma {
     meetingsAdvisorCertified?: MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserNestedInput
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsAssigned?: FlagUncheckedUpdateManyWithoutAssignedToUserNestedInput
+    invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUpsertWithoutFlagsAssignedInput = {
+    update: XOR<UserUpdateWithoutFlagsAssignedInput, UserUncheckedUpdateWithoutFlagsAssignedInput>
+    create: XOR<UserCreateWithoutFlagsAssignedInput, UserUncheckedCreateWithoutFlagsAssignedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutFlagsAssignedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutFlagsAssignedInput, UserUncheckedUpdateWithoutFlagsAssignedInput>
+  }
+
+  export type UserUpdateWithoutFlagsAssignedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    workspaces?: UserWorkspaceUpdateManyWithoutUserNestedInput
+    removedWorkspaceMemberships?: UserWorkspaceUpdateManyWithoutRemovedByNestedInput
+    meetingsAdvisorCertified?: MeetingUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
+    emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutFlagsAssignedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    workspaces?: UserWorkspaceUncheckedUpdateManyWithoutUserNestedInput
+    removedWorkspaceMemberships?: UserWorkspaceUncheckedUpdateManyWithoutRemovedByNestedInput
+    meetingsAdvisorCertified?: MeetingUncheckedUpdateManyWithoutAdvisorCertifiedByUserNestedInput
+    meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
+    meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
+    flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -83638,12 +84120,17 @@ export namespace Prisma {
     escalationReason?: string | null
     cmTriageNote?: string | null
     cmTriagedAt?: Date | string | null
+    escalatedAt?: Date | string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     meeting?: MeetingCreateNestedOneWithoutFlagsInput
     communication?: CommunicationCreateNestedOneWithoutFlagsInput
     workspace: WorkspaceCreateNestedOneWithoutFlagsInput
     cmTriagedByUser?: UserCreateNestedOneWithoutFlagsCmTriagedInput
+    assignedToUser?: UserCreateNestedOneWithoutFlagsAssignedInput
   }
 
   export type FlagUncheckedCreateWithoutResolutionRecordInput = {
@@ -83669,6 +84156,11 @@ export namespace Prisma {
     cmTriageNote?: string | null
     cmTriagedAt?: Date | string | null
     cmTriagedByUserId?: string | null
+    escalatedAt?: Date | string | null
+    assignedToUserId?: string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -84044,12 +84536,17 @@ export namespace Prisma {
     escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meeting?: MeetingUpdateOneWithoutFlagsNestedInput
     communication?: CommunicationUpdateOneWithoutFlagsNestedInput
     workspace?: WorkspaceUpdateOneRequiredWithoutFlagsNestedInput
     cmTriagedByUser?: UserUpdateOneWithoutFlagsCmTriagedNestedInput
+    assignedToUser?: UserUpdateOneWithoutFlagsAssignedNestedInput
   }
 
   export type FlagUncheckedUpdateWithoutResolutionRecordInput = {
@@ -84075,6 +84572,11 @@ export namespace Prisma {
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedToUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -85560,6 +86062,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
@@ -85577,6 +86080,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagUncheckedCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
@@ -85610,6 +86114,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
@@ -85627,6 +86132,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUncheckedUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -85644,6 +86150,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
@@ -85661,6 +86168,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagUncheckedCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
     emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
@@ -85694,6 +86202,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
@@ -85711,6 +86220,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUncheckedUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
     emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -86256,12 +86766,17 @@ export namespace Prisma {
     escalationReason?: string | null
     cmTriageNote?: string | null
     cmTriagedAt?: Date | string | null
+    escalatedAt?: Date | string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     meeting?: MeetingCreateNestedOneWithoutFlagsInput
     communication?: CommunicationCreateNestedOneWithoutFlagsInput
     workspace: WorkspaceCreateNestedOneWithoutFlagsInput
     resolutionRecord?: ResolutionRecordCreateNestedOneWithoutFlagInput
+    assignedToUser?: UserCreateNestedOneWithoutFlagsAssignedInput
   }
 
   export type FlagUncheckedCreateWithoutCmTriagedByUserInput = {
@@ -86286,6 +86801,11 @@ export namespace Prisma {
     escalationReason?: string | null
     cmTriageNote?: string | null
     cmTriagedAt?: Date | string | null
+    escalatedAt?: Date | string | null
+    assignedToUserId?: string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     resolutionRecord?: ResolutionRecordUncheckedCreateNestedOneWithoutFlagInput
@@ -86298,6 +86818,80 @@ export namespace Prisma {
 
   export type FlagCreateManyCmTriagedByUserInputEnvelope = {
     data: FlagCreateManyCmTriagedByUserInput | FlagCreateManyCmTriagedByUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type FlagCreateWithoutAssignedToUserInput = {
+    id?: string
+    sourceType?: $Enums.FlagSourceType
+    sourceId: string
+    dedupeKey?: string | null
+    type: $Enums.FlagType
+    severity?: $Enums.FlagSeverity
+    status?: $Enums.FlagStatus
+    evidence?: NullableJsonNullValueInput | InputJsonValue
+    createdByType?: $Enums.FlagCreatedByType
+    createdByUserId?: string | null
+    resolvedByUserId?: string | null
+    resolvedAt?: Date | string | null
+    resolutionType?: $Enums.FlagResolutionType | null
+    resolutionNote?: string | null
+    cmDisposition?: $Enums.CmFlagDisposition
+    escalationReason?: string | null
+    cmTriageNote?: string | null
+    cmTriagedAt?: Date | string | null
+    escalatedAt?: Date | string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    meeting?: MeetingCreateNestedOneWithoutFlagsInput
+    communication?: CommunicationCreateNestedOneWithoutFlagsInput
+    workspace: WorkspaceCreateNestedOneWithoutFlagsInput
+    resolutionRecord?: ResolutionRecordCreateNestedOneWithoutFlagInput
+    cmTriagedByUser?: UserCreateNestedOneWithoutFlagsCmTriagedInput
+  }
+
+  export type FlagUncheckedCreateWithoutAssignedToUserInput = {
+    id?: string
+    workspaceId: string
+    meetingId?: string | null
+    sourceType?: $Enums.FlagSourceType
+    sourceId: string
+    communicationId?: string | null
+    dedupeKey?: string | null
+    type: $Enums.FlagType
+    severity?: $Enums.FlagSeverity
+    status?: $Enums.FlagStatus
+    evidence?: NullableJsonNullValueInput | InputJsonValue
+    createdByType?: $Enums.FlagCreatedByType
+    createdByUserId?: string | null
+    resolvedByUserId?: string | null
+    resolvedAt?: Date | string | null
+    resolutionType?: $Enums.FlagResolutionType | null
+    resolutionNote?: string | null
+    cmDisposition?: $Enums.CmFlagDisposition
+    escalationReason?: string | null
+    cmTriageNote?: string | null
+    cmTriagedAt?: Date | string | null
+    cmTriagedByUserId?: string | null
+    escalatedAt?: Date | string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    resolutionRecord?: ResolutionRecordUncheckedCreateNestedOneWithoutFlagInput
+  }
+
+  export type FlagCreateOrConnectWithoutAssignedToUserInput = {
+    where: FlagWhereUniqueInput
+    create: XOR<FlagCreateWithoutAssignedToUserInput, FlagUncheckedCreateWithoutAssignedToUserInput>
+  }
+
+  export type FlagCreateManyAssignedToUserInputEnvelope = {
+    data: FlagCreateManyAssignedToUserInput | FlagCreateManyAssignedToUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -86524,6 +87118,22 @@ export namespace Prisma {
     data: XOR<FlagUpdateManyMutationInput, FlagUncheckedUpdateManyWithoutCmTriagedByUserInput>
   }
 
+  export type FlagUpsertWithWhereUniqueWithoutAssignedToUserInput = {
+    where: FlagWhereUniqueInput
+    update: XOR<FlagUpdateWithoutAssignedToUserInput, FlagUncheckedUpdateWithoutAssignedToUserInput>
+    create: XOR<FlagCreateWithoutAssignedToUserInput, FlagUncheckedCreateWithoutAssignedToUserInput>
+  }
+
+  export type FlagUpdateWithWhereUniqueWithoutAssignedToUserInput = {
+    where: FlagWhereUniqueInput
+    data: XOR<FlagUpdateWithoutAssignedToUserInput, FlagUncheckedUpdateWithoutAssignedToUserInput>
+  }
+
+  export type FlagUpdateManyWithWhereWithoutAssignedToUserInput = {
+    where: FlagScalarWhereInput
+    data: XOR<FlagUpdateManyMutationInput, FlagUncheckedUpdateManyWithoutAssignedToUserInput>
+  }
+
   export type InvitationUpsertWithWhereUniqueWithoutInvitedByInput = {
     where: InvitationWhereUniqueInput
     update: XOR<InvitationUpdateWithoutInvitedByInput, InvitationUncheckedUpdateWithoutInvitedByInput>
@@ -86679,6 +87289,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagCreateNestedManyWithoutAssignedToUserInput
     emailAliases?: EmailAliasCreateNestedManyWithoutUserInput
   }
 
@@ -86696,6 +87307,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagUncheckedCreateNestedManyWithoutAssignedToUserInput
     emailAliases?: EmailAliasUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -86844,6 +87456,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUpdateManyWithoutAssignedToUserNestedInput
     emailAliases?: EmailAliasUpdateManyWithoutUserNestedInput
   }
 
@@ -86861,6 +87474,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUncheckedUpdateManyWithoutAssignedToUserNestedInput
     emailAliases?: EmailAliasUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -89846,6 +90460,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationCreateNestedManyWithoutInvitedByInput
   }
 
@@ -89863,6 +90478,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedCreateNestedManyWithoutCmReviewedByUserInput
     meetingsCcoSignedOff?: MeetingUncheckedCreateNestedManyWithoutCcoSignedOffByUserInput
     flagsCmTriaged?: FlagUncheckedCreateNestedManyWithoutCmTriagedByUserInput
+    flagsAssigned?: FlagUncheckedCreateNestedManyWithoutAssignedToUserInput
     invitationsSent?: InvitationUncheckedCreateNestedManyWithoutInvitedByInput
   }
 
@@ -90048,6 +90664,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUpdateManyWithoutInvitedByNestedInput
   }
 
@@ -90065,6 +90682,7 @@ export namespace Prisma {
     meetingsCmReviewed?: MeetingUncheckedUpdateManyWithoutCmReviewedByUserNestedInput
     meetingsCcoSignedOff?: MeetingUncheckedUpdateManyWithoutCcoSignedOffByUserNestedInput
     flagsCmTriaged?: FlagUncheckedUpdateManyWithoutCmTriagedByUserNestedInput
+    flagsAssigned?: FlagUncheckedUpdateManyWithoutAssignedToUserNestedInput
     invitationsSent?: InvitationUncheckedUpdateManyWithoutInvitedByNestedInput
   }
 
@@ -91574,12 +92192,17 @@ export namespace Prisma {
     escalationReason?: string | null
     cmTriageNote?: string | null
     cmTriagedAt?: Date | string | null
+    escalatedAt?: Date | string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     meeting?: MeetingCreateNestedOneWithoutFlagsInput
     workspace: WorkspaceCreateNestedOneWithoutFlagsInput
     resolutionRecord?: ResolutionRecordCreateNestedOneWithoutFlagInput
     cmTriagedByUser?: UserCreateNestedOneWithoutFlagsCmTriagedInput
+    assignedToUser?: UserCreateNestedOneWithoutFlagsAssignedInput
   }
 
   export type FlagUncheckedCreateWithoutCommunicationInput = {
@@ -91604,6 +92227,11 @@ export namespace Prisma {
     cmTriageNote?: string | null
     cmTriagedAt?: Date | string | null
     cmTriagedByUserId?: string | null
+    escalatedAt?: Date | string | null
+    assignedToUserId?: string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     resolutionRecord?: ResolutionRecordUncheckedCreateNestedOneWithoutFlagInput
@@ -92785,6 +93413,11 @@ export namespace Prisma {
     cmTriageNote?: string | null
     cmTriagedAt?: Date | string | null
     cmTriagedByUserId?: string | null
+    escalatedAt?: Date | string | null
+    assignedToUserId?: string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -93325,12 +93958,17 @@ export namespace Prisma {
     escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meeting?: MeetingUpdateOneWithoutFlagsNestedInput
     communication?: CommunicationUpdateOneWithoutFlagsNestedInput
     resolutionRecord?: ResolutionRecordUpdateOneWithoutFlagNestedInput
     cmTriagedByUser?: UserUpdateOneWithoutFlagsCmTriagedNestedInput
+    assignedToUser?: UserUpdateOneWithoutFlagsAssignedNestedInput
   }
 
   export type FlagUncheckedUpdateWithoutWorkspaceInput = {
@@ -93355,6 +93993,11 @@ export namespace Prisma {
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedToUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resolutionRecord?: ResolutionRecordUncheckedUpdateOneWithoutFlagNestedInput
@@ -93382,6 +94025,11 @@ export namespace Prisma {
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedToUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -94224,6 +94872,11 @@ export namespace Prisma {
     cmTriageNote?: string | null
     cmTriagedAt?: Date | string | null
     cmTriagedByUserId?: string | null
+    escalatedAt?: Date | string | null
+    assignedToUserId?: string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -94404,12 +95057,17 @@ export namespace Prisma {
     escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     communication?: CommunicationUpdateOneWithoutFlagsNestedInput
     workspace?: WorkspaceUpdateOneRequiredWithoutFlagsNestedInput
     resolutionRecord?: ResolutionRecordUpdateOneWithoutFlagNestedInput
     cmTriagedByUser?: UserUpdateOneWithoutFlagsCmTriagedNestedInput
+    assignedToUser?: UserUpdateOneWithoutFlagsAssignedNestedInput
   }
 
   export type FlagUncheckedUpdateWithoutMeetingInput = {
@@ -94434,6 +95092,11 @@ export namespace Prisma {
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedToUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resolutionRecord?: ResolutionRecordUncheckedUpdateOneWithoutFlagNestedInput
@@ -94461,6 +95124,11 @@ export namespace Prisma {
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedToUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -95176,6 +95844,42 @@ export namespace Prisma {
     escalationReason?: string | null
     cmTriageNote?: string | null
     cmTriagedAt?: Date | string | null
+    escalatedAt?: Date | string | null
+    assignedToUserId?: string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FlagCreateManyAssignedToUserInput = {
+    id?: string
+    workspaceId: string
+    meetingId?: string | null
+    sourceType?: $Enums.FlagSourceType
+    sourceId: string
+    communicationId?: string | null
+    dedupeKey?: string | null
+    type: $Enums.FlagType
+    severity?: $Enums.FlagSeverity
+    status?: $Enums.FlagStatus
+    evidence?: NullableJsonNullValueInput | InputJsonValue
+    createdByType?: $Enums.FlagCreatedByType
+    createdByUserId?: string | null
+    resolvedByUserId?: string | null
+    resolvedAt?: Date | string | null
+    resolutionType?: $Enums.FlagResolutionType | null
+    resolutionNote?: string | null
+    cmDisposition?: $Enums.CmFlagDisposition
+    escalationReason?: string | null
+    cmTriageNote?: string | null
+    cmTriagedAt?: Date | string | null
+    cmTriagedByUserId?: string | null
+    escalatedAt?: Date | string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -95876,12 +96580,17 @@ export namespace Prisma {
     escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meeting?: MeetingUpdateOneWithoutFlagsNestedInput
     communication?: CommunicationUpdateOneWithoutFlagsNestedInput
     workspace?: WorkspaceUpdateOneRequiredWithoutFlagsNestedInput
     resolutionRecord?: ResolutionRecordUpdateOneWithoutFlagNestedInput
+    assignedToUser?: UserUpdateOneWithoutFlagsAssignedNestedInput
   }
 
   export type FlagUncheckedUpdateWithoutCmTriagedByUserInput = {
@@ -95906,6 +96615,11 @@ export namespace Prisma {
     escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedToUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resolutionRecord?: ResolutionRecordUncheckedUpdateOneWithoutFlagNestedInput
@@ -95933,6 +96647,106 @@ export namespace Prisma {
     escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedToUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FlagUpdateWithoutAssignedToUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceType?: EnumFlagSourceTypeFieldUpdateOperationsInput | $Enums.FlagSourceType
+    sourceId?: StringFieldUpdateOperationsInput | string
+    dedupeKey?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumFlagTypeFieldUpdateOperationsInput | $Enums.FlagType
+    severity?: EnumFlagSeverityFieldUpdateOperationsInput | $Enums.FlagSeverity
+    status?: EnumFlagStatusFieldUpdateOperationsInput | $Enums.FlagStatus
+    evidence?: NullableJsonNullValueInput | InputJsonValue
+    createdByType?: EnumFlagCreatedByTypeFieldUpdateOperationsInput | $Enums.FlagCreatedByType
+    createdByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
+    resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    meeting?: MeetingUpdateOneWithoutFlagsNestedInput
+    communication?: CommunicationUpdateOneWithoutFlagsNestedInput
+    workspace?: WorkspaceUpdateOneRequiredWithoutFlagsNestedInput
+    resolutionRecord?: ResolutionRecordUpdateOneWithoutFlagNestedInput
+    cmTriagedByUser?: UserUpdateOneWithoutFlagsCmTriagedNestedInput
+  }
+
+  export type FlagUncheckedUpdateWithoutAssignedToUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    meetingId?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceType?: EnumFlagSourceTypeFieldUpdateOperationsInput | $Enums.FlagSourceType
+    sourceId?: StringFieldUpdateOperationsInput | string
+    communicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    dedupeKey?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumFlagTypeFieldUpdateOperationsInput | $Enums.FlagType
+    severity?: EnumFlagSeverityFieldUpdateOperationsInput | $Enums.FlagSeverity
+    status?: EnumFlagStatusFieldUpdateOperationsInput | $Enums.FlagStatus
+    evidence?: NullableJsonNullValueInput | InputJsonValue
+    createdByType?: EnumFlagCreatedByTypeFieldUpdateOperationsInput | $Enums.FlagCreatedByType
+    createdByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
+    resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolutionRecord?: ResolutionRecordUncheckedUpdateOneWithoutFlagNestedInput
+  }
+
+  export type FlagUncheckedUpdateManyWithoutAssignedToUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    meetingId?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceType?: EnumFlagSourceTypeFieldUpdateOperationsInput | $Enums.FlagSourceType
+    sourceId?: StringFieldUpdateOperationsInput | string
+    communicationId?: NullableStringFieldUpdateOperationsInput | string | null
+    dedupeKey?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumFlagTypeFieldUpdateOperationsInput | $Enums.FlagType
+    severity?: EnumFlagSeverityFieldUpdateOperationsInput | $Enums.FlagSeverity
+    status?: EnumFlagStatusFieldUpdateOperationsInput | $Enums.FlagStatus
+    evidence?: NullableJsonNullValueInput | InputJsonValue
+    createdByType?: EnumFlagCreatedByTypeFieldUpdateOperationsInput | $Enums.FlagCreatedByType
+    createdByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resolutionType?: NullableEnumFlagResolutionTypeFieldUpdateOperationsInput | $Enums.FlagResolutionType | null
+    resolutionNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmDisposition?: EnumCmFlagDispositionFieldUpdateOperationsInput | $Enums.CmFlagDisposition
+    escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
+    cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -96840,6 +97654,11 @@ export namespace Prisma {
     cmTriageNote?: string | null
     cmTriagedAt?: Date | string | null
     cmTriagedByUserId?: string | null
+    escalatedAt?: Date | string | null
+    assignedToUserId?: string | null
+    reviewDueAt?: Date | string | null
+    materiality?: $Enums.FindingMateriality | null
+    policyMappingCode?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -96899,12 +97718,17 @@ export namespace Prisma {
     escalationReason?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meeting?: MeetingUpdateOneWithoutFlagsNestedInput
     workspace?: WorkspaceUpdateOneRequiredWithoutFlagsNestedInput
     resolutionRecord?: ResolutionRecordUpdateOneWithoutFlagNestedInput
     cmTriagedByUser?: UserUpdateOneWithoutFlagsCmTriagedNestedInput
+    assignedToUser?: UserUpdateOneWithoutFlagsAssignedNestedInput
   }
 
   export type FlagUncheckedUpdateWithoutCommunicationInput = {
@@ -96929,6 +97753,11 @@ export namespace Prisma {
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedToUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resolutionRecord?: ResolutionRecordUncheckedUpdateOneWithoutFlagNestedInput
@@ -96956,6 +97785,11 @@ export namespace Prisma {
     cmTriageNote?: NullableStringFieldUpdateOperationsInput | string | null
     cmTriagedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cmTriagedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    escalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedToUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    materiality?: NullableEnumFindingMaterialityFieldUpdateOperationsInput | $Enums.FindingMateriality | null
+    policyMappingCode?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

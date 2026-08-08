@@ -9,7 +9,7 @@ export const ADVIZORSTACK_PRIMARY_FINDING = {
   flagId: "si-as-flag-rollover-001",
   meetingId: "si-as-sec-mtg-pri-001",
   workspaceId: "si-as-ws-secure",
-  href: "/priority-inbox?finding=si-as-flag-rollover-001",
+  href: "/findings/si-as-flag-rollover-001",
 } as const;
 
 export type AdvizorStackFirmDef = {

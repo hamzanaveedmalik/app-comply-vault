@@ -426,6 +426,7 @@ enum AuditAction {
   CANDIDATE_PACK_APPROVED
   SUPERVISORY_OUTCOME_ASSIGNED
   SUPERVISORY_SAMPLE_SELECTED
+  FINDING_VIEWED
 }
 
 /// CV-TR-01/02 — append-only ledger entry for immutable audit-pack bytes.
@@ -498,6 +499,13 @@ enum FlagSeverity {
   INFO
   WARN
   CRITICAL
+}
+
+/// CV-SI-006 — client-impact materiality on a priority finding.
+enum FindingMateriality {
+  HIGH
+  MEDIUM
+  LOW
 }
 
 enum FlagStatus {
@@ -576,6 +584,12 @@ model Flag {
   cmTriageNote      String?             @db.Text
   cmTriagedAt       DateTime?
   cmTriagedByUserId String?
+  /// CV-SI-006 — when set, this flag is (or was) a priority-inbox finding.
+  escalatedAt       DateTime?
+  assignedToUserId  String?
+  reviewDueAt       DateTime?
+  materiality       FindingMateriality?
+  policyMappingCode String?
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
 
@@ -584,12 +598,15 @@ model Flag {
   workspace        Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   resolutionRecord ResolutionRecord?
   cmTriagedByUser  User?             @relation("FlagCmTriagedBy", fields: [cmTriagedByUserId], references: [id], onDelete: SetNull)
+  assignedToUser   User?             @relation("FlagAssignedTo", fields: [assignedToUserId], references: [id], onDelete: SetNull)
 
   @@unique([workspaceId, dedupeKey])
   @@index([workspaceId])
   @@index([workspaceId, meetingId])
   @@index([workspaceId, status])
   @@index([workspaceId, sourceType, sourceId])
+  @@index([workspaceId, assignedToUserId])
+  @@index([workspaceId, escalatedAt])
   @@index([meetingId, type])
   @@index([communicationId])
 }
@@ -766,6 +783,7 @@ model User {
   meetingsCmReviewed          Meeting[]       @relation("MeetingCmReviewedBy")
   meetingsCcoSignedOff        Meeting[]       @relation("MeetingCcoSignedOffBy")
   flagsCmTriaged              Flag[]          @relation("FlagCmTriagedBy")
+  flagsAssigned               Flag[]          @relation("FlagAssignedTo")
   invitationsSent             Invitation[]    @relation("InvitationsSent")
   emailAliases                EmailAlias[]
 }

@@ -1,8 +1,12 @@
 import Link from "next/link";
 import type { PortfolioSupervisionSummary } from "~/lib/types";
+import type { SupervisionFilterState } from "~/server/supervision/filters";
+import { supervisionHref } from "~/server/supervision/filters";
+import { SupervisionFilters } from "~/components/supervision/supervision-filters";
 
 type SupervisionCommandCentreProps = {
   portfolio: PortfolioSupervisionSummary;
+  filters: SupervisionFilterState;
 };
 
 function formatDate(iso: string | null): string {
@@ -29,8 +33,10 @@ function trendLabel(trend: string): string {
 
 export function SupervisionCommandCentre({
   portfolio,
+  filters,
 }: SupervisionCommandCentreProps): React.JSX.Element {
-  const { counts, selectivityStatement, firms, patterns, synthetic } = portfolio;
+  const { counts, selectivityStatement, firms, patterns, synthetic, filterOptions } =
+    portfolio;
 
   const metrics: Array<{ label: string; value: number; href?: string }> = [
     { label: "Interactions processed", value: counts.totalProcessed },
@@ -39,7 +45,7 @@ export function SupervisionCommandCentre({
     {
       label: "Priority findings",
       value: counts.priorityFindings,
-      href: "/priority-inbox",
+      href: supervisionHref("/priority-inbox", filters),
     },
     { label: "Held interactions", value: counts.heldInteractions },
     { label: "Open remediation", value: counts.openRemediation },
@@ -65,6 +71,12 @@ export function SupervisionCommandCentre({
           review — ComplyVault does not independently determine a violation.
         </p>
       </header>
+
+      <SupervisionFilters
+        filters={filters}
+        firms={filterOptions.firms}
+        advisers={filterOptions.advisers}
+      />
 
       <section
         className="rounded-[12px] border border-[#e6e8e6] bg-white p-4 shadow-[0_1px_2px_rgba(20,31,25,0.04)]"

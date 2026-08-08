@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { requireAppAccess } from "~/server/auth/guards";
 import { db } from "~/server/db";
-import { parseSupervisionFilters, toSummaryQuery } from "~/server/supervision/filters";
-import { listSupervisoryInteractions } from "~/server/supervision/service";
+import { parseSupervisionFilters } from "~/server/supervision/filters";
+import { DEFAULT_INBOX_TAB, listPriorityInbox } from "~/server/supervision/inbox";
 
 const querySchema = z.record(z.string(), z.string().optional());
 
@@ -18,17 +18,11 @@ export async function GET(request: Request): Promise<Response> {
     return Response.json({ success: false, error: "Invalid query" }, { status: 400 });
   }
 
-  const query = toSummaryQuery(parseSupervisionFilters(parsed.data));
-  const data = await listSupervisoryInteractions(db, access.workspaceId, {
-    dateFrom: query.dateFrom,
-    dateTo: query.dateTo,
-    firmId: query.firmId,
-    adviserId: query.adviserId,
-    channel: query.channel,
-    control: query.control,
-    outcome: query.outcome,
-    severity: query.severity,
-    findingStatus: query.findingStatus,
+  const filters = parseSupervisionFilters(parsed.data);
+  const data = await listPriorityInbox(db, {
+    userId: access.session.user.id,
+    filters,
+    tab: filters.inboxTab ?? DEFAULT_INBOX_TAB,
   });
 
   return Response.json({ success: true, data });

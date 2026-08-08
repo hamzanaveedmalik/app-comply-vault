@@ -60,12 +60,21 @@ export type SupervisionPatternDto = {
   href: string;
 };
 
+export type SupervisionFilterOption = {
+  id: string;
+  label: string;
+};
+
 export type PortfolioSupervisionSummary = {
   synthetic: boolean;
   counts: SupervisionCounts;
   selectivityStatement: string;
   firms: FirmSupervisionRow[];
   patterns: SupervisionPatternDto[];
+  filterOptions: {
+    firms: SupervisionFilterOption[];
+    advisers: SupervisionFilterOption[];
+  };
 };
 
 export type SupervisoryInteractionDto = {
@@ -81,6 +90,52 @@ export type SupervisoryInteractionDto = {
   heldReason: string | null;
   parkedReason: string | null;
   href: string;
+};
+
+export type PriorityInboxTab =
+  | "unassigned"
+  | "assigned"
+  | "in_review"
+  | "remediation"
+  | "escalated"
+  | "closed";
+
+export type PriorityInboxFindingDto = {
+  id: string;
+  title: string;
+  firmId: string;
+  firmName: string;
+  adviserId: string | null;
+  adviserName: string | null;
+  clientName: string | null;
+  channels: Array<"MEETING" | "EMAIL">;
+  primaryControl: string;
+  policyMappingCode: string;
+  escalationReason: string;
+  severity: "INFO" | "WARN" | "CRITICAL";
+  materiality: "HIGH" | "MEDIUM" | "LOW";
+  confidence: number | null;
+  dueAt: string | null;
+  ownerId: string | null;
+  ownerName: string | null;
+  repeatAdviser: boolean;
+  evidenceCount: number;
+  status: "OPEN" | "IN_REMEDIATION" | "PENDING_VERIFICATION" | "CLOSED" | "CLOSED_ACCEPTED_RISK";
+  tab: PriorityInboxTab;
+  href: string;
+};
+
+export type PriorityInboxCounts = Record<PriorityInboxTab, number>;
+
+export type PriorityInboxDto = {
+  tab: PriorityInboxTab;
+  findings: PriorityInboxFindingDto[];
+  tabCounts: PriorityInboxCounts;
+  header: {
+    priorityFindings: number;
+    totalProcessed: number;
+    selectivityStatement: string;
+  };
 };
 
 export type SupervisorySamplingConfigDto = {

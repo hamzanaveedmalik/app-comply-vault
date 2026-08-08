@@ -160,7 +160,7 @@ if (james[0]) {
       (id, "threadId", "evidenceItemId", direction, "sentAt", "fromAddress", "toAddresses",
        "ccAddresses", "bodyText", "internetMessageId", "createdAt", "updatedAt")
       values (${communicationId}, ${threadId}, ${evidenceId}, 'OUTBOUND', ${occurredAt}::timestamptz,
-        'compliance@demo.complyvault.co', ${["james.whitfield@example.com"]}::text[], '{}'::text[],
+        'compliance@complyvault.co', ${["james.whitfield@example.com"]}::text[], '{}'::text[],
         ${body}, ${`<demo-advice-${clientId}@example.com>`},
         ${now}::timestamptz, ${now}::timestamptz)`;
     await sql`insert into "ClientActivity"

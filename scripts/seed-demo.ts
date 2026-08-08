@@ -231,6 +231,10 @@ async function main(): Promise<void> {
         where: { id: { in: communicationIds }, deletedAt: null },
         data: { deletedAt: softDeletedAt },
       });
+      await prisma.communication.updateMany({
+        where: { id: { in: communicationIds }, deletedAt: { not: null } },
+        data: { internetMessageId: null },
+      });
     }
     if (threadIds.length > 0) {
       await prisma.communicationThread.updateMany({
@@ -279,7 +283,7 @@ async function main(): Promise<void> {
         status: "CLOSED",
         resolvedAt: daysAgo(1),
         resolutionType: "ADD_CONTEXT",
-        resolutionNote: "Demo reseed - closed for healthy queue metrics",
+        resolutionNote: "Closed during corpus refresh for queue health",
       },
     });
 
@@ -442,7 +446,7 @@ async function main(): Promise<void> {
             status: "OPEN",
             createdAt: daysAgo(i === 0 ? 1 : 2),
             evidence: {
-              excerpt: "Demo seed flag - recent open item for queue health",
+              excerpt: "Open item for queue health — fee disclosure follow-up",
             },
           },
         });
@@ -498,7 +502,7 @@ async function main(): Promise<void> {
           direction: "INBOUND",
           sentAt: feeOccurredAt,
           fromAddress: c.email,
-          toAddresses: ["compliance@demo.complyvault.co"],
+          toAddresses: ["compliance@complyvault.co"],
           ccAddresses: [],
           bodyText: feeBody,
           internetMessageId: `<demo-fee-${c.id}@example.com>`,
@@ -605,7 +609,7 @@ async function main(): Promise<void> {
           evidenceItemId: evidence.id,
           direction: "OUTBOUND",
           sentAt: occurredAt,
-          fromAddress: "compliance@demo.complyvault.co",
+          fromAddress: "compliance@complyvault.co",
           toAddresses: [adviceClient.email],
           ccAddresses: [],
           bodyText: ADVICE_EMAIL.body,
@@ -713,7 +717,7 @@ async function main(): Promise<void> {
           evidenceItemId: evidence.id,
           direction: "OUTBOUND",
           sentAt: occurredAt,
-          fromAddress: "compliance@demo.complyvault.co",
+          fromAddress: "compliance@complyvault.co",
           toAddresses: [perfClient.email],
           ccAddresses: [],
           bodyText: PERFORMANCE_EMAIL.body,
@@ -797,7 +801,7 @@ async function main(): Promise<void> {
         searchableText: [
           HELD_MEETING.clientName,
           HELD_MEETING.lastTopic,
-          "held for confirmation demo",
+          "held for confirmation",
         ]
           .join(" ")
           .toLowerCase(),
@@ -839,9 +843,8 @@ async function main(): Promise<void> {
         source: "zoom",
         externalRef: "demo-parked-zoom-recording-001",
         payload: {
-          demo: true,
-          note: "Seeded parked ingest for fail-closed demonstration",
-          meetingTopic: "Q2 review — posture gate demo",
+          note: "Parked ingest pending media posture decision",
+          meetingTopic: "Q2 review — media posture gate",
         },
         occurredAt: daysAgo(3),
         status: "PARKED",
@@ -860,7 +863,6 @@ async function main(): Promise<void> {
           externalRef: "demo-parked-zoom-recording-001",
           parked: true,
           note: "Ingest refused because no media posture decision exists. Replay from the parked recordings list after the CCO decides.",
-          demoSeed: true,
         },
       },
     });

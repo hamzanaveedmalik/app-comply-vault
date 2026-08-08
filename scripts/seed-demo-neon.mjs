@@ -117,6 +117,12 @@ console.log(`Seeding ${ws[0].name} (${WORKSPACE_ID})`);
 await sql`update "Communication" c set "deletedAt" = ${now}::timestamptz
   from "EvidenceItem" e
   where c."evidenceItemId" = e.id and e."workspaceId" = ${WORKSPACE_ID} and c."deletedAt" is null`;
+await sql`update "Communication" c set "internetMessageId" = null
+  from "EvidenceItem" e
+  where c."evidenceItemId" = e.id
+    and e."workspaceId" = ${WORKSPACE_ID}
+    and c."deletedAt" is not null
+    and c."internetMessageId" is not null`;
 await sql`update "CommunicationThread" set "deletedAt" = ${now}::timestamptz
   where "workspaceId" = ${WORKSPACE_ID} and "deletedAt" is null`;
 await sql`update "EvidenceItem" set "deletedAt" = ${now}::timestamptz
@@ -137,7 +143,7 @@ await sql`update "Flag" set
   status = 'CLOSED',
   "resolvedAt" = ${daysAgo(1)}::timestamptz,
   "resolutionType" = 'ADD_CONTEXT',
-  "resolutionNote" = 'Demo reseed - closed for healthy queue metrics',
+  "resolutionNote" = 'Closed during corpus refresh for queue health',
   "updatedAt" = ${now}::timestamptz
   where "workspaceId" = ${WORKSPACE_ID}
     and status in ('OPEN','IN_REMEDIATION','PENDING_VERIFICATION')`;
@@ -249,7 +255,7 @@ for (const [i, c] of CLIENTS.entries()) {
        "createdByType", "createdAt", "updatedAt")
       values (${cuid()}, ${WORKSPACE_ID}, ${meetingId}, 'MEETING', ${meetingId},
         ${i === 0 ? "MISSING_DISCLOSURE" : "CONFLICT_LANGUAGE"}, 'WARN', 'OPEN',
-        ${JSON.stringify({ excerpt: "Demo seed flag - recent open item for queue health" })}::jsonb,
+        ${JSON.stringify({ excerpt: "Open item for queue health — fee disclosure follow-up" })}::jsonb,
         'SYSTEM', ${flagCreated}::timestamptz, ${now}::timestamptz)`;
   }
 
@@ -282,7 +288,7 @@ for (const [i, c] of CLIENTS.entries()) {
     (id, "threadId", "evidenceItemId", direction, "sentAt", "fromAddress", "toAddresses",
      "ccAddresses", "bodyText", "internetMessageId", "createdAt", "updatedAt")
     values (${communicationId}, ${threadId}, ${evidenceId}, 'INBOUND', ${feeOccurredAt}::timestamptz,
-      ${c.email}, ${["compliance@demo.complyvault.co"]}::text[], '{}'::text[], ${c.feeBody},
+      ${c.email}, ${["compliance@complyvault.co"]}::text[], '{}'::text[], ${c.feeBody},
       ${`<demo-fee-${clientId}@example.com>`}, ${now}::timestamptz, ${now}::timestamptz)`;
   await sql`insert into "ClientActivity"
     (id, "workspaceId", "clientId", type, "occurredAt", title, direction, counterparties,
@@ -357,7 +363,7 @@ if (adviceClient) {
     (id, "threadId", "evidenceItemId", direction, "sentAt", "fromAddress", "toAddresses",
      "ccAddresses", "bodyText", "internetMessageId", "createdAt", "updatedAt")
     values (${communicationId}, ${threadId}, ${evidenceId}, 'OUTBOUND', ${occurredAt}::timestamptz,
-      'compliance@demo.complyvault.co', ${[adviceClient.email]}::text[], '{}'::text[],
+      'compliance@complyvault.co', ${[adviceClient.email]}::text[], '{}'::text[],
       ${ADVICE_EMAIL.body}, ${`<demo-advice-${adviceClient.clientId}@example.com>`},
       ${now}::timestamptz, ${now}::timestamptz)`;
   await sql`insert into "ClientActivity"
@@ -429,7 +435,7 @@ if (perf) {
     (id, "threadId", "evidenceItemId", direction, "sentAt", "fromAddress", "toAddresses",
      "ccAddresses", "bodyText", "internetMessageId", "createdAt", "updatedAt")
     values (${communicationId}, ${threadId}, ${evidenceId}, 'OUTBOUND', ${occurredAt}::timestamptz,
-      'compliance@demo.complyvault.co', ${[perf.email]}::text[], '{}'::text[], ${body},
+      'compliance@complyvault.co', ${[perf.email]}::text[], '{}'::text[], ${body},
       ${`<demo-perf-${perf.clientId}@example.com>`}, ${now}::timestamptz, ${now}::timestamptz)`;
   await sql`insert into "ClientActivity"
     (id, "workspaceId", "clientId", type, "occurredAt", title, direction, counterparties,
@@ -687,7 +693,7 @@ await sql`insert into "Meeting"
   values (${heldMeetingId}, ${WORKSPACE_ID}, 'Robert Chen', null, null, '{}'::text[],
     'Annual Review', ${daysAgo(5)}::timestamptz, 'FINALIZED', ${daysAgo(4)}::timestamptz,
     ${daysAgo(3)}::timestamptz, 86400, 'COMPLETE_REVIEW',
-    'robert chen beneficiary designation update held for confirmation demo',
+    'robert chen beneficiary designation update held for confirmation',
     ${heldTranscript}::jsonb, ${heldExtraction}::jsonb, false,
     ${now}::timestamptz, ${now}::timestamptz)`;
 
@@ -699,9 +705,8 @@ await sql`insert into "ParkedIngest"
    "createdAt", "updatedAt")
   values (${cuid()}, ${WORKSPACE_ID}, 'zoom', 'demo-parked-zoom-recording-001',
     ${JSON.stringify({
-      demo: true,
-      note: "Seeded parked ingest for fail-closed demonstration",
-      meetingTopic: "Q2 review — posture gate demo",
+      note: "Parked ingest pending media posture decision",
+      meetingTopic: "Q2 review — media posture gate",
     })}::jsonb,
     ${daysAgo(3)}::timestamptz, 'PARKED', ${daysAgo(3)}::timestamptz,
     ${now}::timestamptz, ${now}::timestamptz)`;
@@ -713,7 +718,6 @@ await sql`insert into "AuditEvent"
       externalRef: "demo-parked-zoom-recording-001",
       parked: true,
       note: "Ingest refused because no media posture decision exists. Replay from the parked recordings list after the CCO decides.",
-      demoSeed: true,
     })}::jsonb,
     ${now}::timestamptz)`;
 

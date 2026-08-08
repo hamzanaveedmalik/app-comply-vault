@@ -98,11 +98,11 @@ describe("CV-SI-006 Priority Inbox eligibility", () => {
     sourceType: "MEETING" as const,
     meeting: {
       id: "mtg-1",
-      clientName: "[Synthetic] Client",
+      clientName: "Helen Navarro",
       supervisoryOutcome: "ESCALATED",
       outcomeConfidence: 0.95,
       advisorCertifiedByUserId: "adv-a",
-      advisorCertifiedByUser: { id: "adv-a", name: "Adviser Avery" },
+      advisorCertifiedByUser: { id: "adv-a", name: "Avery Chen" },
       transcript: { segments: [] },
     },
     communication: null,

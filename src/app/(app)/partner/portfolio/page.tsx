@@ -25,10 +25,10 @@ export default async function PartnerPortfolioPage(): Promise<React.JSX.Element>
   return (
     <main className="mx-auto max-w-6xl p-6">
       <header className="mb-6">
-        <p className="text-sm font-medium text-brand">Release 1 demo snapshot</p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Partner Portfolio</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Partner Portfolio</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Representative snapshots only. Production partner access ships with the pilot.
+          Named exposure factors across authorised firms. Drill-in is limited to firms
+          you are a member of.
         </p>
       </header>
       <div className="grid gap-4 lg:grid-cols-3">

@@ -17,8 +17,7 @@ export default async function NeedsAttentionPage(): Promise<React.JSX.Element> {
   return (
     <main className="mx-auto max-w-5xl p-6">
       <header className="mb-6">
-        <p className="text-sm font-medium text-brand">Release 1 demo</p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Needs Attention</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Needs Attention</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Items are ordered by severity and age. Each card shows the available evidence,
           what is missing, and the next expected action.

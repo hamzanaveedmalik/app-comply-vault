@@ -26,7 +26,7 @@ export function zeroSetupCopy(input: {
 
   return {
     heading: "Connect, then sync — no client records to type",
-    body: "These counts are workspace open items, not a live read of Gmail. Run Backfill or Delta sync so evidence comes from the connected mailbox. Do not present seed rows as mailbox disclosure.",
+    body: "These counts are workspace open items, not a live read of Gmail. Run Backfill or Delta sync so evidence comes from the connected mailbox.",
     cta:
       input.totalOpenItems > 0 ? "Review open items" : "Open Needs Attention",
   };

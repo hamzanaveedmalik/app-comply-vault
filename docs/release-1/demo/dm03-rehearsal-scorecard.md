@@ -24,7 +24,7 @@ Target: under 25 minutes including opens.
 - [ ] N2 zero setup → Needs Attention (held identity line spoken)
 - [ ] N1 rehearsed + paraphrased + open
 - [ ] Honest miss (SMS / 2023 / private jet)
-- [ ] N4 fail-closed (`demo-parked-zoom-recording-001`)
+- [ ] N4 fail-closed (parked Zoom + INGEST_PARKED)
 - [ ] N3 candidate pack (confirm scope before generate)
 - [ ] N5 portfolio + production-access sentence
 - [ ] N6 complement → economics → dated next step (17 Aug)

@@ -23,8 +23,7 @@ export default async function FailClosedPage(): Promise<React.JSX.Element> {
   return (
     <main className="mx-auto max-w-4xl p-6">
       <header className="mb-6">
-        <p className="text-sm font-medium text-brand">Release 1 demo</p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Fail-closed ingestion</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Fail-closed ingestion</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           The record is parked until its protected media posture is decided.
         </p>
@@ -51,10 +50,25 @@ export default async function FailClosedPage(): Promise<React.JSX.Element> {
             <CardTitle>Stored audit event</CardTitle>
             <CardDescription>This is the persisted event for the refusal path.</CardDescription>
           </CardHeader>
-          <CardContent>
-            <pre className="overflow-x-auto rounded-lg bg-muted p-4 text-xs text-foreground">
-              {JSON.stringify(surface.auditEvent, null, 2)}
-            </pre>
+          <CardContent className="grid gap-4 text-sm md:grid-cols-2">
+            {surface.auditEvent ? (
+              <>
+                <div>
+                  <p className="font-medium">Action</p>
+                  <p className="text-muted-foreground">{surface.auditEvent.action}</p>
+                </div>
+                <div>
+                  <p className="font-medium">Recorded at</p>
+                  <p className="text-muted-foreground">
+                    {new Date(surface.auditEvent.createdAt).toLocaleString()}
+                  </p>
+                </div>
+              </>
+            ) : (
+              <p className="text-muted-foreground md:col-span-2">
+                No stored ingest-parked audit event for this workspace.
+              </p>
+            )}
           </CardContent>
         </Card>
         <Button asChild>

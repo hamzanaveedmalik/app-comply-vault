@@ -11,7 +11,7 @@ import { PrismaClient } from "../generated/prisma";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { Pool } from "@neondatabase/serverless";
 
-const SI_CLIENT = "SI Epic1 Demo Client";
+const SI_CLIENT = "SI Epic1 Household";
 const SI_ID_PREFIX = "si-e1-mtg-";
 
 function parseArgs(argv: string[]): { workspaceId: string | null; confirm: boolean } {
@@ -71,7 +71,7 @@ async function main(): Promise<void> {
           workspaceId,
           status: "ACTIVE",
           crdNumber: "000000",
-          ccoName: "Synthetic CCO",
+          ccoName: "Elena Vasquez",
           approvedAt: now,
         },
       });

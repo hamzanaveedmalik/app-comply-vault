@@ -18,7 +18,7 @@ const TEST_MAILBOX_RE = /complyvaultco@gmail\.com/i;
 function displayMailboxAddress(address: string): string {
   const alias = process.env.NEXT_PUBLIC_DEMO_MAILBOX_LABEL?.trim();
   if (alias) return alias;
-  if (TEST_MAILBOX_RE.test(address)) return "compliance@demo.complyvault.co";
+  if (TEST_MAILBOX_RE.test(address)) return "compliance@complyvault.co";
   return address;
 }
 

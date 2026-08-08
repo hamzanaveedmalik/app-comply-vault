@@ -6,6 +6,7 @@
  * Usage:
  *   npx tsx scripts/seed-supervision-advizorstack.ts --confirm
  *   npx tsx scripts/seed-supervision-advizorstack.ts --confirm --userEmail=you@example.com
+ *   Repeat --userEmail= to link multiple presenter accounts.
  */
 import { config } from "dotenv";
 import { neon } from "@neondatabase/serverless";
@@ -27,17 +28,18 @@ type Sql = ReturnType<typeof neon>;
 
 function parseArgs(argv: string[]): {
   confirm: boolean;
-  userEmail: string | null;
+  userEmails: string[];
 } {
   let confirm = false;
-  let userEmail: string | null = null;
+  const userEmails: string[] = [];
   for (const arg of argv) {
     if (arg === "--confirm") confirm = true;
     if (arg.startsWith("--userEmail=")) {
-      userEmail = arg.slice("--userEmail=".length).trim() || null;
+      const email = arg.slice("--userEmail=".length).trim();
+      if (email) userEmails.push(email);
     }
   }
-  return { confirm, userEmail };
+  return { confirm, userEmails };
 }
 
 function daysAgo(now: Date, days: number): Date {
@@ -287,11 +289,11 @@ async function seedRolloverFindings(sql: Sql, now: Date): Promise<void> {
         ${row.status}::"FlagStatus",
         ${"SYSTEM"},
         ${row.status === "CLOSED" ? "RESOLVED" : "ESCALATED"}::"CmFlagDisposition",
-        ${"Rollover documentation — synthetic AdvizorStack demonstration finding"},
+        ${"Rollover recommendation with unresolved documentation gap"},
         ${evidence}::jsonb,
         ${resolvedAt},
         ${row.status === "CLOSED" ? "DISMISSED_WITH_REASON" : null}::"FlagResolutionType",
-        ${row.status === "CLOSED" ? "Synthetic closed rollover documentation finding" : null},
+        ${row.status === "CLOSED" ? "Rollover documentation closed after CCO review" : null},
         ${now},
         ${"HIGH"}::"FindingMateriality",
         ${"ROLLOVER-DOC-v1"},
@@ -313,7 +315,7 @@ async function seedRolloverFindings(sql: Sql, now: Date): Promise<void> {
           ${row.meetingId},
           ${row.id},
           ${"FOLLOW_UP_REQUIRED"}::"FlagResolutionType",
-          ${"Synthetic remediation opened for AdvizorStack demonstration"},
+          ${"Follow-up required: complete rollover documentation before the recommendation is treated as closed"},
           ${row.adviserId},
           ${metadata}::jsonb,
           ${now},
@@ -328,7 +330,7 @@ async function seedRolloverFindings(sql: Sql, now: Date): Promise<void> {
         ) VALUES (
           ${row.taskId},
           ${row.resolutionId},
-          ${"Complete rollover documentation remediation (synthetic)"},
+          ${"Complete rollover documentation remediation"},
           ${taskStatus}::"RemediationTaskStatus",
           ${row.adviserId},
           ${daysAgo(now, -14)},
@@ -342,7 +344,7 @@ async function seedRolloverFindings(sql: Sql, now: Date): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  const { confirm, userEmail } = parseArgs(process.argv.slice(2));
+  const { confirm, userEmails } = parseArgs(process.argv.slice(2));
   if (!confirm) {
     console.error(
       "Usage: npx tsx scripts/seed-supervision-advizorstack.ts --confirm [--userEmail=...]",
@@ -395,24 +397,24 @@ async function main(): Promise<void> {
 
   await seedRolloverFindings(sql, now);
 
-  if (userEmail) {
+  for (const userEmail of userEmails) {
     const users = await sql`SELECT id FROM "User" WHERE email = ${userEmail} LIMIT 1`;
     const user = users[0] as { id: string } | undefined;
     if (!user) {
-      console.warn("Presenter user not found for email; skipped memberships");
-    } else {
-      for (const firm of ADVIZORSTACK_FIRMS) {
-        await sql`
-          INSERT INTO "UserWorkspace" ("userId", "workspaceId", role)
-          VALUES (${user.id}, ${firm.workspaceId}, ${"OWNER_CCO"}::"WorkspaceRole")
-          ON CONFLICT ("userId", "workspaceId") DO UPDATE SET
-            role = EXCLUDED.role,
-            "removedAt" = NULL,
-            "removedById" = NULL
-        `;
-      }
-      console.log(`Linked presenter as OWNER_CCO on all three firms`);
+      console.warn(`Presenter user not found for email; skipped memberships`);
+      continue;
     }
+    for (const firm of ADVIZORSTACK_FIRMS) {
+      await sql`
+        INSERT INTO "UserWorkspace" ("userId", "workspaceId", role)
+        VALUES (${user.id}, ${firm.workspaceId}, ${"OWNER_CCO"}::"WorkspaceRole")
+        ON CONFLICT ("userId", "workspaceId") DO UPDATE SET
+          role = EXCLUDED.role,
+          "removedAt" = NULL,
+          "removedById" = NULL
+      `;
+    }
+    console.log(`Linked presenter as OWNER_CCO on all three firms`);
   }
 
   const firmIds = ADVIZORSTACK_FIRMS.map((f) => f.workspaceId);

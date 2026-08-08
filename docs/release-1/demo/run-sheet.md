@@ -10,7 +10,7 @@ tags:
 
 **Two corpora — do not mix claims:**
 1. **Live mailbox (N2 zero setup):** Connect Gmail → Labels → **Backfill**. Counts must come from that sync only. Never say “what the mailbox disclosed” about DB seed rows.
-2. **Ask / honest-miss rehearsal (N1):** `node scripts/seed-demo-neon.mjs <id> --confirm` then embed backfill. Prepared synthetic evidence for known questions — label it as demo corpus if the live mailbox is empty.
+2. **Ask / honest-miss rehearsal (N1):** `node scripts/seed-demo-neon.mjs <id> --confirm` then embed backfill. Prepared evidence for known questions. If the live mailbox is empty, say once that this is a prepared corpus — do not put that label on the screen.
 
 ## Open: test the hypotheses
 
@@ -25,15 +25,15 @@ Reorder the middle of the session around the answers. The default sequence below
 ## Default order
 
 1. **Zero setup to first evidence (N2).** Connect the prepared demo mailbox → Labels → **Backfill**. Say: “Zero setup — nobody types client records.” Only after a sync timestamp appears, use the CTA **What the mailbox disclosed** (Needs Attention): held identities, open signals, parked fail-closed. Do **not** end on a client table. Do **not** attribute DB seed rows to the mailbox. Line for held identity: “Held for confirmation is the product working, not unfinished setup.”
-2. **Tiered questions (N1).** Use the seeded Ask corpus (label it if the live mailbox is empty). Start with a rehearsed question, accept a paraphrased question, then offer an open question. Every answer should retain source links and its coverage context.
+2. **Tiered questions (N1).** Use the seeded Ask corpus. If the live mailbox is empty, say once: “This is a prepared corpus so we can test retrieval honestly.” Start with a rehearsed question, accept a paraphrased question, then offer an open question. Every answer should retain source links and its coverage context.
 3. **Honest miss fallback.** Invoke on purpose (seeded):
    - SMS: “Show me SMS messages about fees”
    - Out of range: “What fee emails do we have from 2023-02-15?”
    - No evidence: “Any evidence of private jet gifts to clients?”  
    Line: “This source or period is outside the indexed coverage. I can show what was searched and what is missing, but I will not infer an answer from nearby evidence.”
-4. **Fail-closed ingestion (N4).** `/fail-closed` — parked Zoom ref `demo-parked-zoom-recording-001`, reason, retention rule, stored `INGEST_PARKED` audit event, recovery via media posture.
+4. **Fail-closed ingestion (N4).** `/fail-closed` — parked Zoom source, reason, retention rule, stored `INGEST_PARKED` audit event, recovery via media posture.
 5. **Candidate pack (N3).** Paste one document-request item (example below). Show interpreted scope, make the CCO confirmation explicit, generate candidate evidence, review coverage gaps, then approve.
-6. **Portfolio snapshot (N5).** `/partner/portfolio` — three firms, named exposure factors, drill only into **Summit Ridge Advisors, LLC**. Say: “Production partner access ships with the pilot; Release 1 has no cross-workspace read path.”
+6. **Portfolio snapshot (N5).** `/partner/portfolio` — three firms, named exposure factors, drill only into **Summit Ridge Advisors, LLC**. Say once: “This is a prepared portfolio snapshot; production partner access ships with the pilot.”
 7. **Commercial proposition (N6).** `/partner/complement` then `/partner/economics`. Ask which shape is worth testing in a pilot.
 
 ## Seeded Ask tiers (CV-DM-01)
@@ -52,6 +52,10 @@ Reorder the middle of the session around the answers. The default sequence below
 > Produce all email and meeting records for Margaret Ellison regarding fees from 2025-01-01 to 2025-06-30, excluding SMS and personal messaging channels.
 
 **Expect:** ~14 fee emails + 3 meetings (May 2025 left empty on purpose). Coverage shows search population, matches, May gap, excluded-by-request SMS/personal messaging, and WhatsApp/Teams not connected.
+
+## Spoken honesty (once, not on screen)
+
+Do not show “demo”, “synthetic”, or “Release 1 demo” chrome. Say once, early: “This session uses a prepared corpus so we can test retrieval and coverage honestly — it is not live AdvizorStack production data.” Then stay in product language.
 
 ## Written fallback lines
 

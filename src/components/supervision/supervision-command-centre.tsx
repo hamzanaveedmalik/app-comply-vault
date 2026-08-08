@@ -35,7 +35,7 @@ export function SupervisionCommandCentre({
   portfolio,
   filters,
 }: SupervisionCommandCentreProps): React.JSX.Element {
-  const { counts, selectivityStatement, firms, patterns, synthetic, filterOptions } =
+  const { counts, selectivityStatement, firms, patterns, filterOptions } =
     portfolio;
 
   const metrics: Array<{ label: string; value: number; href?: string }> = [
@@ -53,15 +53,6 @@ export function SupervisionCommandCentre({
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
-      {synthetic ? (
-        <div
-          className="rounded-[8px] border border-[#d8e8df] bg-[#f3faf6] px-3 py-2 text-[12.5px] text-[#2a5c40]"
-          role="status"
-        >
-          Synthetic AdvizorStack demonstration data. No live client information.
-        </div>
-      ) : null}
-
       <header className="space-y-2">
         <h1 className="text-[22px] font-semibold tracking-tight text-[#141f19]">
           Supervision Command Centre
@@ -129,8 +120,7 @@ export function SupervisionCommandCentre({
         </h2>
         {firms.length === 0 ? (
           <div className="rounded-[12px] border border-dashed border-[#d7dbd7] bg-white px-4 py-8 text-center text-[13px] text-[#79837d]">
-            No authorised firms with supervision data yet. Seed the AdvizorStack
-            synthetic tenant, then open this page as a member of those firms.
+            No authorised firms with supervision data yet.
           </div>
         ) : (
           <div className="overflow-x-auto rounded-[12px] border border-[#e6e8e6] bg-white">

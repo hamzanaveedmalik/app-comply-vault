@@ -72,7 +72,7 @@ npx tsx scripts/demo-embed-backfill.ts <workspaceId>
 Verify after seed:
 
 - [x] Summary shows held identities ≥ 3 and parked ≥ 1 (held=3, parked=1, embeddings=21)
-- [ ] `/fail-closed` shows parked Zoom `demo-parked-zoom-recording-001` + stored `INGEST_PARKED` audit event
+- [ ] `/fail-closed` shows parked Zoom source + stored `INGEST_PARKED` audit event
 - [ ] Rehearsed Ask questions return cited answers
 - [ ] Honest-miss questions decline specifically (SMS / 2023 / private jet)
 

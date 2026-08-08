@@ -37,9 +37,9 @@ export const ADVIZORSTACK_FIRMS: readonly AdvizorStackFirmDef[] = [
     firmProfileId: "si-as-fp-secure",
     name: "Secure Investment Management",
     crdNumber: "AS-1001",
-    ccoName: "Synthetic CCO — Secure",
+    ccoName: "Elena Vasquez",
     meetingPrefix: "si-as-sec-mtg-",
-    clientName: "[Synthetic] Secure Demo Client",
+    clientName: "Helen Navarro",
     cleared: 50,
     sampled: 2,
     priority: {
@@ -54,9 +54,9 @@ export const ADVIZORSTACK_FIRMS: readonly AdvizorStackFirmDef[] = [
     firmProfileId: "si-as-fp-desert-ridge",
     name: "Desert Ridge Wealth",
     crdNumber: "AS-1002",
-    ccoName: "Synthetic CCO — Desert Ridge",
+    ccoName: "Marcus Hale",
     meetingPrefix: "si-as-drw-mtg-",
-    clientName: "[Synthetic] Desert Ridge Demo Client",
+    clientName: "David Okonkwo",
     cleared: 45,
     sampled: 2,
     priority: {
@@ -71,9 +71,9 @@ export const ADVIZORSTACK_FIRMS: readonly AdvizorStackFirmDef[] = [
     firmProfileId: "si-as-fp-northstar",
     name: "Northstar Advisory",
     crdNumber: "AS-1003",
-    ccoName: "Synthetic CCO — Northstar",
+    ccoName: "Priya Shah",
     meetingPrefix: "si-as-ns-mtg-",
-    clientName: "[Synthetic] Northstar Demo Client",
+    clientName: "Claire Brennan",
     cleared: 44,
     sampled: 1,
     priority: {
@@ -89,12 +89,12 @@ export const ADVIZORSTACK_ADVISERS = [
   {
     id: "si-as-user-adv-a",
     email: "adviser.a@synthetic.advizorstack.example.com",
-    name: "[Synthetic] Adviser Avery",
+    name: "Avery Chen",
   },
   {
     id: "si-as-user-adv-b",
     email: "adviser.b@synthetic.advizorstack.example.com",
-    name: "[Synthetic] Adviser Blake",
+    name: "Blake Moretti",
   },
 ] as const;
 

@@ -20,7 +20,8 @@ import { uploadMailboxContent } from "./storage";
 import { enqueueClassification } from "~/server/classification/enqueue";
 import { sha256FromBuffer } from "~/server/hash";
 import { recordEmailCorrespondenceActivity } from "~/server/clients/activity";
-import { isEmailIntelligenceEnabled } from "~/lib/feature-flags";
+import { isEmailIntelligenceEnabled, isEmailToMeetingEnabled } from "~/lib/feature-flags";
+import { promoteEmailToMeeting } from "./email-to-meeting";
 import { generateEmailSearchableText } from "~/server/search/email-searchable-text";
 
 export type IngestMessageResult =
@@ -234,6 +235,7 @@ export async function ingestEmailMessage(args: {
 
       return {
         evidenceItemId: evidenceItem.id,
+        communicationId: communication.id,
         threadId: thread.id,
         direction: communication.direction,
         contentSha256,
@@ -264,6 +266,32 @@ export async function ingestEmailMessage(args: {
       workspaceId: args.workspaceId,
       evidenceItemId: result.evidenceItemId,
     });
+
+    // Demo bridge (gated): turn this email into an Email-typed Meeting so it
+    // flows through the dashboard/interaction log/supervision review queue.
+    if (isEmailToMeetingEnabled()) {
+      await promoteEmailToMeeting({
+        workspaceId: args.workspaceId,
+        mailboxAddress: args.mailboxAddress,
+        evidenceItemId: result.evidenceItemId,
+        communicationId: result.communicationId,
+        threadId: result.threadId,
+        contentSha256: result.contentSha256,
+        subject: result.subject,
+        bodyText,
+        sentAt: result.sentAt,
+        fromAddress,
+        fromName: args.message.from?.emailAddress?.name ?? null,
+        toRecipients: (args.message.toRecipients ?? []).map((r) => ({
+          address: normalizeAddress(r.emailAddress?.address),
+          name: r.emailAddress?.name ?? null,
+        })),
+        ccRecipients: (args.message.ccRecipients ?? []).map((r) => ({
+          address: normalizeAddress(r.emailAddress?.address),
+          name: r.emailAddress?.name ?? null,
+        })),
+      });
+    }
 
     return { status: "created", evidenceItemId: result.evidenceItemId };
   } catch (err) {

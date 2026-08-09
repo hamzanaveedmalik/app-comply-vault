@@ -1,0 +1,25 @@
+"use client";
+
+export default function ClientOverviewError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  return (
+    <div className="mx-auto max-w-6xl p-6">
+      <h2 className="text-lg font-semibold text-destructive">
+        Could not load client
+      </h2>
+      <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
+      <button
+        type="button"
+        onClick={reset}
+        className="mt-4 text-sm text-[#2ECC71] hover:underline"
+      >
+        Try again
+      </button>
+    </div>
+  );
+}

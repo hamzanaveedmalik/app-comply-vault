@@ -72,10 +72,14 @@ export function ClientsHealthTable({
                 const openHref =
                   emailIntel && c.clientId
                     ? `/clients/${c.clientId}`
-                    : `/interaction-log?client=${encodeURIComponent(c.clientName)}`;
+                    : `/clients/overview?name=${encodeURIComponent(c.clientName)}`;
                 return (
                   <tr key={`${c.clientId ?? c.clientName}`} className="group last:[&>td]:border-b-0 hover:bg-[#f8f9f8]">
-                    <td className={`${TD} font-semibold text-[#141f19]`}>{c.clientName}</td>
+                    <td className={`${TD} font-semibold text-[#141f19]`}>
+                      <Link href={openHref} className="hover:text-[#177a4c] hover:underline">
+                        {c.clientName}
+                      </Link>
+                    </td>
                     <td className={TD}>
                       <span
                         className={`inline-block min-w-[28px] rounded-[6px] px-0 py-[2.5px] text-center text-[11px] font-[650] tabular-nums ${chip.className}`}

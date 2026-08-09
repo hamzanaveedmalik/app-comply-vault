@@ -254,6 +254,13 @@ export function GmailMailClient({
                   {c.lastErrorMessage && (
                     <p className="text-xs text-destructive">{c.lastErrorMessage}</p>
                   )}
+                  {c.scopeFolders.length === 0 && (
+                    <p className="mt-2 rounded-md border border-amber-300 bg-amber-50 px-2 py-1.5 text-xs text-amber-900">
+                      No labels selected yet — threads won&apos;t sync until you scope
+                      the mailbox. Click <strong>Labels</strong>, choose at least one
+                      label, <strong>Save scope</strong>, then run <strong>Backfill</strong>.
+                    </p>
+                  )}
                 </div>
                 <div className="flex gap-2">
                   <Button size="sm" variant="outline" onClick={() => void loadFolders(c.id)}>

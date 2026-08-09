@@ -34,7 +34,13 @@ const PROVIDER_LABELS: Record<string, string> = {
   SLACK: "Slack",
   TEAMS_BOT: "Teams Bot",
   ZOHO_CRM: "Zoho CRM",
+  GMAIL_MAIL: "Gmail (email evidence)",
+  M365_MAIL: "Microsoft 365 Mail (email evidence)",
 };
+
+// Mail connectors are managed on their own OAuth pages (label scoping,
+// backfill, delta sync) rather than the generic credential card below.
+const MAIL_PROVIDERS = new Set(["GMAIL_MAIL", "M365_MAIL"]);
 
 const STATUS_LABELS: Record<string, string> = {
   CONNECTED: "Live",
@@ -124,6 +130,8 @@ export function IntegrationsClient({
   const hasTeams = integrations.some((i) => i.provider === "TEAMS");
   const hasSharePoint = integrations.some((i) => i.provider === "SHAREPOINT");
   const hasZohoCrm = integrations.some((i) => i.provider === "ZOHO_CRM");
+  const hasGmailMail = integrations.some((i) => i.provider === "GMAIL_MAIL");
+  const hasM365Mail = integrations.some((i) => i.provider === "M365_MAIL");
 
   useEffect(() => {
     if (
@@ -203,6 +211,41 @@ export function IntegrationsClient({
       <p className="text-muted-foreground text-sm">
         Connect your tools to automatically sync audit packs, send notifications, and more.
       </p>
+
+      <div className="space-y-3">
+        <h2 className="text-sm font-semibold text-foreground">Email mailboxes</h2>
+        <p className="text-sm text-muted-foreground">
+          Ingest client email as compliance evidence — read-only, and only the labels
+          and date range you select. After connecting, choose labels and run a Backfill
+          so threads appear under Communications.
+        </p>
+        <div className="rounded-lg border p-4 flex items-center justify-between">
+          <div>
+            <p className="font-medium">Gmail</p>
+            <p className="text-sm text-muted-foreground">
+              Read-only Gmail ingestion (selected labels only)
+            </p>
+          </div>
+          <Button asChild variant={hasGmailMail ? "outline" : "default"}>
+            <Link href="/integrations/gmail-mail">
+              {hasGmailMail ? "Manage mailbox" : "Connect"}
+            </Link>
+          </Button>
+        </div>
+        <div className="rounded-lg border p-4 flex items-center justify-between">
+          <div>
+            <p className="font-medium">Microsoft 365 Mail</p>
+            <p className="text-sm text-muted-foreground">
+              Read-only Outlook / Exchange ingestion (selected folders only)
+            </p>
+          </div>
+          <Button asChild variant={hasM365Mail ? "outline" : "default"}>
+            <Link href="/integrations/m365-mail">
+              {hasM365Mail ? "Manage mailbox" : "Connect"}
+            </Link>
+          </Button>
+        </div>
+      </div>
 
       {zoomConnected && zoomEmail && (
         <div className="rounded-lg border border-green-200 bg-green-50 p-4 flex items-start gap-3">
@@ -382,7 +425,7 @@ export function IntegrationsClient({
               </Button>
             </div>
           )}
-          {integrations.map((int) => (
+          {integrations.filter((int) => !MAIL_PROVIDERS.has(int.provider)).map((int) => (
             <div key={int.id} className="rounded-lg border p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <div>

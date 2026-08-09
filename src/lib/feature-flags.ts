@@ -22,18 +22,6 @@ export function isAskHybridRetrievalEnabled(): boolean {
 }
 
 /**
- * Demo bridge: promote each ingested email into an Email-typed Meeting with
- * auto client attribution + deterministic flags. Off by default; enable only
- * for demo environments (never silently turns real inboxes into meetings).
- */
-export function isEmailToMeetingEnabled(): boolean {
-  return (
-    isTruthyEnv(process.env.EMAIL_TO_MEETING_ENABLED) ||
-    isTruthyEnv(process.env.NEXT_PUBLIC_EMAIL_TO_MEETING)
-  );
-}
-
-/**
  * Release 1 demo surfaces (Needs Attention, candidate pack, portfolio snapshot,
  * fail-closed demo, commercial pages). DoD: all new routes/UI gated.
  */
@@ -41,5 +29,18 @@ export function isRelease1DemoEnabled(): boolean {
   return (
     isTruthyEnv(process.env.RELEASE1_DEMO_ENABLED) ||
     isTruthyEnv(process.env.NEXT_PUBLIC_RELEASE1_DEMO)
+  );
+}
+
+/**
+ * Demo bridge: promote each ingested email into an Email-typed Meeting with
+ * auto client attribution + deterministic flags. On for Release 1 demo, or
+ * when EMAIL_TO_MEETING_ENABLED is set explicitly.
+ */
+export function isEmailToMeetingEnabled(): boolean {
+  return (
+    isTruthyEnv(process.env.EMAIL_TO_MEETING_ENABLED) ||
+    isTruthyEnv(process.env.NEXT_PUBLIC_EMAIL_TO_MEETING) ||
+    isRelease1DemoEnabled()
   );
 }

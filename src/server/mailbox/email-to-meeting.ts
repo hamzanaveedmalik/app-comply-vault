@@ -1,14 +1,15 @@
 /**
  * Demo bridge: promote an ingested email into an "Email"-typed Meeting.
  *
- * Scope: gated behind isEmailToMeetingEnabled() (demo environments only). This
- * turns a single ingested email into a Meeting so it flows through the
- * dashboard, interaction log and supervision review queue — while staying
- * clearly distinguished from recorded meetings via meetingType = "Email".
+ * Scope: gated behind isEmailToMeetingEnabled() (Release 1 demo or explicit
+ * EMAIL_TO_MEETING_ENABLED). Turns a single ingested email into a Meeting so
+ * it flows through the dashboard, interaction log and supervision review queue
+ * — while staying distinguished from recorded meetings via meetingType = "Email".
  *
  * ⚠️ COMPLIANCE IMPACT: creates Meeting + Flag records and writes audit events.
- * Client attribution auto-creates a Client for the external counterparty so the
- * email never lands in the triage queue during a live demo.
+ * Client attribution auto-creates / links a Client for the external counterparty.
+ * When the sender is a workspace member (presenter simulating a client), the
+ * demo maps them to "Jane Client" so the narrative stays clean.
  */
 
 import { db } from "~/server/db";
@@ -16,6 +17,7 @@ import { normalizeParticipantAddress, upsertVerifiedAlias } from "./participant-
 import { detectMissingDisclosureFlags } from "~/server/flags";
 import { getDisclosureProfileForWorkspace } from "~/server/firm-profile/get-disclosure-profile-for-workspace";
 import { emailFlagDedupeKey } from "~/server/classification/email-taxonomy";
+import { isEmailToMeetingEnabled, isRelease1DemoEnabled } from "~/lib/feature-flags";
 import {
   EMAIL_MEETING_TYPE,
   buildExtraction,
@@ -26,6 +28,91 @@ import {
 
 export { EMAIL_MEETING_TYPE } from "./email-to-meeting-rules";
 
+/** Demo narrative client when a workspace member sends into the connected mailbox. */
+export const DEMO_EMAIL_CLIENT_NAME = "Jane Client";
+
+async function linkAliasToClient(args: {
+  workspaceId: string;
+  address: string;
+  clientId: string;
+}): Promise<void> {
+  const address = normalizeParticipantAddress(args.address);
+  const existingAlias = await db.emailAlias.findFirst({
+    where: { workspaceId: args.workspaceId, address, deletedAt: null },
+    select: { userId: true },
+  });
+  const user = await db.user.findFirst({
+    where: { email: { equals: address, mode: "insensitive" } },
+    select: { id: true },
+  });
+  await upsertVerifiedAlias({
+    workspaceId: args.workspaceId,
+    address,
+    userId: existingAlias?.userId ?? user?.id ?? null,
+    clientId: args.clientId,
+  });
+}
+
+async function findOrCreateNamedClient(args: {
+  workspaceId: string;
+  name: string;
+  address: string;
+  contactAt: Date;
+}): Promise<{ clientId: string; clientName: string }> {
+  const existing = await db.client.findFirst({
+    where: {
+      workspaceId: args.workspaceId,
+      name: args.name,
+      deletedAt: null,
+    },
+    select: { id: true, name: true },
+  });
+  if (existing) {
+    await linkAliasToClient({
+      workspaceId: args.workspaceId,
+      address: args.address,
+      clientId: existing.id,
+    });
+    await db.client.update({
+      where: { id: existing.id },
+      data: { lastContactAt: args.contactAt },
+    });
+    return { clientId: existing.id, clientName: existing.name };
+  }
+
+  const client = await db.client.create({
+    data: {
+      workspaceId: args.workspaceId,
+      name: args.name,
+      status: "CLIENT",
+      lastContactAt: args.contactAt,
+    },
+    select: { id: true, name: true },
+  });
+  await linkAliasToClient({
+    workspaceId: args.workspaceId,
+    address: args.address,
+    clientId: client.id,
+  });
+  return { clientId: client.id, clientName: client.name };
+}
+
+async function isWorkspaceMemberEmail(
+  workspaceId: string,
+  address: string,
+): Promise<boolean> {
+  const user = await db.user.findFirst({
+    where: { email: { equals: address, mode: "insensitive" } },
+    select: { id: true },
+  });
+  if (!user) return false;
+  const membership = await db.userWorkspace.findFirst({
+    where: { workspaceId, userId: user.id, removedAt: null },
+    select: { userId: true },
+  });
+  return Boolean(membership);
+}
+
 async function findOrCreateClientForAddress(args: {
   workspaceId: string;
   address: string;
@@ -34,35 +121,53 @@ async function findOrCreateClientForAddress(args: {
 }): Promise<{ clientId: string; clientName: string }> {
   const address = normalizeParticipantAddress(args.address);
 
+  // Presenter sending into the demo mailbox → always Jane Client.
+  if (
+    isRelease1DemoEnabled() &&
+    (await isWorkspaceMemberEmail(args.workspaceId, address))
+  ) {
+    return findOrCreateNamedClient({
+      workspaceId: args.workspaceId,
+      name: DEMO_EMAIL_CLIENT_NAME,
+      address,
+      contactAt: args.contactAt,
+    });
+  }
+
   const alias = await db.emailAlias.findFirst({
-    where: { workspaceId: args.workspaceId, address, clientId: { not: null }, deletedAt: null },
+    where: {
+      workspaceId: args.workspaceId,
+      address,
+      clientId: { not: null },
+      deletedAt: null,
+    },
     select: { clientId: true },
   });
   if (alias?.clientId) {
     const existing = await db.client.findFirst({
-      where: { id: alias.clientId, workspaceId: args.workspaceId, deletedAt: null },
+      where: {
+        id: alias.clientId,
+        workspaceId: args.workspaceId,
+        deletedAt: null,
+      },
       select: { id: true, name: true },
     });
-    if (existing) return { clientId: existing.id, clientName: existing.name };
+    if (existing) {
+      await db.client.update({
+        where: { id: existing.id },
+        data: { lastContactAt: args.contactAt },
+      });
+      return { clientId: existing.id, clientName: existing.name };
+    }
   }
 
   const name = args.fallbackName || deriveNameFromAddress(address);
-  const client = await db.client.create({
-    data: {
-      workspaceId: args.workspaceId,
-      name,
-      status: "CLIENT",
-      lastContactAt: args.contactAt,
-    },
-    select: { id: true, name: true },
-  });
-  await upsertVerifiedAlias({
+  return findOrCreateNamedClient({
     workspaceId: args.workspaceId,
+    name,
     address,
-    userId: null,
-    clientId: client.id,
+    contactAt: args.contactAt,
   });
-  return { clientId: client.id, clientName: client.name };
 }
 
 async function resolveActorUserId(workspaceId: string): Promise<string | null> {
@@ -95,7 +200,7 @@ export type PromoteEmailToMeetingArgs = {
 };
 
 export type PromoteEmailToMeetingResult =
-  | { status: "created"; meetingId: string; flagCount: number }
+  | { status: "created"; meetingId: string; flagCount: number; clientName: string }
   | { status: "skipped"; reason: string };
 
 /**
@@ -137,7 +242,7 @@ export async function promoteEmailToMeeting(
         {
           startTime: 0,
           endTime: 0,
-          speaker: counterparty.name || clientName,
+          speaker: clientName,
           text: `${args.subject}\n\n${args.bodyText}`.trim(),
         },
       ],
@@ -175,6 +280,22 @@ export async function promoteEmailToMeeting(
         select: { id: true },
       });
 
+      // Attribute the evidence item so Communications / Ask also show the client.
+      await tx.evidenceItem.update({
+        where: { id: args.evidenceItemId },
+        data: { clientId },
+      });
+
+      // Attach any existing LLM / keyword EMAIL flags for this message to the meeting.
+      await tx.flag.updateMany({
+        where: {
+          workspaceId: args.workspaceId,
+          communicationId: args.communicationId,
+          meetingId: null,
+        },
+        data: { meetingId: created.id },
+      });
+
       for (const flag of keywordFlags) {
         const dedupeKey = emailFlagDedupeKey(args.communicationId, flag.type);
         const existing = await tx.flag.findFirst({
@@ -210,6 +331,8 @@ export async function promoteEmailToMeeting(
               threadId: args.threadId,
               evidenceItemId: args.evidenceItemId,
               contentSha256: args.contentSha256,
+              clientId,
+              clientName,
             },
           },
         });
@@ -245,6 +368,8 @@ export async function promoteEmailToMeeting(
               communicationId: args.communicationId,
               evidenceItemId: args.evidenceItemId,
               threadId: args.threadId,
+              clientId,
+              clientName,
               keywordFlagCount: keywordFlags.length,
               disclosureFlagCount: disclosureFlags.length,
             },
@@ -259,6 +384,7 @@ export async function promoteEmailToMeeting(
       status: "created",
       meetingId: meeting.id,
       flagCount: keywordFlags.length + disclosureFlags.length,
+      clientName,
     };
   } catch (err) {
     console.error("promoteEmailToMeeting failed (ingest continues)", {
@@ -267,4 +393,104 @@ export async function promoteEmailToMeeting(
     });
     return { status: "skipped", reason: "error" };
   }
+}
+
+/**
+ * Promote EMAIL evidence that was ingested before the bridge was enabled
+ * (or skipped). Safe to call after Delta sync — idempotent via audit metadata.
+ */
+export async function promotePendingEmailsInWorkspace(
+  workspaceId: string,
+  mailboxAddress: string,
+): Promise<{ promoted: number; skipped: number }> {
+  if (!isEmailToMeetingEnabled()) {
+    return { promoted: 0, skipped: 0 };
+  }
+
+  const items = await db.evidenceItem.findMany({
+    where: {
+      workspaceId,
+      sourceType: "EMAIL",
+      deletedAt: null,
+    },
+    include: {
+      communication: {
+        select: {
+          id: true,
+          threadId: true,
+          fromAddress: true,
+          toAddresses: true,
+          ccAddresses: true,
+          bodyText: true,
+          sentAt: true,
+        },
+      },
+    },
+    orderBy: { occurredAt: "desc" },
+    take: 40,
+  });
+
+  let promoted = 0;
+  let skipped = 0;
+
+  for (const item of items) {
+    const comm = item.communication;
+    if (!comm) {
+      skipped += 1;
+      continue;
+    }
+
+    // Already promoted if any flag on this communication is linked to a meeting,
+    // or an Email-type meeting was created for this evidence (audit metadata).
+    const linkedFlag = await db.flag.findFirst({
+      where: {
+        workspaceId,
+        communicationId: comm.id,
+        meetingId: { not: null },
+      },
+      select: { id: true },
+    });
+    if (linkedFlag) {
+      // Still ensure EvidenceItem.clientId is set when a meeting exists.
+      if (!item.clientId) {
+        const meeting = await db.meeting.findFirst({
+          where: {
+            workspaceId,
+            meetingType: EMAIL_MEETING_TYPE,
+            flags: { some: { communicationId: comm.id } },
+          },
+          select: { clientId: true, clientName: true },
+        });
+        if (meeting?.clientId) {
+          await db.evidenceItem.update({
+            where: { id: item.id },
+            data: { clientId: meeting.clientId },
+          });
+        }
+      }
+      skipped += 1;
+      continue;
+    }
+
+    const result = await promoteEmailToMeeting({
+      workspaceId,
+      mailboxAddress,
+      evidenceItemId: item.id,
+      communicationId: comm.id,
+      threadId: comm.threadId,
+      contentSha256: item.contentSha256,
+      subject: item.title,
+      bodyText: comm.bodyText ?? "",
+      sentAt: comm.sentAt,
+      fromAddress: comm.fromAddress,
+      fromName: null,
+      toRecipients: comm.toAddresses.map((a) => ({ address: a, name: null })),
+      ccRecipients: comm.ccAddresses.map((a) => ({ address: a, name: null })),
+    });
+
+    if (result.status === "created") promoted += 1;
+    else skipped += 1;
+  }
+
+  return { promoted, skipped };
 }

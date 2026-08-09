@@ -62,6 +62,8 @@ export type FlagTriageCardFlag = {
   sourceType?: "MEETING" | "EMAIL";
   sourceHref?: string | null;
   sourceLabel?: string | null;
+  /** Client attributed to the email / meeting when known. */
+  clientName?: string | null;
 };
 
 const severityBadgeClass = (severity: string): string =>
@@ -287,12 +289,21 @@ export function FlagTriageCard({
         </span>
       </div>
 
-      {flag.sourceType === "EMAIL" && flag.sourceHref ? (
-        <p className="mt-2 text-[12px]">
-          <a href={flag.sourceHref} className="font-semibold text-[#177a4c] hover:underline">
-            {flag.sourceLabel ?? "Open thread"}
-          </a>
-        </p>
+      {flag.sourceType === "EMAIL" ? (
+        <div className="mt-2 space-y-0.5">
+          {flag.clientName ? (
+            <p className="text-[14px] font-semibold text-[#0D2818]">{flag.clientName}</p>
+          ) : (
+            <p className="text-[12px] text-muted-foreground">Client not attributed yet</p>
+          )}
+          {flag.sourceHref ? (
+            <p className="text-[12px]">
+              <a href={flag.sourceHref} className="font-semibold text-[#177a4c] hover:underline">
+                {flag.sourceLabel ?? "Open thread"}
+              </a>
+            </p>
+          ) : null}
+        </div>
       ) : null}
 
       {recommendation ? <p className="mt-3 text-[14px] font-medium leading-snug">{recommendation}</p> : null}

@@ -29,8 +29,16 @@ export async function listOpenEmailFlagsForReview(
         select: {
           id: true,
           threadId: true,
-          evidenceItem: { select: { title: true } },
+          evidenceItem: {
+            select: {
+              title: true,
+              client: { select: { name: true } },
+            },
+          },
         },
+      },
+      meeting: {
+        select: { clientName: true },
       },
     },
   });
@@ -47,6 +55,10 @@ export async function listOpenEmailFlagsForReview(
     cmTriageNote: f.cmTriageNote,
     resolutionNote: f.resolutionNote,
     sourceType: "EMAIL" as const,
+    clientName:
+      f.meeting?.clientName ??
+      f.communication?.evidenceItem?.client?.name ??
+      null,
     sourceHref: f.communication?.threadId
       ? `/communications/threads/${f.communication.threadId}`
       : f.sourceId

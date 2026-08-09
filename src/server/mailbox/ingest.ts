@@ -145,6 +145,23 @@ export async function processIngestJob(jobId: string): Promise<void> {
         },
       });
     });
+
+    // Demo bridge: promote any EMAIL evidence that never got a Meeting (e.g.
+    // ingested before EMAIL_TO_MEETING was on, or when the sender matched a User).
+    try {
+      const { isEmailToMeetingEnabled } = await import("~/lib/feature-flags");
+      if (isEmailToMeetingEnabled()) {
+        const { promotePendingEmailsInWorkspace } = await import("./email-to-meeting");
+        await promotePendingEmailsInWorkspace(
+          job.workspaceId,
+          connection.mailboxAddress,
+        );
+      }
+    } catch (promoteErr) {
+      console.error("promotePendingEmailsInWorkspace failed (sync continues)", {
+        reason: promoteErr instanceof Error ? promoteErr.message : "unknown",
+      });
+    }
   } catch (err) {
     const message = err instanceof Error ? err.message : "ingest_failed";
     await db.$transaction(async (tx) => {

@@ -1,0 +1,595 @@
+---
+tags:
+  - release-1
+  - demo
+  - product
+  - as-built
+---
+
+# ComplyVault — Complete Product Brief for Demo Extracts
+
+**Purpose:** Give another model (or presenter) everything needed to write *exact* spoken lines, click paths, and expected on-screen outcomes for the AdvizorStack demo.  
+**As of:** 2026-08-10 (demo day)  
+**Production:** `https://app.complyvault.co`  
+**Ground truth:** codebase + seeds + Release 1 / SI backlogs. Prefer this document over older PRDs where they conflict.
+
+**How to use this doc:** Write a timed talk track and exact extracts. Do not invent UI labels, firm names, coverage statuses, commercial numbers, or routes that are not listed here. Prefer the **Release 1 default path** unless the audience explicitly asks for Supervision Intelligence.
+
+---
+
+## 0. One-sentence product claim
+
+ComplyVault is a multi-tenant RIA compliance documentation platform that captures meetings and email, runs AI triage, requires human review before anything is final, seals deterministic audit packs, and (for partners) surfaces portfolio-level supervision attention — without claiming live AdvizorStack production data in this session.
+
+**Live marketing line:**  
+> Meeting records your CCO can seal for exam documentation — with human review before anything is final.
+
+**Demo thesis (10 Aug):**  
+> Show a coherent set of partner-relevant capabilities, observe which ones create urgency, and use that evidence to determine the paid-pilot scope.
+
+---
+
+## 1. Audience, login, workspaces
+
+### Roles (code → UI)
+
+| Code role | UI | Can do on demo |
+|---|---|---|
+| `OWNER_CCO` | Owner / CCO | All Release 1 partner surfaces, candidate pack, fail-closed, media posture, seal/finalize |
+| `MEMBER` | Compliance Manager | Flag triage, review |
+| `ADVISOR` | Advisor | Certify meetings; no cockpit write |
+
+### Login for the call
+
+1. Sign in at `https://app.complyvault.co`
+2. Switch workspace to **Summit Ridge Advisors, LLC**  
+   - Workspace ID: `cmkyri10q0007l104stmnl00y`  
+   - Seed renames this workspace; older docs may still say “A Small Investment, LLC” — **same ID**
+3. Confirm sidebar shows Release 1 items when flags are on: Needs Attention, Candidate Pack, Partner Portfolio (CCO), plus Supervision / Priority Inbox
+
+### Two demo corpora — never mix claims
+
+| Corpus | Workspace / data | Claim language |
+|---|---|---|
+| **N1 — prepared Ask / XR / fail-closed / held** | Summit Ridge seed (`seed-demo-neon.mjs`) | “Prepared corpus for honest retrieval and coverage.” Never “what the mailbox disclosed.” |
+| **N2 — live mailbox** | Gmail connect → Labels → **Backfill** | “What the mailbox disclosed” **only after** a sync timestamp appears. Counts must come from that sync only. |
+| **SI — AdvizorStack synthetic firms** | `si-as-ws-secure`, `si-as-ws-desert-ridge`, `si-as-ws-northstar` | Portfolio Command Centre / Priority Inbox path. Separate from R1 partner portfolio fixtures. |
+
+Spoken honesty **once**, early, not as on-screen chrome:  
+> This session uses a prepared corpus so we can test retrieval and coverage honestly — it is not live AdvizorStack production data.
+
+**Do not** put persistent “demo / synthetic / Release 1 demo” banners on screen.
+
+---
+
+## 2. Feature flags (production)
+
+| Flag | Env | Gates |
+|---|---|---|
+| Release 1 demo | `RELEASE1_DEMO_ENABLED=true`, `NEXT_PUBLIC_RELEASE1_DEMO=true` | Needs Attention, Candidate Pack, Partner Portfolio / Complement / Economics, fail-closed, Gmail zero-setup chrome |
+| Email intelligence | `EMAIL_INTELLIGENCE_ENABLED` / `NEXT_PUBLIC_EMAIL_INTELLIGENCE` | Email classify→flag, Ask over email, client/comms surfaces |
+| Ask hybrid retrieval | `ASK_HYBRID_RETRIEVAL` | Keyword + pgvector hybrid Ask |
+| Email → meeting | `EMAIL_TO_MEETING_ENABLED` **or** Release 1 demo on | Promote ingested email → Meeting with `meetingType: "Email"` |
+
+Without Release 1 flags, R1 routes redirect to `/dashboard`.
+
+---
+
+## 3. Core platform (shipped — pre–Release 1)
+
+Everything below is implemented end-to-end unless marked otherwise.
+
+### 3.1 Capture
+
+| Path | Status | Notes |
+|---|---|---|
+| Manual upload (audio / video / transcript) | Shipped | Presigned object storage → process job |
+| Zoom auto-ingest | Shipped | **Only marketed live capture** — OAuth + recording webhook |
+| Microsoft Teams auto-ingest | In product | OAuth + webhooks + Teams app; **not** marketed as live capture |
+| M365 mailbox | Shipped | Consent modes, delta sync, threads, attachments |
+| Gmail mailbox | Shipped | Same mailbox/evidence model; R1 zero-setup chrome when flagged |
+
+### 3.2 AI processing
+
+- Transcription (Deepgram / AssemblyAI)
+- Structured extraction (topics, recommendations, disclosures, decisions, follow-ups, evidence map)
+- Missing-disclosure flags (firm-profile-aware suppression)
+- Redaction guard before LLM; prompt logging; regulatory-language post-filter on Ask
+- Other flag enums (`CONFLICT_LANGUAGE`, `MISSING_SUITABILITY_BASIS`) exist; not all are generated by every path
+
+### 3.3 Meeting lifecycle (three-layer review)
+
+```
+UPLOADING → PROCESSING → DRAFT_READY / DRAFT
+  → ADVISOR_CERTIFIED → CM_REVIEWED → CCO_SIGNED_OFF → FINALIZED
+```
+
+1. Advisor certifies accuracy (versioned edits)
+2. CM triages flags: resolve / note / escalate / accept-as-risk / N/A; remediation + evidence
+3. CCO sign-off (single or batch); finalize with reason
+
+Every consequential transition writes an append-only `AuditEvent`.
+
+### 3.4 Clients & communications
+
+- Clients / households / email aliases
+- Email triage queue (held / unknown senders)
+- Thread export: PDF + EML/ZIP + custody hashes
+- Evidence tagging; optional embeddings / hybrid Ask
+
+### 3.5 Compliance cockpit (firm disclosure profile)
+
+- IAPD / CRD firm lookup
+- Configurable disclosure categories (required vs covered elsewhere; locked never-suppress set)
+- Approval workflow, version history, suppression log
+- Wired into missing-disclosure detection and audit-pack firm section
+- **Not shipped:** deep conflicts panel, rich ADV viewer, examiner preview depth
+
+### 3.6 Audit packs & Trust Layer
+
+| Capability | Status |
+|---|---|
+| Per-meeting audit pack ZIP | Shipped |
+| Deterministic pack bytes (fail-closed gate) | Shipped |
+| Draft vs seal watermark rules | Shipped |
+| Object Lock seal + `RecordSeal` ledger | Code complete; **ops bucket cutover may still be pending** |
+| Cover seal block / pack hash | Shipped |
+| SharePoint deposit after seal | Shipped (convenience copy; Object Lock is system of record when configured) |
+| Supersession without erasure | Shipped |
+| Fiscal-year retention (years + FYE + timezone; no shortening) | Shipped |
+| Media posture RETAIN / DISCARD | Shipped — blocks ingest until set; parked queue + replay; purge after RETAIN→DISCARD |
+| Transcript hash + discard gate | Shipped |
+| Seal reconcile cron | Shipped |
+
+**Typical pack contents:** `01_Compliance_Note.pdf`, `02_Evidence_Map.csv`, `03_Version_History.csv`, `04_Transcript.txt`, optional email correspondence + supersession chain, `README.txt`.
+
+### 3.7 Integrations honesty
+
+Marketing “live capture” = IntegrationHub `adapters` registry (CI-enforced).
+
+| System | In product | Marketed live capture |
+|---|---|---|
+| Zoom | Yes | Yes |
+| Manual upload | Yes | Yes (narrative) |
+| Teams | Yes | No |
+| SharePoint | Yes (post-seal deposit) | No |
+| Zoho CRM | Yes (contact note) | No |
+| M365 / Gmail mail | Yes | No (not capture registry) |
+| DocuSign, Redtail, Wealthbox, Salesforce, Google Drive, SmartVault, Slack bots, Google Meet | Stub / not built | No |
+
+### 3.8 Workspace / billing / ops
+
+- Workspace settings (retention, FYE, timezone, team)
+- Media posture + parked ingest UI
+- Stripe billing, plans, entitlements, trial request
+- In-app notifications + weekly email digest (Resend)
+- Append-only audit trail + exportable audit logs
+- Internal ops dashboard
+- Auth.js v5: email/password + optional Google OAuth; invitations
+
+### 3.9 Ask ComplyVault (core)
+
+- Workspace Q&A with retrieval, rate limit, regulatory-language post-filter, `AI_QUERY` audit
+- Entry point: **global search** (“Ask ComplyVault…”) → `POST /api/ask`  
+  - There is **no dedicated `/ask` App Router page**; smoke may still hit `/ask` and get auth redirect
+- Hybrid retrieval is env-gated
+
+### 3.10 Public marketing
+
+- `/` honest capture narrative (Zoom + manual)
+- `/trust` — implemented controls; SOC 2 **Not started**; subprocessors; security overview download
+- `/uk` retired — **no FCA / UK residency claim**
+- CI guards forbid unsupported ROI / “&lt;10 minutes” marketing claims
+
+### 3.11 Explicitly NOT product claims
+
+| Item | Reality |
+|---|---|
+| ExamPack (exam request-list generator, EPIC-D) | Not built as that product — **Candidate Pack** is the R1 exam-response *candidate* surface |
+| Legal hold enforcement | Boolean / UI only; does not block purge |
+| SOC 2 Type II | Not started |
+| FCA / UK track | Retired |
+| WhatsApp / Message Audit | Not built |
+| Cross-workspace production partner reader | Not built — R1 portfolio is **fixtures**; SI uses seeded firm memberships |
+| CV-AX-02 Explain mode | **Cut** from Release 1 |
+| CV-OB-03 Auto-built client timeline | **Cut** from Release 1 |
+
+---
+
+## 4. Release 1 surfaces (hypothesis-testing demo) — SHIPPED
+
+**Flags required.** Sidebar (when on): Needs Attention, Candidate Pack, Partner Portfolio (OWNER_CCO). Complement / Economics / Fail-closed are direct URLs.
+
+### Hypotheses under test
+
+| ID | Hypothesis | Surface |
+|---|---|---|
+| N1 | Evidence retrieval with honest coverage | Ask (global search) + seeded corpus |
+| N2 | Zero setup after mailbox connect | Gmail → Needs Attention |
+| N3 | Examination-response assembly | Candidate Pack |
+| N4 | Fail-closed builds trust | `/fail-closed` |
+| N5 | Multi-firm portfolio is strategically relevant | `/partner/portfolio` |
+| N6 | Commercial shape is testable | `/partner/complement` → `/partner/economics` |
+
+### Open the call with three questions (before any screen)
+
+1. Which would be most useful today: evidence retrieval, examination-response assembly, or a portfolio view?
+2. How important is immediate usefulness after a mailbox connection?
+3. Which commercial shape is most plausible for your adviser base?
+
+Reorder the middle around answers. Default order below is the fallback.
+
+### Default demo order (CV-DM-02)
+
+| # | Step | Where | Exact lines / expect |
+|---|---|---|---|
+| 1 | Zero setup (N2) | `/integrations/gmail-mail` → Labels → **Backfill** → `/needs-attention` | “Zero setup — nobody types client records.” After sync timestamp only: CTA **What the mailbox disclosed**. Held identity: “Held for confirmation is the product working, not unfinished setup.” Do **not** end on a client table. Do **not** attribute seed rows to the mailbox. |
+| 2 | Tiered Ask (N1) | Global search Ask | Rehearsed → paraphrased → open. Every answer retains source links + coverage context. If mailbox empty: say once this is a prepared corpus. |
+| 3 | Honest miss | Same | See questions below. Line: “This source or period is outside the indexed coverage. I can show what was searched and what is missing, but I will not infer an answer from nearby evidence.” |
+| 4 | Fail-closed (N4) | `/fail-closed` | Parked Zoom `demo-parked-zoom-recording-001`, reason, retention rule, stored `INGEST_PARKED` audit event, recovery via `/settings/media-posture`. |
+| 5 | Candidate pack (N3) | `/candidate-pack` | Paste XR item → interpret scope → **CCO confirms before generate** → review coverage → attest/approve. |
+| 6 | Portfolio (N5) | `/partner/portfolio` | Three fixture firms; drill **only Summit Ridge Advisors, LLC**. Spoken: “This is a prepared portfolio snapshot; production partner access ships with the pilot.” |
+| 7 | Commercial (N6) | `/partner/complement` then `/partner/economics` | Ask which shape to test. Close: free pilot 2–3 firms; next step **17 August 2026**. |
+
+### Reorder if Nico already answered VL-02
+
+| He prioritises | Open with | Still show (short) |
+|---|---|---|
+| Evidence retrieval | N1 + honest miss | N2, N3 or N5, N6 |
+| Exam-response assembly | N3 | N1 miss, N4, N6 |
+| Cross-firm view | N5 | N2 held identity, N6 |
+
+---
+
+## 5. Seeded Summit Ridge data (N1) — exact facts
+
+**Seed:** `node scripts/seed-demo-neon.mjs cmkyri10q0007l104stmnl00y --confirm`  
+**Embed:** `node scripts/demo-embed-backfill-neon.mjs cmkyri10q0007l104stmnl00y`  
+**Last reseed (demo day prep):** held=3, parked=1, XR 14 emails + 3 meetings, embeds present.
+
+| Field | Value |
+|---|---|
+| Firm | Summit Ridge Advisors, LLC |
+| CRD | 332816 |
+| CCO | Jordan Hale |
+| AUM | $8,400,000 |
+
+### Clients
+
+| Client | Email |
+|---|---|
+| Margaret Ellison | margaret.ellison@example.com |
+| James Whitfield | james.whitfield@example.com |
+| Priya Natarajan | priya.natarajan@example.com |
+| Daniel Okonkwo | daniel.okonkwo@example.com |
+| Elena Vargas | elena.vargas@example.com |
+
+### Held identities
+
+- `jordan.lee.assistant@example.com` — assistant for household
+- `shared.family.trust@example.com` — client vs prospect
+- `unknown.sender.demo@example.com` — no alias
+- Meeting **Robert Chen** with `clientId=null` (beneficiary designation update) — held for confirmation
+
+### Parked fail-closed
+
+- External ref: `demo-parked-zoom-recording-001` (Zoom)
+- Audit: `INGEST_PARKED`
+- UI reason pattern: ingest refused because no media posture decision (fail-closed)
+
+### XR corpus (candidate pack centrepiece)
+
+- **Margaret Ellison**, fees, H1 2025
+- **14 fee emails** (Jan–Apr + Jun; **May deliberately empty**)
+- **3 meetings:** 2025-02-18, 2025-04-10, 2025-06-20
+
+**Paste this document-request item exactly:**
+
+> Produce all email and meeting records for Margaret Ellison regarding fees from 2025-01-01 to 2025-06-30, excluding SMS and personal messaging channels.
+
+**Expect:** ~14 emails + 3 meetings; coverage shows search population, matches, **May gap**, excluded-by-request SMS/personal messaging, WhatsApp/Teams not connected.
+
+### Other seeded signals useful in Review / Ask
+
+- Margaret: open `FEE_DISPUTE` email signal
+- James: `TRADE_INSTRUCTION` advice email; performance-disclaimer email for “promised performance” Ask
+
+### Ask questions — exact
+
+| Tier | Question | Expect |
+|---|---|---|
+| Rehearsed | Show me every email where a client mentioned fees since April | Cited answer |
+| Rehearsed | Has any advisor promised performance in writing? | Cited answer (disclaimer email) |
+| Rehearsed | When did we last hear from Margaret Ellison and about what? | Cited answer |
+| Honest miss | Show me SMS messages about fees | Unindexed source — specific decline |
+| Honest miss | What fee emails do we have from 2023-02-15? | Out of range |
+| Honest miss | Any evidence of private jet gifts to clients? | No evidence + coverage |
+
+### Index coverage gaps (seeded)
+
+- EMAIL Q1 2024 not connected
+- EMAIL **May 2025** deliberate fee gap
+- MEETING 2023 out-of-range
+- Unindexed channels: SMS, WhatsApp, Teams chat
+
+---
+
+## 6. Candidate Pack — exact UI language (N3)
+
+**Route:** `/candidate-pack` (OWNER_CCO, Release 1 on)
+
+### Flow
+
+1. Paste request → **Interpret candidate scope** → status `DRAFT_SCOPE`
+2. Show interpreted people, entities, dates, channels, concepts, exclusions  
+   Copy pattern: confirm the request was read correctly; **nothing generates until confirm**
+3. CCO confirms → `SCOPE_CONFIRMED`
+4. **Generate candidate evidence** → `GENERATED`
+5. Review records + coverage; select includes
+6. **Attest and approve** (acknowledge every coverage row) → `APPROVED`
+7. Preview framing: labelled **candidate** — not a complete population claim
+
+### Coverage status labels (CV-VL-01) — use these exact words
+
+| Storage enum | On-screen label |
+|---|---|
+| `answerable` | **Matches under scope** |
+| `partially_answerable` | **Partial matches — gaps remain** |
+| `missing` | **No matches** |
+| `requires_manual_confirmation` | **Action required** |
+| `data_source_unavailable` | **Not connected** |
+| `excluded_by_request` | **Excluded by request** |
+
+### Forbidden words
+
+- Never say **exam ready**
+- Never say **responsive** (exam-letter sense) in XR paths
+- Spoken if challenged: “These statuses describe whether matches exist under the scope you confirmed — not whether the firm has answered an examiner.”
+- Boundary line: “This is candidate evidence under a confirmed scope. A CCO must review it before any examination use.”
+
+### Needs Attention evidence chain states
+
+Cards can show chain states: Complete / Pending / Missing / Not applicable (unified `ComplianceItem` + `ChainView`).
+
+---
+
+## 7. Partner commercial surfaces — exact copy (N5 / N6)
+
+### `/partner/portfolio` — fixtures (NOT AdvizorStack SI firms)
+
+| Firm | Coverage | Drill |
+|---|---|---|
+| Cedar Ridge Advisors | 92% | No |
+| **Summit Ridge Advisors, LLC** | 71% | Yes → `/needs-attention` |
+| Northline Wealth | 48% | No |
+
+Summit Ridge factors include held identities, parked ingest, meeting/document/flag/signature weights, evidence gaps (EMAIL Q1 2024, SMS unindexed).
+
+**No live cross-workspace read path.** `assertNoCrossWorkspaceRead()` applies. Do not imply production partner access exists today.
+
+### `/partner/complement` — exact cards
+
+| Partner | What it does | What it does not | ComplyVault’s job |
+|---|---|---|---|
+| Hadrius | Marketing-review workflow and approval support | Does not assemble a source-linked supervision evidence trail | Preserves and retrieves underlying communication and review evidence |
+| Zocks | Meeting intelligence and adviser workflow automation | Does not provide a compliance evidence chain across channels | Connects source evidence, what surfaced, review decisions, and closure evidence |
+| FastTrackr AI | AI-assisted operational workflows — data arrives without typing | Does not turn intake into a supervision evidence trail or exam candidate pack | Zero setup to first evidence: connect mailbox, see what it disclosed, hold ambiguous identities, assemble candidate packs under confirmed scope |
+
+Header framing: “ComplyVault completes the stack; it is not positioned as a replacement.”
+
+### `/partner/economics` — exact numbers
+
+| Shape | Price line |
+|---|---|
+| Referral | **$1,000 per converted firm** |
+| Volume licence | **$300 per adviser per year** |
+| White-label | **30% partner margin** |
+
+Pilot card:
+
+- Free pilot with two or three partner firms
+- Success criteria: evidence retrieval, candidate-pack review time, usefulness of named portfolio exposure factors
+- First engineering act: production partner access with enforced isolation guarantees
+- **Next step: select pilot firms and commercial shape by 17 August 2026**
+
+---
+
+## 8. Live mailbox email → meeting bridge (demo glue)
+
+When Release 1 demo is on (or `EMAIL_TO_MEETING_ENABLED`):
+
+1. Email ingested to prepared demo mailbox (`complyvaultco@gmail.com` path used in rehearsal)
+2. Auto-creates / attributes a **Client**
+3. If sender is a workspace member (e.g. `hamza@complyvault.co`), demo maps to **Jane Client**
+4. Creates a Meeting with `meetingType: "Email"`, `status = DRAFT_READY`
+5. Runs deterministic keyword flags + disclosure detection; LLM email classifier may still run
+6. Audit: `email_promoted_to_meeting`
+7. Appears in dashboard / interaction log / review queue
+
+**Do not** claim this is AdvizorStack production supervision. It is Release 1 demo glue for live email storytelling.
+
+---
+
+## 9. Supervision Intelligence (R1.1) — what is shipped
+
+**Show only if Nico asks for portfolio / CCO command / multi-firm supervision**, or after the R1 commercial close. Do **not** lead the 10 Aug default path with SI.
+
+### Shipped stories
+
+| Story | What |
+|---|---|
+| CV-SI-001 | Supervisory outcomes on interactions (`CLEARED`, `ROUTINE_SAMPLE`, `ESCALATED`, `HELD`, `PARKED`) |
+| CV-SI-002 | Cleared / sampled / escalated / held counts |
+| CV-SI-003 | Routine supervisory sampling config |
+| CV-SI-004 | `/supervision` Portfolio Command Centre |
+| CV-SI-005 | Global URL filters (default **30-day** window) |
+| CV-SI-006 | `/priority-inbox` CCO Priority Inbox |
+| CV-SI-029 | Synthetic AdvizorStack tenant seed |
+
+### Partial / stub only — do not oversell
+
+| Route / story | Reality |
+|---|---|
+| `/findings/[findingId]` (CV-SI-008) | Stub: header + human-review boundary + policy code. “Full finding sections land in CV-SI-008.” |
+| `/firms/[firmId]/supervision` (CV-SI-027) | Stub: firm name + 4 counts + link to inbox |
+| `/controls` (CV-SI-025) | Not built |
+| Decisions, remediation workflows, trail export, partner control matrix | Backlog |
+
+### AdvizorStack synthetic firms (SI seed)
+
+| Workspace ID | Firm | CRD | CCO |
+|---|---|---|---|
+| `si-as-ws-secure` | Secure Investment Management | AS-1001 | Elena Vasquez |
+| `si-as-ws-desert-ridge` | Desert Ridge Wealth | AS-1002 | Marcus Hale |
+| `si-as-ws-northstar` | Northstar Advisory | AS-1003 | Priya Shah |
+
+**Advisers:** Avery Chen, Blake Moretti (ADVISOR on all three). Presenter emails linked as OWNER_CCO.
+
+### Expected portfolio counts (must match UI under default 30-day filter)
+
+| Metric | Value |
+|---|---|
+| Processed | **147** |
+| Cleared or deprioritised | **139** |
+| Routine samples | **5** |
+| Priority findings | **3** |
+| Held | **0** |
+| Open remediation | **4** |
+| Rollover findings | **7** |
+
+Selectivity line pattern:  
+> 3 findings require review from 147 processed interactions.
+
+### Primary finding (stable demo deep-link)
+
+- Flag ID: `si-as-flag-rollover-001`
+- Route: `/findings/si-as-flag-rollover-001`
+- Firm: Secure Investment Management
+- Client: Helen Navarro
+- Adviser: Avery Chen
+- Control: `MISSING_DISCLOSURE` / policy `ROLLOVER-DOC-v1`
+- Reason: “Rollover recommendation with unresolved insurance conflict”
+- Status: `IN_REMEDIATION`
+
+### Other priority themes
+
+- Desert Ridge: unsupported performance language
+- Northstar: fee-disclosure inconsistency
+
+### Command Centre filters (URL)
+
+`from`, `to`, `firm`, `adviser`, `channel` (`MEETING`|`EMAIL`), `control`, `outcome`, `severity`, `status`  
+Clear → default 30-day window. Metrics, firm rows, and patterns share the same filter set.
+
+### Emerging patterns (max 3)
+
+1. Rollover documentation weakness (≥2 `MISSING_DISCLOSURE`)
+2. Unsupported performance language (`PERFORMANCE_CLAIM`)
+3. Fee-disclosure inconsistency (`FEE_DISPUTE`)
+
+### SI talk-track (short)
+
+1. `/supervision` — “3 of 147” selectivity  
+2. `/priority-inbox` — small actionable set  
+3. Open `si-as-flag-rollover-001` — acknowledge stub depth if challenged  
+4. Optional firm link for Secure  
+5. Return to R1 commercial / pilot close  
+
+**Do not claim:** full finding evidence sections, meeting+email dual evidence on seed findings, remediate workflow, control centre, or production AdvizorStack data.
+
+### Separate illustrative UI (usually skip on live call)
+
+Unauthenticated `/demo/advizorStack/*` (Home, Queue, Evidence, Sources, Cockpit) — seed storytelling only; **not** the SI Command Centre and **not** the R1 run sheet.
+
+---
+
+## 10. Full authenticated route map (implemented pages)
+
+### Release 1
+
+`/needs-attention`, `/candidate-pack`, `/fail-closed`, `/partner/portfolio`, `/partner/complement`, `/partner/economics`, `/integrations/gmail-mail` (R1 chrome)
+
+### Supervision Intelligence
+
+`/supervision`, `/priority-inbox`, `/findings/[findingId]`, `/firms/[firmId]/supervision`
+
+### Core product
+
+`/dashboard`, `/welcome`, `/upload`, `/interaction-log`, `/meetings/[id]`, `/review`, `/clients/[id]`, `/clients/overview`, `/compliance-cockpit`, `/communications`, `/communications/threads/[id]`, `/mailbox/triage`, `/integrations`, `/integrations/zoho`, `/integrations/m365-mail`, `/integrations/teams/manifest`, `/settings`, `/settings/workspace`, `/settings/media-posture`, `/audit-logs`, `/audit-packs`, `/notifications`, `/workspaces/new`, `/workspaces/[id]/invite`, `/no-workspace`, `/internal/ops`
+
+### Public / auth / Teams / illustrative demo
+
+`/`, `/trust`, `/privacy`, `/terms`, `/uk`, `/auth/signin`, `/auth/signup`, `/invitations/accept`, `/billing/success`, `/teams/sidepanel`, `/teams/config`, `/demo/advizorStack/*`
+
+---
+
+## 11. Written fallback lines (memorise)
+
+| Situation | Line |
+|---|---|
+| Slow Gmail sync | “The recorded run has the same prepared mailbox and staged outcomes; we will use it so we can preserve time for the evidence and scope decisions.” |
+| Ambiguous identity | “The system has intentionally held this identity for confirmation rather than assigning a plausible match.” |
+| Offer of a real mailbox | “That becomes the pilot’s first act, on an authorised workspace.” |
+| Candidate-pack boundary | “This is candidate evidence under a confirmed scope. A CCO must review it before any examination use.” |
+| Portfolio depth | “This is a prepared portfolio snapshot; production partner access ships with the pilot.” |
+| SI finding stub | “The Priority Inbox and selectivity counts are live; the full finding dossier sections are next on the build.” |
+
+---
+
+## 12. Close of call
+
+1. Propose **free pilot with two or three firms**
+2. Agree success criteria (retrieval quality, candidate-pack review time, portfolio factor usefulness)
+3. Dated next step: **select firms and commercial shape by 17 August 2026**
+
+---
+
+## 13. Instructions for generating demo extracts
+
+When writing extracts for the presenter:
+
+1. Prefer **Release 1 default order** unless told Nico prioritised otherwise.
+2. Use **exact** firm names, questions, XR paste text, coverage labels, commercial numbers, and routes from this document.
+3. Separate **spoken honesty** (once) from **on-screen product language** (no synthetic banners).
+4. Never mix N1 seed claims with N2 mailbox disclosure claims.
+5. Never claim ExamPack completeness, exam-ready status, live AdvizorStack production data, or a production cross-tenant partner reader.
+6. If SI is included, keep it short and honest about stub finding depth.
+7. Timed target for full R1 sheet: **under 25 minutes** including opens.
+
+### Extract pack to produce
+
+Produce these as separate labelled blocks the presenter can read aloud:
+
+1. **Cold open** (3 hypothesis questions + one honesty sentence)
+2. **N2 zero-setup** (connect → backfill → Needs Attention; held-identity line)
+3. **N1 Ask** (one rehearsed + one paraphrased prompt + one open offer)
+4. **Honest miss** (SMS fees + decline line)
+5. **N4 fail-closed** (what to click and what to point at)
+6. **N3 candidate pack** (XR paste + confirm-before-generate + coverage label narration)
+7. **N5 portfolio** (three firms; drill Summit Ridge only; production-access sentence)
+8. **N6 commercial** (complement framing + three price shapes + 17 Aug close)
+9. **Optional SI appendix** (3 of 147 → Priority Inbox → primary finding; stub caveat)
+10. **Objection handling** (exam-ready challenge; “is this real?”; slow sync; real mailbox offer)
+
+---
+
+## 14. Source documents (if deeper detail needed)
+
+| Doc | Use |
+|---|---|
+| `docs/release-1/demo/run-sheet.md` | Live demo order |
+| `docs/release-1/demo/deploy-and-rehearsal.md` | Deploy / seed / rehearsal checklist |
+| `docs/release-1/demo/vl-01-compliance-review.md` | Coverage label rationale |
+| `docs/release-1/demo/vl-02-email.md` | Hypothesis email + reorder table |
+| `docs/release-1/complyvault-backlog-v5-release-1.md` | R1 story status |
+| `docs/product/supervision-intelligence-r1-1-backlog.md` | SI stories |
+| `docs/product/product-as-built.md` | Core platform as-built (pre-dates some R1/SI; this brief supersedes for demo day) |
+| `src/server/supervision/advizorstack-tenant.ts` | SI tenant registry |
+| `src/server/partner/snapshots.ts` | R1 portfolio fixtures |
+| `scripts/seed-demo-neon.mjs` | N1 corpus |
+
+---
+
+## 15. One-paragraph external-safe summary
+
+ComplyVault today is a workspace-scoped RIA compliance product that captures meetings (Zoom auto-ingest and manual upload; Teams available in-product), processes them through transcription and structured extraction, surfaces missing-disclosure and email-intelligence flags tuned by a firm disclosure profile, and requires advisor → compliance manager → CCO review before a meeting can be finalized into a deterministic audit pack that can be sealed with an append-only ledger and optional SharePoint convenience deposit. Release 1 adds Needs Attention, Ask with honest miss, fail-closed parked ingest, candidate examination-response packs under confirmed scope, a fixture partner portfolio, and a complement/economics commercial path. Supervision Intelligence adds a multi-firm Command Centre and Priority Inbox over a seeded AdvizorStack-shaped tenant (147 interactions → few escalations). Exam request completeness claims, SOC 2 certification, FCA/UK residency, and production cross-tenant partner access are not product claims for this session.

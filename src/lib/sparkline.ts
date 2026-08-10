@@ -24,10 +24,12 @@ export function buildSparkline(
   const min = Math.min(...values);
   const max = Math.max(...values);
   const range = max - min || 1;
-  const stepX = n === 1 ? 0 : width / (n - 1);
+  // Inset on both axes so stroke caps / end markers are not clipped by the viewBox.
+  const innerW = Math.max(0, width - 2 * pad);
+  const stepX = n === 1 ? 0 : innerW / (n - 1);
 
   const points: SparklinePoint[] = values.map((v, i) => {
-    const x = n === 1 ? width / 2 : i * stepX;
+    const x = n === 1 ? width / 2 : pad + i * stepX;
     const y = pad + (height - 2 * pad) * (1 - (v - min) / range);
     return { x: Number(x.toFixed(2)), y: Number(y.toFixed(2)) };
   });

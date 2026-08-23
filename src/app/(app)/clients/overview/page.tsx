@@ -5,17 +5,9 @@ import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { topicToString } from "~/lib/topics";
 import { redirectPathForMissingWorkspace } from "~/server/workspace/no-workspace-redirect";
-import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/components/ui/table";
+import { ClientOverviewMeetingsTable } from "./client-overview-meetings-table";
 import type { FlagStatus, Prisma } from "../../../../../generated/prisma";
 
 // Reads searchParams for the client name, so it must render dynamically.
@@ -26,31 +18,6 @@ const OPEN_FLAG_STATUSES: readonly FlagStatus[] = [
   "IN_REMEDIATION",
   "PENDING_VERIFICATION",
 ];
-
-function outcomeLabel(outcome: string | null): string {
-  switch (outcome) {
-    case "CLEARED":
-      return "Cleared";
-    case "ROUTINE_SAMPLE":
-      return "Sampled";
-    case "ESCALATED":
-      return "Escalated";
-    case "HELD":
-      return "Held";
-    case "PARKED":
-      return "Parked";
-    default:
-      return "Unassigned";
-  }
-}
-
-function outcomeVariant(
-  outcome: string | null,
-): "default" | "secondary" | "destructive" | "outline" {
-  if (outcome === "ESCALATED") return "destructive";
-  if (outcome === "HELD") return "secondary";
-  return "outline";
-}
 
 export default async function ClientOverviewPage({
   searchParams,
@@ -219,57 +186,7 @@ export default async function ClientOverviewPage({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Keywords</TableHead>
-                  <TableHead>Outcome</TableHead>
-                  <TableHead>Recommendations</TableHead>
-                  <TableHead>Finalized</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell>{dateFmt.format(new Date(row.date))}</TableCell>
-                    <TableCell>{row.type}</TableCell>
-                    <TableCell>
-                      <div className="max-w-xs truncate text-sm text-muted-foreground">
-                        {row.keywords || "—"}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={outcomeVariant(row.supervisoryOutcome)}
-                        title={row.outcomeReason ?? undefined}
-                      >
-                        {outcomeLabel(row.supervisoryOutcome)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={row.hasRecommendations ? "default" : "secondary"}>
-                        {row.hasRecommendations ? "Yes" : "No"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={row.isFinalized ? "default" : "outline"}>
-                        {row.isFinalized ? "Yes" : "No"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="link" asChild>
-                        <Link href={`/meetings/${row.id}`}>View</Link>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <ClientOverviewMeetingsTable rows={rows} />
         </CardContent>
       </Card>
 

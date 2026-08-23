@@ -1,27 +1,46 @@
+import { PrismaNeonHttp } from "@prisma/adapter-neon";
 import { env } from "~/env";
-import { PrismaClient } from "../../generated/prisma";
+import { Prisma, PrismaClient } from "../../generated/prisma";
 
-const createPrismaClient = () => {
-  // Use placeholder during Vercel build when DATABASE_URL may not be available yet.
-  // At runtime, Vercel injects env vars and the real URL is used.
+function resolveDatabaseUrl(): string {
   const url =
-    env.DATABASE_URL ||
+    process.env.DATABASE_URL ??
+    env.DATABASE_URL ??
     (process.env.VERCEL === "1"
       ? "postgresql://build:build@localhost:5432/build"
       : undefined);
   if (!url) {
     throw new Error("DATABASE_URL environment variable is required");
   }
+  return url;
+}
+
+function usesNeonServerless(url: string): boolean {
+  return url.includes("neon.tech");
+}
+
+const createPrismaClient = (): PrismaClient => {
+  const url = resolveDatabaseUrl();
+  const log: Prisma.LogLevel[] =
+    env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"];
+
+  // Neon HTTP driver works behind corporate TLS interception; Prisma TCP engine does not.
+  if (usesNeonServerless(url)) {
+    const adapter = new PrismaNeonHttp(url, {
+      arrayMode: false,
+      fullResults: true,
+    });
+    return new PrismaClient({ adapter, log });
+  }
 
   return new PrismaClient({
     datasourceUrl: url,
-    log:
-      env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    log,
   });
 };
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: ReturnType<typeof createPrismaClient> | undefined;
+  prisma: PrismaClient | undefined;
 };
 
 export const db = globalForPrisma.prisma ?? createPrismaClient();

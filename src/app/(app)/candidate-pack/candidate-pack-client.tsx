@@ -1,9 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
+import { toast } from "~/lib/toast";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import {
+  StatefulButton,
+  pendingButtonState,
+} from "~/components/ui/stateful-button";
 import {
   Card,
   CardContent,
@@ -328,14 +332,14 @@ export function CandidatePackClient(): React.JSX.Element {
                 className="text-foreground placeholder:text-muted-foreground/70"
               />
               {!pack ? (
-                <Button
+                <StatefulButton
                   onClick={() => void createDraft()}
+                  state={pendingButtonState(pending === "draft")}
+                  loadingText="Interpreting…"
                   disabled={pending === "draft" || requestText.trim().length < 10}
                 >
-                  {pending === "draft"
-                    ? "Interpreting…"
-                    : "Interpret candidate scope"}
-                </Button>
+                  Interpret candidate scope
+                </StatefulButton>
               ) : null}
             </CardContent>
           </Card>
@@ -388,15 +392,15 @@ export function CandidatePackClient(): React.JSX.Element {
                 </div>
                 {pack.status === "DRAFT_SCOPE" ? (
                   <div className="md:col-span-2 flex flex-wrap gap-2 border-t pt-4">
-                    <Button
+                    <StatefulButton
                       className="bg-[#0D2818] hover:bg-[#0D2818]/90"
                       onClick={() => void confirmScope()}
+                      state={pendingButtonState(pending === "confirm")}
+                      loadingText="Confirming…"
                       disabled={pending === "confirm"}
                     >
-                      {pending === "confirm"
-                        ? "Confirming…"
-                        : "Confirm candidate scope"}
-                    </Button>
+                      Confirm candidate scope
+                    </StatefulButton>
                     <p className="self-center text-xs text-muted-foreground">
                       This stores your confirmation in the audit log before any
                       retrieval.
@@ -419,14 +423,14 @@ export function CandidatePackClient(): React.JSX.Element {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button
+            <StatefulButton
               onClick={() => void generate()}
+              state={pendingButtonState(pending === "generate")}
+              loadingText="Generating…"
               disabled={pending === "generate"}
             >
-              {pending === "generate"
-                ? "Generating…"
-                : "Generate candidate pack"}
-            </Button>
+              Generate candidate pack
+            </StatefulButton>
           </CardContent>
         </Card>
       ) : null}
@@ -693,15 +697,15 @@ export function CandidatePackClient(): React.JSX.Element {
             <Button variant="outline" onClick={() => setAttestOpen(false)}>
               Cancel
             </Button>
-            <Button
+            <StatefulButton
               className="bg-[#0D2818] hover:bg-[#0D2818]/90"
               disabled={!allAcked || pending === "approve"}
+              state={pendingButtonState(pending === "approve")}
+              loadingText="Writing attestation…"
               onClick={() => void approve()}
             >
-              {pending === "approve"
-                ? "Writing attestation…"
-                : "Confirm approval"}
-            </Button>
+              Confirm approval
+            </StatefulButton>
           </DialogFooter>
         </DialogContent>
       </Dialog>

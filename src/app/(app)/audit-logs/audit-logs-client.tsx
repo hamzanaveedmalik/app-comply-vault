@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
@@ -18,13 +18,14 @@ import { Alert, AlertDescription } from "~/components/ui/alert";
 import { Download } from "lucide-react";
 import { cn } from "~/lib/utils";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/components/ui/table";
+  DataTable,
+  type TableColumn,
+} from "~/components/ui/data-table/index";
+import {
+  StatefulButton,
+  pendingButtonState,
+  type ButtonState,
+} from "~/components/ui/stateful-button";
 
 interface AuditEvent {
   id: string;
@@ -158,7 +159,7 @@ export default function AuditLogsClient({
 }: AuditLogsClientProps) {
   const router = useRouter();
   const [filters, setFilters] = useState(initialFilters);
-  const [isExporting, setIsExporting] = useState(false);
+  const [exportState, setExportState] = useState<ButtonState>("idle");
 
   const handleFilterChange = (key: string, value: string) => {
     const newFilters = { ...filters, [key]: value };
@@ -183,8 +184,8 @@ export default function AuditLogsClient({
     router.push("/audit-logs");
   };
 
-  const handleExport = async () => {
-    setIsExporting(true);
+  const handleExport = async (): Promise<void> => {
+    setExportState("loading");
     try {
       const params = new URLSearchParams();
       Object.entries(filters).forEach(([k, v]) => {
@@ -205,13 +206,111 @@ export default function AuditLogsClient({
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+      setExportState("success");
+      window.setTimeout(() => setExportState("idle"), 1500);
     } catch (err) {
       console.error("Error exporting audit logs:", err);
       alert("Failed to export audit logs. Please try again.");
-    } finally {
-      setIsExporting(false);
+      setExportState("error");
+      window.setTimeout(() => setExportState("idle"), 2000);
     }
   };
+
+  const columns = useMemo((): TableColumn<AuditEvent>[] => {
+    return [
+      {
+        key: "timestamp",
+        header: "Timestamp",
+        sortable: true,
+        width: "9rem",
+        sortValue: (row) => row.timestamp,
+        cell: (row) => (
+          <span className="font-mono text-xs tabular-nums whitespace-nowrap">
+            {new Date(row.timestamp).toLocaleString()}
+          </span>
+        ),
+      },
+      {
+        key: "user",
+        header: "User",
+        width: "8rem",
+        sortValue: (row) => row.user.name ?? row.user.email ?? row.user.id,
+        cell: (row) => (
+          <span className="text-sm whitespace-nowrap">
+            {row.user.name || row.user.email || row.user.id}
+          </span>
+        ),
+      },
+      {
+        key: "action",
+        header: "Action",
+        width: "7rem",
+        sortValue: (row) => row.action,
+        cell: (row) => (
+          <Badge
+            variant="outline"
+            className={cn("whitespace-nowrap border", getActionPillClass(row.action))}
+          >
+            {getActionLabel(row.action)}
+          </Badge>
+        ),
+      },
+      {
+        key: "resource",
+        header: "Resource",
+        width: "9rem",
+        cell: (row) => (
+          <div className="text-sm">
+            <div className="font-medium">{row.resourceType}</div>
+            <div className="max-w-[9rem] truncate font-mono text-xs text-muted-foreground">
+              {row.resourceId}
+            </div>
+          </div>
+        ),
+      },
+      {
+        key: "meeting",
+        header: "Meeting",
+        width: "9rem",
+        cell: (row) =>
+          row.meeting ? (
+            <div className="text-sm">
+              <div className="font-medium">{row.meeting.clientName}</div>
+              <div className="text-xs text-muted-foreground">
+                {new Date(row.meeting.meetingDate).toLocaleDateString()}
+              </div>
+            </div>
+          ) : (
+            <span className="text-muted-foreground">—</span>
+          ),
+      },
+      {
+        key: "metadata",
+        header: "Metadata",
+        width: "12rem",
+        cell: (row) =>
+          row.metadata ? (
+            <div className="space-y-1">
+              {getMetadataSummary(row.metadata) ? (
+                <div className="text-xs text-muted-foreground line-clamp-2">
+                  {getMetadataSummary(row.metadata)}
+                </div>
+              ) : null}
+              <details className="text-xs">
+                <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
+                  View metadata
+                </summary>
+                <pre className="mt-1 max-h-32 overflow-auto rounded border bg-muted p-2 text-xs">
+                  {JSON.stringify(row.metadata, null, 2)}
+                </pre>
+              </details>
+            </div>
+          ) : (
+            <span className="text-muted-foreground">—</span>
+          ),
+      },
+    ];
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -291,10 +390,18 @@ export default function AuditLogsClient({
             <Button variant="outline" onClick={clearFilters} className="w-full sm:w-auto">
               Clear Filters
             </Button>
-            <Button onClick={handleExport} disabled={isExporting} className="w-full sm:w-auto">
-              <Download className="mr-2 h-4 w-4" />
+            <StatefulButton
+              onClick={() => void handleExport()}
+              state={exportState}
+              loadingText="Exporting…"
+              successText="Exported"
+              errorText="Try again"
+              disabled={exportState === "loading"}
+              className="w-full sm:w-auto"
+              icon={<Download className="h-4 w-4" aria-hidden />}
+            >
               Export CSV
-            </Button>
+            </StatefulButton>
           </div>
         </CardContent>
       </Card>
@@ -307,93 +414,17 @@ export default function AuditLogsClient({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {initialEvents.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No audit events found matching your filters.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="min-w-[140px]">Timestamp</TableHead>
-                    <TableHead className="min-w-[100px]">User</TableHead>
-                    <TableHead className="min-w-[100px]">Action</TableHead>
-                    <TableHead className="min-w-[120px]">Resource</TableHead>
-                    <TableHead className="min-w-[140px]">Meeting</TableHead>
-                    <TableHead className="min-w-[100px]">Metadata</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {initialEvents.map((event) => (
-                    <TableRow key={event.id}>
-                      <TableCell className="font-mono text-xs">
-                        <div className="whitespace-nowrap">
-                          {new Date(event.timestamp).toLocaleString()}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm whitespace-nowrap">
-                          {event.user.name || event.user.email || event.user.id}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="outline"
-                          className={cn("whitespace-nowrap border", getActionPillClass(event.action))}
-                        >
-                          {getActionLabel(event.action)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          <div className="font-medium">{event.resourceType}</div>
-                          <div className="text-xs text-muted-foreground font-mono truncate max-w-[150px]">
-                            {event.resourceId}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {event.meeting ? (
-                          <div className="text-sm">
-                            <div className="font-medium">{event.meeting.clientName}</div>
-                            <div className="text-xs text-muted-foreground">
-                              {new Date(event.meeting.meetingDate).toLocaleDateString()}
-                            </div>
-                          </div>
-                        ) : (
-                          <span className="text-muted-foreground">—</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {event.metadata ? (
-                          <div className="space-y-2">
-                            {getMetadataSummary(event.metadata) && (
-                              <div className="text-xs text-muted-foreground">
-                                {getMetadataSummary(event.metadata)}
-                              </div>
-                            )}
-                          <details className="text-xs">
-                            <summary className="cursor-pointer text-muted-foreground hover:text-foreground transition-colors">
-                              View metadata
-                            </summary>
-                            <div className="mt-2 max-w-md">
-                              <pre className="whitespace-pre-wrap break-words text-xs bg-muted p-2 rounded border overflow-auto max-h-48">
-                                {JSON.stringify(event.metadata, null, 2)}
-                              </pre>
-                            </div>
-                          </details>
-                          </div>
-                        ) : (
-                          <span className="text-muted-foreground">—</span>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+          <DataTable
+            data={initialEvents}
+            columns={columns}
+            getRowId={(row) => row.id}
+            defaultSort={{ key: "timestamp", direction: "desc" }}
+            rowHeight={64}
+            height={560}
+            overscan={8}
+            emptyState="No audit events found matching your filters."
+            className="rounded-md border"
+          />
         </CardContent>
       </Card>
     </div>

@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
-import { Button } from "~/components/ui/button";
+import { StatefulButton } from "~/components/ui/stateful-button";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 
 interface ExportButtonProps {
@@ -17,11 +16,12 @@ export default function ExportButton({
   status,
   hasExtraction,
   openFlagsCount: _openFlagsCount,
-}: ExportButtonProps) {
-  const [isExporting, setIsExporting] = useState(false);
+}: ExportButtonProps): React.JSX.Element | null {
+  const [buttonState, setButtonState] = useState<"idle" | "loading" | "success" | "error">(
+    "idle",
+  );
   const [error, setError] = useState<string | null>(null);
 
-  // Only show export button for finalized or draft ready meetings with extraction
   if (status !== "FINALIZED" && status !== "DRAFT_READY") {
     return null;
   }
@@ -36,8 +36,8 @@ export default function ExportButton({
     );
   }
 
-  const handleExport = async () => {
-    setIsExporting(true);
+  const handleExport = async (): Promise<void> => {
+    setButtonState("loading");
     setError(null);
 
     try {
@@ -54,7 +54,6 @@ export default function ExportButton({
         throw new Error(message);
       }
 
-      // Get filename from Content-Disposition header or generate one
       const contentDisposition = response.headers.get("Content-Disposition");
       let filename = "audit_pack.zip";
       if (contentDisposition) {
@@ -64,7 +63,6 @@ export default function ExportButton({
         }
       }
 
-      // Download the ZIP file
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -74,38 +72,35 @@ export default function ExportButton({
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+      setButtonState("success");
+      window.setTimeout(() => setButtonState("idle"), 1500);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unknown error occurred");
-    } finally {
-      setIsExporting(false);
+      setButtonState("error");
+      window.setTimeout(() => setButtonState("idle"), 2000);
     }
   };
 
   return (
     <div className="mt-4 space-y-2">
-      <Button
-        onClick={handleExport}
-        disabled={isExporting}
-        variant="default"
+      <StatefulButton
+        onClick={() => void handleExport()}
+        state={buttonState}
+        loadingText="Exporting…"
+        successText="Downloaded"
+        errorText="Try again"
+        disabled={buttonState === "loading"}
       >
-        {isExporting ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Exporting...
-          </>
-        ) : (
-          "Export Audit Pack"
-        )}
-      </Button>
-      {error && (
+        Export Audit Pack
+      </StatefulButton>
+      {error ? (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
-      )}
+      ) : null}
       <p className="text-xs text-muted-foreground">
         Downloads a ZIP file with branded PDF, Evidence Map, Version History, and Transcript
       </p>
     </div>
   );
 }
-

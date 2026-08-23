@@ -2,10 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "~/components/ui/button";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 import { RefreshCw, Upload } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "~/lib/toast";
+import {
+  StatefulButton,
+  pendingButtonState,
+  type ButtonState,
+} from "~/components/ui/stateful-button";
 
 interface RetryButtonProps {
   meetingId: string;
@@ -19,12 +23,11 @@ export default function RetryButton({
   status,
   hasFile,
   type = "processing",
-}: RetryButtonProps) {
+}: RetryButtonProps): React.JSX.Element | null {
   const router = useRouter();
-  const [isRetrying, setIsRetrying] = useState(false);
+  const [buttonState, setButtonState] = useState<ButtonState>("idle");
   const [error, setError] = useState<string | null>(null);
 
-  // Only show retry button for failed/error states
   const shouldShow =
     (type === "upload" && status === "UPLOADING") ||
     (type === "processing" && (status === "PROCESSING" || status === "DRAFT_READY" || status === "DRAFT"));
@@ -33,12 +36,12 @@ export default function RetryButton({
     return null;
   }
 
-  const handleRetry = async () => {
+  const handleRetry = async (): Promise<void> => {
     if (!confirm(`Are you sure you want to retry ${type === "upload" ? "upload" : "processing"}?`)) {
       return;
     }
 
-    setIsRetrying(true);
+    setButtonState("loading");
     setError(null);
 
     try {
@@ -57,59 +60,51 @@ export default function RetryButton({
 
       const data = await response.json();
       toast.success(data.message || "Retry initiated successfully");
-      
-      // Refresh the page to show updated status
+      setButtonState("success");
+      window.setTimeout(() => setButtonState("idle"), 1500);
       router.refresh();
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "An unknown error occurred";
       setError(errorMessage);
       toast.error(errorMessage);
-      setIsRetrying(false);
+      setButtonState("error");
+      window.setTimeout(() => setButtonState("idle"), 2000);
     }
   };
 
   return (
     <div className="space-y-2">
-      <Button
-        onClick={handleRetry}
-        disabled={isRetrying || !hasFile}
+      <StatefulButton
+        onClick={() => void handleRetry()}
+        state={buttonState}
+        loadingText="Retrying…"
+        successText="Queued"
+        errorText="Try again"
         variant="outline"
         className="w-full sm:w-auto"
+        disabled={!hasFile || buttonState === "loading"}
+        icon={
+          type === "upload" ? (
+            <Upload className="h-4 w-4" aria-hidden />
+          ) : (
+            <RefreshCw className="h-4 w-4" aria-hidden />
+          )
+        }
       >
-        {isRetrying ? (
-          <>
-            <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-            Retrying...
-          </>
-        ) : (
-          <>
-            {type === "upload" ? (
-              <>
-                <Upload className="mr-2 h-4 w-4" />
-                Retry Upload
-              </>
-            ) : (
-              <>
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Retry Processing
-              </>
-            )}
-          </>
-        )}
-      </Button>
-      {error && (
+        {type === "upload" ? "Retry Upload" : "Retry Processing"}
+      </StatefulButton>
+      {error ? (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
-      )}
-      {!hasFile && type === "processing" && (
+      ) : null}
+      {!hasFile && type === "processing" ? (
         <Alert>
           <AlertDescription>
             Cannot retry processing: no file found. Please upload a file first.
           </AlertDescription>
         </Alert>
-      )}
+      ) : null}
     </div>
   );
 }
-

@@ -2,7 +2,8 @@
 
 import { Fragment, useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Sparkles } from "lucide-react";
+import { TextShimmer } from "~/components/ui/text-shimmer";
+import { Sparkles } from "lucide-react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -356,8 +357,8 @@ export function GlobalSearch({ className }: GlobalSearchProps): React.JSX.Elemen
           )}
 
           {isLoading && !askActive && (
-            <div className="flex items-center justify-center py-6">
-              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            <div className="flex items-center justify-center py-6 text-sm text-muted-foreground">
+              <TextShimmer>Searching meetings…</TextShimmer>
             </div>
           )}
           {!isLoading && !askActive && query.length < 2 && (

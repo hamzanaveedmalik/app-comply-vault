@@ -3,8 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
+import {
+  StatefulButton,
+  pendingButtonState,
+} from "~/components/ui/stateful-button";
 import { Input } from "~/components/ui/input";
-import { toast } from "sonner";
+import { toast } from "~/lib/toast";
 import type { MailboxConnectionDto } from "~/lib/types/evidence";
 import type { GmailWorkspaceStatus } from "~/lib/types/evidence";
 import { isRelease1DemoEnabled } from "~/lib/feature-flags";
@@ -36,6 +40,7 @@ export function GmailMailClient({
   const [connections, setConnections] = useState<MailboxConnectionDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedConnection, setSelectedConnection] = useState<string | null>(null);
+  const [syncPending, setSyncPending] = useState<string | null>(null);
   const [folders, setFolders] = useState<MailFolder[]>([]);
   const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
   const [backfillFrom, setBackfillFrom] = useState("");
@@ -131,18 +136,24 @@ export function GmailMailClient({
   }
 
   async function startSync(connectionId: string, kind: "BACKFILL" | "DELTA"): Promise<void> {
-    const res = await fetch(`/api/mailbox/connections/${connectionId}/sync`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ kind }),
-    });
-    const json = (await res.json()) as { success: boolean; data?: { jobId: string }; error?: string };
-    if (!json.success) {
-      toast.error(json.error ?? "Sync failed");
-      return;
+    const key = `${connectionId}-${kind}`;
+    setSyncPending(key);
+    try {
+      const res = await fetch(`/api/mailbox/connections/${connectionId}/sync`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind }),
+      });
+      const json = (await res.json()) as { success: boolean; data?: { jobId: string }; error?: string };
+      if (!json.success) {
+        toast.error(json.error ?? "Sync failed");
+        return;
+      }
+      toast.success(`${kind} job started`);
+      await loadConnections();
+    } finally {
+      setSyncPending(null);
     }
-    toast.success(`${kind} job started`);
-    await loadConnections();
   }
 
   function toggleFolder(folderId: string): void {
@@ -266,16 +277,26 @@ export function GmailMailClient({
                   <Button size="sm" variant="outline" onClick={() => void loadFolders(c.id)}>
                     Labels
                   </Button>
-                  <Button
+                  <StatefulButton
                     size="sm"
+                    state={pendingButtonState(syncPending === `${c.id}-BACKFILL`)}
+                    loadingText="Starting…"
                     onClick={() => void startSync(c.id, "BACKFILL")}
-                    className="bg-[#2ECC71] text-[#0D2818]"
+                    className="bg-[#2ECC71] text-[#0D2818] hover:bg-[#27ae60]"
+                    disabled={syncPending !== null}
                   >
                     Backfill
-                  </Button>
-                  <Button size="sm" variant="secondary" onClick={() => void startSync(c.id, "DELTA")}>
+                  </StatefulButton>
+                  <StatefulButton
+                    size="sm"
+                    variant="secondary"
+                    state={pendingButtonState(syncPending === `${c.id}-DELTA`)}
+                    loadingText="Starting…"
+                    onClick={() => void startSync(c.id, "DELTA")}
+                    disabled={syncPending !== null}
+                  >
                     Delta sync
-                  </Button>
+                  </StatefulButton>
                 </div>
               </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "~/components/ui/card";
@@ -14,17 +14,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/components/ui/table";
 import { Badge } from "~/components/ui/badge";
-import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { SupersessionBadge } from "~/components/meetings/supersession-badge";
+import {
+  DataTable,
+  type SortState,
+  type TableColumn,
+} from "~/components/ui/data-table/index";
 
 interface InteractionLogMeeting {
   id: string;
@@ -75,27 +71,24 @@ export default function InteractionLogClient({
     router.push(`/interaction-log?${params.toString()}`);
   };
 
-  const handleSort = (column: string) => {
-    const newSortOrder =
-      filters.sortBy === column && filters.sortOrder === "asc" ? "desc" : "asc";
-    handleFilterChange("sortBy", column);
-    handleFilterChange("sortOrder", newSortOrder);
+  const handleSortChange = (sort: SortState | null): void => {
+    if (!sort) return;
+    const newFilters = {
+      ...filters,
+      sortBy: sort.key,
+      sortOrder: sort.direction,
+    };
+    setFilters(newFilters);
+    const params = new URLSearchParams();
+    Object.entries(newFilters).forEach(([k, v]) => {
+      if (v) params.set(k, v);
+    });
+    router.push(`/interaction-log?${params.toString()}`);
   };
 
-  const clearFilters = () => {
-    setFilters({
-      clientName: "",
-      dateFrom: "",
-      dateTo: "",
-      type: "",
-      keywords: "",
-      recommendations: "",
-      finalized: "",
-      outcome: "",
-      sortBy: "date",
-      sortOrder: "desc",
-    });
-    router.push("/interaction-log");
+  const sortState: SortState = {
+    key: filters.sortBy || "date",
+    direction: filters.sortOrder === "asc" ? "asc" : "desc",
   };
 
   const outcomeLabel = (outcome: string | null): string => {
@@ -115,15 +108,119 @@ export default function InteractionLogClient({
     }
   };
 
-  const getSortIcon = (column: string) => {
-    if (filters.sortBy !== column) {
-      return <ArrowUpDown className="ml-1 h-3 w-3" />;
-    }
-    return filters.sortOrder === "asc" ? (
-      <ArrowUp className="ml-1 h-3 w-3" />
-    ) : (
-      <ArrowDown className="ml-1 h-3 w-3" />
-    );
+  const columns = useMemo((): TableColumn<InteractionLogMeeting>[] => {
+    return [
+      {
+        key: "client",
+        header: "Client",
+        sortable: true,
+        width: "11rem",
+        sortValue: (row) => row.clientName,
+        cell: (row) => (
+          <div className="flex flex-col gap-1">
+            <span className="font-medium">{row.clientName}</span>
+            <SupersessionBadge
+              supersededById={row.supersededById}
+              supersedesId={row.supersedesId}
+            />
+          </div>
+        ),
+      },
+      {
+        key: "date",
+        header: "Date",
+        sortable: true,
+        width: "6.5rem",
+        sortValue: (row) => row.date,
+        cell: (row) => new Date(row.date).toLocaleDateString(),
+      },
+      {
+        key: "type",
+        header: "Type",
+        sortable: true,
+        width: "8rem",
+        sortValue: (row) => row.type,
+        cell: (row) => row.type,
+      },
+      {
+        key: "keywords",
+        header: "Keywords",
+        width: "10rem",
+        cell: (row) => (
+          <span className="block max-w-[10rem] truncate text-sm text-muted-foreground">
+            {row.keywords || "—"}
+          </span>
+        ),
+      },
+      {
+        key: "outcome",
+        header: "Outcome",
+        width: "7rem",
+        cell: (row) => (
+          <Badge
+            variant={
+              row.supervisoryOutcome === "ESCALATED"
+                ? "destructive"
+                : row.supervisoryOutcome === "HELD"
+                  ? "secondary"
+                  : "outline"
+            }
+            title={row.outcomeReason ?? undefined}
+          >
+            {outcomeLabel(row.supervisoryOutcome)}
+          </Badge>
+        ),
+      },
+      {
+        key: "recommendations",
+        header: "Recommendations",
+        width: "6rem",
+        align: "center",
+        cell: (row) => (
+          <Badge variant={row.hasRecommendations ? "default" : "secondary"}>
+            {row.hasRecommendations ? "Yes" : "No"}
+          </Badge>
+        ),
+      },
+      {
+        key: "finalized",
+        header: "Finalized",
+        width: "5.5rem",
+        align: "center",
+        cell: (row) => (
+          <Badge variant={row.isFinalized ? "default" : "outline"}>
+            {row.isFinalized ? "Yes" : "No"}
+          </Badge>
+        ),
+      },
+      {
+        key: "actions",
+        header: "Actions",
+        width: "5rem",
+        align: "right",
+        cell: (row) => (
+          <Button variant="link" asChild className="h-auto p-0">
+            <Link href={`/meetings/${row.id}`}>View</Link>
+          </Button>
+        ),
+      },
+    ];
+  }, []);
+
+  const clearFilters = (): void => {
+    setFilters({
+      clientName: "",
+      dateFrom: "",
+      dateTo: "",
+      type: "",
+      keywords: "",
+      recommendations: "",
+      finalized: "",
+      outcome: "",
+      sortBy: "date",
+      sortOrder: "desc",
+    });
+    router.push("/interaction-log");
   };
 
   return (
@@ -255,105 +352,18 @@ export default function InteractionLogClient({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {initialMeetings.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No interactions found matching your filters.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>
-                      <button
-                        onClick={() => handleSort("client")}
-                        className="flex items-center hover:text-foreground"
-                      >
-                        Client
-                        {getSortIcon("client")}
-                      </button>
-                    </TableHead>
-                    <TableHead>
-                      <button
-                        onClick={() => handleSort("date")}
-                        className="flex items-center hover:text-foreground"
-                      >
-                        Date
-                        {getSortIcon("date")}
-                      </button>
-                    </TableHead>
-                    <TableHead>
-                      <button
-                        onClick={() => handleSort("type")}
-                        className="flex items-center hover:text-foreground"
-                      >
-                        Type
-                        {getSortIcon("type")}
-                      </button>
-                    </TableHead>
-                    <TableHead>Keywords</TableHead>
-                    <TableHead>Outcome</TableHead>
-                    <TableHead>Recommendations</TableHead>
-                    <TableHead>Finalized</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {initialMeetings.map((meeting) => (
-                    <TableRow key={meeting.id}>
-                      <TableCell className="font-medium">
-                        <div className="flex flex-col gap-1">
-                          <span>{meeting.clientName}</span>
-                          <SupersessionBadge
-                            supersededById={meeting.supersededById}
-                            supersedesId={meeting.supersedesId}
-                          />
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {new Date(meeting.date).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>{meeting.type}</TableCell>
-                      <TableCell>
-                        <div className="max-w-xs truncate text-sm text-muted-foreground">
-                          {meeting.keywords || "—"}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            meeting.supervisoryOutcome === "ESCALATED"
-                              ? "destructive"
-                              : meeting.supervisoryOutcome === "HELD"
-                                ? "secondary"
-                                : "outline"
-                          }
-                          title={meeting.outcomeReason ?? undefined}
-                        >
-                          {outcomeLabel(meeting.supervisoryOutcome)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={meeting.hasRecommendations ? "default" : "secondary"}>
-                          {meeting.hasRecommendations ? "Yes" : "No"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={meeting.isFinalized ? "default" : "outline"}>
-                          {meeting.isFinalized ? "Yes" : "No"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="link" asChild>
-                          <Link href={`/meetings/${meeting.id}`}>View</Link>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+          <DataTable
+            data={initialMeetings}
+            columns={columns}
+            getRowId={(row) => row.id}
+            sort={sortState}
+            onSortChange={handleSortChange}
+            rowHeight={52}
+            height={560}
+            overscan={8}
+            emptyState="No interactions found matching your filters."
+            className="rounded-md border"
+          />
         </CardContent>
       </Card>
     </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
+import { StatefulButton, type ButtonState } from "~/components/ui/stateful-button";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 import { CheckCircle2 } from "lucide-react";
 import {
@@ -47,6 +48,7 @@ export default function FinalizeButton({
   embedInActionBar,
 }: FinalizeButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [submitState, setSubmitState] = useState<ButtonState>("idle");
   const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [finalizeReason, setFinalizeReason] = useState<string>("");
@@ -64,6 +66,7 @@ export default function FinalizeButton({
 
   const handleFinalize = async () => {
     setIsLoading(true);
+    setSubmitState("loading");
     setError(null);
 
     try {
@@ -93,9 +96,13 @@ export default function FinalizeButton({
       setIsOpen(false);
       setFinalizeReason("");
       setFinalizeNote("");
+      setSubmitState("success");
+      window.setTimeout(() => setSubmitState("idle"), 1500);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unknown error occurred");
+      setSubmitState("error");
+      window.setTimeout(() => setSubmitState("idle"), 2000);
     } finally {
       setIsLoading(false);
     }
@@ -170,9 +177,16 @@ export default function FinalizeButton({
             <Button variant="outline" onClick={() => setIsOpen(false)} disabled={isLoading}>
               Cancel
             </Button>
-            <Button onClick={handleFinalize} disabled={isLoading}>
-              {isLoading ? "Finalizing..." : "Confirm Finalize"}
-            </Button>
+            <StatefulButton
+              onClick={handleFinalize}
+              state={submitState}
+              loadingText="Finalizing..."
+              successText="Finalized"
+              errorText="Try again"
+              disabled={isLoading && submitState === "idle"}
+            >
+              Confirm Finalize
+            </StatefulButton>
           </DialogFooter>
         </DialogContent>
       </Dialog>

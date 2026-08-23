@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '~/components/ui/button';
+import { FileUpload } from '~/components/ui/file-upload';
+import { StatefulButton, type ButtonState } from '~/components/ui/stateful-button';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import {
@@ -26,6 +28,7 @@ export default function UploadPage() {
   const [meetingDate, setMeetingDate] = useState('');
   const [consent, setConsent] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadBtnState, setUploadBtnState] = useState<ButtonState>('idle');
   const [error, setError] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,6 +71,7 @@ export default function UploadPage() {
     }
 
     setIsUploading(true);
+    setUploadBtnState('loading');
 
     try {
       // Convert datetime-local format to ISO string
@@ -247,6 +251,8 @@ export default function UploadPage() {
         errorMessage = JSON.stringify(err);
       }
       setError(errorMessage);
+      setUploadBtnState('error');
+      window.setTimeout(() => setUploadBtnState('idle'), 2000);
       setIsUploading(false);
       console.error('Upload error:', err);
     }
@@ -294,18 +300,37 @@ export default function UploadPage() {
             <div className="space-y-2">
               {uploadMode === 'audio' ? (
                 <>
-                  <Label htmlFor="file">Recording File</Label>
-                  <Input
-                    id="file"
-                    type="file"
-                    accept=".mp3,.mp4,.wav,.m4a"
-                    onChange={handleFileChange}
-                    className="cursor-pointer"
-                    required
+                  <Label>Recording File</Label>
+                  <FileUpload
+                    accept=".mp3,.mp4,.wav,.m4a,audio/*"
+                    multiple={false}
+                    maxFiles={1}
+                    title="Drop recording here"
+                    description="MP3, MP4, WAV, M4A — max 500 MB"
+                    disabled={isUploading}
+                    value={
+                      file
+                        ? [
+                            {
+                              id: 'recording',
+                              name: file.name,
+                              size: file.size,
+                              type: file.type,
+                              status: isUploading ? 'uploading' : 'queued',
+                              file,
+                            },
+                          ]
+                        : []
+                    }
+                    onFilesAdded={(_items, files) => {
+                      const selected = files[0];
+                      if (selected) {
+                        setFile(selected);
+                        setError(null);
+                      }
+                    }}
+                    onRemove={() => setFile(null)}
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Supported formats: MP3, MP4, WAV, M4A (max 500 MB)
-                  </p>
                 </>
               ) : (
                 <>
@@ -396,8 +421,12 @@ export default function UploadPage() {
               >
                 Cancel
               </Button>
-              <Button
+              <StatefulButton
                 type="submit"
+                state={uploadBtnState}
+                loadingText="Uploading..."
+                successText="Uploaded"
+                errorText="Try again"
                 disabled={
                   isUploading ||
                   !consent ||
@@ -406,8 +435,8 @@ export default function UploadPage() {
                 }
                 className="flex-1"
               >
-                {isUploading ? 'Uploading...' : 'Upload'}
-              </Button>
+                Upload
+              </StatefulButton>
             </div>
           </form>
         </CardContent>

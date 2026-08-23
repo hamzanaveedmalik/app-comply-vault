@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { toast } from "~/lib/toast";
 import { Loader2 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import FinalizeButton from "~/app/(app)/meetings/[id]/finalize-button";

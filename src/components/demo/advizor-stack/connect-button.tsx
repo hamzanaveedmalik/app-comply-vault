@@ -1,6 +1,6 @@
 "use client";
 
-import { toast } from "sonner";
+import { toast } from "~/lib/toast";
 import { Button } from "~/components/ui/button";
 
 export function ConnectButton({ source }: { source: string }) {
@@ -10,7 +10,7 @@ export function ConnectButton({ source }: { source: string }) {
       variant="outline"
       size="sm"
       onClick={() =>
-        toast("Connecting is disabled in this demo", {
+        toast.info("Connecting is disabled in this demo", {
           description: `${source} would be linked through its own secure flow in the full product.`,
         })
       }

@@ -1,7 +1,8 @@
 "use client";
 
 import { Fragment, useEffect, useState } from "react";
-import { ArrowUpRight, Loader2, Mail, Sparkles, Video } from "lucide-react";
+import { ArrowUpRight, Mail, Sparkles, Video } from "lucide-react";
+import { TextShimmer } from "~/components/ui/text-shimmer";
 
 import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
@@ -127,8 +128,7 @@ export function AnswerCard({
       <div className="px-4 py-4 text-sm leading-relaxed text-foreground">
         {state.kind === "loading" && (
           <div className="flex items-center gap-2 text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span>{LOADING_PHRASES[phraseIdx]}</span>
+            <TextShimmer>{LOADING_PHRASES[phraseIdx]}</TextShimmer>
           </div>
         )}
 

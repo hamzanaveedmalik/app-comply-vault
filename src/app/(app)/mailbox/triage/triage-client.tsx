@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Badge } from "~/components/ui/badge";
-import { toast } from "sonner";
+import { toast } from "~/lib/toast";
 import type { EmailTriageItemDto } from "~/lib/types/evidence";
 import type { ClientListItemDto, NeedsAttributionMeetingDto } from "~/lib/types/clients";
 import {

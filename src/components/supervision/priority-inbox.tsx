@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ScrollToFinding } from "~/components/supervision/scroll-to-finding";
-import type { PriorityInboxDto, PriorityInboxFindingDto } from "~/lib/types";
+import { PriorityInboxFindingsTable } from "~/components/supervision/priority-inbox-findings-table";
+import type { PriorityInboxDto } from "~/lib/types";
 import type { SupervisionFilterState } from "~/server/supervision/filters";
 import {
   PRIORITY_INBOX_TABS,
@@ -13,56 +14,6 @@ type PriorityInboxProps = {
   filters: SupervisionFilterState;
   focusId?: string;
 };
-
-function formatDate(iso: string | null): string {
-  if (!iso) return "—";
-  return new Date(iso).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
-function severityLabel(severity: PriorityInboxFindingDto["severity"]): string {
-  return SUPERVISION_FILTER_LABELS.severity[severity];
-}
-
-function materialityLabel(materiality: PriorityInboxFindingDto["materiality"]): string {
-  switch (materiality) {
-    case "HIGH":
-      return "High";
-    case "MEDIUM":
-      return "Medium";
-    case "LOW":
-      return "Low";
-  }
-}
-
-function statusLabel(status: PriorityInboxFindingDto["status"]): string {
-  return SUPERVISION_FILTER_LABELS.findingStatus[status];
-}
-
-function controlLabel(control: string): string {
-  const known = Object.keys(SUPERVISION_FILTER_LABELS.control).find(
-    (key) => key === control,
-  );
-  return known
-    ? SUPERVISION_FILTER_LABELS.control[
-        known as keyof typeof SUPERVISION_FILTER_LABELS.control // CAST: key narrowed from control label map
-      ]
-    : control;
-}
-
-function channelLabel(channels: PriorityInboxFindingDto["channels"]): string {
-  return channels
-    .map((channel) => SUPERVISION_FILTER_LABELS.channel[channel])
-    .join(" + ");
-}
-
-function confidenceLabel(confidence: number | null): string {
-  if (confidence === null) return "—";
-  return `${Math.round(confidence * 100)}%`;
-}
 
 export function PriorityInbox({
   inbox,
@@ -129,77 +80,7 @@ export function PriorityInbox({
           </p>
         </div>
       ) : (
-        <ul className="divide-y divide-[#eef0ee] overflow-hidden rounded-[12px] border border-[#e6e8e6] bg-white">
-          {inbox.findings.map((finding) => (
-            <li
-              key={finding.id}
-              id={`finding-${finding.id}`}
-              className={focusId === finding.id ? "bg-[#f3faf6]" : undefined}
-            >
-              <Link
-                href={finding.href}
-                className="block px-4 py-3 hover:bg-[#fafbfa] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#177a4c]"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[14px] font-semibold text-[#141f19]">{finding.title}</p>
-                    <p className="mt-1 text-[12.5px] leading-snug text-[#5f6b64]">
-                      {finding.escalationReason}
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap gap-2 text-[11px] uppercase tracking-[0.04em] text-[#79837d]">
-                    <span>{severityLabel(finding.severity)}</span>
-                    <span>{materialityLabel(finding.materiality)}</span>
-                    <span>{statusLabel(finding.status)}</span>
-                    {finding.repeatAdviser ? <span>Repeat adviser</span> : null}
-                  </div>
-                </div>
-                <dl className="mt-3 grid gap-2 text-[12.5px] text-[#5f6b64] sm:grid-cols-2 lg:grid-cols-4">
-                  <div>
-                    <dt className="text-[11px] uppercase tracking-[0.04em] text-[#79837d]">Firm</dt>
-                    <dd>{finding.firmName}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-[11px] uppercase tracking-[0.04em] text-[#79837d]">Adviser</dt>
-                    <dd>{finding.adviserName ?? "—"}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-[11px] uppercase tracking-[0.04em] text-[#79837d]">
-                      Client or household
-                    </dt>
-                    <dd>{finding.clientName ?? "—"}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-[11px] uppercase tracking-[0.04em] text-[#79837d]">Channels</dt>
-                    <dd>{channelLabel(finding.channels)}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-[11px] uppercase tracking-[0.04em] text-[#79837d]">
-                      Primary control
-                    </dt>
-                    <dd>{controlLabel(finding.primaryControl)}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-[11px] uppercase tracking-[0.04em] text-[#79837d]">Owner</dt>
-                    <dd>{finding.ownerName ?? "Unassigned"}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-[11px] uppercase tracking-[0.04em] text-[#79837d]">Due</dt>
-                    <dd>{formatDate(finding.dueAt)}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-[11px] uppercase tracking-[0.04em] text-[#79837d]">
-                      Confidence · evidence
-                    </dt>
-                    <dd>
-                      {confidenceLabel(finding.confidence)} · {finding.evidenceCount}
-                    </dd>
-                  </div>
-                </dl>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <PriorityInboxFindingsTable findings={inbox.findings} focusId={focusId} />
       )}
     </div>
   );

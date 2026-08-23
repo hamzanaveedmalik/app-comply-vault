@@ -142,8 +142,8 @@ export default function InviteUserPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs value={mode} onValueChange={(value) => setMode(value as "single" | "bulk")}>
-            <TabsList className="grid w-full grid-cols-2">
+          <Tabs value={mode} onValueChange={(value) => setMode(value as "single" | "bulk")} variant="underline">
+            <TabsList className="w-full">
               <TabsTrigger value="single">Single Invite</TabsTrigger>
               <TabsTrigger value="bulk">Bulk Invite</TabsTrigger>
             </TabsList>

@@ -3,8 +3,12 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { toast } from "sonner";
+import { toast } from "~/lib/toast";
 import { Button } from "~/components/ui/button";
+import {
+  StatefulButton,
+  pendingButtonState,
+} from "~/components/ui/stateful-button";
 import { Input } from "~/components/ui/input";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import {
@@ -357,18 +361,45 @@ export function IntegrationsClient({
             Integration connections (Zoom, Teams, SharePoint, etc.) will appear here once configured.
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
-            <Button onClick={handleConnectZoom} disabled={connectLoading} size="lg">
-              {connectLoading ? "Redirecting…" : "Connect Zoom"}
-            </Button>
-            <Button onClick={handleConnectTeams} disabled={connectLoading} variant="outline" size="lg">
+            <StatefulButton
+              onClick={handleConnectZoom}
+              state={pendingButtonState(connectLoading)}
+              loadingText="Redirecting…"
+              size="lg"
+              disabled={connectLoading}
+            >
+              Connect Zoom
+            </StatefulButton>
+            <StatefulButton
+              onClick={handleConnectTeams}
+              state={pendingButtonState(connectLoading)}
+              loadingText="Redirecting…"
+              variant="outline"
+              size="lg"
+              disabled={connectLoading}
+            >
               Connect Teams
-            </Button>
-            <Button onClick={handleConnectSharePoint} disabled={connectLoading} variant="outline" size="lg">
+            </StatefulButton>
+            <StatefulButton
+              onClick={handleConnectSharePoint}
+              state={pendingButtonState(connectLoading)}
+              loadingText="Redirecting…"
+              variant="outline"
+              size="lg"
+              disabled={connectLoading}
+            >
               Connect SharePoint
-            </Button>
-            <Button onClick={handleConnectZohoCrm} disabled={connectLoading} variant="outline" size="lg">
+            </StatefulButton>
+            <StatefulButton
+              onClick={handleConnectZohoCrm}
+              state={pendingButtonState(connectLoading)}
+              loadingText="Redirecting…"
+              variant="outline"
+              size="lg"
+              disabled={connectLoading}
+            >
               Connect Zoho CRM
-            </Button>
+            </StatefulButton>
           </div>
         </div>
       ) : (
@@ -381,9 +412,14 @@ export function IntegrationsClient({
                   Auto-sync meeting recordings to ComplyVault
                 </p>
               </div>
-              <Button onClick={handleConnectZoom} disabled={connectLoading}>
-                {connectLoading ? "Redirecting…" : "Connect"}
-              </Button>
+              <StatefulButton
+                onClick={handleConnectZoom}
+                state={pendingButtonState(connectLoading)}
+                loadingText="Redirecting…"
+                disabled={connectLoading}
+              >
+                Connect
+              </StatefulButton>
             </div>
           )}
           {!hasTeams && (
@@ -394,9 +430,15 @@ export function IntegrationsClient({
                   Auto-sync Teams meeting recordings to ComplyVault
                 </p>
               </div>
-              <Button onClick={handleConnectTeams} disabled={connectLoading} variant="outline">
+              <StatefulButton
+                onClick={handleConnectTeams}
+                state={pendingButtonState(connectLoading)}
+                loadingText="Redirecting…"
+                variant="outline"
+                disabled={connectLoading}
+              >
                 Connect
-              </Button>
+              </StatefulButton>
             </div>
           )}
           {!hasSharePoint && (
@@ -407,9 +449,15 @@ export function IntegrationsClient({
                   File finalized audit packs under ComplyVault/AuditPacks/Year/Month on your default drive
                 </p>
               </div>
-              <Button onClick={handleConnectSharePoint} disabled={connectLoading} variant="outline">
+              <StatefulButton
+                onClick={handleConnectSharePoint}
+                state={pendingButtonState(connectLoading)}
+                loadingText="Redirecting…"
+                variant="outline"
+                disabled={connectLoading}
+              >
                 Connect
-              </Button>
+              </StatefulButton>
             </div>
           )}
           {!hasZohoCrm && (
@@ -420,9 +468,15 @@ export function IntegrationsClient({
                   Add a note to the matched Contact when an audit pack is ready for review
                 </p>
               </div>
-              <Button onClick={handleConnectZohoCrm} disabled={connectLoading} variant="outline">
+              <StatefulButton
+                onClick={handleConnectZohoCrm}
+                state={pendingButtonState(connectLoading)}
+                loadingText="Redirecting…"
+                variant="outline"
+                disabled={connectLoading}
+              >
                 Connect
-              </Button>
+              </StatefulButton>
             </div>
           )}
           {integrations.filter((int) => !MAIL_PROVIDERS.has(int.provider)).map((int) => (
@@ -526,9 +580,11 @@ export function IntegrationsClient({
                     {STATUS_LABELS[int.status] ?? int.status.replace(/_/g, " ")}
                   </span>
                   {int.provider === "ZOOM" && (
-                    <Button
+                    <StatefulButton
                       variant="outline"
                       size="sm"
+                      state={pendingButtonState(loading === `sync-${int.id}`)}
+                      loadingText="Syncing…"
                       onClick={async () => {
                         setLoading(`sync-${int.id}`);
                         try {
@@ -568,19 +624,21 @@ export function IntegrationsClient({
                           setLoading(null);
                         }
                       }}
-                      disabled={loading !== null}
+                      disabled={loading !== null && loading !== `sync-${int.id}`}
                     >
-                      {loading === `sync-${int.id}` ? "Syncing…" : "Sync from Zoom"}
-                    </Button>
+                      Sync from Zoom
+                    </StatefulButton>
                   )}
-                  <Button
+                  <StatefulButton
                     variant="outline"
                     size="sm"
+                    state={pendingButtonState(loading === int.id)}
+                    loadingText="Disconnecting…"
                     onClick={() => handleDisconnect(int.id)}
-                    disabled={loading === int.id}
+                    disabled={loading !== null}
                   >
-                    {loading === int.id ? "Disconnecting…" : "Disconnect"}
-                  </Button>
+                    Disconnect
+                  </StatefulButton>
                 </div>
               </div>
               {int.provider === "SHAREPOINT" && (

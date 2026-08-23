@@ -1,28 +1,24 @@
 "use client";
 
-import { Toaster as Sonner } from "sonner";
+import { useEffect, useState } from "react";
+import {
+  AnimatedToastStack,
+  type AnimatedToast,
+} from "~/components/ui/animated-toast-stack";
+import { dismissToast, subscribe } from "~/lib/toast-store";
 
-type ToasterProps = React.ComponentProps<typeof Sonner>;
+export function Toaster(): React.JSX.Element {
+  const [toasts, setToasts] = useState<AnimatedToast[]>([]);
 
-const Toaster = ({ ...props }: ToasterProps) => {
+  useEffect(() => subscribe(setToasts), []);
+
   return (
-    <Sonner
-      theme="light"
-      className="toaster group"
-      toastOptions={{
-        classNames: {
-          toast:
-            "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
-          description: "group-[.toast]:text-muted-foreground",
-          actionButton:
-            "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
-          cancelButton:
-            "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
-        },
-      }}
-      {...props}
+    <AnimatedToastStack
+      toasts={toasts}
+      onDismiss={dismissToast}
+      position="bottom-right"
+      maxVisible={3}
+      portal
     />
   );
-};
-
-export { Toaster };
+}

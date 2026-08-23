@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useMeetingStatus } from "~/hooks/use-meeting-status";
-import { toast } from "sonner";
+import { toast } from "~/lib/toast";
 
 interface MeetingStatusPollerProps {
   meetingId: string;

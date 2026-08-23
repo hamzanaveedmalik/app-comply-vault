@@ -5,10 +5,8 @@ import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { isRelease1DemoEnabled } from "~/lib/feature-flags";
 import { requireAppAccess } from "~/server/auth/guards";
-import {
-  assertNoCrossWorkspaceRead,
-  listPartnerFirmSnapshots,
-} from "~/server/partner/snapshots";
+import { assertNoCrossWorkspaceRead } from "~/server/partner/snapshots";
+import { listPartnerSnapshotsForUser } from "~/server/partner/resolve-snapshots";
 
 export default async function PartnerPortfolioPage(): Promise<React.JSX.Element> {
   if (!isRelease1DemoEnabled()) redirect("/dashboard");
@@ -20,15 +18,18 @@ export default async function PartnerPortfolioPage(): Promise<React.JSX.Element>
   }
   if (access.session.user.role !== "OWNER_CCO") redirect("/dashboard");
 
-  const snapshots = listPartnerFirmSnapshots();
+  const { tenant, snapshots } = await listPartnerSnapshotsForUser(
+    access.session.user.id,
+  );
   assertNoCrossWorkspaceRead();
   return (
     <main className="mx-auto max-w-6xl p-6">
       <header className="mb-6">
         <h1 className="text-3xl font-semibold tracking-tight">Partner Portfolio</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Named exposure factors across authorised firms. Drill-in is limited to firms
-          you are a member of.
+          {tenant === "riact"
+            ? "Sonoran Compliance Partners — prepared snapshot across three client firms. No live cross-workspace reads."
+            : "Named exposure factors across authorised firms. Drill-in is limited to firms you are a member of."}
         </p>
       </header>
       <div className="grid gap-4 lg:grid-cols-3">

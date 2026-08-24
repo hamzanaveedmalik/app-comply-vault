@@ -1,7 +1,5 @@
 import type { FinalizeStrip } from "~/lib/dashboard-types";
 import { DashboardCard, Metric } from "~/components/dashboard/dashboard-card";
-import { dashboardType } from "~/lib/dashboard-typography";
-import { cn } from "~/lib/utils";
 
 type TimeToFinalizeCardProps = {
   strip: FinalizeStrip;
@@ -18,19 +16,19 @@ export function TimeToFinalizeCard({ strip, avgDays }: TimeToFinalizeCardProps):
     <DashboardCard title="Time to Finalize" link={{ href: "/audit-packs", label: "By meeting" }}>
       <Metric value={displayAvg} unit={`days avg · target ≤ ${strip.targetDays}d`} />
       <div className="relative mt-3 h-[42px]">
-        <div className="absolute left-0 right-0 top-[19px] h-0.5 rounded-[1px] bg-surface-divider" />
+        <div className="absolute left-0 right-0 top-[19px] h-0.5 rounded-[1px] bg-[#eff1ef]" />
         <div
-          className="absolute top-[7px] h-[26px] w-[1.5px] bg-text-primary opacity-40"
+          className="absolute top-[7px] h-[26px] w-[1.5px] bg-[#141f19] opacity-40"
           style={{ left: `${targetLeft}%` }}
         />
         <div
-          className={cn("absolute top-[34px] -translate-x-1/2", dashboardType.axisTick)}
+          className="absolute top-[34px] -translate-x-1/2 text-[10px] text-[#79837d]"
           style={{ left: `${targetLeft}%` }}
         >
           {strip.targetDays}d
         </div>
         {strip.points.length === 0 ? (
-          <div className={cn("absolute left-1/2 top-[6px] -translate-x-1/2", dashboardType.caption)}>
+          <div className="absolute left-1/2 top-[6px] -translate-x-1/2 text-[11px] text-[#79837d]">
             No finalized meetings yet
           </div>
         ) : (
@@ -41,12 +39,12 @@ export function TimeToFinalizeCard({ strip, avgDays }: TimeToFinalizeCardProps):
               className="absolute top-[15px] h-[9px] w-[9px] rounded-full border-2 border-white shadow-[0_0_0_1px_#d5d9d5]"
               style={{
                 left: `${clampPct((p.days / max) * 100)}%`,
-                background: p.late ? "var(--chart-breach)" : "var(--color-text-secondary)",
+                background: p.late ? "#c13a2a" : "#3f4b45",
               }}
             />
           ))
         )}
-        <div className={cn("absolute top-[34px] right-0", dashboardType.axisTick)}>
+        <div className="absolute top-[34px] right-0 text-[10px] tabular-nums text-[#79837d]">
           {strip.maxDays}d
         </div>
       </div>

@@ -1,12 +1,6 @@
-import Link from "next/link";
-import { BarList } from "~/components/ui/bar-list";
-import { ProgressCircle } from "~/components/ui/progress-circle";
 import type { DashboardSummary } from "~/lib/dashboard-types";
 import { buildSparkline } from "~/lib/sparkline";
 import { DashboardCard } from "~/components/dashboard/dashboard-card";
-import { dashboardType } from "~/lib/dashboard-typography";
-import { chartColors } from "~/lib/chart-colors";
-import { cn } from "~/lib/utils";
 
 type ComplianceHealthCardProps = {
   score: number;
@@ -17,22 +11,25 @@ type ComplianceHealthCardProps = {
   caption: string;
 };
 
-function progressVariant(score: number): "success" | "warning" | "error" {
-  if (score <= 39) return "error";
-  if (score <= 69) return "warning";
-  return "success";
+const RING_R = 36;
+const RING_CIRC = 2 * Math.PI * RING_R;
+
+function arcColor(score: number): string {
+  if (score <= 39) return "#c13a2a";
+  if (score <= 69) return "#b26a12";
+  return "#177a4c";
+}
+
+function factorColor(value: number): string {
+  if (value >= 70) return "#177a4c";
+  if (value >= 40) return "#b26a12";
+  return "#c13a2a";
 }
 
 function statusBadge(score: number): { bg: string; text: string } {
   if (score <= 39) return { bg: "#FEE2E2", text: "#991B1B" };
   if (score <= 69) return { bg: "#FEF3C7", text: "#92400E" };
   return { bg: "#E8F5EE", text: "#0D5C38" };
-}
-
-function factorBarColor(value: number): string {
-  if (value >= 70) return chartColors.cleared;
-  if (value >= 40) return chartColors.priority;
-  return chartColors.breach;
 }
 
 export function ComplianceHealthCard({
@@ -43,6 +40,9 @@ export function ComplianceHealthCard({
   trend,
   caption,
 }: ComplianceHealthCardProps): React.JSX.Element {
+  const clipped = Math.max(0, Math.min(100, score));
+  const dashOffset = RING_CIRC * (1 - clipped / 100);
+  const color = arcColor(score);
   const badge = statusBadge(score);
 
   const factors = [
@@ -52,14 +52,6 @@ export function ComplianceHealthCard({
     { label: "Signatures", value: breakdown.signaturesComplete },
   ];
 
-  const pointsLost = factors
-    .map((f) => ({
-      name: f.label,
-      value: Math.max(0, 100 - f.value),
-      barColor: factorBarColor(f.value),
-    }))
-    .filter((f) => f.value > 0);
-
   const spark = buildSparkline(
     trend.map((t) => t.score),
     { width: 320, height: 46, pad: 4 },
@@ -68,18 +60,29 @@ export function ComplianceHealthCard({
 
   return (
     <DashboardCard title="Compliance Health" link={{ href: "/compliance-cockpit", label: "Details" }}>
-      <div className="grid grid-cols-[auto_1fr] items-start gap-5">
+      <div className="grid grid-cols-[auto_1fr] items-center gap-5">
         <div className="flex flex-col items-center gap-2">
-          <ProgressCircle
-            value={score}
-            max={100}
-            radius={42}
-            strokeWidth={7}
-            variant={progressVariant(score)}
-            showAnimation={false}
-          >
-            <span className={dashboardType.displayFigureSm}>{score}</span>
-          </ProgressCircle>
+          <div className="relative h-[84px] w-[84px] shrink-0">
+            <svg width="84" height="84" viewBox="0 0 84 84" className="-rotate-90" aria-hidden>
+              <circle cx="42" cy="42" r={RING_R} stroke="#eff1ef" strokeWidth="7" fill="none" />
+              <circle
+                cx="42"
+                cy="42"
+                r={RING_R}
+                stroke={color}
+                strokeWidth="7"
+                fill="none"
+                strokeLinecap="round"
+                strokeDasharray={RING_CIRC.toFixed(2)}
+                strokeDashoffset={dashOffset.toFixed(2)}
+              />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-[22px] font-[650] leading-none tabular-nums text-[#141f19]">
+                {score}
+              </div>
+            </div>
+          </div>
           <span
             className="max-w-[110px] truncate rounded-full px-2.5 py-0.5 text-center text-[10px] font-semibold leading-tight"
             style={{ backgroundColor: badge.bg, color: badge.text }}
@@ -88,24 +91,37 @@ export function ComplianceHealthCard({
             {label}
           </span>
         </div>
-        <div className="min-w-0">
-          <p className={cn(dashboardType.metricLabel, "mb-2")}>Points lost by factor</p>
-          {pointsLost.length === 0 ? (
-            <p className={dashboardType.caption}>No points lost across factors.</p>
-          ) : (
-            <BarList data={pointsLost} sortOrder="descending" />
-          )}
+        <div className="flex min-w-0 flex-col gap-2">
+          {factors.map((f) => (
+            <div
+              key={f.label}
+              className="grid grid-cols-[104px_1fr_2.5rem] items-center gap-2"
+            >
+              <span className="whitespace-nowrap text-[11px] text-[#3f4b45]">{f.label}</span>
+              <div className="h-[5px] overflow-hidden rounded-[3px] bg-[#eff1ef]">
+                <div
+                  className="h-full min-w-0 rounded-[3px]"
+                  style={{
+                    width: `${Math.max(0, Math.min(100, f.value))}%`,
+                    background: factorColor(f.value),
+                  }}
+                />
+              </div>
+              <span className="text-right text-[11px] font-semibold tabular-nums text-[#141f19]">
+                {f.value}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="mt-[14px] border-t border-surface-border pt-3">
+      <div className="mt-[14px] border-t border-[#e6e8e6] pt-3">
         <div className="mb-1.5 flex items-baseline justify-between gap-2">
-          <span className={dashboardType.metricLabel}>{caption}</span>
+          <span className="text-[10.5px] font-semibold uppercase tracking-[0.05em] text-[#79837d]">
+            {caption}
+          </span>
           <span
-            className={cn(
-              "shrink-0 tabular text-[11.5px] font-semibold",
-              delta >= 0 ? "text-brand" : "text-semantic-danger",
-            )}
+            className={`shrink-0 text-[11.5px] font-semibold ${delta >= 0 ? "text-[#177a4c]" : "text-[#c13a2a]"}`}
           >
             {delta >= 0 ? "+" : ""}
             {delta} vs start
@@ -122,8 +138,8 @@ export function ComplianceHealthCard({
           >
             <defs>
               <linearGradient id="health-trend-fill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--chart-cleared)" stopOpacity="0.14" />
-                <stop offset="100%" stopColor="var(--chart-cleared)" stopOpacity="0" />
+                <stop offset="0%" stopColor="#177a4c" stopOpacity="0.14" />
+                <stop offset="100%" stopColor="#177a4c" stopOpacity="0" />
               </linearGradient>
             </defs>
             {spark.area ? <path d={spark.area} fill="url(#health-trend-fill)" /> : null}
@@ -131,7 +147,7 @@ export function ComplianceHealthCard({
               <path
                 d={spark.line}
                 fill="none"
-                stroke="var(--chart-cleared)"
+                stroke="#177a4c"
                 strokeWidth="2"
                 strokeLinejoin="round"
                 strokeLinecap="round"
@@ -140,7 +156,7 @@ export function ComplianceHealthCard({
             ) : null}
           </svg>
         </div>
-        <div className={cn("mt-1 flex justify-between", dashboardType.axisTick)}>
+        <div className="mt-1 flex justify-between text-[10px] tabular-nums text-[#79837d]">
           {axis.map((labelText, i) => (
             <span key={`${labelText}-${i}`}>{labelText}</span>
           ))}

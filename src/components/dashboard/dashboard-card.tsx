@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { cn } from "~/lib/utils";
-import { dashboardType } from "~/lib/dashboard-typography";
 
 type DashboardCardProps = {
   title: string;
@@ -24,20 +23,24 @@ export function DashboardCard({
   return (
     <section
       className={cn(
-        "rounded-[10px] border border-surface-border bg-white shadow-sm",
+        "rounded-[10px] border border-[#e6e8e6] bg-white shadow-[0_1px_2px_rgba(20,31,25,0.04)]",
         className,
       )}
     >
       <div className="flex items-center justify-between px-[18px] pt-4">
         <span
           className={cn(
-            emphasized ? dashboardType.cardTitleEmphasis : dashboardType.cardTitle,
+            "font-semibold",
+            emphasized ? "text-[13.5px] text-[#141f19]" : "text-[12px] text-[#3f4b45]",
           )}
         >
           {title}
         </span>
         {link ? (
-          <Link href={link.href} className={dashboardType.cardLink}>
+          <Link
+            href={link.href}
+            className="text-[12px] font-semibold text-[#177a4c] hover:underline"
+          >
             {link.label}
           </Link>
         ) : null}
@@ -56,10 +59,17 @@ type MetricProps = {
 export function Metric({ value, unit, delta }: MetricProps): React.JSX.Element {
   return (
     <div className="flex items-baseline gap-1.5">
-      <span className={dashboardType.displayFigure}>{value}</span>
-      {unit ? <span className={dashboardType.metricUnit}>{unit}</span> : null}
+      <span className="text-[26px] font-[650] leading-none tracking-[-0.02em] tabular-nums text-[#141f19]">
+        {value}
+      </span>
+      {unit ? <span className="text-[12.5px] text-[#79837d]">{unit}</span> : null}
       {delta ? (
-        <span className={delta.tone === "bad" ? dashboardType.deltaBad : dashboardType.deltaGood}>
+        <span
+          className={cn(
+            "ml-1 text-[11.5px] font-semibold",
+            delta.tone === "bad" ? "text-[#c13a2a]" : "text-[#177a4c]",
+          )}
+        >
           {delta.text}
         </span>
       ) : null}

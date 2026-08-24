@@ -1,6 +1,5 @@
 import type { AuditReadiness } from "~/lib/dashboard-types";
 import { DashboardCard } from "~/components/dashboard/dashboard-card";
-import { dashboardType } from "~/lib/dashboard-typography";
 
 type AuditReadinessCardProps = {
   readiness: AuditReadiness;
@@ -12,29 +11,21 @@ export function AuditReadinessCard({ readiness }: AuditReadinessCardProps): Reac
   return (
     <DashboardCard title="Audit Readiness" link={{ href: "/audit-packs", label: "View packs" }}>
       <div className="flex items-baseline gap-1.5">
-        <span className={dashboardType.displayFigure}>
+        <span className="text-[26px] font-[650] leading-none tracking-[-0.02em] tabular-nums text-[#141f19]">
           {readiness.ready}
-          <span className="text-[15px] font-medium text-text-secondary">/{readiness.total}</span>
+          <span className="text-[15px] font-medium text-[#79837d]">/{readiness.total}</span>
         </span>
-        <span className={dashboardType.metricUnit}>meetings SEC-ready</span>
+        <span className="text-[12.5px] text-[#79837d]">meetings SEC-ready</span>
       </div>
-      <svg width="100%" height="12" viewBox="0 0 320 12" preserveAspectRatio="none" className="mt-3.5" aria-hidden>
-        <rect x="0" y="2" width="320" height="8" rx="4" fill="var(--color-surface-divider)" />
-        <rect
-          x="0"
-          y="2"
-          width={(pct / 100) * 320}
-          height="8"
-          rx="4"
-          fill="var(--chart-cleared)"
-        />
+      <svg width="100%" height="12" viewBox="0 0 320 12" preserveAspectRatio="none" className="mt-3.5">
+        <rect x="0" y="2" width="320" height="8" rx="4" fill="#eff1ef" />
+        <rect x="0" y="2" width={(pct / 100) * 320} height="8" rx="4" fill="#177a4c" />
       </svg>
-      <div className={dashboardType.caption + " mt-3"}>
+      <div className="mt-3 text-[11.5px] text-[#79837d]">
         {readiness.blocked > 0 ? (
           <>
-            <span className="tabular font-semibold text-text-primary">{readiness.blocked}</span>{" "}
-            {readiness.blocked === 1 ? "meeting" : "meetings"} blocked ·{" "}
-            <b className="text-text-primary">{readiness.blockedReason}</b>
+            {readiness.blocked} {readiness.blocked === 1 ? "meeting" : "meetings"} blocked ·{" "}
+            <b className="text-[#141f19]">{readiness.blockedReason}</b>
           </>
         ) : (
           <>All reviewed meetings finalized</>

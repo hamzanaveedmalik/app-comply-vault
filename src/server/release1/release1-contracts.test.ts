@@ -293,6 +293,19 @@ describe("CV-PV-01s partner snapshots", () => {
 });
 
 describe("CV-XR candidate pack scope", () => {
+  it("interprets a request item without generating", () => {
+    const scope = interpretRequestItem(
+      "Produce all email and meeting records for Margaret Ellison regarding fees from 2025-01-01 to 2026-08-03, excluding SMS and personal messaging channels."
+    );
+    expect(scope.channels).toContain("EMAIL");
+    expect(scope.channels).toContain("MEETING");
+    expect(scope.concepts).toContain("fees");
+    expect(scope.people.some((p) => /Margaret/i.test(p))).toBe(true);
+    expect(scope.exclusions).toEqual(
+      expect.arrayContaining(["SMS", "personal messaging"])
+    );
+  });
+
   it("interprets a twelve-month period ending in prose dates", () => {
     const scope = interpretRequestItem(
       "Produce all advisory-fee communications and suitability documentation for Marcus Holloway for the twelve-month period ending 13 August 2026, including email and meeting records.",

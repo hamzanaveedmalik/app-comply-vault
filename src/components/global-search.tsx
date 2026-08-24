@@ -14,11 +14,16 @@ import {
 } from "~/components/ui/command";
 import { Badge } from "~/components/ui/badge";
 import { cn } from "~/lib/utils";
+import { isRelease1DemoEnabled } from "~/lib/feature-flags";
 import {
   AnswerCard,
   type AnswerCardProps,
   type AnswerCitation,
 } from "~/components/global-search/AnswerCard";
+import {
+  RIACT_CITATION_QUESTION,
+  RIACT_SMS_REFUSAL_QUESTION,
+} from "~/server/demo/riact/tenant";
 
 interface SearchResult {
   id: string;
@@ -33,12 +38,6 @@ interface SearchResult {
 interface GlobalSearchProps {
   className?: string;
 }
-
-import {
-  RIACT_CITATION_QUESTION,
-  RIACT_SMS_REFUSAL_QUESTION,
-} from "~/server/demo/riact/tenant";
-import { isRelease1DemoEnabled } from "~/lib/feature-flags";
 
 const EXAMPLE_QUERIES_DEFAULT = [
   "Did Rob discuss fee changes?",

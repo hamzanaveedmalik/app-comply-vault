@@ -3,6 +3,11 @@ import type { PortfolioSupervisionSummary } from "~/lib/types";
 import type { SupervisionFilterState } from "~/server/supervision/filters";
 import { supervisionHref } from "~/server/supervision/filters";
 import { SupervisionFilters } from "~/components/supervision/supervision-filters";
+import { MetricInfoTooltip } from "~/components/supervision/metric-info-tooltip";
+import {
+  SUPERVISION_METRIC_HELP,
+  type SupervisionMetricHelpKey,
+} from "~/lib/supervision-metric-copy";
 
 type SupervisionCommandCentreProps = {
   portfolio: PortfolioSupervisionSummary;
@@ -38,17 +43,43 @@ export function SupervisionCommandCentre({
   const { counts, selectivityStatement, firms, patterns, filterOptions } =
     portfolio;
 
-  const metrics: Array<{ label: string; value: number; href?: string }> = [
-    { label: "Interactions processed", value: counts.totalProcessed },
-    { label: "Cleared or deprioritised", value: counts.clearedOrDeprioritised },
-    { label: "Routine samples", value: counts.routineSamples },
+  const metrics: Array<{
+    key: SupervisionMetricHelpKey;
+    label: string;
+    value: number;
+    href?: string;
+  }> = [
     {
+      key: "processed",
+      label: "Interactions processed",
+      value: counts.totalProcessed,
+    },
+    {
+      key: "cleared",
+      label: "Cleared or deprioritised",
+      value: counts.clearedOrDeprioritised,
+    },
+    {
+      key: "routineSamples",
+      label: "Routine samples",
+      value: counts.routineSamples,
+    },
+    {
+      key: "priorityFindings",
       label: "Priority findings",
       value: counts.priorityFindings,
       href: supervisionHref("/priority-inbox", filters),
     },
-    { label: "Held interactions", value: counts.heldInteractions },
-    { label: "Open remediation", value: counts.openRemediation },
+    {
+      key: "held",
+      label: "Held interactions",
+      value: counts.heldInteractions,
+    },
+    {
+      key: "openRemediation",
+      label: "Open remediation",
+      value: counts.openRemediation,
+    },
   ];
 
   return (
@@ -81,33 +112,35 @@ export function SupervisionCommandCentre({
         </p>
         <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           {metrics.map((metric) => {
-            const body = (
-              <>
-                <p className="text-[11px] font-medium uppercase tracking-[0.04em] text-[#79837d]">
-                  {metric.label}
-                </p>
-                <p className="mt-1 text-[20px] font-semibold tabular-nums text-[#141f19]">
-                  {metric.value}
-                </p>
-              </>
+            const figure = (
+              <p className="mt-1 text-[20px] font-semibold tabular-nums text-[#141f19]">
+                {metric.value}
+              </p>
             );
-            if (metric.href) {
-              return (
-                <Link
-                  key={metric.label}
-                  href={metric.href}
-                  className="rounded-[8px] border border-[#eef0ee] bg-[#fafbfa] px-3 py-2 transition hover:border-[#cfe3d8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#177a4c]"
-                >
-                  {body}
-                </Link>
-              );
-            }
             return (
               <div
-                key={metric.label}
+                key={metric.key}
                 className="rounded-[8px] border border-[#eef0ee] bg-[#fafbfa] px-3 py-2"
               >
-                {body}
+                <div className="flex items-start gap-1">
+                  <p className="min-w-0 flex-1 text-[11px] font-medium uppercase tracking-[0.04em] text-[#79837d]">
+                    {metric.label}
+                  </p>
+                  <MetricInfoTooltip
+                    label={metric.label}
+                    explanation={SUPERVISION_METRIC_HELP[metric.key]}
+                  />
+                </div>
+                {metric.href ? (
+                  <Link
+                    href={metric.href}
+                    className="block rounded-sm transition hover:text-[#177a4c] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#177a4c]"
+                  >
+                    {figure}
+                  </Link>
+                ) : (
+                  figure
+                )}
               </div>
             );
           })}

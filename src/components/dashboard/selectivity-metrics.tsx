@@ -2,7 +2,12 @@
 
 import Link from "next/link";
 import { AnimatedNumber } from "~/components/ui/animated-number";
+import { MetricInfoTooltip } from "~/components/supervision/metric-info-tooltip";
 import { dashboardType } from "~/lib/dashboard-typography";
+import {
+  SUPERVISION_METRIC_HELP,
+  type SupervisionMetricHelpKey,
+} from "~/lib/supervision-metric-copy";
 import type { SupervisionSummary } from "~/lib/types";
 import { cn } from "~/lib/utils";
 
@@ -10,36 +15,49 @@ type SelectivityMetricsProps = {
   summary: SupervisionSummary;
 };
 
+type MetricDef = {
+  key: SupervisionMetricHelpKey;
+  label: string;
+  value: number;
+  href?: string;
+};
+
 export function SelectivityMetrics({ summary }: SelectivityMetricsProps): React.JSX.Element {
   const { counts, selectivityStatement } = summary;
 
-  const metrics: Array<{ label: string; value: number; href?: string }> = [
+  const metrics: MetricDef[] = [
     {
+      key: "processed",
       label: "Processed",
       value: counts.totalProcessed,
       href: "/interaction-log",
     },
     {
+      key: "cleared",
       label: "Cleared / deprioritised",
       value: counts.clearedOrDeprioritised,
       href: "/interaction-log?outcome=CLEARED",
     },
     {
+      key: "routineSamples",
       label: "Routine samples",
       value: counts.routineSamples,
       href: "/interaction-log?outcome=ROUTINE_SAMPLE",
     },
     {
+      key: "priorityFindings",
       label: "Priority findings",
       value: counts.priorityFindings,
       href: "/interaction-log?outcome=ESCALATED",
     },
     {
+      key: "held",
       label: "Held",
       value: counts.heldInteractions,
       href: "/interaction-log?outcome=HELD",
     },
     {
+      key: "openRemediation",
       label: "Open remediation",
       value: counts.openRemediation,
     },
@@ -63,31 +81,34 @@ export function SelectivityMetrics({ summary }: SelectivityMetricsProps): React.
       </div>
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {metrics.map((metric) => {
-          const content = (
-            <>
-              <p className={dashboardType.metricLabel}>{metric.label}</p>
-              <p className={cn(dashboardType.displayFigureSm, "mt-1")}>
-                <AnimatedNumber value={metric.value} startOnView={false} />
-              </p>
-            </>
+          const figure = (
+            <p className={cn(dashboardType.displayFigureSm, "mt-1")}>
+              <AnimatedNumber value={metric.value} startOnView={false} />
+            </p>
           );
-          if (metric.href) {
-            return (
-              <Link
-                key={metric.label}
-                href={metric.href}
-                className="rounded-[8px] border border-surface-divider bg-surface-muted px-3 py-2 transition hover:border-brand/30"
-              >
-                {content}
-              </Link>
-            );
-          }
+
           return (
             <div
-              key={metric.label}
-              className="rounded-[8px] border border-surface-divider bg-surface-muted px-3 py-2"
+              key={metric.key}
+              className="rounded-[8px] border border-surface-divider bg-surface-muted px-3 py-2 transition hover:border-brand/30"
             >
-              {content}
+              <div className="flex items-start gap-1">
+                <p className={cn(dashboardType.metricLabel, "min-w-0 flex-1")}>{metric.label}</p>
+                <MetricInfoTooltip
+                  label={metric.label}
+                  explanation={SUPERVISION_METRIC_HELP[metric.key]}
+                />
+              </div>
+              {metric.href ? (
+                <Link
+                  href={metric.href}
+                  className="block rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                >
+                  {figure}
+                </Link>
+              ) : (
+                figure
+              )}
             </div>
           );
         })}

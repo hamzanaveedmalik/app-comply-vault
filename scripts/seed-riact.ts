@@ -12,6 +12,7 @@ import { config } from "dotenv";
 import bcrypt from "bcryptjs";
 import { neon } from "@neondatabase/serverless";
 import {
+  RIACT_ADVISORS,
   RIACT_CLIENT_FIRMS,
   RIACT_COVERAGE_GAP,
   RIACT_CORPUS_FROM_ISO,
@@ -101,19 +102,27 @@ async function upsertWorkspace(
 ): Promise<void> {
   await sql`
     INSERT INTO "Workspace" (
-      id, name, "onboardingType", "billingStatus", "planTier", "createdAt", "updatedAt"
+      id, name, "onboardingType", "billingStatus", "planTier",
+      "mediaPosture", "postureSetById", "postureSetAt",
+      "createdAt", "updatedAt"
     ) VALUES (
       ${args.id},
       ${args.name},
       ${RIACT_ONBOARDING_TYPE},
       'PILOT',
       'TEAM',
+      ${"RETAIN"}::"MediaPosture",
+      ${RIACT_DEMO_USER.id},
+      ${args.now},
       ${args.now},
       ${args.now}
     )
     ON CONFLICT (id) DO UPDATE SET
       name = EXCLUDED.name,
       "onboardingType" = EXCLUDED."onboardingType",
+      "mediaPosture" = COALESCE("Workspace"."mediaPosture", EXCLUDED."mediaPosture"),
+      "postureSetById" = COALESCE("Workspace"."postureSetById", EXCLUDED."postureSetById"),
+      "postureSetAt" = COALESCE("Workspace"."postureSetAt", EXCLUDED."postureSetAt"),
       "updatedAt" = EXCLUDED."updatedAt"
   `;
 }
@@ -169,6 +178,37 @@ async function linkOwnerCco(
   `;
 }
 
+async function seedAdvisors(
+  sql: Sql,
+  workspaceId: string,
+  now: Date,
+): Promise<void> {
+  for (const advisor of RIACT_ADVISORS) {
+    await sql`
+      INSERT INTO "User" (id, email, name, "emailVerified", image)
+      VALUES (
+        ${advisor.id},
+        ${advisor.email},
+        ${advisor.name},
+        ${now},
+        ${`https://i.pravatar.cc/80?u=${encodeURIComponent(advisor.id)}`}
+      )
+      ON CONFLICT (id) DO UPDATE SET
+        email = EXCLUDED.email,
+        name = EXCLUDED.name,
+        image = EXCLUDED.image
+    `;
+    await sql`
+      INSERT INTO "UserWorkspace" ("userId", "workspaceId", role)
+      VALUES (${advisor.id}, ${workspaceId}, ${"ADVISOR"}::"WorkspaceRole")
+      ON CONFLICT ("userId", "workspaceId") DO UPDATE SET
+        role = EXCLUDED.role,
+        "removedAt" = NULL,
+        "removedById" = NULL
+    `;
+  }
+}
+
 async function clearCactusArtifacts(sql: Sql, workspaceId: string): Promise<void> {
   const emailIds = RIACT_EMAIL_MESSAGES.map((m) => m.id);
   const meetingIds = RIACT_MEETINGS.map((m) => m.id);
@@ -178,6 +218,8 @@ async function clearCactusArtifacts(sql: Sql, workspaceId: string): Promise<void
   );
 
   await sql`DELETE FROM "EvidenceClassification" WHERE "evidenceItemId" = ANY(${emailIds})`;
+  await sql`DELETE FROM "ActionItem" WHERE id LIKE 'riact-task-%'`;
+  await sql`DELETE FROM "ResolutionRecord" WHERE id LIKE 'riact-res-%' OR ("workspaceId" = ${workspaceId} AND "flagId" = ANY(${flagIds}))`;
   await sql`DELETE FROM "Flag" WHERE id = ANY(${flagIds}) OR ("workspaceId" = ${workspaceId} AND "sourceId" = ANY(${emailIds}))`;
   await sql`DELETE FROM "ClientActivity" WHERE "workspaceId" = ${workspaceId} AND "evidenceItemId" = ANY(${emailIds})`;
   await sql`DELETE FROM "Communication" WHERE "evidenceItemId" = ANY(${emailIds})`;
@@ -468,10 +510,11 @@ async function seedEmails(sql: Sql, workspaceId: string, now: Date): Promise<voi
 }
 
 async function seedMeetings(sql: Sql, workspaceId: string, now: Date): Promise<void> {
-  for (const mtg of RIACT_MEETINGS) {
+  for (const [index, mtg] of RIACT_MEETINGS.entries()) {
     const meetingDate = daysBeforeReference(mtg.daysBeforeRef);
     const draftReadyAt = new Date(meetingDate.getTime() + 3_600_000);
     const finalizedAt = new Date(meetingDate.getTime() + 86_400_000);
+    const advisor = RIACT_ADVISORS[index % RIACT_ADVISORS.length]!;
     const topicText = mtg.topics.join(" ");
     const advisorLine = `Today we covered ${topicText} with ${mtg.clientName}. Advisory fee schedule and suitability were reviewed where applicable.`;
     const clientLine = "That sounds good. Please send the follow-up in writing.";
@@ -497,7 +540,8 @@ async function seedMeetings(sql: Sql, workspaceId: string, now: Date): Promise<v
         id, "workspaceId", "clientId", "clientName", "meetingType", "meetingDate",
         status, "draftReadyAt", "finalizedAt", "timeToFinalize", "finalizeReason",
         "searchableText", transcript, extraction, "participantEmails",
-        "clientMatchConfidence", "createdAt", "updatedAt"
+        "clientMatchConfidence", "advisorCertifiedByUserId", "advisorCertifiedAt",
+        "createdAt", "updatedAt"
       ) VALUES (
         ${mtg.id},
         ${workspaceId},
@@ -515,6 +559,8 @@ async function seedMeetings(sql: Sql, workspaceId: string, now: Date): Promise<v
         ${extraction}::jsonb,
         ${[RIACT_CACTUS_CLIENTS.find((c) => c.id === mtg.clientId)?.email ?? ""]},
         'EMAIL'::"MeetingClientMatchConfidence",
+        ${advisor.id},
+        ${finalizedAt},
         ${now},
         ${now}
       )
@@ -522,6 +568,8 @@ async function seedMeetings(sql: Sql, workspaceId: string, now: Date): Promise<v
         "searchableText" = EXCLUDED."searchableText",
         transcript = EXCLUDED.transcript,
         extraction = EXCLUDED.extraction,
+        "advisorCertifiedByUserId" = EXCLUDED."advisorCertifiedByUserId",
+        "advisorCertifiedAt" = EXCLUDED."advisorCertifiedAt",
         "updatedAt" = EXCLUDED."updatedAt"
     `;
 
@@ -715,6 +763,175 @@ async function seedAuditBootstrap(sql: Sql, workspaceId: string, now: Date): Pro
   `;
 }
 
+/**
+ * Assign supervisory outcomes so the dashboard selectivity strip is non-zero.
+ * Open / in-remediation flags → ESCALATED (priority findings); rest mostly CLEARED.
+ */
+async function seedSupervisionOutcomes(
+  sql: Sql,
+  workspaceId: string,
+  now: Date,
+): Promise<void> {
+  const openStatuses = ["OPEN", "IN_REMEDIATION", "PENDING_VERIFICATION"];
+
+  await sql`
+    UPDATE "Meeting" m
+    SET
+      "supervisoryOutcome" = 'ESCALATED'::"SupervisoryOutcome",
+      "outcomeReason" = 'Open compliance finding requires CCO review',
+      "outcomeConfidence" = 0.92,
+      "processedAt" = COALESCE(m."meetingDate", ${now}),
+      "primaryControlId" = f.type::text,
+      "updatedAt" = ${now}
+    FROM "Flag" f
+    WHERE m.id = f."meetingId"
+      AND m."workspaceId" = ${workspaceId}
+      AND f."workspaceId" = ${workspaceId}
+      AND f.status::text = ANY(${openStatuses})
+  `;
+
+  await sql`
+    UPDATE "CommunicationThread" t
+    SET
+      "supervisoryOutcome" = 'ESCALATED'::"SupervisoryOutcome",
+      "outcomeReason" = 'Open email finding requires CCO review',
+      "outcomeConfidence" = 0.9,
+      "processedAt" = COALESCE(t."updatedAt", ${now}),
+      "primaryControlId" = f.type::text,
+      "updatedAt" = ${now}
+    FROM "Communication" c
+    JOIN "Flag" f ON f."communicationId" = c.id
+    WHERE t.id = c."threadId"
+      AND t."workspaceId" = ${workspaceId}
+      AND f."workspaceId" = ${workspaceId}
+      AND f.status::text = ANY(${openStatuses})
+  `;
+
+  // One routine sample meeting (first without an open flag).
+  await sql`
+    UPDATE "Meeting"
+    SET
+      "supervisoryOutcome" = 'ROUTINE_SAMPLE'::"SupervisoryOutcome",
+      "outcomeReason" = 'Control sampling selection',
+      "outcomeConfidence" = 0.8,
+      "processedAt" = COALESCE("meetingDate", ${now}),
+      "updatedAt" = ${now}
+    WHERE id = (
+      SELECT m.id FROM "Meeting" m
+      WHERE m."workspaceId" = ${workspaceId}
+        AND m."supervisoryOutcome" IS NULL
+      ORDER BY m."meetingDate" ASC
+      LIMIT 1
+    )
+  `;
+
+  // One held thread for the Held metric.
+  await sql`
+    UPDATE "CommunicationThread"
+    SET
+      "supervisoryOutcome" = 'HELD'::"SupervisoryOutcome",
+      "outcomeReason" = 'Awaiting identity confirmation before disposition',
+      "outcomeConfidence" = 0.7,
+      "heldReason" = 'REQUIRED_CLIENT_CONTEXT_UNRESOLVED'::"SupervisoryHoldReason",
+      "processedAt" = COALESCE("updatedAt", ${now}),
+      "updatedAt" = ${now}
+    WHERE id = (
+      SELECT t.id FROM "CommunicationThread" t
+      WHERE t."workspaceId" = ${workspaceId}
+        AND t."deletedAt" IS NULL
+        AND t."supervisoryOutcome" IS NULL
+      ORDER BY t.id ASC
+      LIMIT 1
+    )
+  `;
+
+  await sql`
+    UPDATE "Meeting"
+    SET
+      "supervisoryOutcome" = 'CLEARED'::"SupervisoryOutcome",
+      "outcomeReason" = 'No material findings after review',
+      "outcomeConfidence" = 0.88,
+      "processedAt" = COALESCE("meetingDate", ${now}),
+      "updatedAt" = ${now}
+    WHERE "workspaceId" = ${workspaceId}
+      AND "supervisoryOutcome" IS NULL
+  `;
+
+  await sql`
+    UPDATE "CommunicationThread"
+    SET
+      "supervisoryOutcome" = 'CLEARED'::"SupervisoryOutcome",
+      "outcomeReason" = 'No material findings after review',
+      "outcomeConfidence" = 0.86,
+      "processedAt" = COALESCE("updatedAt", ${now}),
+      "updatedAt" = ${now}
+    WHERE "workspaceId" = ${workspaceId}
+      AND "deletedAt" IS NULL
+      AND "supervisoryOutcome" IS NULL
+  `;
+}
+
+async function seedOpenRemediation(
+  sql: Sql,
+  workspaceId: string,
+  now: Date,
+): Promise<void> {
+  const openFlags = await sql`
+    SELECT f.id, f."meetingId", f.type::text AS type
+    FROM "Flag" f
+    WHERE f."workspaceId" = ${workspaceId}
+      AND f.status::text IN ('OPEN', 'IN_REMEDIATION', 'PENDING_VERIFICATION')
+  `;
+
+  for (const flag of openFlags as Array<{
+    id: string;
+    meetingId: string | null;
+    type: string;
+  }>) {
+    const resolutionId = `riact-res-${flag.id}`;
+    const taskId = `riact-task-${flag.id}`;
+    await sql`
+      INSERT INTO "ResolutionRecord" (
+        id, "workspaceId", "meetingId", "flagId", "resolutionType", rationale,
+        "createdByUserId", metadata, "createdAt", "updatedAt"
+      ) VALUES (
+        ${resolutionId},
+        ${workspaceId},
+        ${flag.meetingId},
+        ${flag.id},
+        ${"FOLLOW_UP_REQUIRED"}::"FlagResolutionType",
+        ${`Remediate ${flag.type} finding before closing`},
+        ${RIACT_DEMO_USER.id},
+        ${JSON.stringify({ synthetic: true, tenant: "RIACT" })}::jsonb,
+        ${now},
+        ${now}
+      )
+      ON CONFLICT ("flagId") DO UPDATE SET
+        rationale = EXCLUDED.rationale,
+        "updatedAt" = EXCLUDED."updatedAt"
+    `;
+    await sql`
+      INSERT INTO "ActionItem" (
+        id, "resolutionId", title, status, "ownerId", "dueDate", required,
+        "createdAt", "updatedAt"
+      ) VALUES (
+        ${taskId},
+        ${resolutionId},
+        ${`Complete remediation for ${flag.type}`},
+        ${"OPEN"}::"RemediationTaskStatus",
+        ${RIACT_DEMO_USER.id},
+        ${new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000)},
+        true,
+        ${now},
+        ${now}
+      )
+      ON CONFLICT (id) DO UPDATE SET
+        status = ${"OPEN"}::"RemediationTaskStatus",
+        "updatedAt" = EXCLUDED."updatedAt"
+    `;
+  }
+}
+
 async function countSeedArtifacts(sql: Sql, workspaceId: string): Promise<Record<string, number>> {
   const [emails, meetings, flags, clients, triage] = await Promise.all([
     sql`SELECT count(*)::int AS c FROM "EvidenceItem" WHERE "workspaceId" = ${workspaceId} AND "sourceType" = 'EMAIL' AND "deletedAt" IS NULL`,
@@ -783,6 +1000,7 @@ async function main(): Promise<void> {
 
   const primaryWs = riactPrimaryWorkspaceId();
   await clearCactusArtifacts(sql, primaryWs);
+  await seedAdvisors(sql, primaryWs, now);
   await seedCactusClients(sql, primaryWs, now);
   await seedMailboxConnection(sql, primaryWs, now);
   await seedEmails(sql, primaryWs, now);
@@ -790,6 +1008,8 @@ async function main(): Promise<void> {
   await seedSecDocument(sql, primaryWs, now);
   await seedCoverageManifest(sql, primaryWs, now);
   await seedSmsSourceRegistration(sql, primaryWs, now);
+  await seedSupervisionOutcomes(sql, primaryWs, now);
+  await seedOpenRemediation(sql, primaryWs, now);
   await seedAuditBootstrap(sql, primaryWs, now);
 
   const counts = await countSeedArtifacts(sql, primaryWs);

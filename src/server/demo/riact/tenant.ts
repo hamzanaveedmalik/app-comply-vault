@@ -48,7 +48,7 @@ export const RIACT_CLIENT_FIRMS: readonly RiactFirmDef[] = [
     ccoName: "Elena Morales",
     aumUsd: 310_000_000,
     registration: "SEC",
-    adviserCount: 6,
+    adviserCount: 4,
     primary: true,
   },
   {
@@ -72,6 +72,30 @@ export const RIACT_CLIENT_FIRMS: readonly RiactFirmDef[] = [
     registration: "STATE",
     adviserCount: 4,
     primary: false,
+  },
+] as const;
+
+/** Advisors on the primary firm (Cactus Wren) — drives the dashboard Advisors table. */
+export const RIACT_ADVISORS = [
+  {
+    id: "riact-user-adv-elena",
+    email: "elena.morales@riact.synthetic.example.com",
+    name: "Elena Morales",
+  },
+  {
+    id: "riact-user-adv-derek",
+    email: "derek.cho@riact.synthetic.example.com",
+    name: "Derek Cho",
+  },
+  {
+    id: "riact-user-adv-amira",
+    email: "amira.hassan@riact.synthetic.example.com",
+    name: "Amira Hassan",
+  },
+  {
+    id: "riact-user-adv-noah",
+    email: "noah.bennett@riact.synthetic.example.com",
+    name: "Noah Bennett",
   },
 ] as const;
 

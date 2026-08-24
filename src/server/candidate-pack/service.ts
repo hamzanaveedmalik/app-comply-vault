@@ -274,35 +274,34 @@ export async function confirmCandidatePackScope(args: {
     confirmedByUserId: args.userId,
   };
 
-  const [row] = await db.$transaction([
-    db.candidateResponsePack.update({
-      where: { id: existing.id },
-      data: {
-        confirmedScope: confirmedScope as unknown as Prisma.InputJsonValue,
-        interpretedScope: args.scope as unknown as Prisma.InputJsonValue,
-        confirmedAt,
-        confirmedByUserId: args.userId,
-        status: "SCOPE_CONFIRMED",
+  // Sequential writes: Prisma Neon HTTP adapter does not support $transaction.
+  const row = await db.candidateResponsePack.update({
+    where: { id: existing.id },
+    data: {
+      confirmedScope: confirmedScope as unknown as Prisma.InputJsonValue,
+      interpretedScope: args.scope as unknown as Prisma.InputJsonValue,
+      confirmedAt,
+      confirmedByUserId: args.userId,
+      status: "SCOPE_CONFIRMED",
+    },
+  });
+  await db.auditEvent.create({
+    data: {
+      workspaceId: args.workspaceId,
+      userId: args.userId,
+      action: "CANDIDATE_PACK_SCOPE_CONFIRMED",
+      resourceType: "candidate_response_pack",
+      resourceId: existing.id,
+      metadata: {
+        packId: existing.id,
+        channels: args.scope.channels,
+        dateFrom: args.scope.dateFrom,
+        dateTo: args.scope.dateTo,
+        exclusions: args.scope.exclusions,
+        people: args.scope.people,
       },
-    }),
-    db.auditEvent.create({
-      data: {
-        workspaceId: args.workspaceId,
-        userId: args.userId,
-        action: "CANDIDATE_PACK_SCOPE_CONFIRMED",
-        resourceType: "candidate_response_pack",
-        resourceId: existing.id,
-        metadata: {
-          packId: existing.id,
-          channels: args.scope.channels,
-          dateFrom: args.scope.dateFrom,
-          dateTo: args.scope.dateTo,
-          exclusions: args.scope.exclusions,
-          people: args.scope.people,
-        },
-      },
-    }),
-  ]);
+    },
+  });
 
   return toDto(row);
 }
@@ -488,35 +487,34 @@ export async function generateCandidatePack(args: {
     "Pack labelled candidate — CCO approval required before export use.",
   ].join(" ");
 
-  const [row] = await db.$transaction([
-    db.candidateResponsePack.update({
-      where: { id: existing.id },
-      data: {
-        status: "GENERATED",
-        meetingIds,
-        emailEvidenceIds,
-        coverageStatement:
-          coverageStatement as unknown as Prisma.InputJsonValue,
-        retrievalBasis,
+  // Sequential writes: Prisma Neon HTTP adapter does not support $transaction.
+  const row = await db.candidateResponsePack.update({
+    where: { id: existing.id },
+    data: {
+      status: "GENERATED",
+      meetingIds,
+      emailEvidenceIds,
+      coverageStatement:
+        coverageStatement as unknown as Prisma.InputJsonValue,
+      retrievalBasis,
+      auditChainRootId: chainRoot?.id ?? null,
+    },
+  });
+  await db.auditEvent.create({
+    data: {
+      workspaceId: args.workspaceId,
+      userId: args.userId,
+      action: "CANDIDATE_PACK_GENERATED",
+      resourceType: "candidate_response_pack",
+      resourceId: existing.id,
+      metadata: {
+        packId: existing.id,
+        meetingCount: meetingIds.length,
+        emailCount: emailEvidenceIds.length,
         auditChainRootId: chainRoot?.id ?? null,
       },
-    }),
-    db.auditEvent.create({
-      data: {
-        workspaceId: args.workspaceId,
-        userId: args.userId,
-        action: "CANDIDATE_PACK_GENERATED",
-        resourceType: "candidate_response_pack",
-        resourceId: existing.id,
-        metadata: {
-          packId: existing.id,
-          meetingCount: meetingIds.length,
-          emailCount: emailEvidenceIds.length,
-          auditChainRootId: chainRoot?.id ?? null,
-        },
-      },
-    }),
-  ]);
+    },
+  });
 
   const candidateRecords = await hydrateCandidateRecords({
     workspaceId: args.workspaceId,
@@ -575,40 +573,39 @@ export async function approveCandidatePack(
   const approvedAt = new Date();
   const scope = (existing.confirmedScope ??
     existing.interpretedScope) as InterpretedScope;
-  const [row] = await db.$transaction([
-    db.candidateResponsePack.update({
-      where: { id: existing.id },
-      data: {
-        status: "APPROVED",
-        approvedAt,
+  // Sequential writes: Prisma Neon HTTP adapter does not support $transaction.
+  const row = await db.candidateResponsePack.update({
+    where: { id: existing.id },
+    data: {
+      status: "APPROVED",
+      approvedAt,
+      approvedByUserId: args.userId,
+      meetingIds,
+      emailEvidenceIds,
+    },
+  });
+  await db.auditEvent.create({
+    data: {
+      workspaceId: args.workspaceId,
+      userId: args.userId,
+      action: "CANDIDATE_PACK_APPROVED",
+      resourceType: "candidate_response_pack",
+      resourceId: existing.id,
+      metadata: {
+        packId: existing.id,
         approvedByUserId: args.userId,
-        meetingIds,
-        emailEvidenceIds,
+        approvedAt: approvedAt.toISOString(),
+        scopeConfirmedAt: existing.confirmedAt?.toISOString() ?? null,
+        scopeConfirmedByUserId: existing.confirmedByUserId,
+        recordCount: meetingIds.length + emailEvidenceIds.length,
+        meetingCount: meetingIds.length,
+        emailCount: emailEvidenceIds.length,
+        acknowledgedCoverage: args.acknowledgedCoverageLabels,
+        coverageStatement: coverage,
+        confirmedScope: scope,
       },
-    }),
-    db.auditEvent.create({
-      data: {
-        workspaceId: args.workspaceId,
-        userId: args.userId,
-        action: "CANDIDATE_PACK_APPROVED",
-        resourceType: "candidate_response_pack",
-        resourceId: existing.id,
-        metadata: {
-          packId: existing.id,
-          approvedByUserId: args.userId,
-          approvedAt: approvedAt.toISOString(),
-          scopeConfirmedAt: existing.confirmedAt?.toISOString() ?? null,
-          scopeConfirmedByUserId: existing.confirmedByUserId,
-          recordCount: meetingIds.length + emailEvidenceIds.length,
-          meetingCount: meetingIds.length,
-          emailCount: emailEvidenceIds.length,
-          acknowledgedCoverage: args.acknowledgedCoverageLabels,
-          coverageStatement: coverage,
-          confirmedScope: scope,
-        },
-      },
-    }),
-  ]);
+    },
+  });
 
   const candidateRecords = await hydrateCandidateRecords({
     workspaceId: args.workspaceId,

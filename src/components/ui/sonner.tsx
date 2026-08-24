@@ -17,6 +17,7 @@ export function Toaster(): React.JSX.Element {
       toasts={toasts}
       onDismiss={dismissToast}
       position="bottom-right"
+      placement="fixed"
       maxVisible={3}
       portal
     />

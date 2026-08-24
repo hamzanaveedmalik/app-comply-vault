@@ -187,6 +187,7 @@ export function CandidatePackClient({
   const [previewOpen, setPreviewOpen] = useState(false);
   const [scopeExpanded, setScopeExpanded] = useState(true);
   const [landOnGaps, setLandOnGaps] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
   const coverageRef = useRef<HTMLDivElement | null>(null);
   const autoDraftStarted = useRef(false);
 
@@ -248,6 +249,7 @@ export function CandidatePackClient({
   async function confirmScope(): Promise<void> {
     if (!pack || !scope) return;
     setPending("confirm");
+    setActionError(null);
     try {
       const data = await requestJson<CandidatePackDto>(
         `/api/candidate-pack/${pack.id}/confirm`,
@@ -259,11 +261,12 @@ export function CandidatePackClient({
       syncPack(data);
       toast.success("Scope confirmed. You can generate candidate evidence.");
     } catch (error) {
-      toast.error(
+      const message =
         error instanceof Error
           ? error.message
-          : "Could not confirm candidate scope.",
-      );
+          : "Could not confirm candidate scope.";
+      setActionError(message);
+      toast.error(message);
     } finally {
       setPending(null);
     }
@@ -495,20 +498,27 @@ export function CandidatePackClient({
                   </p>
                 </div>
                 {pack.status === "DRAFT_SCOPE" ? (
-                  <div className="md:col-span-2 flex flex-wrap gap-2 border-t pt-4">
-                    <StatefulButton
-                      className="bg-[#0D2818] hover:bg-[#0D2818]/90"
-                      onClick={() => void confirmScope()}
-                      state={pendingButtonState(pending === "confirm")}
-                      loadingText="Confirming…"
-                      disabled={pending === "confirm"}
-                    >
-                      Confirm candidate scope
-                    </StatefulButton>
-                    <p className="self-center text-xs text-muted-foreground">
-                      This stores your confirmation in the audit log before any
-                      retrieval.
-                    </p>
+                  <div className="md:col-span-2 space-y-2 border-t pt-4">
+                    <div className="flex flex-wrap gap-2">
+                      <StatefulButton
+                        className="bg-[#0D2818] hover:bg-[#0D2818]/90"
+                        onClick={() => void confirmScope()}
+                        state={pendingButtonState(pending === "confirm")}
+                        loadingText="Confirming…"
+                        disabled={pending === "confirm"}
+                      >
+                        Confirm candidate scope
+                      </StatefulButton>
+                      <p className="self-center text-xs text-muted-foreground">
+                        This stores your confirmation in the audit log before any
+                        retrieval.
+                      </p>
+                    </div>
+                    {actionError ? (
+                      <p className="text-sm text-destructive" role="alert">
+                        {actionError}
+                      </p>
+                    ) : null}
                   </div>
                 ) : null}
               </CardContent>

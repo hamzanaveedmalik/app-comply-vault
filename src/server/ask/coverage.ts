@@ -114,7 +114,7 @@ export function evaluateHonestMiss(args: {
       return {
         kind: "honest-miss",
         missReason: "unindexed_source",
-        message: `I cannot answer from ${unindexed.name}: that source is not indexed. ${describeCoverage(args.manifest)}`,
+        message: `I cannot answer from ${unindexed.name}: that source is not indexed. I will not infer from nearby material. ${describeCoverage(args.manifest)}`,
         coveredRanges: args.manifest.sources,
         missing: unindexed.name,
       };

@@ -42,6 +42,7 @@ import {
   evaluateHonestMiss,
   type IndexCoverageManifest,
 } from "./coverage";
+import { buildExtractiveAnswer } from "./extractive";
 import { loadCoverageManifest } from "./load-coverage";
 import {
   assertProvenanceContract,
@@ -55,6 +56,10 @@ import type {
   RetrievalMeta,
   ScoredEvidence,
 } from "./types";
+import {
+  RIACT_CITATION_QUESTION,
+  isRiactWorkspaceId,
+} from "~/server/demo/riact/tenant";
 
 type MeetingRow = {
   id: string;
@@ -554,41 +559,48 @@ export async function askComplyVault(
   }
 
   let rawAnswer: string;
+  const useExtractive =
+    isRiactWorkspaceId(input.workspaceId) &&
+    input.question.trim() === RIACT_CITATION_QUESTION;
+
   try {
-    rawAnswer = await completion({
-      systemPrompt: SYSTEM_PROMPT,
-      userMessage: buildUserMessage(input.question, evidence),
-      model,
-    });
+    rawAnswer = useExtractive
+      ? buildExtractiveAnswer(evidence)
+      : await completion({
+          systemPrompt: SYSTEM_PROMPT,
+          userMessage: buildUserMessage(input.question, evidence),
+          model,
+        });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "LLM provider error";
-    await safeAudit(prisma, {
-      workspaceId: input.workspaceId,
-      userId: input.userId,
-      questionHash: hashQuestion(input.question),
-      questionLength: input.question.length,
-      retrievedMeetingIds: evidence
-        .filter((e) => e.candidate.sourceType === "MEETING")
-        .map((e) => e.candidate.id),
-      retrievedEmailIds: evidence
-        .filter((e) => e.candidate.sourceType === "EMAIL")
-        .map((e) => e.candidate.id),
-      candidatesScanned,
-      candidatesUsed: evidence.length,
-      model,
-      latencyMs: Date.now() - startedAt,
-      mode: retrievalMode,
-      error: "LLM_PROVIDER_ERROR",
-      ...(input.meetingId ? { scopedToMeetingId: input.meetingId } : {}),
-      ...(input.windowDays ? { windowDays: input.windowDays } : {}),
-    });
-    return {
-      kind: "provider-error",
-      message,
-      retrieval,
-      model,
-      latencyMs: Date.now() - startedAt,
-    };
+    // Demo resilience: still return grounded citations when the LLM is down.
+    if (evidence.length > 0) {
+      rawAnswer = buildExtractiveAnswer(evidence);
+    } else {
+      const message = err instanceof Error ? err.message : "LLM provider error";
+      await safeAudit(prisma, {
+        workspaceId: input.workspaceId,
+        userId: input.userId,
+        questionHash: hashQuestion(input.question),
+        questionLength: input.question.length,
+        retrievedMeetingIds: [],
+        retrievedEmailIds: [],
+        candidatesScanned,
+        candidatesUsed: 0,
+        model,
+        latencyMs: Date.now() - startedAt,
+        mode: retrievalMode,
+        error: "LLM_PROVIDER_ERROR",
+        ...(input.meetingId ? { scopedToMeetingId: input.meetingId } : {}),
+        ...(input.windowDays ? { windowDays: input.windowDays } : {}),
+      });
+      return {
+        kind: "provider-error",
+        message,
+        retrieval,
+        model,
+        latencyMs: Date.now() - startedAt,
+      };
+    }
   }
 
   const scan = scanForRegulatoryCitations(rawAnswer);

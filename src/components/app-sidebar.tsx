@@ -138,7 +138,7 @@ function AppSidebarPanel({
                 {
                   href: "/document-request",
                   label: "Document Request",
-                  icon: FileText,
+                  icon: Mail,
                 },
               ]
             : []),

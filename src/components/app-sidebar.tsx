@@ -18,6 +18,7 @@ import {
   FileText,
   LayoutGrid,
   LogOut,
+  Mail,
   Menu,
   PanelLeftClose,
   PanelLeftOpen,

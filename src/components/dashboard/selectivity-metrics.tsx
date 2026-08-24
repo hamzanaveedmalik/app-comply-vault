@@ -3,13 +3,11 @@
 import Link from "next/link";
 import { AnimatedNumber } from "~/components/ui/animated-number";
 import { MetricInfoTooltip } from "~/components/supervision/metric-info-tooltip";
-import { dashboardType } from "~/lib/dashboard-typography";
 import {
   SUPERVISION_METRIC_HELP,
   type SupervisionMetricHelpKey,
 } from "~/lib/supervision-metric-copy";
 import type { SupervisionSummary } from "~/lib/types";
-import { cn } from "~/lib/utils";
 
 type SelectivityMetricsProps = {
   summary: SupervisionSummary;
@@ -65,24 +63,27 @@ export function SelectivityMetrics({ summary }: SelectivityMetricsProps): React.
 
   return (
     <section
-      className="rounded-[12px] border border-surface-border bg-white p-4 shadow-sm"
+      className="rounded-[12px] border border-[#e6e8e6] bg-white p-4 shadow-[0_1px_2px_rgba(20,31,25,0.04)]"
       aria-labelledby="selectivity-heading"
     >
       <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h2 id="selectivity-heading" className={dashboardType.cardTitleEmphasis}>
+          <h2 id="selectivity-heading" className="text-[14px] font-semibold text-[#141f19]">
             Supervision selectivity
           </h2>
-          <p className={cn(dashboardType.caption, "mt-1 leading-snug")}>{selectivityStatement}</p>
+          <p className="mt-1 text-[12.5px] leading-snug text-[#79837d]">{selectivityStatement}</p>
         </div>
-        <Link href="/interaction-log" className={dashboardType.cardLink}>
+        <Link
+          href="/interaction-log"
+          className="text-[12px] font-medium text-[#177a4c] hover:underline"
+        >
           View interactions
         </Link>
       </div>
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {metrics.map((metric) => {
           const figure = (
-            <p className={cn(dashboardType.displayFigureSm, "mt-1")}>
+            <p className="mt-1 text-[20px] font-semibold tabular-nums text-[#141f19]">
               <AnimatedNumber value={metric.value} startOnView={false} />
             </p>
           );
@@ -90,10 +91,12 @@ export function SelectivityMetrics({ summary }: SelectivityMetricsProps): React.
           return (
             <div
               key={metric.key}
-              className="rounded-[8px] border border-surface-divider bg-surface-muted px-3 py-2 transition hover:border-brand/30"
+              className="rounded-[8px] border border-[#eef0ee] bg-[#fafbfa] px-3 py-2 transition hover:border-[#cfe3d8]"
             >
               <div className="flex items-start gap-1">
-                <p className={cn(dashboardType.metricLabel, "min-w-0 flex-1")}>{metric.label}</p>
+                <p className="min-w-0 flex-1 text-[11px] font-medium uppercase tracking-[0.04em] text-[#79837d]">
+                  {metric.label}
+                </p>
                 <MetricInfoTooltip
                   label={metric.label}
                   explanation={SUPERVISION_METRIC_HELP[metric.key]}
@@ -102,7 +105,7 @@ export function SelectivityMetrics({ summary }: SelectivityMetricsProps): React.
               {metric.href ? (
                 <Link
                   href={metric.href}
-                  className="block rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                  className="block rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#177a4c]"
                 >
                   {figure}
                 </Link>

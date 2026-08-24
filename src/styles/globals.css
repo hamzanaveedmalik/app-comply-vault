@@ -3,17 +3,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@utility tabular {
-  font-variant-numeric: tabular-nums;
-}
-
 @theme {
-  --text-dashboard-display: 1.625rem;
-  --text-dashboard-figure-sm: 1.25rem;
-  --text-dashboard-card-title: 0.75rem;
-  --text-dashboard-metric-label: 0.6875rem;
-  --text-dashboard-axis: 0.625rem;
-  --text-dashboard-caption: 0.71875rem;
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
   /* ComplyVault dashboard design system */
   --color-brand: #117a4b;
@@ -55,8 +47,6 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -87,14 +77,6 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --color-chart-cleared: var(--chart-cleared);
-  --color-chart-sampled: var(--chart-sampled);
-  --color-chart-priority: var(--chart-priority);
-  --color-chart-held: var(--chart-held);
-  --color-chart-remediation: var(--chart-remediation);
-  --color-chart-breach: var(--chart-breach);
-  --color-chart-opened: var(--chart-opened);
-  --color-chart-resolved: var(--chart-resolved);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -130,15 +112,6 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  /* Semantic supervision palette — red reserved for breach only */
-  --chart-cleared: oklch(0.52 0.12 155);
-  --chart-sampled: oklch(0.52 0.1 230);
-  --chart-priority: oklch(0.58 0.14 65);
-  --chart-held: oklch(0.48 0.06 290);
-  --chart-remediation: oklch(0.62 0.12 45);
-  --chart-breach: oklch(0.52 0.2 25);
-  --chart-opened: oklch(0.62 0.03 240);
-  --chart-resolved: oklch(0.52 0.12 155);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -173,14 +146,6 @@
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --chart-cleared: oklch(0.62 0.14 155);
-  --chart-sampled: oklch(0.62 0.11 230);
-  --chart-priority: oklch(0.68 0.14 65);
-  --chart-held: oklch(0.58 0.07 290);
-  --chart-remediation: oklch(0.7 0.12 45);
-  --chart-breach: oklch(0.62 0.2 25);
-  --chart-opened: oklch(0.68 0.04 240);
-  --chart-resolved: oklch(0.62 0.14 155);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);

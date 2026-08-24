@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { DASHBOARD_RANGES, type DashboardSummary } from "~/lib/dashboard-types";
+import type { DashboardSummary } from "~/lib/dashboard-types";
 import type { SupervisionSummary } from "~/lib/types";
 import { ComplianceHealthCard } from "~/components/dashboard/compliance-health-card";
 import { FlagActivityCard } from "~/components/dashboard/flag-activity-card";
@@ -12,6 +12,9 @@ import { ClientsHealthTable } from "~/components/dashboard/clients-health-table"
 import { AdvisorsTable } from "~/components/dashboard/advisors-table";
 import { DashboardMeetingTable } from "~/components/dashboard/dashboard-meeting-table";
 import { SelectivityCard } from "~/components/dashboard/selectivity-card";
+import { DashboardDateRangePicker } from "~/components/ui/dashboard-date-range-picker";
+import { dashboardType } from "~/lib/dashboard-typography";
+import { cn } from "~/lib/utils";
 
 type DashboardViewProps = {
   summary: DashboardSummary;
@@ -22,7 +25,7 @@ type DashboardViewProps = {
 function weekOfLabel(): string {
   const now = new Date();
   const day = now.getDay();
-  const diff = (day + 6) % 7; // days since Monday
+  const diff = (day + 6) % 7;
   const monday = new Date(now);
   monday.setDate(now.getDate() - diff);
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(monday);
@@ -37,39 +40,16 @@ export function DashboardView({
     <div className="mx-auto w-full max-w-[1240px] space-y-3.5 pb-10">
       <div className="mb-1 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-[18px] font-[650] tracking-[-0.01em] text-[#141f19]">Dashboard</h1>
-          <p className="mt-0.5 text-[12.5px] text-[#79837d]">
-            {workspaceName} · Week of {weekOfLabel()}
+          <h1 className={dashboardType.pageTitle}>Dashboard</h1>
+          <p className={cn(dashboardType.pageSubtitle, "mt-0.5")}>
+            {workspaceName} · Week of {weekOfLabel()} · Range {summary.range}
           </p>
         </div>
         <div className="flex items-center gap-2.5">
-          <div
-            className="flex rounded-[8px] border border-[#e6e8e6] bg-white p-0.5"
-            role="group"
-            aria-label="Time range"
-          >
-            {DASHBOARD_RANGES.map((r) => {
-              const active = r === summary.range;
-              return (
-                <Link
-                  key={r}
-                  href={`/dashboard?range=${r}`}
-                  scroll={false}
-                  aria-current={active ? "true" : undefined}
-                  className={`rounded-[6px] px-[11px] py-[5px] text-[12px] transition ${
-                    active
-                      ? "bg-[#12382a] font-semibold text-white"
-                      : "font-medium text-[#79837d] hover:text-[#141f19]"
-                  }`}
-                >
-                  {r}
-                </Link>
-              );
-            })}
-          </div>
+          <DashboardDateRangePicker activeRange={summary.range} />
           <Link
             href="/upload"
-            className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#12382a] px-3.5 py-2 text-[12.5px] font-semibold text-white transition hover:bg-[#1c4a37]"
+            className="inline-flex items-center gap-1.5 rounded-[8px] bg-brand-dark px-3.5 py-2 text-[12.5px] font-semibold text-white transition hover:bg-brand"
           >
             <Plus className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
             Upload meeting
@@ -92,6 +72,7 @@ export function DashboardView({
           data={summary.flagActivity}
           openFlags={summary.openFlags}
           openedDelta={summary.flagsOpenedThisWeek}
+          rangeLabel={summary.range}
         />
         <FlagAgingCard aging={summary.flagAging} />
       </div>
@@ -107,11 +88,11 @@ export function DashboardView({
       <AdvisorsTable advisors={summary.advisors} rangeLabel={summary.range} />
 
       {summary.recentMeetings.length === 0 ? (
-        <section className="rounded-[10px] border border-dashed border-[#e6e8e6] bg-white p-10 text-center shadow-[0_1px_2px_rgba(20,31,25,0.04)]">
-          <p className="text-[13px] text-[#3f4b45]">No meetings yet.</p>
+        <section className="rounded-[10px] border border-dashed border-surface-border bg-white p-10 text-center shadow-sm">
+          <p className={dashboardType.caption}>No meetings yet.</p>
           <Link
             href="/upload"
-            className="mt-4 inline-flex rounded-[8px] bg-[#12382a] px-4 py-2 text-[12px] font-semibold text-white transition hover:bg-[#1c4a37]"
+            className="mt-4 inline-flex rounded-[8px] bg-brand-dark px-4 py-2 text-[12px] font-semibold text-white transition hover:bg-brand"
           >
             Upload meeting
           </Link>

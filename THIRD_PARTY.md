@@ -1,20 +1,13 @@
-# Third-party notices
+# Third-party components
 
-## beUI
+Copied source components retained under `src/components/ui/` with licence headers.
 
-- **Source:** [beUI](https://beui.dev) — MIT-licensed animated React components (Motion + Tailwind)
-- **Registry:** https://beui.dev/r/{slug}.json
-- **Components copied into this repo (Aug 2026):**
-  - `button-stateful` → `src/components/ui/stateful-button.tsx`
-  - `animated-toast-stack` → `src/components/ui/animated-toast-stack.tsx`
-  - `animated-number` → `src/components/ui/animated-number.tsx`
-  - `text-shimmer` → `src/components/ui/text-shimmer.tsx`, `src/lib/text-shimmer.ts`
-  - `tabs` → `src/components/ui/tabs.tsx`
-  - `table` → `src/components/ui/data-table/` (read-only virtualized lists)
-  - `file-upload` → `src/components/ui/file-upload.tsx`
-  - Priority Inbox virtual table → `src/components/supervision/priority-inbox-findings-table.tsx` (read-only, `@tanstack/react-virtual`)
-  - `presence-gate` → `src/lib/presence-gate.tsx`
-- **Author:** Saurabh (beUI registry metadata)
-- **License:** MIT
+| Component | Source | Licence | Commit / version |
+|-----------|--------|---------|------------------|
+| `tracker.tsx` | [tremorlabs/tremor](https://github.com/tremorlabs/tremor) `Tracker` | Apache-2.0 | main @ 2026-03-20 |
+| `bar-list.tsx` | [tremorlabs/tremor](https://github.com/tremorlabs/tremor) `BarList` | Apache-2.0 | main @ 2026-03-20 |
+| `progress-circle.tsx` | [tremorlabs/tremor](https://github.com/tremorlabs/tremor) `ProgressCircle` | Apache-2.0 | main @ 2026-03-20 |
+| `animated-number.tsx` | [beui.dev](https://beui.dev/r/animated-number) | MIT | beUI registry |
+| `chart.tsx` | [shadcn/ui](https://ui.shadcn.com/docs/components/chart) | MIT | new-york-v4 registry |
 
-Adapted for ComplyVault: brand token mapping, reduced-motion guardrails, duration caps in `src/components/ui/motion-config.ts`.
+The `@tremor/react` npm package is **not** used (Tailwind 3 / React 18 constraints).

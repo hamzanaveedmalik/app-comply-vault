@@ -43,7 +43,7 @@ export function AnimatedNumber({
   }, [value, duration, reduce]);
 
   return (
-    <span ref={ref} className={cn("tabular-nums", className)}>
+    <span ref={ref} className={cn("tabular", className)}>
       {format(display)}
     </span>
   );

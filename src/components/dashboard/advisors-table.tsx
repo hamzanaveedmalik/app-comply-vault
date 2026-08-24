@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { AdvisorRow } from "~/lib/dashboard-types";
 import { buildSparkline } from "~/lib/sparkline";
 import { DashboardCard } from "~/components/dashboard/dashboard-card";
+import { dashboardType } from "~/lib/dashboard-typography";
+import { cn } from "~/lib/utils";
 
 type AdvisorsTableProps = {
   advisors: AdvisorRow[];
@@ -22,9 +24,11 @@ function initials(name: string): string {
   return `${parts[0]![0] ?? ""}${parts[parts.length - 1]![0] ?? ""}`.toUpperCase();
 }
 
-const TH =
-  "px-[18px] py-2.5 text-[10.5px] font-semibold uppercase tracking-[0.05em] text-[#79837d] border-b border-[#e6e8e6] whitespace-nowrap";
-const TD = "px-[18px] py-[11px] border-b border-[#e6e8e6] whitespace-nowrap align-middle";
+const TH = cn(
+  "px-[18px] py-2.5 border-b border-surface-border whitespace-nowrap",
+  dashboardType.tableHeader,
+);
+const TD = "px-[18px] py-[11px] border-b border-surface-border whitespace-nowrap align-middle";
 
 export function AdvisorsTable({ advisors, rangeLabel }: AdvisorsTableProps): React.JSX.Element {
   const dateFmt = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" });

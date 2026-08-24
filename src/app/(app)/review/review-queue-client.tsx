@@ -16,6 +16,7 @@ import {
 } from "~/components/ui/select";
 import Link from "next/link";
 import { FlagTriageCard, type FlagTriageCardFlag } from "~/components/flags/flag-triage-card";
+import { ActiveUrlFilterChips } from "~/components/filters/active-url-filter-chips";
 
 interface Meeting {
   id: string;
@@ -110,6 +111,11 @@ export default function ReviewQueueClient({
 
   return (
     <div className="space-y-6">
+      <ActiveUrlFilterChips
+        filters={filters}
+        basePath="/review"
+        keys={["clientName", "status", "dateFrom", "dateTo"]}
+      />
       {/* Filters */}
       <Card>
         <CardHeader>

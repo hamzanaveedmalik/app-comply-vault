@@ -293,16 +293,56 @@ describe("CV-PV-01s partner snapshots", () => {
 });
 
 describe("CV-XR candidate pack scope", () => {
-  it("interprets a request item without generating", () => {
+  it("interprets a twelve-month period ending in prose dates", () => {
     const scope = interpretRequestItem(
-      "Produce all email and meeting records for Margaret Ellison regarding fees from 2025-01-01 to 2026-08-03, excluding SMS and personal messaging channels."
+      "Produce all advisory-fee communications and suitability documentation for Marcus Holloway for the twelve-month period ending 13 August 2026, including email and meeting records.",
     );
-    expect(scope.channels).toContain("EMAIL");
-    expect(scope.channels).toContain("MEETING");
-    expect(scope.concepts).toContain("fees");
-    expect(scope.people.some((p) => /Margaret/i.test(p))).toBe(true);
-    expect(scope.exclusions).toEqual(
-      expect.arrayContaining(["SMS", "personal messaging"])
+    expect(scope.dateFrom).toBe("2025-08-13");
+    expect(scope.dateTo).toBe("2026-08-13");
+    expect(scope.people.some((p) => /Marcus Holloway/i.test(p))).toBe(true);
+    expect(scope.concepts).toEqual(
+      expect.arrayContaining(["fees", "suitability"]),
+    );
+    expect(scope.channels).toEqual(
+      expect.arrayContaining(["EMAIL", "MEETING"]),
+    );
+  });
+
+  it("surfaces explicit coverage gap rows with reasons", () => {
+    const items = buildCoverageStatement({
+      scope: {
+        people: ["Marcus Holloway"],
+        entities: [],
+        dateFrom: "2025-08-13",
+        dateTo: "2026-08-13",
+        channels: ["EMAIL", "MEETING"],
+        concepts: ["fees"],
+        exclusions: [],
+      },
+      meetingCount: 3,
+      emailCount: 8,
+      gapPeriods: [
+        {
+          from: "2025-08-13",
+          to: "2025-11-22",
+          reason:
+            "Indexed mailbox and meeting capture begin 23 November 2025 — request covers twelve months",
+        },
+        {
+          from: "2025-08-13",
+          to: "2025-11-22",
+          reason:
+            "Indexed mailbox and meeting capture begin 23 November 2025 — request covers twelve months",
+        },
+      ],
+      unindexedSources: ["SMS"],
+    });
+    const gaps = items.filter((i) => i.label === "Coverage gap");
+    expect(gaps).toHaveLength(1);
+    expect(gaps[0]?.detail).toMatch(/2025-08-13 to 2025-11-22/);
+    expect(gaps[0]?.detail).toMatch(/Indexed mailbox/);
+    expect(items.some((i) => i.status === "data_source_unavailable")).toBe(
+      true,
     );
   });
 

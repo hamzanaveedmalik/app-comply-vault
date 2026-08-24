@@ -10,6 +10,7 @@ import {
   buildCoverageStatement,
   interpretRequestItem,
   searchPopulationSummary,
+  uniqueGapPeriods,
   type CandidateEvidenceRow,
   type ConfirmedScope,
   type CoverageStatementItem,
@@ -439,17 +440,19 @@ export async function generateCandidatePack(args: {
     where: { workspaceId: args.workspaceId },
     select: { gapPeriods: true, unindexedSources: true },
   });
-  const gapPeriods = (
-    (coverageManifest?.gapPeriods as Array<{
-      from: string;
-      to: string;
-      reason?: string;
-    }> | null) ?? []
-  ).map((g) => ({
-    from: g.from,
-    to: g.to,
-    reason: g.reason ?? "Indexed coverage gap",
-  }));
+  const gapPeriods = uniqueGapPeriods(
+    (
+      (coverageManifest?.gapPeriods as Array<{
+        from: string;
+        to: string;
+        reason?: string;
+      }> | null) ?? []
+    ).map((g) => ({
+      from: g.from,
+      to: g.to,
+      reason: g.reason ?? "Indexed coverage gap",
+    })),
+  );
   const unindexedSources = (
     (coverageManifest?.unindexedSources as Array<{ name: string }> | null) ??
     []

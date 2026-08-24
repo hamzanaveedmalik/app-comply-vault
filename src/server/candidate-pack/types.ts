@@ -66,6 +66,44 @@ const MONTH_RANGE =
   /\b((?:january|february|march|april|may|june|july|august|september|october|november|december)\s+20\d{2})\b/gi;
 const ISO_RANGE = /\b(20\d{2}-\d{2}-\d{2})\b/g;
 
+const MONTH_INDEX: Record<string, number> = {
+  january: 1,
+  february: 2,
+  march: 3,
+  april: 4,
+  may: 5,
+  june: 6,
+  july: 7,
+  august: 8,
+  september: 9,
+  october: 10,
+  november: 11,
+  december: 12,
+};
+
+const TWELVE_MONTH_ENDING =
+  /\b(?:(?:a|the)\s+)?(?:twelve|12)[\s-]*month(?:s)?\s+(?:period\s+)?ending\s+(\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(20\d{2})\b/i;
+
+function toIsoDate(year: number, month: number, day: number): string {
+  const iso = new Date(Date.UTC(year, month - 1, day)).toISOString();
+  return iso.slice(0, 10);
+}
+
+/** Dedupe gap rows that share the same window (email + meeting often mirror). */
+export function uniqueGapPeriods<T extends { from: string; to: string }>(
+  gaps: T[],
+): T[] {
+  const seen = new Set<string>();
+  const out: T[] = [];
+  for (const gap of gaps) {
+    const key = `${gap.from}|${gap.to}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(gap);
+  }
+  return out;
+}
+
 const EXCLUSION_PATTERNS: Array<{ re: RegExp; label: string }> = [
   { re: /\bsms\b/i, label: "SMS" },
   { re: /\bwhatsapp\b/i, label: "WhatsApp" },
@@ -108,7 +146,18 @@ export function interpretRequestItem(requestText: string): InterpretedScope {
   const months = text.match(MONTH_RANGE) ?? [];
   let dateFrom: string | null = isoDates[0] ?? null;
   let dateTo: string | null = isoDates[1] ?? isoDates[0] ?? null;
-  if (!dateFrom && months[0]) {
+
+  const twelveMonth = text.match(TWELVE_MONTH_ENDING);
+  if (twelveMonth) {
+    const day = Number(twelveMonth[1]);
+    const monthName = twelveMonth[2]!.toLowerCase();
+    const year = Number(twelveMonth[3]);
+    const month = MONTH_INDEX[monthName];
+    if (month && day >= 1 && day <= 31) {
+      dateTo = toIsoDate(year, month, day);
+      dateFrom = toIsoDate(year - 1, month, day);
+    }
+  } else if (!dateFrom && months[0]) {
     dateFrom = months[0];
     dateTo = months[1] ?? months[0];
   }
@@ -124,6 +173,7 @@ export function interpretRequestItem(requestText: string): InterpretedScope {
 
   const concepts: string[] = [];
   if (/\bfee/i.test(lower)) concepts.push("fees");
+  if (/\bsuitab/i.test(lower)) concepts.push("suitability");
   if (/\bperformance|return/i.test(lower)) concepts.push("performance claims");
   if (/\brecommend/i.test(lower)) concepts.push("recommendations");
   if (/\bcomplaint/i.test(lower)) concepts.push("complaints");
@@ -184,6 +234,8 @@ export function buildCoverageStatement(args: {
     });
   }
 
+  const gaps = uniqueGapPeriods(args.gapPeriods ?? []);
+
   for (const channel of args.scope.channels) {
     const count = channel === "EMAIL" ? args.emailCount : args.meetingCount;
     const noun = channelLabel(channel);
@@ -193,12 +245,15 @@ export function buildCoverageStatement(args: {
         status: "missing",
         detail: `No matches in the ${noun} sources searched under the confirmed scope.`,
       });
-    } else if ((args.gapPeriods?.length ?? 0) > 0) {
+    } else if (gaps.length > 0) {
+      const windowSummary = gaps
+        .map((g) => `${g.from} to ${g.to}`)
+        .join("; ");
       items.push({
         label: `${channel === "EMAIL" ? "Email" : "Meeting"} candidate records`,
         status: "partially_answerable",
-        detail: `Found ${count} candidate ${noun} record${count === 1 ? "" : "s"}; known gaps remain.`,
-        missingPeriods: args.gapPeriods?.map((g) => ({
+        detail: `Found ${count} candidate ${noun} record${count === 1 ? "" : "s"} under the confirmed scope. Indexed coverage does not include ${windowSummary}.`,
+        missingPeriods: gaps.map((g) => ({
           from: g.from,
           to: g.to,
         })),
@@ -210,6 +265,15 @@ export function buildCoverageStatement(args: {
         detail: `Found ${count} candidate ${noun} record${count === 1 ? "" : "s"} under the confirmed scope.`,
       });
     }
+  }
+
+  for (const gap of gaps) {
+    items.push({
+      label: "Coverage gap",
+      status: "partially_answerable",
+      detail: `${gap.from} to ${gap.to}: ${gap.reason}`,
+      missingPeriods: [{ from: gap.from, to: gap.to }],
+    });
   }
 
   if (args.scope.exclusions.length > 0) {

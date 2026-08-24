@@ -55,7 +55,7 @@ export function RiactDemoLoginClient(): React.JSX.Element {
         return;
       }
 
-      router.push("/dashboard");
+      router.push("/document-request");
       router.refresh();
     } catch {
       setError("Unexpected error starting the demo.");

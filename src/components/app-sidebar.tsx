@@ -133,6 +133,15 @@ function AppSidebarPanel({
     ...(isRelease1DemoEnabled()
       ? [
           { href: "/needs-attention", label: "Needs Attention", icon: CheckSquare },
+          ...(userRole === "OWNER_CCO"
+            ? [
+                {
+                  href: "/document-request",
+                  label: "Document Request",
+                  icon: FileText,
+                },
+              ]
+            : []),
           { href: "/candidate-pack", label: "Candidate Pack", icon: FileText },
           ...(userRole === "OWNER_CCO"
             ? [

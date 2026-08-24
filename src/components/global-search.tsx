@@ -34,10 +34,22 @@ interface GlobalSearchProps {
   className?: string;
 }
 
-const EXAMPLE_QUERIES = [
+import {
+  RIACT_CITATION_QUESTION,
+  RIACT_SMS_REFUSAL_QUESTION,
+} from "~/server/demo/riact/tenant";
+import { isRelease1DemoEnabled } from "~/lib/feature-flags";
+
+const EXAMPLE_QUERIES_DEFAULT = [
   "Did Rob discuss fee changes?",
   "Show me every email where a client mentioned fees since April",
   "Has any advisor promised performance in writing?",
+] as const;
+
+const EXAMPLE_QUERIES_RIACT = [
+  RIACT_SMS_REFUSAL_QUESTION,
+  RIACT_CITATION_QUESTION,
+  "Show me every email where a client mentioned fees since April",
 ] as const;
 
 const EXAMPLE_CHIP_CLASS =
@@ -319,6 +331,10 @@ export function GlobalSearch({ className }: GlobalSearchProps): React.JSX.Elemen
       askState?.kind !== "answer" &&
       askState?.kind !== "no-evidence");
 
+  const exampleQueries = isRelease1DemoEnabled()
+    ? EXAMPLE_QUERIES_RIACT
+    : EXAMPLE_QUERIES_DEFAULT;
+
   return (
     <>
       {/* Search Button/Input in Top Bar */}
@@ -365,7 +381,7 @@ export function GlobalSearch({ className }: GlobalSearchProps): React.JSX.Elemen
             <CommandEmpty>
               <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 px-4 py-6 text-sm text-muted-foreground">
                 <span className="shrink-0">Try</span>
-                {EXAMPLE_QUERIES.map((example, index) => (
+                {exampleQueries.map((example, index) => (
                   <Fragment key={example}>
                     {index > 0 ? <span className="shrink-0">or</span> : null}
                     <button

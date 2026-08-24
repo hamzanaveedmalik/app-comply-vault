@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { toast } from "~/lib/toast";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -27,6 +28,7 @@ import { Textarea } from "~/components/ui/textarea";
 import type { CandidatePackDto } from "~/server/candidate-pack/service";
 import type {
   CoverageAnswerability,
+  CoverageStatementItem,
   InterpretedScope,
 } from "~/server/candidate-pack/types";
 import { coverageStatusLabel } from "~/server/candidate-pack/types";
@@ -114,8 +116,66 @@ function formatDate(iso: string | null): string {
   });
 }
 
-export function CandidatePackClient(): React.JSX.Element {
-  const [requestText, setRequestText] = useState("");
+function CoverageItemCard({
+  item,
+  emphasizeGaps,
+}: {
+  item: CoverageStatementItem;
+  emphasizeGaps: boolean;
+}): React.JSX.Element {
+  const isGap =
+    item.label === "Coverage gap" ||
+    item.status === "partially_answerable" ||
+    item.status === "data_source_unavailable" ||
+    item.status === "missing";
+
+  return (
+    <div
+      className={`rounded-lg border p-3 ${
+        item.status === "excluded_by_request"
+          ? "border-slate-200 bg-slate-50"
+          : item.status === "data_source_unavailable"
+            ? "border-amber-200 bg-amber-50/60"
+            : item.label === "Coverage gap" && emphasizeGaps
+              ? "border-amber-400 bg-amber-50 ring-2 ring-amber-200"
+              : isGap && emphasizeGaps
+                ? "border-amber-200 bg-amber-50/40"
+                : ""
+      }`}
+    >
+      <div className="flex flex-wrap items-center gap-2">
+        <p className="text-sm font-medium">{item.label}</p>
+        {item.label !== "Search population" ? (
+          <Badge variant="outline" className={statusChipClass(item.status)}>
+            {coverageStatusLabel(item.status)}
+          </Badge>
+        ) : null}
+      </div>
+      <p className="mt-1 text-sm text-muted-foreground">{item.detail}</p>
+      {item.missingPeriods && item.missingPeriods.length > 0 ? (
+        <ul className="mt-2 space-y-1 text-xs text-amber-950">
+          {item.missingPeriods.map((period) => (
+            <li key={`${period.from}-${period.to}`} className="font-mono">
+              {period.from} → {period.to}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {item.requestQuote ? (
+        <p className="mt-1 text-xs italic text-muted-foreground">
+          From request: “{item.requestQuote}”
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+export function CandidatePackClient({
+  initialRequestText = "",
+}: {
+  initialRequestText?: string;
+}): React.JSX.Element {
+  const [requestText, setRequestText] = useState(initialRequestText);
   const [pack, setPack] = useState<CandidatePackDto | null>(null);
   const [scope, setScope] = useState<InterpretedScope | null>(null);
   const [pending, setPending] = useState<
@@ -126,16 +186,21 @@ export function CandidatePackClient(): React.JSX.Element {
   const [ackLabels, setAckLabels] = useState<Set<string>>(new Set());
   const [previewOpen, setPreviewOpen] = useState(false);
   const [scopeExpanded, setScopeExpanded] = useState(true);
+  const [landOnGaps, setLandOnGaps] = useState(false);
+  const coverageRef = useRef<HTMLDivElement | null>(null);
+  const autoDraftStarted = useRef(false);
 
   const coverage = pack?.coverageStatement ?? [];
 
   const includedCounts = useMemo(() => {
-    const meetings = pack?.candidateRecords.filter(
-      (r) => r.kind === "MEETING" && includedIds.has(r.id),
-    ).length ?? 0;
-    const emails = pack?.candidateRecords.filter(
-      (r) => r.kind === "EMAIL" && includedIds.has(r.id),
-    ).length ?? 0;
+    const meetings =
+      pack?.candidateRecords.filter(
+        (r) => r.kind === "MEETING" && includedIds.has(r.id),
+      ).length ?? 0;
+    const emails =
+      pack?.candidateRecords.filter(
+        (r) => r.kind === "EMAIL" && includedIds.has(r.id),
+      ).length ?? 0;
     return { meetings, emails, total: meetings + emails };
   }, [pack, includedIds]);
 
@@ -150,12 +215,12 @@ export function CandidatePackClient(): React.JSX.Element {
     }
   }
 
-  async function createDraft(): Promise<void> {
+  async function createDraft(text: string = requestText): Promise<void> {
     setPending("draft");
     try {
       const data = await requestJson<CandidatePackDto>("/api/candidate-pack", {
         method: "POST",
-        body: JSON.stringify({ requestText }),
+        body: JSON.stringify({ requestText: text }),
       });
       syncPack(data);
       setScopeExpanded(true);
@@ -170,6 +235,15 @@ export function CandidatePackClient(): React.JSX.Element {
       setPending(null);
     }
   }
+
+  useEffect(() => {
+    if (!initialRequestText || autoDraftStarted.current) return;
+    if (initialRequestText.trim().length < 10) return;
+    autoDraftStarted.current = true;
+    void createDraft(initialRequestText);
+    // Demo cold-open: interpret once when arriving from the letter.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialRequestText]);
 
   async function confirmScope(): Promise<void> {
     if (!pack || !scope) return;
@@ -204,7 +278,14 @@ export function CandidatePackClient(): React.JSX.Element {
         { method: "POST" },
       );
       syncPack(data);
+      setLandOnGaps(true);
       toast.success("Candidate evidence retrieved under the confirmed scope.");
+      requestAnimationFrame(() => {
+        coverageRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      });
     } catch (error) {
       toast.error(
         error instanceof Error
@@ -236,14 +317,18 @@ export function CandidatePackClient(): React.JSX.Element {
             includedEmailEvidenceIds: pack.candidateRecords
               .filter((r) => r.kind === "EMAIL" && includedIds.has(r.id))
               .map((r) => r.id),
-            acknowledgedCoverageLabels: [...ackLabels],
+            acknowledgedCoverageLabels: coverage
+              .filter((c) => ackLabels.has(coverageAckKey(c)))
+              .map((c) => c.label),
           }),
         },
       );
       syncPack(data);
       setAttestOpen(false);
       setPreviewOpen(true);
-      toast.success("Candidate pack approved — attestation written to the audit log.");
+      toast.success(
+        "Candidate pack approved — attestation written to the audit log.",
+      );
     } catch (error) {
       toast.error(
         error instanceof Error
@@ -273,12 +358,29 @@ export function CandidatePackClient(): React.JSX.Element {
     });
   }
 
+  function coverageAckKey(item: CoverageStatementItem): string {
+    return `${item.label}::${item.detail}`;
+  }
+
   const allAcked =
-    coverage.length > 0 && coverage.every((c) => ackLabels.has(c.label));
+    coverage.length > 0 &&
+    coverage.every((c) => ackLabels.has(coverageAckKey(c)));
 
   return (
     <div className="space-y-5">
-      {/* Request + scope */}
+      {!pack && !initialRequestText ? (
+        <p className="text-sm text-muted-foreground">
+          Prefer opening from the{" "}
+          <Link
+            href="/document-request"
+            className="underline underline-offset-2"
+          >
+            inbound letter
+          </Link>
+          , or paste a request item below.
+        </p>
+      ) : null}
+
       {pack && !scopeExpanded && scope ? (
         <Card>
           <CardContent className="flex flex-wrap items-start justify-between gap-3 py-4">
@@ -336,7 +438,9 @@ export function CandidatePackClient(): React.JSX.Element {
                   onClick={() => void createDraft()}
                   state={pendingButtonState(pending === "draft")}
                   loadingText="Interpreting…"
-                  disabled={pending === "draft" || requestText.trim().length < 10}
+                  disabled={
+                    pending === "draft" || requestText.trim().length < 10
+                  }
                 >
                   Interpret candidate scope
                 </StatefulButton>
@@ -413,7 +517,6 @@ export function CandidatePackClient(): React.JSX.Element {
         </>
       )}
 
-      {/* Generate gate */}
       {pack?.status === "SCOPE_CONFIRMED" ? (
         <Card>
           <CardHeader>
@@ -435,7 +538,6 @@ export function CandidatePackClient(): React.JSX.Element {
         </Card>
       ) : null}
 
-      {/* Evidence table */}
       {pack &&
       (pack.status === "GENERATED" || pack.status === "APPROVED") &&
       pack.candidateRecords ? (
@@ -514,143 +616,143 @@ export function CandidatePackClient(): React.JSX.Element {
         </Card>
       ) : null}
 
-      {/* Coverage */}
       {pack?.coverageStatement ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Coverage and gaps</CardTitle>
-            <CardDescription>
-              What was searched, what matched, and what was deliberately not
-              searched.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            {(() => {
-              const searched = pack.coverageStatement.filter(
-                (i) =>
-                  i.label === "Search population" ||
-                  i.status === "answerable" ||
-                  i.status === "partially_answerable" ||
-                  i.status === "missing" ||
-                  i.status === "requires_manual_confirmation",
-              );
-              const notSearched = pack.coverageStatement.filter(
-                (i) =>
-                  i.status === "excluded_by_request" ||
-                  i.status === "data_source_unavailable",
-              );
-              const renderItems = (
-                items: typeof pack.coverageStatement,
-              ) =>
-                items.map((item) => (
-                  <div
-                    key={item.label}
-                    className={`rounded-lg border p-3 ${
-                      item.status === "excluded_by_request"
-                        ? "border-slate-200 bg-slate-50"
-                        : item.status === "data_source_unavailable"
-                          ? "border-amber-200 bg-amber-50/60"
-                          : ""
-                    }`}
-                  >
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-sm font-medium">{item.label}</p>
-                      {item.label !== "Search population" ? (
-                        <Badge
-                          variant="outline"
-                          className={statusChipClass(item.status)}
-                        >
-                          {coverageStatusLabel(item.status)}
-                        </Badge>
-                      ) : null}
-                    </div>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {item.detail}
-                    </p>
-                    {item.requestQuote ? (
-                      <p className="mt-1 text-xs italic text-muted-foreground">
-                        From request: “{item.requestQuote}”
-                      </p>
+        <div ref={coverageRef}>
+          <Card
+            className={landOnGaps ? "border-amber-400 shadow-md" : undefined}
+          >
+            <CardHeader>
+              <CardTitle>Coverage and gaps</CardTitle>
+              <CardDescription>
+                What was searched, what matched, and what this pack could not
+                find — including holes you can defend.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              {(() => {
+                const gapItems = pack.coverageStatement.filter(
+                  (i) => i.label === "Coverage gap",
+                );
+                const searched = pack.coverageStatement.filter(
+                  (i) =>
+                    i.label !== "Coverage gap" &&
+                    (i.label === "Search population" ||
+                      i.status === "answerable" ||
+                      i.status === "partially_answerable" ||
+                      i.status === "missing" ||
+                      i.status === "requires_manual_confirmation"),
+                );
+                const notSearched = pack.coverageStatement.filter(
+                  (i) =>
+                    i.status === "excluded_by_request" ||
+                    i.status === "data_source_unavailable",
+                );
+                return (
+                  <>
+                    {gapItems.length > 0 ? (
+                      <div className="space-y-2">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-amber-900">
+                          What it could not find
+                        </p>
+                        {gapItems.map((item) => (
+                          <CoverageItemCard
+                            key={`${item.label}-${item.detail}`}
+                            item={item}
+                            emphasizeGaps={landOnGaps}
+                          />
+                        ))}
+                      </div>
                     ) : null}
-                  </div>
-                ));
-              return (
-                <>
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      Searched
-                    </p>
-                    {renderItems(searched)}
-                  </div>
-                  {notSearched.length > 0 ? (
                     <div className="space-y-2">
                       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                        Not searched, and why
+                        Searched
                       </p>
-                      {renderItems(notSearched)}
+                      {searched.map((item) => (
+                        <CoverageItemCard
+                          key={item.label}
+                          item={item}
+                          emphasizeGaps={landOnGaps}
+                        />
+                      ))}
                     </div>
+                    {notSearched.length > 0 ? (
+                      <div className="space-y-2">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                          Not searched, and why
+                        </p>
+                        {notSearched.map((item) => (
+                          <CoverageItemCard
+                            key={item.label}
+                            item={item}
+                            emphasizeGaps={landOnGaps}
+                          />
+                        ))}
+                      </div>
+                    ) : null}
+                  </>
+                );
+              })()}
+
+              {pack.status === "GENERATED" ? (
+                <div className="flex flex-wrap items-center gap-3 border-t pt-4">
+                  <Button
+                    className="bg-[#0D2818] hover:bg-[#0D2818]/90"
+                    onClick={openAttestation}
+                    disabled={includedCounts.total === 0}
+                  >
+                    Approve candidate pack
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setPreviewOpen(true)}
+                  >
+                    Preview pack
+                  </Button>
+                  {includedCounts.total === 0 ? (
+                    <p className="text-xs text-muted-foreground">
+                      Nothing to approve yet — generate matches under a
+                      confirmed scope first.
+                    </p>
                   ) : null}
-                </>
-              );
-            })()}
+                </div>
+              ) : null}
 
-            {pack.status === "GENERATED" ? (
-              <div className="flex flex-wrap items-center gap-3 border-t pt-4">
-                <Button
-                  className="bg-[#0D2818] hover:bg-[#0D2818]/90"
-                  onClick={openAttestation}
-                  disabled={includedCounts.total === 0}
-                >
-                  Approve candidate pack
-                </Button>
-                <Button variant="outline" onClick={() => setPreviewOpen(true)}>
-                  Preview pack
-                </Button>
-                {includedCounts.total === 0 ? (
-                  <p className="text-xs text-muted-foreground">
-                    Nothing to approve yet — generate matches under a confirmed
-                    scope first.
+              {pack.status === "APPROVED" ? (
+                <div className="rounded-lg border border-brand/30 bg-brand/5 p-3 text-sm">
+                  <p className="font-medium text-brand">
+                    Approved for export use
                   </p>
-                ) : null}
-              </div>
-            ) : null}
-
-            {pack.status === "APPROVED" ? (
-              <div className="rounded-lg border border-brand/30 bg-brand/5 p-3 text-sm">
-                <p className="font-medium text-brand">
-                  Approved for export use
-                </p>
-                <p className="mt-1 text-muted-foreground">
-                  Approved{" "}
-                  {pack.approvedAt
-                    ? new Date(pack.approvedAt).toLocaleString()
-                    : ""}
-                  {pack.approvedByUserId
-                    ? ` · approver ${pack.approvedByUserId.slice(0, 8)}…`
-                    : ""}
-                  {pack.confirmedAt
-                    ? ` · scope confirmed ${new Date(pack.confirmedAt).toLocaleString()}`
-                    : ""}
-                  {" · "}
-                  {includedCounts.total} record
-                  {includedCounts.total === 1 ? "" : "s"} · gaps acknowledged
-                  in the audit log.
-                </p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="mt-3"
-                  onClick={() => setPreviewOpen(true)}
-                >
-                  Preview pack
-                </Button>
-              </div>
-            ) : null}
-          </CardContent>
-        </Card>
+                  <p className="mt-1 text-muted-foreground">
+                    Approved{" "}
+                    {pack.approvedAt
+                      ? new Date(pack.approvedAt).toLocaleString()
+                      : ""}
+                    {pack.approvedByUserId
+                      ? ` · approver ${pack.approvedByUserId.slice(0, 8)}…`
+                      : ""}
+                    {pack.confirmedAt
+                      ? ` · scope confirmed ${new Date(pack.confirmedAt).toLocaleString()}`
+                      : ""}
+                    {" · "}
+                    {includedCounts.total} record
+                    {includedCounts.total === 1 ? "" : "s"} · gaps acknowledged
+                    in the audit log.
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-3"
+                    onClick={() => setPreviewOpen(true)}
+                  >
+                    Preview pack
+                  </Button>
+                </div>
+              ) : null}
+            </CardContent>
+          </Card>
+        </div>
       ) : null}
 
-      {/* Attestation dialog */}
       <Dialog open={attestOpen} onOpenChange={setAttestOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
@@ -674,23 +776,26 @@ export function CandidatePackClient(): React.JSX.Element {
               Acknowledge each coverage item:
             </p>
             <ul className="space-y-2">
-              {coverage.map((item) => (
-                <li key={item.label} className="flex items-start gap-2">
-                  <input
-                    type="checkbox"
-                    className="mt-1 h-4 w-4"
-                    checked={ackLabels.has(item.label)}
-                    onChange={() => toggleAck(item.label)}
-                    id={`ack-${item.label}`}
-                  />
-                  <label htmlFor={`ack-${item.label}`} className="cursor-pointer">
-                    <span className="font-medium">{item.label}</span>
-                    <span className="block text-muted-foreground">
-                      {item.detail}
-                    </span>
-                  </label>
-                </li>
-              ))}
+              {coverage.map((item) => {
+                const key = coverageAckKey(item);
+                return (
+                  <li key={key} className="flex items-start gap-2">
+                    <input
+                      type="checkbox"
+                      className="mt-1 h-4 w-4"
+                      checked={ackLabels.has(key)}
+                      onChange={() => toggleAck(key)}
+                      id={`ack-${key}`}
+                    />
+                    <label htmlFor={`ack-${key}`} className="cursor-pointer">
+                      <span className="font-medium">{item.label}</span>
+                      <span className="block text-muted-foreground">
+                        {item.detail}
+                      </span>
+                    </label>
+                  </li>
+                );
+              })}
             </ul>
           </div>
           <DialogFooter>
@@ -710,7 +815,6 @@ export function CandidatePackClient(): React.JSX.Element {
         </DialogContent>
       </Dialog>
 
-      {/* Preview panel */}
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
@@ -771,7 +875,7 @@ export function CandidatePackClient(): React.JSX.Element {
                   </p>
                   <ul className="mt-2 space-y-2">
                     {coverage.map((c) => (
-                      <li key={c.label}>
+                      <li key={`${c.label}-${c.detail}`}>
                         <span className="font-medium">{c.label}</span> —{" "}
                         {coverageStatusLabel(c.status)}. {c.detail}
                       </li>

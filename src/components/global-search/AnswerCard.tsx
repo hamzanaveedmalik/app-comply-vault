@@ -150,14 +150,18 @@ export function AnswerCard({
 
         {state.kind === "honest-miss" && (
           <div className="space-y-2">
-            <Badge variant="outline" className="font-normal">
-              Honest miss
+            <Badge variant="outline" className="border-amber-300 bg-amber-50 font-normal text-amber-950">
+              Will not answer
               {state.missReason ? ` · ${state.missReason.replace(/_/g, " ")}` : ""}
             </Badge>
             <p className="text-muted-foreground">{state.answer}</p>
+            <p className="text-xs text-muted-foreground">
+              ComplyVault does not infer from nearby indexed material when the
+              underlying record is not in coverage.
+            </p>
             {state.missing && (
               <p className="text-xs text-muted-foreground">
-                Missing: {state.missing}
+                Not indexed: {state.missing}
               </p>
             )}
           </div>
